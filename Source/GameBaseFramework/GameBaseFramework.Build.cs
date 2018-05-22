@@ -7,14 +7,25 @@ namespace UnrealBuildTool.Rules
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 
-            PrivateIncludePaths.Add("GameBaseFramework/Private");
+            PublicIncludePaths.AddRange(
+                new string[]
+                {
+                    "GameBaseFramework/Public/GameFramework"
+                } 
+            );
+
+            PrivateIncludePaths.AddRange( 
+                new string[]
+                {
+                    "GameBaseFramework/Private/GameFramework"
+                }
+            );
 
             PublicDependencyModuleNames.AddRange(
                 new string[]
                 {
                     "Core",
                     "CoreUObject",
-                    "InputCore",
                     "Engine"
                 }
             );
