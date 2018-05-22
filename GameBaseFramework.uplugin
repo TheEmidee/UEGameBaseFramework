@@ -1,0 +1,25 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1",
+  "FriendlyName": "Game Base Framework",
+  "Description" : "Helper classes",
+  "Category" : "",
+  "CreatedBy" : "Michael Delva",
+  "CreatedByURL" : "http://www.emidee.net",
+  "DocsURL" : "",
+  "MarketplaceURL" : "",
+  "SupportURL" : "",
+  "EnabledByDefault" : false,
+  "CanContainContent" : true,
+  "IsBetaVersion" : false,
+  "Installed" : false,
+  "Modules" :
+  [
+    {
+      "Name" : "BaseGameFramework",
+      "Type" : "Runtime",
+      "LoadingPhase" : "Default"
+    }
+  ]
+}
