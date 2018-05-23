@@ -10,14 +10,14 @@ namespace UnrealBuildTool.Rules
             PublicIncludePaths.AddRange(
                 new string[]
                 {
-                    "GameBaseFramework/Public/GameFramework"
+                    "GameBaseFramework/Public"
                 } 
             );
 
             PrivateIncludePaths.AddRange( 
                 new string[]
                 {
-                    "GameBaseFramework/Private/GameFramework"
+                    "GameBaseFramework/Private"
                 }
             );
 
