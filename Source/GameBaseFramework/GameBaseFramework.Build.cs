@@ -17,7 +17,8 @@ namespace UnrealBuildTool.Rules
             PrivateIncludePaths.AddRange( 
                 new string[]
                 {
-                    "GameBaseFramework/Private"
+                    "GameBaseFramework/Private",
+                    "GameBaseFramework/Private/Engine"
                 }
             );
 
@@ -26,7 +27,10 @@ namespace UnrealBuildTool.Rules
                 {
                     "Core",
                     "CoreUObject",
-                    "Engine"
+                    "Engine",
+                    "InputCore",
+                    "Slate",
+                    "SlateCore"
                 }
             );
         }
