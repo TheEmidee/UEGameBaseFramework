@@ -1,5 +1,8 @@
 #include "GBFInputBlueprintLibrary.h"
 
+#include "Kismet/GameplayStatics.h"
+
+#include "IGameBaseFrameworkModule.h"
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "GameFramework/GBFPlayerController.h"
 
@@ -97,4 +100,26 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
         }
     }
 #endif
+}
+
+UTexture2D * UGBFInputBlueprintLibrary::GetPlatformInputKeyTexture( const FKey & key, APlayerController * player_controller )
+{
+#if PLATFORM_DESKTOP
+    auto platform_name = FString( "Desktop" );
+
+    if ( auto * pc = Cast< AGBFPlayerController >( player_controller ) )
+    {
+        if ( auto * input_device_switcher = pc->GetPlatformInputSwitcherComponent() )
+        {
+            if ( input_device_switcher->GetPlatformInputType() == EGBFPlatformInputType::Keyboard )
+            {
+                platform_name = "Keyboard";
+            }
+        }
+    }
+#else
+    const auto platform_name = UGameplayStatics::GetPlatformName();
+#endif
+
+    return IGameBaseFrameworkModule::Get().GetPlatformInputTextureForKey( platform_name, key );
 }

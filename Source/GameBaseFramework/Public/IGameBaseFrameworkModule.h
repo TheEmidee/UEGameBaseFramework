@@ -4,33 +4,34 @@
 
 #include "ModuleManager.h"
 
-/**
- * The public interface to this module
- */
+#include "InputCoreTypes.h"
+
+class UTexture2D;
+
 class IGameBaseFrameworkModule : public IModuleInterface
 {
 
 public:
 
-	/**
-	 * Singleton-like access to this module's interface.  This is just for convenience!
-	 * Beware of calling this during the shutdown phase, though.  Your module might have been unloaded already.
-	 *
-	 * @return Returns singleton instance, loading the module on demand if needed
-	 */
-	static inline IGameBaseFrameworkModule & Get()
-	{
-		return FModuleManager::LoadModuleChecked< IGameBaseFrameworkModule >("GameBaseFramework");
-	}
+    virtual void StartupModule() override;
+    virtual void ShutdownModule() override;
 
-	/**
-	 * Checks to see if this module is loaded and ready.  It is only valid to call Get() if IsAvailable() returns true.
-	 *
-	 * @return True if the module is loaded and ready to use
-	 */
-	static inline bool IsAvailable()
-	{
-		return FModuleManager::Get().IsModuleLoaded( "GameBaseFramework" );
-	}
+    UTexture2D * GetPlatformInputTextureForKey( const FString & platform_name, const FKey & key );
+
+    static inline IGameBaseFrameworkModule & Get()
+    {
+        return FModuleManager::LoadModuleChecked< IGameBaseFrameworkModule >("GameBaseFramework");
+    }
+
+    static inline bool IsAvailable()
+    {
+        return FModuleManager::Get().IsModuleLoaded( "GameBaseFramework" );
+    }
+
+private:
+
+    void LoadPlatformInputTextures( const FString & platform_input_name );
+
+    TMap< FString, TMap< FKey, UTexture2D * > > PlatformInputTexturesMap;
 };
 

@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Engine/DataTable.h"
+#include "Engine/DataAsset.h"
+
 #include "GBFInputTypes.generated.h"
 
 UENUM()
@@ -46,4 +49,32 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 
     UPROPERTY( BlueprintReadWrite, EditAnywhere )
     TEnumAsByte< EGBFVirtualKeyProcessedFirst > ProcessVirtualKeyFirstFlag;
+};
+
+USTRUCT(BlueprintType)
+struct FGBFPlatformInputTextureData : public FTableRowBase
+{
+    GENERATED_USTRUCT_BODY()
+
+public:
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FKey Key;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    TSoftObjectPtr< UTexture2D > Texture;
+};
+
+UCLASS( BlueprintType )
+class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
+{
+    GENERATED_BODY()
+
+public:
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    TSoftObjectPtr< UDataTable > FallBack;
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    TMap< FString, TSoftObjectPtr< UDataTable > > PlatformInputToTextureMap;
 };

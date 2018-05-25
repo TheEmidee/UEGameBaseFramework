@@ -22,4 +22,6 @@ public:
     UFUNCTION( BlueprintPure, meta = ( DisplayName = "Resolve (FGBFKey)" ), Category = "Input" )
     static const FKey & ResolvePlatformInputKey( const FGBFPlatformInputKey & key, APlayerController * player_controller );
 
+    UFUNCTION( BlueprintPure, Category = "Input" )
+    static UTexture2D * GetPlatformInputKeyTexture( const FKey & key, APlayerController * player_controller );
 };

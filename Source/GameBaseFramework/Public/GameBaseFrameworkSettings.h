@@ -2,6 +2,8 @@
 
 #include "GameBaseFrameworkSettings.generated.h"
 
+class UGBFPlatformInputTextures;
+
 USTRUCT()
 struct FGBFInputSwitchConfig
 {
@@ -36,4 +38,7 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
     FGBFInputSwitchConfig InputSwitchConfig;
+
+    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 };

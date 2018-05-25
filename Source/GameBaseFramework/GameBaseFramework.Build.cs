@@ -30,7 +30,8 @@ namespace UnrealBuildTool.Rules
                     "Engine",
                     "InputCore",
                     "Slate",
-                    "SlateCore"
+                    "SlateCore",
+                    "UMG"
                 }
             );
         }
