@@ -15,8 +15,21 @@ public:
 
     AGBFPlayerController();
 
+#if PLATFORM_DESKTOP
+    FORCEINLINE UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponent() const;
+#endif
+
 private:
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
 };
+
+#if PLATFORM_DESKTOP
+
+UGBFPlatformInputSwitcherComponent * AGBFPlayerController::GetPlatformInputSwitcherComponent() const
+{
+    return PlatformInputSwitcherComponent;
+}
+
+#endif

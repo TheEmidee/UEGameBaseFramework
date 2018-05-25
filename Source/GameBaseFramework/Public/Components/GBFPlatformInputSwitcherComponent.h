@@ -5,15 +5,9 @@
 #include "Application/IInputProcessor.h"
 
 #include "GameBaseFrameworkSettings.h"
+#include "Input/GBFInputTypes.h"
 
 #include "GBFPlatformInputSwitcherComponent.generated.h"
-
-UENUM()
-enum class EGBFPlatformInputType : uint8
-{
-    Gamepad,
-    Keyboard
-};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnPlatformInputTypeUpdatedEvent, EGBFPlatformInputType, new_input_type );
 
@@ -27,6 +21,7 @@ public:
     UGBFPlatformInputSwitcherComponent();
 
     FORCEINLINE FOnPlatformInputTypeUpdatedEvent & OnPlatformInputTypeUpdated();
+    FORCEINLINE EGBFPlatformInputType GetPlatformInputType() const;
 
     virtual void BeginPlay() override;
     virtual void BeginDestroy() override;
@@ -78,4 +73,9 @@ private:
 FOnPlatformInputTypeUpdatedEvent & UGBFPlatformInputSwitcherComponent::OnPlatformInputTypeUpdated()
 {
     return OnPlatformInputTypeUpdatedEvent;
+}
+
+EGBFPlatformInputType UGBFPlatformInputSwitcherComponent::GetPlatformInputType() const
+{
+    return PlatformInputType;
 }
