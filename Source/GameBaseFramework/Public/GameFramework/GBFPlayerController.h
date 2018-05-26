@@ -26,10 +26,8 @@ private:
 };
 
 #if PLATFORM_DESKTOP
-
 UGBFPlatformInputSwitcherComponent * AGBFPlayerController::GetPlatformInputSwitcherComponent() const
 {
     return PlatformInputSwitcherComponent;
 }
-
 #endif

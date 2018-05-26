@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Engine/DeveloperSettings.h"
 #include "GameBaseFrameworkSettings.generated.h"
 
 class UGBFPlatformInputTextures;
@@ -29,11 +30,15 @@ class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettin
 
 public:
 
-    // Begin UDeveloperSettings Interface
     virtual FName GetCategoryName() const override;
 
 #if WITH_EDITOR
     virtual FText GetSectionText() const override;
+    virtual void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
+
+    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * );
+
+    static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
@@ -41,4 +46,11 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
+
+#if WITH_EDITOR
+protected:
+
+    static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
+#endif
+
 };

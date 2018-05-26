@@ -1,5 +1,3 @@
-// Copyright 1998-2015 Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
 #include "ModuleManager.h"
@@ -18,6 +16,10 @@ public:
 
     UTexture2D * GetPlatformInputTextureForKey( const FString & platform_name, const FKey & key );
 
+#if WITH_EDITOR
+    void GAMEBASEFRAMEWORK_API RefreshPlatformInputTextures();
+#endif
+
     static inline IGameBaseFrameworkModule & Get()
     {
         return FModuleManager::LoadModuleChecked< IGameBaseFrameworkModule >("GameBaseFramework");
@@ -30,6 +32,7 @@ public:
 
 private:
 
+    void LoadAllPlatformInputTextures();
     void LoadPlatformInputTextures( const FString & platform_input_name );
 
     TMap< FString, TMap< FKey, UTexture2D * > > PlatformInputTexturesMap;
