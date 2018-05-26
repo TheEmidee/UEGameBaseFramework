@@ -2,6 +2,9 @@
 
 #include "Engine/Texture2D.h"
 
+#include "GameBaseFrameworkSettings.h"
+#include "Input/GBFInputTypes.h"
+
 IMPLEMENT_MODULE( IGameBaseFrameworkModule, GameBaseFramework )
 
 void IGameBaseFrameworkModule::StartupModule()
