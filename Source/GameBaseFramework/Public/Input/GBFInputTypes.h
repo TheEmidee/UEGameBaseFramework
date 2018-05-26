@@ -72,9 +72,22 @@ class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
 
 public:
 
+#if WITH_EDITOR
+    virtual void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
+
+    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnPlatformInputTexturesChanged, const FString &, const UGBFPlatformInputTextures * );
+    static FOnPlatformInputTexturesChanged & OnPlatformInputTexturesChanged();
+#endif
+
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSoftObjectPtr< UDataTable > FallBack;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TMap< FString, TSoftObjectPtr< UDataTable > > PlatformInputToTextureMap;
+
+protected:
+
+#if WITH_EDITOR
+    static FOnPlatformInputTexturesChanged PlatformInputTexturesChangedDelegate;
+#endif
 };

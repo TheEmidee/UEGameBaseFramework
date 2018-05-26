@@ -47,9 +47,9 @@ public:
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
-#if WITH_EDITOR
 protected:
 
+#if WITH_EDITOR
     static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
 #endif
 
