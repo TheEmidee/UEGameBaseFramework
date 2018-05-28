@@ -4,6 +4,7 @@
 #include "GameBaseFrameworkSettings.generated.h"
 
 class UGBFPlatformInputTextures;
+class UGBFGameState;
 
 USTRUCT()
 struct FGBFInputSwitchConfig
@@ -46,6 +47,9 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
+
+    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    TMap< FName, TSoftObjectPtr< UGBFGameState > > GameStates;
 
 protected:
 
