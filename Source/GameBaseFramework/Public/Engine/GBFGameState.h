@@ -11,6 +11,12 @@ class GAMEBASEFRAMEWORK_API UGBFGameState : public UDataAsset
 
 public:
 
+    UGBFGameState()
+    {}
+
+    UPROPERTY( EditAnywhere )
+    FName Name;
+
     UPROPERTY( EditAnywhere )
     TSubclassOf< AGameModeBase > GameModeClass;
 

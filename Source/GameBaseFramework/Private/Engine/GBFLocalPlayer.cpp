@@ -81,6 +81,26 @@ FPlatformUserId UGBFLocalPlayer::GetPlatformUserId() const
     return platform_user_id;
 }
 
+ELoginStatus::Type UGBFLocalPlayer::GetLoginStatus() const
+{
+    if ( const auto oss = IOnlineSubsystem::Get() )
+    {
+        const auto identity_interface = oss->GetIdentityInterface();
+
+        if ( identity_interface.IsValid() )
+        {
+            const auto unique_net_id = GetCachedUniqueNetId();
+
+            if ( unique_net_id.IsValid() )
+            {
+                return identity_interface->GetLoginStatus( *unique_net_id );
+            }
+        }
+    }
+
+    return ELoginStatus::NotLoggedIn;
+}
+
 void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
 {
     SetControllerId( controller_index );
@@ -96,6 +116,28 @@ void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
         )
     {
         FInternationalization::Get().SetCurrentCulture( culture_name );
+    }
+}
+
+void UGBFLocalPlayer::SetPresenceStatus( const FText & status )
+{
+    const auto presence_interface = Online::GetPresenceInterface();
+
+    if ( presence_interface.IsValid() )
+    {
+        const auto user_id = GetPreferredUniqueNetId();
+
+        if ( user_id.IsValid()
+            && user_id->IsValid()
+            )
+        {
+            FOnlineUserPresenceStatus presence_status;
+            // Not ideal to convert from FText to FString since we could potentially loose conversion for some languages
+            // but the whole presence API treats FString only
+            presence_status.Properties.Add( DefaultPresenceKey, FVariantData( status.ToString() ) );
+
+            presence_interface->SetPresence( *user_id, presence_status );
+        }
     }
 }
 

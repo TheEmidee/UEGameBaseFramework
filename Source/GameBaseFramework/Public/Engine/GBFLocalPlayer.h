@@ -5,6 +5,7 @@
 #include "OnlineSubsystem.h"
 #include "OnlineAchievementsInterface.h"
 #include "OnlineStats.h"
+#include "OnlineSubsystemTypes.h"
 #include "Engine/LocalPlayer.h"
 
 #include "GBFLocalPlayer.generated.h"
@@ -27,8 +28,10 @@ public:
 
     UGBFSaveGame * GetSaveGame() const;
     FPlatformUserId GetPlatformUserId() const;
+    ELoginStatus::Type GetLoginStatus() const;
 
     void InitializeAfterLogin( int controller_index );
+    void SetPresenceStatus( const FText & status );
 
     UFUNCTION( BlueprintCallable )
     void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count );

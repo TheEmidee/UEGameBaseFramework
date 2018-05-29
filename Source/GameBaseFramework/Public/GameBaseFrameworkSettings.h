@@ -49,7 +49,10 @@ public:
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
     UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
-    TMap< FName, TSoftObjectPtr< UGBFGameState > > GameStates;
+    TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
+
+    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    TArray< TSoftObjectPtr< UGBFGameState > > GameStates;
 
 protected:
 
