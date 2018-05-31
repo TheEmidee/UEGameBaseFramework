@@ -21,17 +21,6 @@ namespace UnrealBuildTool.Rules
                 }
             );
 
-            PublicDependencyModuleNames.AddRange(
-                new string[]
-                {
-                    "Engine",
-                    "Core",
-                    "CoreUObject",
-                    "UnrealEd",
-                    "GameBaseFramework"
-                }
-            );
-
              PublicIncludePathModuleNames.AddRange(
                 new string[] 
                 {
@@ -43,6 +32,12 @@ namespace UnrealBuildTool.Rules
             PrivateDependencyModuleNames.AddRange(
                 new string[]
                 {
+                    "Engine",
+                    "Core",
+                    "CoreUObject",
+                    "UnrealEd",
+                    "Slate",
+                    "SlateCore",
                     "GameBaseFramework"
                 }
             );
