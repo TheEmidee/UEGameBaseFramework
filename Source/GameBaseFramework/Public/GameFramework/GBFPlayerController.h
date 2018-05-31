@@ -5,6 +5,7 @@
 #include "GBFPlayerController.generated.h"
 
 class UGBFPlatformInputSwitcherComponent;
+class UGBFUIDialogManagerComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public APlayerController
@@ -19,10 +20,15 @@ public:
     FORCEINLINE UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponent() const;
 #endif
 
+    FORCEINLINE UGBFUIDialogManagerComponent * GetUIDialogManagerComponent() const;
+
 private:
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
+
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+    UGBFUIDialogManagerComponent * UIDialogManagerComponent;
 };
 
 #if PLATFORM_DESKTOP
@@ -31,3 +37,8 @@ UGBFPlatformInputSwitcherComponent * AGBFPlayerController::GetPlatformInputSwitc
     return PlatformInputSwitcherComponent;
 }
 #endif
+
+UGBFUIDialogManagerComponent * AGBFPlayerController::GetUIDialogManagerComponent() const
+{
+    return UIDialogManagerComponent;
+}
