@@ -25,6 +25,8 @@ public:
     virtual void Shutdown() override;
     virtual class AGameModeBase* CreateGameModeForURL( FURL InURL ) override;
 
+    bool IsOnWelcomeScreenState() const;
+
     bool Tick( float delta_seconds );
     
     UFUNCTION( BlueprintCallable )
@@ -45,7 +47,8 @@ private:
     void LoadGameStates();
     void GoToState( const UGBFGameState & new_state );
 
-    //void OnLoginUIClosed( TSharedPtr<const FUniqueNetId> UniqueId, const int controller_index );
+    void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
+    void HandleSignInChangeMessaging();
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;

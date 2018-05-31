@@ -8,6 +8,7 @@
 #include "GBFLocalPlayer.h"
 #include "GameBaseFrameworkSettings.h"
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
+#include "Log/GBFLog.h"
 
 #if PLATFORM_XBOXONE
 class FGBFXBoxOneDisconnectedInputProcessor : public IInputProcessor
@@ -77,7 +78,10 @@ void UGBFGameInstance::Init()
     FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject( this, &UGBFGameInstance::HandleAppWillEnterBackground );
     FCoreDelegates::ApplicationHasEnteredForegroundDelegate.AddUObject( this, &UGBFGameInstance::HandleAppHasEnteredForeground );
     FCoreDelegates::OnSafeFrameChangedEvent.AddUObject( this, &UGBFGameInstance::HandleSafeFrameChanged );
+    */
+
     FCoreDelegates::OnControllerConnectionChange.AddUObject( this, &UGBFGameInstance::HandleControllerConnectionChange );
+    /*
     FCoreDelegates::ApplicationLicenseChange.AddUObject( this, &UGBFGameInstance::HandleAppLicenseUpdate );
 
 #if PLATFORM_PS4
@@ -117,11 +121,21 @@ AGameModeBase* UGBFGameInstance::CreateGameModeForURL( FURL in_url )
     return game_mode;
 }
 
+bool UGBFGameInstance::IsOnWelcomeScreenState() const
+{
+    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    {
+        return settings->WelcomeScreenGameState.Get() == CurrentGameState.Get();
+    }
+
+    return false;
+}
+
 bool UGBFGameInstance::Tick( float delta_seconds )
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
-        if ( CurrentGameState.Get() != settings->WelcomeScreenGameState.Get()
+        if ( !IsOnWelcomeScreenState()
             && LocalPlayers.Num() > 0 )
         {
             if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
@@ -151,28 +165,7 @@ bool UGBFGameInstance::Tick( float delta_seconds )
                     {
                         if ( local_player->GetGamepadDisconnected() )
                         {
-    #if PLATFORM_XBOXONE
-                            auto & slate_app = FSlateApplication::Get();
-                            TSharedPtr<IInputProcessor> input_preprocessor = MakeShared< FGBFXBoxOneDisconnectedInputProcessor >();
-
-                            slate_app.RegisterInputPreProcessor( input_preprocessor );
-    #endif
-
-                            GamePadDisconnectedConfirmationWidget = player_controller->GetDialogManagerComponent().ShowConfirmationPopup(
-                                NSLOCTEXT( "SQ", "LocKey_SignInChange", "Sign in status change occurred." ),
-                                NSLOCTEXT( "SQ", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
-                                FSQConfirmationPopupButtonClicked::CreateLambda( [ this
-    #if PLATFORM_XBOXONE
-                                    , &slate_app, input_preprocessor
-    #endif
-                                ] ( )
-                            {
-                                GamePadDisconnectedConfirmationWidget = nullptr;
-    #if PLATFORM_XBOXONE
-                                slate_app.UnregisterInputPreProcessor( input_preprocessor );
-    #endif
-                            } )
-                            );
+    
                         }
                     }
     #endif
@@ -189,7 +182,7 @@ void UGBFGameInstance::GoToWelcomeScreenState()
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
-        if ( CurrentGameState == settings->WelcomeScreenGameState.Get() )
+        if ( IsOnWelcomeScreenState() )
         {
             return;
         }
@@ -269,5 +262,86 @@ void UGBFGameInstance::GoToState( const UGBFGameState & new_state )
         UGBFHelperBlueprintLibrary::OpenMap( this, new_state.Map );
 
         OnStateChangedEvent.Broadcast( &new_state );
+    }
+}
+
+void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index )
+{
+#if PLATFORM_XBOXONE
+    // update game_user_index based on previous controller index from stable index
+#endif
+
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerConnectionChange bIsConnection %d GameUserIndex %d" ), b_is_connection, game_user_index );
+
+    if ( auto * local_player = Cast< UGBFLocalPlayer >( FindLocalPlayerFromControllerId( game_user_index ) ) )
+    {
+        if ( !b_is_connection )
+        {
+#if PLATFORM_XBOXONE
+            auto & slate_app = FSlateApplication::Get();
+            TSharedPtr<IInputProcessor> input_preprocessor = MakeShared< FGBFXBoxOneDisconnectedInputProcessor >();
+
+            slate_app.RegisterInputPreProcessor( input_preprocessor );
+#endif
+            if ( auto * pc = Cast< AGBFPlayerController >( local_player->PlayerController ) )
+            {
+                /*pc->GetDialogManagerComponent().ShowConfirmationPopup(
+                    NSLOCTEXT( "SQ", "LocKey_SignInChange", "Gamepad disconnected" ),
+                    NSLOCTEXT( "SQ", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
+                    FSQConfirmationPopupButtonClicked::CreateLambda( [ this
+#if PLATFORM_XBOXONE
+                                                                     , &slate_app, input_preprocessor
+#endif
+                    ] ( )
+                {
+                    GamePadDisconnectedConfirmationWidget = nullptr;
+#if PLATFORM_XBOXONE
+                    slate_app.UnregisterInputPreProcessor( input_preprocessor );
+#endif
+                } ) );*/
+            }
+        }
+#if PLATFORM_PS4
+        else
+        {
+            if ( const auto * oss = IOnlineSubsystem::Get() )
+            {
+                const auto identity_interface = oss->GetIdentityInterface();
+
+                TSharedPtr<const FUniqueNetId> unique_id = identity_interface->GetUniquePlayerId( game_user_index );
+
+                if ( ensure( unique_id.IsValid() )
+                     && unique_id->IsValid()
+                     && CurrentUniqueNetId.IsValid()
+                     && *CurrentUniqueNetId == *unique_id
+                     )
+                {
+                    return;
+                }
+
+                HandleSignInChangeMessaging();
+            }
+        }
+#endif
+    }
+}
+
+void UGBFGameInstance::HandleSignInChangeMessaging()
+{
+    // Master user signed out, go to initial state (if we aren't there already)
+    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    {
+        if ( !IsOnWelcomeScreenState() )
+        {
+#if GBF_CONSOLE_UI
+            /*ShowMessageThenGotoState(
+                NSLOCTEXT( "SQ", "LocKey_SignInChangeTitle", "Sign in status change" ),
+                NSLOCTEXT( "SQ", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
+                ESQGameState::WelcomeScreen
+            );*/
+#else
+            GoToWelcomeScreenState();
+#endif
+        }
     }
 }
