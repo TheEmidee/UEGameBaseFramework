@@ -1,13 +1,18 @@
 #include "GBFGameInstance.h"
 
 #include "SoftObjectPtr.h"
+#include "Online.h"
+#include "OnlineSubsystem.h"
 #include "Containers/Ticker.h"
+#include "Engine/Canvas.h"
 #include "GameFramework/GameModeBase.h"
 
+#include "GBFTypes.h"
 #include "GBFGameState.h"
 #include "GBFLocalPlayer.h"
 #include "GameBaseFrameworkSettings.h"
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
+#include "GameFramework/GBFGameModeBase.h"
 #include "Log/GBFLog.h"
 
 #if PLATFORM_XBOXONE
@@ -45,8 +50,7 @@ static void LOCAL_ExtendedSaveGameInfoDelegate( const TCHAR* save_name, const EG
 
 UGBFGameInstance::UGBFGameInstance()
     :
-    LoginStatus( ELoginStatus::NotLoggedIn )
-    , bIsLicensed( true ) // Default to licensed (should have been checked by OS on boot)
+    bIsLicensed( true ) // Default to licensed (should have been checked by OS on boot)
     , IgnorePairingChangeForControllerId( -1 )
 {
 }
@@ -57,14 +61,15 @@ void UGBFGameInstance::Init()
 
     LoadGameStates();
 
-    /*
     CurrentConnectionStatus = EOnlineServerConnectionStatus::Connected;
 
     const auto oss = IOnlineSubsystem::Get();
-    check( oss.IsValid() );
+    check( oss != nullptr );
 
     const auto identity_interface = oss->GetIdentityInterface();
     check( identity_interface.IsValid() );
+
+    LocalPlayerOnlineStatus.InsertDefaulted( 0, MAX_LOCAL_PLAYERS );
 
     for ( int i = 0; i < MAX_LOCAL_PLAYERS; ++i )
     {
@@ -78,10 +83,7 @@ void UGBFGameInstance::Init()
     FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject( this, &UGBFGameInstance::HandleAppWillEnterBackground );
     FCoreDelegates::ApplicationHasEnteredForegroundDelegate.AddUObject( this, &UGBFGameInstance::HandleAppHasEnteredForeground );
     FCoreDelegates::OnSafeFrameChangedEvent.AddUObject( this, &UGBFGameInstance::HandleSafeFrameChanged );
-    */
-
     FCoreDelegates::OnControllerConnectionChange.AddUObject( this, &UGBFGameInstance::HandleControllerConnectionChange );
-    /*
     FCoreDelegates::ApplicationLicenseChange.AddUObject( this, &UGBFGameInstance::HandleAppLicenseUpdate );
 
 #if PLATFORM_PS4
@@ -89,7 +91,6 @@ void UGBFGameInstance::Init()
 #endif
 
     oss->AddOnConnectionStatusChangedDelegate_Handle( FOnConnectionStatusChangedDelegate::CreateUObject( this, &UGBFGameInstance::HandleNetworkConnectionStatusChanged ) );
-    */
     
     TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
     TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
@@ -150,9 +151,9 @@ bool UGBFGameInstance::Tick( float delta_seconds )
                         )
                     {
                         ShowMessageThenGotoState(
-                            SQLocalization::NeedLicenseTextTitle,
-                            SQLocalization::NeedLicenseTextContent,
-                            ESQGameState::WelcomeScreen
+                            GBFLocalization::NeedLicenseTextTitle,
+                            GBFLocalization::NeedLicenseTextContent,
+                            EGBFGameState::WelcomeScreen
                         );
 
                         return true;
@@ -160,7 +161,7 @@ bool UGBFGameInstance::Tick( float delta_seconds )
 
                     TRY TO HANDLE THE FOLLOWING CODE IN HandleControllerConnectionChange
 
-    #if SQ_CONSOLE_UI
+    #if GBF_CONSOLE_UI
                     if ( GamePadDisconnectedConfirmationWidget == nullptr )
                     {
                         if ( local_player->GetGamepadDisconnected() )
@@ -265,6 +266,200 @@ void UGBFGameInstance::GoToState( const UGBFGameState & new_state )
     }
 }
 
+void UGBFGameInstance::HandleAppWillDeactivate()
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppWillDeactivate" ) );
+
+#if PLATFORM_PS4
+    HandleAppDeactivateOrBackground();
+#endif
+}
+
+void UGBFGameInstance::HandleAppHasReactivated()
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppHasReactivated" ) );
+
+#if PLATFORM_PS4
+    HandleAppReactivateOrForeground();
+#endif
+}
+
+void UGBFGameInstance::HandleAppWillEnterBackground()
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppWillEnterBackground" ) );
+
+#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+    HandleAppDeactivateOrBackground();
+#endif
+}
+
+void UGBFGameInstance::HandleAppHasEnteredForeground()
+{
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleAppHasEnteredForeground" ) );
+
+#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+    HandleAppReactivateOrForeground();
+#endif
+}
+
+void UGBFGameInstance::HandleAppDeactivateOrBackground()
+{
+    if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
+    {
+        gm->HandleAppSuspended();
+    }
+}
+
+void UGBFGameInstance::HandleAppReactivateOrForeground()
+{
+    if ( !IsOnWelcomeScreenState() )
+    {
+        UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppReactivateOrForeground: Attempting to sign out players" ) );
+
+        for ( auto i = 0; i < LocalPlayers.Num(); ++i )
+        {
+            if ( auto * lp = Cast< UGBFLocalPlayer >( LocalPlayers[ i ] ) )
+            {
+                if ( lp->GetCachedUniqueNetId().IsValid()
+                     && LocalPlayerOnlineStatus[ i ] == ELoginStatus::LoggedIn
+                     && lp->GetLoginStatus() != ELoginStatus::LoggedIn
+                     )
+                {
+                    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleAppReactivateOrForeground: Signed out during resume." ) );
+                    HandleSignInChangeMessaging();
+                    return;
+                }
+            }
+        }
+    }
+
+    if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
+    {
+        gm->HandleAppResumed();
+    }
+}
+
+void UGBFGameInstance::HandleSafeFrameChanged()
+{
+    UCanvas::UpdateAllCanvasSafeZoneData();
+}
+
+void UGBFGameInstance::HandleAppLicenseUpdate()
+{
+    TSharedPtr<GenericApplication> GenericApplication = FSlateApplication::Get().GetPlatformApplication();
+    bIsLicensed = GenericApplication->ApplicationLicenseValid();
+}
+
+void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id )
+{
+    const bool is_downgraded = login_status == ELoginStatus::NotLoggedIn;
+
+    UE_LOG( LogGBF_OSS, Verbose, TEXT( "HandleUserLoginChanged: bDownGraded: %i" ), ( int ) is_downgraded );
+
+    TSharedPtr<GenericApplication> GenericApplication = FSlateApplication::Get().GetPlatformApplication();
+    bIsLicensed = GenericApplication->ApplicationLicenseValid();
+
+    LocalPlayerOnlineStatus[ game_user_index ] = login_status;
+
+    if ( ULocalPlayer * local_player = FindLocalPlayerFromUniqueNetId( user_id ) )
+    {
+        if ( is_downgraded )
+        {
+            UE_LOG( LogGBF_OSS, Log, TEXT( "HandleUserLoginChanged: Player logged out: %s" ), *user_id.ToString() );
+
+            HandleSignInChangeMessaging();
+        }
+    }
+}
+
+void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user )
+{
+#if PLATFORM_XBOXONE
+    // update game_user_index based on previous controller index from stable index
+#endif
+
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ),
+            game_user_index, *previous_user.ToString(), *new_user.ToString() );
+
+    if ( IsOnWelcomeScreenState() )
+    {
+        // Don't care about pairing changes at welcome screen
+        return;
+    }
+
+#if PLATFORM_XBOXONE
+    if ( IgnorePairingChangeForControllerId != -1 && game_user_index == IgnorePairingChangeForControllerId )
+    {
+        // We were told to ignore
+        IgnorePairingChangeForControllerId = -1;	// Reset now so there there is no chance this remains in a bad state
+        return;
+    }
+
+    if ( previous_user.IsValid()
+         && !new_user.IsValid()
+         )
+    {
+        // Treat this as a disconnect or signout, which is handled somewhere else
+        return;
+    }
+
+    if ( !previous_user.IsValid()
+         && new_user.IsValid()
+         )
+    {
+        // Treat this as a signin
+        ULocalPlayer * controlled_local_player = FindLocalPlayerFromControllerId( game_user_index );
+
+        if ( controlled_local_player != nullptr
+             && !controlled_local_player->GetCachedUniqueNetId().IsValid()
+             )
+        {
+            // If a player that previously selected "continue without saving" signs into this controller, move them back to welcome screen
+            HandleSignInChangeMessaging();
+        }
+
+        return;
+    }
+
+    if ( previous_user.IsValid()
+         && new_user.IsValid()
+         )
+    {
+        check( previous_user != new_user );
+        check( previous_user == *CurrentUniqueNetId );
+
+        GoToWelcomeScreenState();
+    }
+#endif
+}
+
+void UGBFGameInstance::HandleNetworkConnectionStatusChanged( EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status )
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
+
+    //if ( !IsOnWelcomeScreenState()
+    //     && connection_status != EOnlineServerConnectionStatus::Connected
+    //     )
+    //{
+    //    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
+    //    const auto oss = IOnlineSubsystem::Get();
+    //    FText return_reason;
+    //    if ( oss != nullptr )
+    //    {
+    //         return_reason = FText::Format( NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContent", "Connection to {OnlineSystemName} has been lost." ), oss->GetOnlineServiceName() );
+    //    }
+    //    else
+    //    {
+    //        return_reason = NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContentFallback", "Connection to the online service has been lost." );
+    //    }
+    //
+    //    // :TODO: Instead of going to state, we should ask the user to fix and retry, or go back to the beginning.
+    //    ShowMessageThenGotoState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason, EGBFGameState::WelcomeScreen );
+    //}
+
+    CurrentConnectionStatus = connection_status;
+}
+
 void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index )
 {
 #if PLATFORM_XBOXONE
@@ -286,9 +481,9 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
             if ( auto * pc = Cast< AGBFPlayerController >( local_player->PlayerController ) )
             {
                 /*pc->GetDialogManagerComponent().ShowConfirmationPopup(
-                    NSLOCTEXT( "SQ", "LocKey_SignInChange", "Gamepad disconnected" ),
-                    NSLOCTEXT( "SQ", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
-                    FSQConfirmationPopupButtonClicked::CreateLambda( [ this
+                    NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
+                    NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
+                    FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                      , &slate_app, input_preprocessor
 #endif
@@ -335,9 +530,9 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
         {
 #if GBF_CONSOLE_UI
             /*ShowMessageThenGotoState(
-                NSLOCTEXT( "SQ", "LocKey_SignInChangeTitle", "Sign in status change" ),
-                NSLOCTEXT( "SQ", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                ESQGameState::WelcomeScreen
+                NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
+                NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
+                EGBFGameState::WelcomeScreen
             );*/
 #else
             GoToWelcomeScreenState();

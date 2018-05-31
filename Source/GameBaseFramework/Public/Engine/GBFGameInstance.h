@@ -46,14 +46,23 @@ private:
 
     void LoadGameStates();
     void GoToState( const UGBFGameState & new_state );
-
+    void HandleAppWillDeactivate();
+    void HandleAppHasReactivated();
+    void HandleAppWillEnterBackground();
+    void HandleAppHasEnteredForeground();
+    void HandleAppDeactivateOrBackground();
+    void HandleAppReactivateOrForeground();
+    void HandleSafeFrameChanged();
+    void HandleAppLicenseUpdate();
+    void HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id );
+    void HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user );
+    void HandleNetworkConnectionStatusChanged( EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
     void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
     void HandleSignInChangeMessaging();
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;
 
-    ELoginStatus::Type LoginStatus;
     EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
     bool bIsLicensed;
     int IgnorePairingChangeForControllerId;
@@ -62,4 +71,5 @@ private:
     TSharedPtr<const FUniqueNetId> CurrentUniqueNetId;
     FOnLoginUIClosedDelegate LoginUIClosedDelegate;
     TWeakObjectPtr< const UGBFGameState > CurrentGameState;
+    TArray<ELoginStatus::Type> LocalPlayerOnlineStatus;
 };
