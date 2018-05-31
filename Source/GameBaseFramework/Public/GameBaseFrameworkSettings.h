@@ -42,16 +42,16 @@ public:
     static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
 #endif
 
-    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    UPROPERTY( config, EditAnywhere, Category = Input )
     FGBFInputSwitchConfig InputSwitchConfig;
 
-    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    UPROPERTY( config, EditAnywhere, Category = InputTextures )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
-    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    UPROPERTY( config, EditAnywhere, Category = GameStates )
     TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
 
-    UPROPERTY( config, EditAnywhere, Category = GameBaseFramework )
+    UPROPERTY( config, EditAnywhere, Category = GameStates )
     TArray< TSoftObjectPtr< UGBFGameState > > GameStates;
 
 protected:
@@ -59,5 +59,4 @@ protected:
 #if WITH_EDITOR
     static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
 #endif
-
 };
