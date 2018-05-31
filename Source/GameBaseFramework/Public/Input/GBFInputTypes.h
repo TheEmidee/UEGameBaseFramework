@@ -5,7 +5,7 @@
 
 #include "GBFInputTypes.generated.h"
 
-UENUM()
+UENUM( BlueprintType )
 enum class EGBFPlatformInputType : uint8
 {
     Gamepad,
