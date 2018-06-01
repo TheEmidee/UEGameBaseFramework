@@ -35,7 +35,7 @@ private:
 
     public:
 
-        InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchConfig & config );
+        InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchOptions & config );
 
         virtual void Tick( const float delta_time, FSlateApplication & slate_app, TSharedRef<ICursor> cursor );
         virtual bool HandleKeyDownEvent( FSlateApplication & slate_app, const FKeyEvent & event ) override;
@@ -51,7 +51,7 @@ private:
 
         TWeakObjectPtr< UGBFPlatformInputSwitcherComponent > InputSwitcherComponent;
         TWeakObjectPtr< const ULocalPlayer > LocalPlayer;
-        FGBFInputSwitchConfig Config;
+        FGBFInputSwitchOptions Config;
         float MouseMoveMinDeltaSquared;
     };
 

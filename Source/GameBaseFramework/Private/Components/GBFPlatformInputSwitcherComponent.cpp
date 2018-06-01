@@ -30,7 +30,7 @@ APlayerController * UGBFPlatformInputSwitcherComponent::GetPlayerController() co
 
 // -- PRIVATE
 
-UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchConfig & config )
+UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchOptions & config )
     : InputSwitcherComponent( &input_switcher_component )
     , LocalPlayer( input_switcher_component.GetPlayerController()->GetLocalPlayer() )
     , Config( config )

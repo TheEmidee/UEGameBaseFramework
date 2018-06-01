@@ -3,11 +3,29 @@
 #include "Engine/DeveloperSettings.h"
 #include "GameBaseFrameworkSettings.generated.h"
 
+class UUserWidget;
+
 class UGBFPlatformInputTextures;
 class UGBFGameState;
+class UGBFConfirmationWidget;
 
 USTRUCT()
-struct FGBFInputSwitchConfig
+struct FGBFUIOptions
+{
+    GENERATED_BODY()
+
+    UPROPERTY( EditAnywhere )
+    TSubclassOf< UUserWidget > BackgroundBlurWidgetClass;
+
+    UPROPERTY( EditAnywhere )
+    TSubclassOf< UGBFConfirmationWidget > ConfirmationWidgetClass;
+
+    UPROPERTY( EditAnywhere )
+    uint8 bConfirmationButtonOnTheLeft : 1;
+};
+
+USTRUCT()
+struct FGBFInputSwitchOptions
 {
     GENERATED_BODY()
 
@@ -43,7 +61,7 @@ public:
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = Input )
-    FGBFInputSwitchConfig InputSwitchConfig;
+    FGBFInputSwitchOptions InputSwitchConfig;
 
     UPROPERTY( config, EditAnywhere, Category = InputTextures )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
@@ -53,6 +71,9 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = GameStates )
     TArray< TSoftObjectPtr< UGBFGameState > > GameStates;
+
+    UPROPERTY( config, EditAnywhere, Category = UI )
+    FGBFUIOptions UIOptions;
 
 protected:
 
