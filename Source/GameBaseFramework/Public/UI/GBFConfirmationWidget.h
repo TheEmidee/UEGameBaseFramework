@@ -5,8 +5,11 @@
 
 #include "GBFConfirmationWidget.generated.h"
 
-DECLARE_DELEGATE( FGBFConfirmationPopupButtonClicked );
-DECLARE_DYNAMIC_DELEGATE( FGBFDynamicConfirmationPopupButtonClicked );
+class UButton;
+
+class UGBFUIDialogManagerComponent;
+
+DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClicked );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConfirmationWidget : public UUserWidget
@@ -15,37 +18,33 @@ class GAMEBASEFRAMEWORK_API UGBFConfirmationWidget : public UUserWidget
 
 public:
 
-    void NativeInitialize(
-        const FText & title, 
-        const FText & content, 
-        const FGBFConfirmationPopupButtonClicked & ok_button_clicked_delegate = FGBFConfirmationPopupButtonClicked(),
-        const FGBFConfirmationPopupButtonClicked & cancel_button_clicked_delegate = FGBFConfirmationPopupButtonClicked(),
-        const FText & ok_button_text = FText::GetEmpty(),
-        const FText & cancel_button_text = FText::GetEmpty()
-    );
-
-    void K2_Initialize(
+    void InitializeConfirmationWidget(
         const FText & title,
         const FText & content,
-        FGBFDynamicConfirmationPopupButtonClicked ok_button_clicked_delegate = FGBFDynamicConfirmationPopupButtonClicked(),
-        FGBFDynamicConfirmationPopupButtonClicked cancel_button_clicked_delegate = FGBFDynamicConfirmationPopupButtonClicked(),
+        FGBFConfirmationPopupButtonClicked ok_button_clicked_delegate = FGBFConfirmationPopupButtonClicked(),
+        FGBFConfirmationPopupButtonClicked cancel_button_clicked_delegate = FGBFConfirmationPopupButtonClicked(),
         const FText & ok_button_text = FText::GetEmpty(),
         const FText & cancel_button_text = FText::GetEmpty()
     );
-
-    /*UFUNCTION( BlueprintCallable )
-    void CallOkButtonDelegate();
-
-    UFUNCTION( BlueprintCallable )
-    void CallCancelButtonDelegate();*/
 
 protected:
 
+    virtual void NativeConstruct() override;
+
     UFUNCTION( BlueprintImplementableEvent )
-    void K2_Initialize( const FText & title, const FText &content, bool display_cancel_button, const FText & ok_button_text, const FText & cancel_button_text );
+    void K2Event_Initialize( const FText & title, const FText &content, bool display_cancel_button, const FText & ok_button_text, const FText & cancel_button_text );
+
+    UFUNCTION( BlueprintCallable )
+    void CallOkButtonDelegate();
+
+    UFUNCTION( BlueprintCallable )
+    void CallCancelButtonDelegate();
 
 private:
 
+    void TryBindClickEventOnButtons();
+
     FGBFConfirmationPopupButtonClicked OkButtonClickedDelegate;
     FGBFConfirmationPopupButtonClicked CancelButtonClickedDelegate;
+    TWeakObjectPtr< UGBFUIDialogManagerComponent > OwnerDialogManagerComponent;
 };

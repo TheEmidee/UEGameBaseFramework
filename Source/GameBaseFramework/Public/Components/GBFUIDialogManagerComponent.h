@@ -2,6 +2,9 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
+#include "UI/GBFConfirmationWidget.h"
+
 #include "GBFUIDialogManagerComponent.generated.h"
 
 class APlayerController;
@@ -85,6 +88,49 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void CloseAllDialogs( bool show_main_ui = true );
+
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup" ) )
+    UGBFConfirmationWidget * ShowConfirmationPopup(
+        FText title,
+        FText content,
+        FGBFConfirmationPopupButtonClicked ok_button_clicked,
+        FGBFConfirmationPopupButtonClicked cancel_button_clicked,
+        FText ok_button_text,
+        FText cancel_button_text
+    );
+
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancel" ) )
+    UGBFConfirmationWidget * ShowConfirmationPopupNoCancel(
+        FText title,
+        FText content,
+        FGBFConfirmationPopupButtonClicked ok_button_clicked,
+        FText ok_button_text
+    );
+
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancelDelegate" ) )
+    UGBFConfirmationWidget * ShowConfirmationPopupNoCancelDelegate(
+        FText title,
+        FText content,
+        FGBFConfirmationPopupButtonClicked ok_button_clicked,
+        FText ok_button_text,
+        FText cancel_button_text
+    );
+
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancelNoOkDelegate" ) )
+    UGBFConfirmationWidget * ShowConfirmationPopupNoCancelNoOkDelegate(
+        FText title,
+        FText content,
+        FText ok_button_text
+    );
+
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoOkDelegate" ) )
+    UGBFConfirmationWidget * ShowConfirmationPopupNoOkDelegate(
+        FText title,
+        FText content,
+        FGBFConfirmationPopupButtonClicked cancel_button_clicked,
+        FText ok_button_text,
+        FText cancel_button_text
+    );
 
 private:
 

@@ -36,7 +36,6 @@ public:
     bool ProfileUISwap( const int controller_index );
 
     bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
-    void SetPresenceForLocalPlayer( const FText & status );
     */
 
 private:

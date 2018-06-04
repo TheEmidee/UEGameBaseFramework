@@ -1,62 +1,66 @@
 #include "GBFConfirmationWidget.h"
 
+#include "Blueprint/WidgetTree.h"
+#include "Components/Button.h"
+
 #include "GameFramework/GBFPlayerController.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 
-void UGBFConfirmationWidget::NativeInitialize(
+void UGBFConfirmationWidget::InitializeConfirmationWidget(
     const FText & title,
     const FText & content,
-    const FGBFConfirmationPopupButtonClicked & ok_button_clicked_delegate,
-    const FGBFConfirmationPopupButtonClicked & cancel_button_clicked_delegate,
-    const FText & ok_button_text,
-    const FText & cancel_button_text
-    )
-{
-    K2_Initialize( title, content, !cancel_button_text.IsEmpty(), ok_button_text, cancel_button_text );
-    OkButtonClickedDelegate = ok_button_clicked_delegate;
-    CancelButtonClickedDelegate = cancel_button_clicked_delegate;
-}
-
-void UGBFConfirmationWidget::K2_Initialize(
-    const FText & title,
-    const FText & content,
-    FGBFDynamicConfirmationPopupButtonClicked ok_button_clicked_delegate,
-    FGBFDynamicConfirmationPopupButtonClicked cancel_button_clicked_delegate,
+    FGBFConfirmationPopupButtonClicked ok_button_clicked_delegate,
+    FGBFConfirmationPopupButtonClicked cancel_button_clicked_delegate,
     const FText & ok_button_text,
     const FText & cancel_button_text
 )
 {
-    K2_Initialize( title, content, !cancel_button_text.IsEmpty(), ok_button_text, cancel_button_text );
+    OwnerDialogManagerComponent = Cast< UGBFUIDialogManagerComponent >( GetOuter() );
+    check( OwnerDialogManagerComponent.IsValid() );
 
-    OkButtonClickedDelegate = FGBFConfirmationPopupButtonClicked::CreateLambda(
-        [ ok_button_clicked_delegate ] ()
-    {
-        ok_button_clicked_delegate.ExecuteIfBound();
-    });
-
-    CancelButtonClickedDelegate = FGBFConfirmationPopupButtonClicked::CreateLambda(
-        [ cancel_button_clicked_delegate ] ()
-    {
-        cancel_button_clicked_delegate.ExecuteIfBound();
-    } );
+    K2Event_Initialize( title, content, !cancel_button_text.IsEmpty(), ok_button_text, cancel_button_text );
+    OkButtonClickedDelegate = ok_button_clicked_delegate;
+    CancelButtonClickedDelegate = cancel_button_clicked_delegate;
 }
 
-// void UGBFConfirmationWidget::CallOkButtonDelegate()
-// {
-//     if ( auto * player_controller = Cast< AGBFPlayerControllerBase >( GetOwningPlayer() ) )
-//     {
-//         player_controller->GetDialogManagerComponent().CloseDialog();
-//     }
+// -- PROTECTED
 
-//     OkButtonClickedDelegate.ExecuteIfBound();
-// }
+void UGBFConfirmationWidget::NativeConstruct()
+{
+    Super::NativeConstruct();
 
-// void UGBFConfirmationWidget::CallCancelButtonDelegate()
-// {
-//     if ( auto * player_controller = Cast< AGBFPlayerControllerBase >( GetOwningPlayer() ) )
-//     {
-//         player_controller->GetDialogManagerComponent().CloseDialog();
-//     }
+    TryBindClickEventOnButtons();
+}
 
-//     CancelButtonClickedDelegate.ExecuteIfBound();
-// }
+void UGBFConfirmationWidget::CallOkButtonDelegate()
+{
+    OwnerDialogManagerComponent->CloseLastDialog();
+    OkButtonClickedDelegate.ExecuteIfBound();
+}
+
+void UGBFConfirmationWidget::CallCancelButtonDelegate()
+{
+    OwnerDialogManagerComponent->CloseLastDialog();
+    CancelButtonClickedDelegate.ExecuteIfBound();
+}
+
+// -- PRIVATE
+
+void UGBFConfirmationWidget::TryBindClickEventOnButtons()
+{
+    if ( auto * cancel_button = WidgetTree->FindWidget( FName( TEXT( "OKButton" ) ) ) )
+    {
+        if ( auto * button = UGBFUMGBlueprintLibrary::GetFirstChildWidgetOfClass< UButton >( cancel_button ) )
+        {
+            button->OnClicked.AddDynamic( this, &UGBFConfirmationWidget::CallOkButtonDelegate );
+        }
+    }
+
+    if ( auto * cancel_button = WidgetTree->FindWidget( FName( TEXT( "CancelButton" ) ) ) )
+    {
+        if ( auto * button = UGBFUMGBlueprintLibrary::GetFirstChildWidgetOfClass< UButton >( cancel_button ) )
+        {
+            button->OnClicked.AddDynamic( this, &UGBFConfirmationWidget::CallCancelButtonDelegate );
+        }
+    }
+}

@@ -235,6 +235,75 @@ void UGBFUIDialogManagerComponent::CloseAllDialogs( bool show_main_ui /*= true*/
     }
 }
 
+UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
+    FText title,
+    FText content,
+    FGBFConfirmationPopupButtonClicked ok_button_clicked,
+    FGBFConfirmationPopupButtonClicked cancel_button_clicked,
+    FText ok_button_text,
+    FText cancel_button_text
+)
+{
+    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    {
+        if ( ensure( settings->UIOptions.ConfirmationWidgetClass != nullptr ) )
+        {
+            if ( auto * widget = NewObject< UGBFConfirmationWidget >( this, settings->UIOptions.ConfirmationWidgetClass ) )
+            {
+                widget->InitializeConfirmationWidget( title, content, ok_button_clicked, cancel_button_clicked, ok_button_text, cancel_button_text );
+                widget->SetOwningPlayer( OwnerPlayerController.Get() );
+
+                ShowDialog( widget, { true, true, true, EGBFUIDialogType::Exclusive, true } );
+
+                return widget;
+            }
+        }
+    }
+
+    return nullptr;
+}
+
+UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopupNoCancel(
+    FText title,
+    FText content,
+    FGBFConfirmationPopupButtonClicked ok_button_clicked,
+    FText ok_button_text
+)
+{
+    return ShowConfirmationPopup( title, content, ok_button_clicked, FGBFConfirmationPopupButtonClicked(), ok_button_text, FText::GetEmpty() );
+}
+
+UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopupNoCancelDelegate(
+    FText title,
+    FText content,
+    FGBFConfirmationPopupButtonClicked ok_button_clicked,
+    FText ok_button_text,
+    FText cancel_button_text
+)
+{
+    return ShowConfirmationPopup( title, content, ok_button_clicked, FGBFConfirmationPopupButtonClicked(), ok_button_text, cancel_button_text );
+}
+
+UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopupNoCancelNoOkDelegate(
+    FText title,
+    FText content,
+    FText ok_button_text
+)
+{
+    return ShowConfirmationPopup( title, content, FGBFConfirmationPopupButtonClicked(), FGBFConfirmationPopupButtonClicked(), ok_button_text, FText::GetEmpty() );
+}
+
+UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopupNoOkDelegate(
+    FText title,
+    FText content,
+    FGBFConfirmationPopupButtonClicked cancel_button_clicked,
+    FText ok_button_text,
+    FText cancel_button_text
+)
+{
+    return ShowConfirmationPopup( title, content, FGBFConfirmationPopupButtonClicked(), cancel_button_clicked, ok_button_text, cancel_button_text );
+}
+
 // -- PRIVATE
 
 void UGBFUIDialogManagerComponent::ShowBlurBackground()

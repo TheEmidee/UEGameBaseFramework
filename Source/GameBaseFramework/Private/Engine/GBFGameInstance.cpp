@@ -12,7 +12,9 @@
 #include "GBFLocalPlayer.h"
 #include "GameBaseFrameworkSettings.h"
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
+#include "Components/GBFUIDialogManagerComponent.h"
 #include "GameFramework/GBFGameModeBase.h"
+#include "UI/GBFConfirmationWidget.h"
 #include "Log/GBFLog.h"
 
 #if PLATFORM_XBOXONE
@@ -480,20 +482,21 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
 #endif
             if ( auto * pc = Cast< AGBFPlayerController >( local_player->PlayerController ) )
             {
-                /*pc->GetDialogManagerComponent().ShowConfirmationPopup(
+                pc->GetUIDialogManagerComponent()->ShowConfirmationPopup(
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
+                    FGBFConfirmationPopupButtonClicked::
                     FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                      , &slate_app, input_preprocessor
 #endif
                     ] ( )
                 {
-                    GamePadDisconnectedConfirmationWidget = nullptr;
+                    //GamePadDisconnectedConfirmationWidget = nullptr;
 #if PLATFORM_XBOXONE
                     slate_app.UnregisterInputPreProcessor( input_preprocessor );
 #endif
-                } ) );*/
+                } ) );
             }
         }
 #if PLATFORM_PS4
