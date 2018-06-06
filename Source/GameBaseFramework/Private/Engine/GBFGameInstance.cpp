@@ -61,6 +61,10 @@ void UGBFGameInstance::Init()
 {
     Super::Init();
 
+    Settings = GetDefault< UGameBaseFrameworkSettings >();
+
+    check( Settings != nullptr );
+
     LoadGameStates();
 
     CurrentConnectionStatus = EOnlineServerConnectionStatus::Connected;
@@ -126,54 +130,33 @@ AGameModeBase* UGBFGameInstance::CreateGameModeForURL( FURL in_url )
 
 bool UGBFGameInstance::IsOnWelcomeScreenState() const
 {
-    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
-    {
-        return settings->WelcomeScreenGameState.Get() == CurrentGameState.Get();
-    }
-
-    return false;
+    return IsStateWelcomeScreenState( *CurrentGameState.Get() );
 }
 
 bool UGBFGameInstance::Tick( float delta_seconds )
 {
-    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    if ( !IsOnWelcomeScreenState()
+        && LocalPlayers.Num() > 0 )
     {
-        if ( !IsOnWelcomeScreenState()
-            && LocalPlayers.Num() > 0 )
+        if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
         {
-            if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
+            if ( auto * player_controller = Cast< AGBFPlayerController >( local_player->PlayerController ) )
             {
-                /*if ( auto * player_controller = local_player->GetPlayerControllerBase() )
+                const auto is_displaying_dialog = player_controller->GetUIDialogManagerComponent()->IsDisplayingDialog();
+
+                // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
+                if ( !bIsLicensed
+                    && !is_displaying_dialog
+                    )
                 {
-                    const auto is_displaying_dialog = player_controller->GetDialogManagerComponent().IsDisplayingDialog();
+                    ShowMessageThenGotoState(
+                        NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
+                        NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
+                        *Settings->WelcomeScreenGameState.Get()
+                    );
 
-                    // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
-                    if ( !bIsLicensed
-                        && !is_displaying_dialog
-                        )
-                    {
-                        ShowMessageThenGotoState(
-                            GBFLocalization::NeedLicenseTextTitle,
-                            GBFLocalization::NeedLicenseTextContent,
-                            EGBFGameState::WelcomeScreen
-                        );
-
-                        return true;
-                    }
-
-                    TRY TO HANDLE THE FOLLOWING CODE IN HandleControllerConnectionChange
-
-    #if GBF_CONSOLE_UI
-                    if ( GamePadDisconnectedConfirmationWidget == nullptr )
-                    {
-                        if ( local_player->GetGamepadDisconnected() )
-                        {
-    
-                        }
-                    }
-    #endif
+                    return true;
                 }
-                */
             }
         }
     }
@@ -183,25 +166,22 @@ bool UGBFGameInstance::Tick( float delta_seconds )
 
 void UGBFGameInstance::GoToWelcomeScreenState()
 {
-    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    if ( IsOnWelcomeScreenState() )
     {
-        if ( IsOnWelcomeScreenState() )
-        {
-            return;
-        }
-
-        if ( CurrentUniqueNetId.IsValid() )
-        {
-            if ( auto * local_player = FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
-            {
-                local_player->SetCachedUniqueNetId( nullptr );
-            }
-        }
-
-        CurrentUniqueNetId = nullptr;
-
-        GoToState( *settings->WelcomeScreenGameState );
+        return;
     }
+
+    if ( CurrentUniqueNetId.IsValid() )
+    {
+        if ( auto * local_player = FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
+        {
+            local_player->SetCachedUniqueNetId( nullptr );
+        }
+    }
+
+    CurrentUniqueNetId = nullptr;
+
+    GoToState( *Settings->WelcomeScreenGameState );
 }
 
 // -- PRIVATE
@@ -210,15 +190,12 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclas
 {
     UGBFGameState * result = nullptr;
 
-    if ( auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    auto predicate = [ game_mode_class ] ( auto state_soft_ptr )
     {
-        auto predicate = [ game_mode_class ] ( auto state_soft_ptr )
-        {
-            return state_soft_ptr.Get()->GameModeClass == game_mode_class;
-        };
+        return state_soft_ptr.Get()->GameModeClass == game_mode_class;
+    };
 
-        return settings->GameStates.FindByPredicate( predicate )->Get();
-    }
+    return Settings->GameStates.FindByPredicate( predicate )->Get();
 
     return result;
 }
@@ -227,31 +204,30 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name )
 {
     UGBFGameState * result = nullptr;
 
-    if ( auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    auto predicate = [ state_name ] ( auto state_soft_ptr )
     {
-        auto predicate = [ state_name ] ( auto state_soft_ptr )
-        {
-            return state_soft_ptr.Get()->Name == state_name;
-        };
+        return state_soft_ptr.Get()->Name == state_name;
+    };
 
-        return settings->GameStates.FindByPredicate( predicate )->Get();
-    }
+    return Settings->GameStates.FindByPredicate( predicate )->Get();
 
     return result;
 }
 
+bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState & state ) const
+{
+    return Settings->WelcomeScreenGameState.Get() == &state;
+}
+
 void UGBFGameInstance::LoadGameStates()
 {
-    if ( auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
-    {
-        settings->WelcomeScreenGameState.LoadSynchronous();
+    Settings->WelcomeScreenGameState.LoadSynchronous();
 
-        for ( auto & game_state : settings->GameStates )
+    for ( auto & game_state : Settings->GameStates )
+    {
+        if ( game_state.Get() == nullptr )
         {
-            if ( game_state.Get() == nullptr )
-            {
-                game_state.LoadSynchronous();
-            }
+            game_state.LoadSynchronous();
         }
     }
 }
@@ -358,8 +334,7 @@ void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStat
 
     UE_LOG( LogGBF_OSS, Verbose, TEXT( "HandleUserLoginChanged: bDownGraded: %i" ), ( int ) is_downgraded );
 
-    TSharedPtr<GenericApplication> GenericApplication = FSlateApplication::Get().GetPlatformApplication();
-    bIsLicensed = GenericApplication->ApplicationLicenseValid();
+    HandleAppLicenseUpdate();
 
     LocalPlayerOnlineStatus[ game_user_index ] = login_status;
 
@@ -439,25 +414,26 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( EOnlineServerConnec
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
-    //if ( !IsOnWelcomeScreenState()
-    //     && connection_status != EOnlineServerConnectionStatus::Connected
-    //     )
-    //{
-    //    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
-    //    const auto oss = IOnlineSubsystem::Get();
-    //    FText return_reason;
-    //    if ( oss != nullptr )
-    //    {
-    //         return_reason = FText::Format( NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContent", "Connection to {OnlineSystemName} has been lost." ), oss->GetOnlineServiceName() );
-    //    }
-    //    else
-    //    {
-    //        return_reason = NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContentFallback", "Connection to the online service has been lost." );
-    //    }
-    //
-    //    // :TODO: Instead of going to state, we should ask the user to fix and retry, or go back to the beginning.
-    //    ShowMessageThenGotoState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason, EGBFGameState::WelcomeScreen );
-    //}
+    if ( !IsOnWelcomeScreenState()
+         && connection_status != EOnlineServerConnectionStatus::Connected
+         )
+    {
+        UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
+        
+        const auto oss = IOnlineSubsystem::Get();
+        FText return_reason;
+        
+        if ( oss != nullptr )
+        {
+             return_reason = FText::Format( NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContent", "Connection to {OnlineSystemName} has been lost." ), oss->GetOnlineServiceName() );
+        }
+        else
+        {
+            return_reason = NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContentFallback", "Connection to the online service has been lost." );
+        }
+    
+        ShowMessageThenGotoState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason, *Settings->WelcomeScreenGameState.Get() );
+    }
 
     CurrentConnectionStatus = connection_status;
 }
@@ -485,14 +461,12 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
                 pc->GetUIDialogManagerComponent()->ShowConfirmationPopup(
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
-                    FGBFConfirmationPopupButtonClicked::
                     FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                      , &slate_app, input_preprocessor
 #endif
                     ] ( )
                 {
-                    //GamePadDisconnectedConfirmationWidget = nullptr;
 #if PLATFORM_XBOXONE
                     slate_app.UnregisterInputPreProcessor( input_preprocessor );
 #endif
@@ -532,14 +506,38 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
         if ( !IsOnWelcomeScreenState() )
         {
 #if GBF_CONSOLE_UI
-            /*ShowMessageThenGotoState(
+            ShowMessageThenGotoState(
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                EGBFGameState::WelcomeScreen
-            );*/
+                *Settings->WelcomeScreenGameState.Get()
+            );
 #else
             GoToWelcomeScreenState();
 #endif
+        }
+    }
+}
+
+void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FText & content, const UGBFGameState & next_state )
+{
+    if ( auto * player_controller = Cast < AGBFPlayerController >( GetWorld()->GetFirstPlayerController() ) )
+    {
+        if ( auto * dialog_manager_component = player_controller->GetUIDialogManagerComponent() )
+        {
+            const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
+                [ this, &next_state ] ()
+            {
+                if ( IsStateWelcomeScreenState( next_state ) )
+                {
+                    GoToWelcomeScreenState();
+                }
+                else
+                {
+                    GoToState( next_state );
+                }
+            } );
+
+            dialog_manager_component->ShowConfirmationPopup( title, content, on_ok_clicked );
         }
     }
 }

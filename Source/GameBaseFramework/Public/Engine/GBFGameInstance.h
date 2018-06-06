@@ -8,6 +8,7 @@
 #include "GBFGameInstance.generated.h"
 
 class UGBFGameState;
+class UGameBaseFrameworkSettings;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
@@ -42,6 +43,7 @@ private:
 
     const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
     const UGBFGameState * GetGameStateFromName( FName state_name ) const;
+    bool IsStateWelcomeScreenState( const UGBFGameState & state ) const;
 
     void LoadGameStates();
     void GoToState( const UGBFGameState & new_state );
@@ -58,9 +60,13 @@ private:
     void HandleNetworkConnectionStatusChanged( EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
     void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
     void HandleSignInChangeMessaging();
+    void ShowMessageThenGotoState( const FText & title, const FText & content, const UGBFGameState & next_state );
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;
+
+    UPROPERTY()
+    const UGameBaseFrameworkSettings * Settings;
 
     EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
     bool bIsLicensed;
