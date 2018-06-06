@@ -40,19 +40,19 @@ struct FGBFShowDialogOptions
         , bDisablePlayerControllerInput( disable_player_controller_input )
     {}
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( BlueprintReadWrite )
     uint8 bGiveUserFocus : 1;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( BlueprintReadWrite )
     uint8 bHideMainUI : 1;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( BlueprintReadWrite )
     uint8 bBlurBackground : 1;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( BlueprintReadWrite )
     EGBFUIDialogType DialogType;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( BlueprintReadWrite )
     uint8 bDisablePlayerControllerInput : 1;
 };
 
@@ -67,6 +67,8 @@ public:
     UGBFUIDialogManagerComponent();
 
     virtual void BeginPlay() override;
+
+    bool IsDisplayingDialog() const;
 
     UFUNCTION( BlueprintCallable )
     void InitializeMainUI( const TSubclassOf< UUserWidget > & main_ui_class );
@@ -89,45 +91,21 @@ public:
     UFUNCTION( BlueprintCallable )
     void CloseAllDialogs( bool show_main_ui = true );
 
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup" ) )
     UGBFConfirmationWidget * ShowConfirmationPopup(
-        FText title,
-        FText content,
-        FGBFConfirmationPopupButtonClicked ok_button_clicked,
-        FGBFConfirmationPopupButtonClicked cancel_button_clicked,
-        FText ok_button_text,
-        FText cancel_button_text
+        const FText & title,
+        const FText & content,
+        const FGBFConfirmationPopupButtonClicked & ok_button_clicked = FGBFConfirmationPopupButtonClicked(),
+        const FGBFConfirmationPopupButtonClicked & cancel_button_clicked = FGBFConfirmationPopupButtonClicked(),
+        const FText & ok_button_text = FText::GetEmpty(),
+        const FText & cancel_button_text = FText::GetEmpty()
     );
 
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancel" ) )
-    UGBFConfirmationWidget * ShowConfirmationPopupNoCancel(
+    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup", AutoCreateRefTerm = "ok_button_clicked, cancel_button_clicked" ) )
+    UGBFConfirmationWidget * K2_ShowConfirmationPopup(
         FText title,
         FText content,
-        FGBFConfirmationPopupButtonClicked ok_button_clicked,
-        FText ok_button_text
-    );
-
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancelDelegate" ) )
-    UGBFConfirmationWidget * ShowConfirmationPopupNoCancelDelegate(
-        FText title,
-        FText content,
-        FGBFConfirmationPopupButtonClicked ok_button_clicked,
-        FText ok_button_text,
-        FText cancel_button_text
-    );
-
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoCancelNoOkDelegate" ) )
-    UGBFConfirmationWidget * ShowConfirmationPopupNoCancelNoOkDelegate(
-        FText title,
-        FText content,
-        FText ok_button_text
-    );
-
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopupNoOkDelegate" ) )
-    UGBFConfirmationWidget * ShowConfirmationPopupNoOkDelegate(
-        FText title,
-        FText content,
-        FGBFConfirmationPopupButtonClicked cancel_button_clicked,
+        const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
+        const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
         FText ok_button_text,
         FText cancel_button_text
     );

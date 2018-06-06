@@ -2,6 +2,8 @@
 
 #include "Kismet/BlueprintFunctionLibrary.h"
 
+#include "UI/GBFConfirmationWidget.h"
+
 #include "GBFUMGBlueprintLibrary.generated.h"
 
 class UUserWidget;
@@ -24,6 +26,8 @@ public:
 
         if ( auto * widget_tree = Cast< UWidgetTree >( parent_widget->GetOuter() ) )
         {
+            widget_tree->RootWidget = parent_widget;
+
             widget_tree->ForEachWidgetAndDescendants( [ &result ] ( UWidget * child_widget ) 
             {
                 if ( result == nullptr )
