@@ -66,7 +66,9 @@ void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWid
 
 void UGBFUIDialogManagerComponent::ShowMainUI()
 {
-    if ( MainUIWidget != nullptr )
+    if ( MainUIWidget != nullptr 
+         && bIsMainUIHidden 
+         )
     {
         MainUIWidget->AddToViewport( 0 );
         bIsMainUIHidden = false;
@@ -75,7 +77,9 @@ void UGBFUIDialogManagerComponent::ShowMainUI()
 
 void UGBFUIDialogManagerComponent::HideMainUI()
 {
-    if ( MainUIWidget != nullptr )
+    if ( MainUIWidget != nullptr 
+         && !bIsMainUIHidden
+         )
     {
         MainUIWidget->RemoveFromViewport();
         bIsMainUIHidden = true;
