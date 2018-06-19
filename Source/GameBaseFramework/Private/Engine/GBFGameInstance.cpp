@@ -188,16 +188,17 @@ void UGBFGameInstance::GoToWelcomeScreenState()
 
 const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
 {
-    UGBFGameState * result = nullptr;
-
     auto predicate = [ game_mode_class ] ( auto state_soft_ptr )
     {
         return state_soft_ptr.Get()->GameModeClass == game_mode_class;
     };
 
-    return Settings->GameStates.FindByPredicate( predicate )->Get();
+    if ( auto * state = Settings->GameStates.FindByPredicate( predicate ) )
+    {
+        return state->Get();
+    }
 
-    return result;
+    return nullptr;
 }
 
 const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name ) const
