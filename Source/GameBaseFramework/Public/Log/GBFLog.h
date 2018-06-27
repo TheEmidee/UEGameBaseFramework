@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Color.h"
 #include "Logging/LogMacros.h"
 
 DECLARE_LOG_CATEGORY_EXTERN( LogGBF, Log, All );
@@ -25,7 +26,37 @@ private: \
 }; \
 FSQScopedLog InstanceName( FString::Printf( InitialLogFormat, ##__VA_ARGS__ ) );
 
-extern FColor GetColorForLogVerbosity( ELogVerbosity::Type verbosity );
+FORCEINLINE FColor GetColorForLogVerbosity( ELogVerbosity::Type verbosity )
+{
+    FColor color;
+
+    switch ( verbosity )
+    {
+    case ELogVerbosity::Fatal:
+    case ELogVerbosity::Error:
+    {
+        color = FColor::Red;
+    }
+    break;
+    case ELogVerbosity::Display:
+    case ELogVerbosity::Verbose:
+    {
+        color = FColor::Cyan;
+    }
+    break;
+    case ELogVerbosity::Warning:
+    {
+        color = FColor::Yellow;
+    }
+    break;
+    default:
+    {
+        color = FColor::White;
+    }
+    }
+
+    return color;
+}
 
 #define UE_SLOG( CategoryName, Verbosity, Format, ... ) \
     UE_LOG( CategoryName, Verbosity, Format, ##__VA_ARGS__ ); \
