@@ -57,7 +57,7 @@ private:
     void HandleAppLicenseUpdate();
     void HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id );
     void HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user );
-    void HandleNetworkConnectionStatusChanged( EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
+    void HandleNetworkConnectionStatusChanged( const FString & service_name, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
     void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
     void HandleSignInChangeMessaging();
     void ShowMessageThenGotoState( const FText & title, const FText & content, const UGBFGameState & next_state );

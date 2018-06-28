@@ -411,7 +411,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
 #endif
 }
 
-void UGBFGameInstance::HandleNetworkConnectionStatusChanged( EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status )
+void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*service_name*/, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status )
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 

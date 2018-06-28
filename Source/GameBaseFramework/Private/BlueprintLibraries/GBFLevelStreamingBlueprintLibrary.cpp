@@ -34,10 +34,10 @@ ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( b
     ULevelStreamingKismet* streaming_level = NewObject<ULevelStreamingKismet>( World, ULevelStreamingKismet::StaticClass(), NAME_None, RF_Transient, NULL );
     streaming_level->SetWorldAssetByPackageName( FName( *unique_level_package_name ) );
     streaming_level->LevelColor = FColor::MakeRandomColor();
-    streaming_level->bShouldBeLoaded = parameters.bShouldBeLoaded;
+    streaming_level->SetShouldBeLoaded( parameters.bShouldBeLoaded );
     streaming_level->bIsStatic = parameters.bIsStatic;
     streaming_level->bLocked = parameters.bLocked;
-    streaming_level->bShouldBeVisible = parameters.bShouldBeVisible;
+    streaming_level->SetShouldBeVisible( parameters.bShouldBeVisible );
     streaming_level->bShouldBlockOnLoad = parameters.bShouldBlockOnLoad;
     streaming_level->bInitiallyLoaded = parameters.bInitiallyLoaded;
     streaming_level->bInitiallyVisible = parameters.bInitiallyVisible;
@@ -45,7 +45,7 @@ ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( b
     streaming_level->LevelTransform = FTransform( parameters.Rotation, parameters.Location );
     streaming_level->PackageNameToLoad = FName( *long_package_name );
 
-    World->StreamingLevels.Add( streaming_level );
+    World->AddStreamingLevel( streaming_level );
 
     success = true;
     return streaming_level;

@@ -105,7 +105,7 @@ void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
 {
     SetControllerId( controller_index );
 
-    SetCachedUniqueNetId( GetUniqueNetIdFromCachedControllerId() );
+    SetCachedUniqueNetId( GetUniqueNetIdFromCachedControllerId().GetUniqueNetId() );
 
     QueryAchievements();
 
@@ -238,7 +238,8 @@ IOnlineAchievementsPtr UGBFLocalPlayer::GetOnlineAchievementsInterface() const
 
 void UGBFLocalPlayer::QueryAchievements()
 {
-    TSharedPtr<const FUniqueNetId> user_id = GetCachedUniqueNetId();
+    auto user_id = GetCachedUniqueNetId().GetUniqueNetId();
+
     if ( !user_id.IsValid() )
     {
         UE_LOG( LogGBF_OSS, Error, TEXT( "No valid user id for this controller." ) );
