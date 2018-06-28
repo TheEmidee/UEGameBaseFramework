@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Color.h"
+#include "Engine/Engine.h"
 #include "Logging/LogMacros.h"
 
 DECLARE_LOG_CATEGORY_EXTERN( LogGBF, Log, All );
