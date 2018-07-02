@@ -14,6 +14,7 @@
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "GameFramework/GBFGameModeBase.h"
+#include "GameFramework/GBFPlayerController.h"
 #include "UI/GBFConfirmationWidget.h"
 #include "Log/GBFLog.h"
 
