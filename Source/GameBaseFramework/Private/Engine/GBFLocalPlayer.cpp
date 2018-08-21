@@ -150,7 +150,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
         return;
     }
 
-    TSharedPtr<const FUniqueNetId> user_id = GetCachedUniqueNetId();
+    FUniqueNetIdRepl user_id = GetCachedUniqueNetId();
     if ( !user_id.IsValid() )
     {
         UE_LOG( LogGBF_OSS, Error, TEXT( "No valid user id for this controller." ) );
