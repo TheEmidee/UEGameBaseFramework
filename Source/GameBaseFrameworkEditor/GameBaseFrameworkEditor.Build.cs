@@ -8,21 +8,7 @@ namespace UnrealBuildTool.Rules
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
             bEnforceIWYU = true;
 
-            PublicIncludePaths.AddRange(
-                new string[]
-                {
-                    "GameBaseFrameworkEditor/Public"
-                } 
-            );
-
-            PrivateIncludePaths.AddRange( 
-                new string[]
-                {
-                    "GameBaseFrameworkEditor/Private"
-                }
-            );
-
-             PublicIncludePathModuleNames.AddRange(
+            PublicIncludePathModuleNames.AddRange(
                 new string[] 
                 {
                     "Engine",

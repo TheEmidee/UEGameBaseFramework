@@ -8,13 +8,6 @@ namespace UnrealBuildTool.Rules
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
             bEnforceIWYU = true;
 
-            PublicIncludePaths.AddRange(
-                new string[]
-                {
-                    "GameBaseFramework/Public"
-                } 
-            );
-
             PrivateIncludePaths.AddRange( 
                 new string[]
                 {
