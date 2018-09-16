@@ -66,7 +66,7 @@ UGBFSaveGame * UGBFSaveGame::LoadSaveGame( const FString & slot_name, int user_i
 
     if ( result == nullptr )
     {
-        result = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( UGBFSaveGame::StaticClass() ) );
+        result = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( StaticClass() ) );
     }
 
     check( result != nullptr );

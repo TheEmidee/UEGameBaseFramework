@@ -11,6 +11,7 @@ class APlayerController;
 class UUserWidget;
 
 UENUM( BlueprintType )
+
 enum class EGBFUIDialogType : uint8
 {
     Exclusive,
@@ -19,6 +20,7 @@ enum class EGBFUIDialogType : uint8
 };
 
 USTRUCT( BlueprintType )
+
 struct FGBFShowDialogOptions
 {
     GENERATED_BODY()
@@ -38,7 +40,8 @@ struct FGBFShowDialogOptions
         , bBlurBackground( blur_background )
         , DialogType( dialog_type )
         , bDisablePlayerControllerInput( disable_player_controller_input )
-    {}
+    {
+    }
 
     UPROPERTY( BlueprintReadWrite )
     uint8 bGiveUserFocus : 1;
@@ -58,6 +61,7 @@ struct FGBFShowDialogOptions
 
 
 UCLASS( ClassGroup=(Custom), meta=( BlueprintSpawnableComponent ) )
+
 class GAMEBASEFRAMEWORK_API UGBFUIDialogManagerComponent : public UActorComponent
 {
     GENERATED_BODY()
@@ -66,7 +70,7 @@ public:
 
     UGBFUIDialogManagerComponent();
 
-    virtual void BeginPlay() override;
+    void BeginPlay() override;
 
     bool IsDisplayingDialog() const;
 
@@ -83,7 +87,7 @@ public:
     void ShowDialog( UUserWidget * widget, const FGBFShowDialogOptions & options );
 
     UFUNCTION( BlueprintCallable )
-    UUserWidget * CreateAndShowDialog( const TSubclassOf< UUserWidget > widget_class, const FGBFShowDialogOptions & options );
+    UUserWidget * CreateAndShowDialog( TSubclassOf< UUserWidget > widget_class, const FGBFShowDialogOptions & options );
 
     UFUNCTION( BlueprintCallable )
     void CloseLastDialog();
@@ -98,7 +102,7 @@ public:
         const FGBFConfirmationPopupButtonClicked & cancel_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FText & ok_button_text = FText::GetEmpty(),
         const FText & cancel_button_text = FText::GetEmpty()
-    );
+        );
 
     UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup", AutoCreateRefTerm = "ok_button_clicked, cancel_button_clicked" ) )
     UGBFConfirmationWidget * K2_ShowConfirmationPopup(
@@ -108,7 +112,7 @@ public:
         const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
         FText ok_button_text,
         FText cancel_button_text
-    );
+        );
 
 private:
 
@@ -116,7 +120,8 @@ private:
     {
         FDialogStackEntry()
             : UserWidget( nullptr )
-        {}
+        {
+        }
 
         FDialogStackEntry( UUserWidget * user_widget, const FGBFShowDialogOptions & options )
             : UserWidget( user_widget )

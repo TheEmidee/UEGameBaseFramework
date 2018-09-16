@@ -9,18 +9,17 @@ class UGBFPlatformInputTextures;
 
 class IGameBaseFrameworkEditorModule : public IModuleInterface
 {
-
 public:
 
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
+    void StartupModule() override;
+    void ShutdownModule() override;
 
-    static inline IGameBaseFrameworkEditorModule & Get()
+    static IGameBaseFrameworkEditorModule & Get()
     {
-        return FModuleManager::LoadModuleChecked< IGameBaseFrameworkEditorModule >("GameBaseFrameworkEditor");
+        return FModuleManager::LoadModuleChecked< IGameBaseFrameworkEditorModule >( "GameBaseFrameworkEditor" );
     }
 
-    static inline bool IsAvailable()
+    static bool IsAvailable()
     {
         return FModuleManager::Get().IsModuleLoaded( "GameBaseFrameworkEditor" );
     }
@@ -30,4 +29,3 @@ private:
     void OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * settings );
     void OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * settings );
 };
-

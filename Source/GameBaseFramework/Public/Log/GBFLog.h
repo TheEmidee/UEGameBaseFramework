@@ -5,6 +5,7 @@
 #include "Logging/LogMacros.h"
 
 DECLARE_LOG_CATEGORY_EXTERN( LogGBF, Log, All );
+
 DECLARE_LOG_CATEGORY_EXTERN( LogGBF_OSS, Log, All );
 
 #define DECLARE_SCOPED_LOG(CategoryName, InstanceName, InitialLogFormat, ...) \
@@ -33,27 +34,27 @@ FORCEINLINE FColor GetColorForLogVerbosity( ELogVerbosity::Type verbosity )
 
     switch ( verbosity )
     {
-    case ELogVerbosity::Fatal:
-    case ELogVerbosity::Error:
-    {
-        color = FColor::Red;
-    }
-    break;
-    case ELogVerbosity::Display:
-    case ELogVerbosity::Verbose:
-    {
-        color = FColor::Cyan;
-    }
-    break;
-    case ELogVerbosity::Warning:
-    {
-        color = FColor::Yellow;
-    }
-    break;
-    default:
-    {
-        color = FColor::White;
-    }
+        case ELogVerbosity::Fatal:
+        case ELogVerbosity::Error:
+        {
+            color = FColor::Red;
+        }
+            break;
+        case ELogVerbosity::Display:
+        case ELogVerbosity::Verbose:
+        {
+            color = FColor::Cyan;
+        }
+            break;
+        case ELogVerbosity::Warning:
+        {
+            color = FColor::Yellow;
+        }
+        break;
+        default:
+        {
+            color = FColor::White;
+        }
     }
 
     return color;

@@ -10,39 +10,39 @@
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSettingsDetails"
 
-TSharedRef<IDetailCustomization> FGameBaseFrameworkSettingsDetails::MakeInstance()
+TSharedRef< IDetailCustomization > FGameBaseFrameworkSettingsDetails::MakeInstance()
 {
     return MakeShareable( new FGameBaseFrameworkSettingsDetails );
 }
 
-void FGameBaseFrameworkSettingsDetails::CustomizeDetails( IDetailLayoutBuilder& detail_builder )
+void FGameBaseFrameworkSettingsDetails::CustomizeDetails( IDetailLayoutBuilder & detail_builder )
 {
-    TArray<TWeakObjectPtr<UObject>> objects_being_customized;
-    detail_builder.GetObjectsBeingCustomized(objects_being_customized);
+    TArray< TWeakObjectPtr< UObject > > objects_being_customized;
+    detail_builder.GetObjectsBeingCustomized( objects_being_customized );
     check(objects_being_customized.Num() == 1);
 
-    TWeakObjectPtr<UGameBaseFrameworkSettings> settings = Cast< UGameBaseFrameworkSettings >( objects_being_customized[ 0 ].Get() );
+    TWeakObjectPtr< UGameBaseFrameworkSettings > settings = Cast< UGameBaseFrameworkSettings >( objects_being_customized[ 0 ].Get() );
 
     IDetailCategoryBuilder & input_textures_category = detail_builder.EditCategory( "InputTextures" );
 
     input_textures_category.AddCustomRow( LOCTEXT( "PlatformTextures", "PlatformTextures" ) )
-        .ValueContent()
+                           .ValueContent()
+    [
+        SNew( SHorizontalBox )
+        + SHorizontalBox::Slot()
+          .Padding( 5 )
+          .AutoWidth()
         [
-            SNew( SHorizontalBox )
-            + SHorizontalBox::Slot()
-            .Padding(5)
-            .AutoWidth()
-            [
-                SNew( SButton )
+            SNew( SButton )
                 .Text( LOCTEXT( "ReloadPlatformInputTextures", "Reload platform input textures" ) )
                 .ToolTipText( LOCTEXT( "ReloadPlatformInputTextures_Tooltip", "Reload the platform input textures (useful when you change the content of the CSV files)" ) )
                 .OnClicked_Lambda( [this, settings ]()
-                {
-                    IGameBaseFrameworkModule::Get().RefreshPlatformInputTextures();
-                    return FReply::Handled();
-                })
-            ]
-        ];
+                           {
+                               IGameBaseFrameworkModule::Get().RefreshPlatformInputTextures();
+                               return FReply::Handled();
+                           } )
+        ]
+    ];
 }
 
 #undef LOCTEXT_NAMESPACE

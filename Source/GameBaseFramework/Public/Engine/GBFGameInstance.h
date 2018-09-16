@@ -11,6 +11,7 @@ class UGBFGameState;
 class UGameBaseFrameworkSettings;
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
 {
     GENERATED_BODY()
@@ -20,16 +21,17 @@ public:
     UGBFGameInstance();
 
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
+
     FORCEINLINE FOnStateChangedEvent & OnStateChanged() { return OnStateChangedEvent; }
 
-    virtual void Init() override;
-    virtual void Shutdown() override;
-    virtual class AGameModeBase* CreateGameModeForURL( FURL InURL ) override;
+    void Init() override;
+    void Shutdown() override;
+    class AGameModeBase * CreateGameModeForURL( FURL InURL ) override;
 
     bool IsOnWelcomeScreenState() const;
 
     bool Tick( float delta_seconds );
-    
+
     UFUNCTION( BlueprintCallable )
     void GoToWelcomeScreenState();
 
@@ -73,8 +75,8 @@ private:
     int IgnorePairingChangeForControllerId;
     FTickerDelegate TickDelegate;
     FDelegateHandle TickDelegateHandle;
-    TSharedPtr<const FUniqueNetId> CurrentUniqueNetId;
+    TSharedPtr< const FUniqueNetId > CurrentUniqueNetId;
     FOnLoginUIClosedDelegate LoginUIClosedDelegate;
     TWeakObjectPtr< const UGBFGameState > CurrentGameState;
-    TArray<ELoginStatus::Type> LocalPlayerOnlineStatus;
+    TArray< ELoginStatus::Type > LocalPlayerOnlineStatus;
 };

@@ -10,6 +10,7 @@ class UGBFGameState;
 class UGBFConfirmationWidget;
 
 USTRUCT()
+
 struct FGBFUIOptions
 {
     GENERATED_BODY()
@@ -25,6 +26,7 @@ struct FGBFUIOptions
 };
 
 USTRUCT()
+
 struct FGBFInputSwitchOptions
 {
     GENERATED_BODY()
@@ -43,17 +45,18 @@ struct FGBFInputSwitchOptions
 };
 
 UCLASS( config = GameBaseFramework, defaultconfig, meta=( DisplayName="GameBaseFramework" ) )
+
 class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
 
 public:
 
-    virtual FName GetCategoryName() const override;
+    FName GetCategoryName() const override;
 
 #if WITH_EDITOR
-    virtual FText GetSectionText() const override;
-    virtual void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
+    FText GetSectionText() const override;
+    void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
     DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * );
 

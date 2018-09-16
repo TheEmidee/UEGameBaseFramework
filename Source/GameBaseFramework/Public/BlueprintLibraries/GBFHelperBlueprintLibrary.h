@@ -8,6 +8,7 @@
 class UWorld;
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()

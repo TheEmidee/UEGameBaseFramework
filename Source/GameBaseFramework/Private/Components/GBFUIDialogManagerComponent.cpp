@@ -11,10 +11,10 @@
 UGBFUIDialogManagerComponent::UGBFUIDialogManagerComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
-    
+
     // Keep ZOrder 0 for main UI and 1 for blur
     zOrder = 2;
-    
+
     bIsMainUIHidden = true;
     bIsBlurBackgroundVisible = false;
 }
@@ -66,9 +66,9 @@ void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWid
 
 void UGBFUIDialogManagerComponent::ShowMainUI()
 {
-    if ( MainUIWidget != nullptr 
-         && bIsMainUIHidden 
-         )
+    if ( MainUIWidget != nullptr
+        && bIsMainUIHidden
+        )
     {
         MainUIWidget->AddToViewport( 0 );
         bIsMainUIHidden = false;
@@ -77,9 +77,9 @@ void UGBFUIDialogManagerComponent::ShowMainUI()
 
 void UGBFUIDialogManagerComponent::HideMainUI()
 {
-    if ( MainUIWidget != nullptr 
-         && !bIsMainUIHidden
-         )
+    if ( MainUIWidget != nullptr
+        && !bIsMainUIHidden
+        )
     {
         MainUIWidget->RemoveFromViewport();
         bIsMainUIHidden = true;
@@ -165,8 +165,8 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
     bool must_hide_blur = true;
     bool must_show_main_ui = true;
-    bool must_enable_player_input = true; 
-    
+    bool must_enable_player_input = true;
+
     if ( DialogStack.Num() > 0 )
     {
         for ( const auto & stack_entry : DialogStack )
@@ -298,7 +298,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
                     ok_button_clicked.ExecuteIfBound();
                 } );
 
-                auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ cancel_button_clicked ] ()
+                auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ cancel_button_clicked ]()
                 {
                     cancel_button_clicked.ExecuteIfBound();
                 } );
@@ -317,8 +317,8 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
 
 void UGBFUIDialogManagerComponent::ShowBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr ) 
-        && !bIsBlurBackgroundVisible 
+    if ( ensure( BlurBackgroundWidget != nullptr )
+        && !bIsBlurBackgroundVisible
         )
     {
         BlurBackgroundWidget->AddToViewport( 1 );
@@ -328,8 +328,8 @@ void UGBFUIDialogManagerComponent::ShowBlurBackground()
 
 void UGBFUIDialogManagerComponent::HideBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr ) 
-        && bIsBlurBackgroundVisible 
+    if ( ensure( BlurBackgroundWidget != nullptr )
+        && bIsBlurBackgroundVisible
         )
     {
         BlurBackgroundWidget->RemoveFromViewport();

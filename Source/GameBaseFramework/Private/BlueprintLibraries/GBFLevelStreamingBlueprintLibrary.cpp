@@ -8,7 +8,7 @@
 ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters )
 {
     success = false;
-    UWorld* const World = world_context->GetWorld();
+    UWorld * const World = world_context->GetWorld();
 
     if ( !World )
     {
@@ -31,7 +31,7 @@ ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( b
     unique_level_package_name += TEXT( "_LevelInstance_" ) + FString::FromInt( ++UniqueLevelInstanceId );
 
     // Setup streaming level object that will load specified map
-    ULevelStreamingKismet* streaming_level = NewObject<ULevelStreamingKismet>( World, ULevelStreamingKismet::StaticClass(), NAME_None, RF_Transient, NULL );
+    auto streaming_level = NewObject< ULevelStreamingKismet >( World, ULevelStreamingKismet::StaticClass(), NAME_None, RF_Transient, nullptr );
     streaming_level->SetWorldAssetByPackageName( FName( *unique_level_package_name ) );
     streaming_level->LevelColor = FColor::MakeRandomColor();
     streaming_level->SetShouldBeLoaded( parameters.bShouldBeLoaded );
@@ -41,7 +41,7 @@ ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( b
     streaming_level->bShouldBlockOnLoad = parameters.bShouldBlockOnLoad;
     streaming_level->bInitiallyLoaded = parameters.bInitiallyLoaded;
     streaming_level->bInitiallyVisible = parameters.bInitiallyVisible;
-    
+
     streaming_level->LevelTransform = FTransform( parameters.Rotation, parameters.Location );
     streaming_level->PackageNameToLoad = FName( *long_package_name );
 

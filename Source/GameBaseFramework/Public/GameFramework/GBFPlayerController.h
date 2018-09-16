@@ -8,6 +8,7 @@ class UGBFPlatformInputSwitcherComponent;
 class UGBFUIDialogManagerComponent;
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public APlayerController
 {
     GENERATED_BODY()
@@ -25,10 +26,10 @@ public:
 private:
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
+    UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent {};
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFUIDialogManagerComponent * UIDialogManagerComponent;
+    UGBFUIDialogManagerComponent * UIDialogManagerComponent {};
 };
 
 #if PLATFORM_DESKTOP

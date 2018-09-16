@@ -6,9 +6,9 @@
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "GameFramework/GBFPlayerController.h"
 
-TArray<FKey> UGBFInputBlueprintLibrary::GetCancelKeys()
+TArray< FKey > UGBFInputBlueprintLibrary::GetCancelKeys()
 {
-    static const TArray<FKey> cancel_keys_for_platform {
+    static const TArray< FKey > cancel_keys_for_platform {
 #if PLATFORM_DESKTOP
         EKeys::Escape,
         EKeys::Virtual_Back
@@ -20,9 +20,9 @@ TArray<FKey> UGBFInputBlueprintLibrary::GetCancelKeys()
     return cancel_keys_for_platform;
 }
 
-TArray<FKey> UGBFInputBlueprintLibrary::GetConfirmKeys()
+TArray< FKey > UGBFInputBlueprintLibrary::GetConfirmKeys()
 {
-    static const TArray<FKey> confirm_keys_for_platform = {
+    static const TArray< FKey > confirm_keys_for_platform = {
 #if PLATFORM_DESKTOP
         EKeys::Enter,
         EKeys::Virtual_Accept,
@@ -50,7 +50,7 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
     if ( platform_input_type == EGBFPlatformInputType::Gamepad )
 #endif
     {
-        if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & EGBFVirtualKeyProcessedFirst::GamepadOnly ) == EGBFVirtualKeyProcessedFirst::GamepadOnly )
+        if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & GamepadOnly ) == GamepadOnly )
         {
             switch ( platform_input_key.VirtualKey )
             {
@@ -68,37 +68,28 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
                 }
             }
         }
-        else
-        {
-            return platform_input_key.GamePadKey;
-        }
+        return platform_input_key.GamePadKey;
     }
 #if PLATFORM_DESKTOP
-    else
+    if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & KeyboardOnly ) == KeyboardOnly )
     {
-        if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & EGBFVirtualKeyProcessedFirst::KeyboardOnly ) == EGBFVirtualKeyProcessedFirst::KeyboardOnly )
+        switch ( platform_input_key.VirtualKey )
         {
-            switch ( platform_input_key.VirtualKey )
+            case EGBFVirtualKey::Virtual_Back:
             {
-                case EGBFVirtualKey::Virtual_Back:
-                {
-                    return EKeys::Escape;
-                }
-                case EGBFVirtualKey::Virtual_Accept:
-                {
-                    return EKeys::Enter;
-                }
-                default:
-                {
-                    return platform_input_key.KeyboardKey;
-                }
+                return EKeys::Escape;
+            }
+            case EGBFVirtualKey::Virtual_Accept:
+            {
+                return EKeys::Enter;
+            }
+            default:
+            {
+                return platform_input_key.KeyboardKey;
             }
         }
-        else
-        {
-            return platform_input_key.KeyboardKey;
-        }
     }
+    return platform_input_key.KeyboardKey;
 #endif
 }
 

@@ -8,10 +8,12 @@
 #include "Input/GBFInputTypes.h"
 
 #include "GBFPlatformInputSwitcherComponent.generated.h"
+#include "Engine/LocalPlayer.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnPlatformInputTypeUpdatedEvent, EGBFPlatformInputType, new_input_type );
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+
 class GAMEBASEFRAMEWORK_API UGBFPlatformInputSwitcherComponent : public UActorComponent
 {
     GENERATED_BODY()
@@ -23,8 +25,8 @@ public:
     FORCEINLINE FOnPlatformInputTypeUpdatedEvent & OnPlatformInputTypeUpdated();
     FORCEINLINE EGBFPlatformInputType GetPlatformInputType() const;
 
-    virtual void BeginPlay() override;
-    virtual void BeginDestroy() override;
+    void BeginPlay() override;
+    void BeginDestroy() override;
 
     APlayerController * GetPlayerController() const;
 
@@ -32,22 +34,21 @@ private:
 
     class InputPlatformDetector : public IInputProcessor
     {
-
     public:
 
         InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchOptions & config );
 
-        virtual void Tick( const float delta_time, FSlateApplication & slate_app, TSharedRef<ICursor> cursor );
-        virtual bool HandleKeyDownEvent( FSlateApplication & slate_app, const FKeyEvent & event ) override;
-        virtual bool HandleKeyUpEvent( FSlateApplication & slate_app, const FKeyEvent & event ) override;
-        virtual bool HandleAnalogInputEvent( FSlateApplication & slate_app, const FAnalogInputEvent & event ) override;
-        virtual bool HandleMouseMoveEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
-        virtual bool HandleMouseButtonDownEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
-        virtual bool HandleMouseButtonUpEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
+        void Tick( float delta_time, FSlateApplication & slate_app, TSharedRef< ICursor > cursor ) override;
+        bool HandleKeyDownEvent( FSlateApplication & slate_app, const FKeyEvent & event ) override;
+        bool HandleKeyUpEvent( FSlateApplication & slate_app, const FKeyEvent & event ) override;
+        bool HandleAnalogInputEvent( FSlateApplication & slate_app, const FAnalogInputEvent & event ) override;
+        bool HandleMouseMoveEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
+        bool HandleMouseButtonDownEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
+        bool HandleMouseButtonUpEvent( FSlateApplication & slate_app, const FPointerEvent & event ) override;
 
     private:
 
-        void SetLocalPlayerPlatformInputType( const bool is_using_gamepad ) const;
+        void SetLocalPlayerPlatformInputType( bool is_using_gamepad ) const;
 
         TWeakObjectPtr< UGBFPlatformInputSwitcherComponent > InputSwitcherComponent;
         TWeakObjectPtr< const ULocalPlayer > LocalPlayer;
@@ -56,7 +57,7 @@ private:
     };
 
     void RegisterSlateInputPreprocessor();
-    void UnRegisterSlateInputPreprocessor();
+    void UnRegisterSlateInputPreprocessor() const;
     void SetPlatformInputType( EGBFPlatformInputType new_platform_input_type );
 
     UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )

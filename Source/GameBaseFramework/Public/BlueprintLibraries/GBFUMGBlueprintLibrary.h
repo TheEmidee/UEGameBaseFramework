@@ -10,6 +10,7 @@ class UUserWidget;
 class UWidget;
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API UGBFUMGBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
@@ -28,7 +29,7 @@ public:
         {
             widget_tree->RootWidget = parent_widget;
 
-            widget_tree->ForEachWidgetAndDescendants( [ &result ] ( UWidget * child_widget ) 
+            widget_tree->ForEachWidgetAndDescendants( [ &result ]( UWidget * child_widget )
             {
                 if ( result == nullptr )
                 {

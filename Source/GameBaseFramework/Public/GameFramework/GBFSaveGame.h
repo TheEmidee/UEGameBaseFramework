@@ -5,6 +5,7 @@
 #include "GBFSaveGame.generated.h"
 
 UCLASS( BlueprintType )
+
 class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 {
     GENERATED_BODY()
@@ -21,7 +22,7 @@ public:
     bool SaveSlotToDisk();
     void UpdateAchievementCurrentCount( const FName & achievement_id, int current_count );
     void ResetAchievementsProgression();
-    
+
     UFUNCTION( BlueprintCallable )
     void SetActiveCulture( const FString & active_culture );
 

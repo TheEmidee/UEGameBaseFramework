@@ -5,7 +5,7 @@
 
 void UGBFHelperBlueprintLibrary::CreateObject( TSubclassOf< UObject > class_of, UObject *& object )
 {
-    object = NewObject<UObject>( GetTransientPackage(), class_of );
+    object = NewObject< UObject >( GetTransientPackage(), class_of );
 }
 
 void UGBFHelperBlueprintLibrary::OpenMap( const UObject * world_context, const TSoftObjectPtr< UWorld > & map_soft_object_ptr, bool open_if_current /*= false*/ )

@@ -4,9 +4,9 @@
 
 class FGameBaseFrameworkSettingsDetails : public IDetailCustomization
 {
-public:    
-    
-    virtual void CustomizeDetails( IDetailLayoutBuilder & detail_builder ) override;
+public:
 
-    static TSharedRef<IDetailCustomization> MakeInstance();
+    void CustomizeDetails( IDetailLayoutBuilder & detail_builder ) override;
+
+    static TSharedRef< IDetailCustomization > MakeInstance();
 };

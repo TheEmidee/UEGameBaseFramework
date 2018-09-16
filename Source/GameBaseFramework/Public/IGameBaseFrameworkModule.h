@@ -8,11 +8,10 @@ class UTexture2D;
 
 class IGameBaseFrameworkModule : public IModuleInterface
 {
-
 public:
 
-    virtual void StartupModule() override;
-    virtual void ShutdownModule() override;
+    void StartupModule() override;
+    void ShutdownModule() override;
 
     UTexture2D * GetPlatformInputTextureForKey( const FString & platform_name, const FKey & key );
 
@@ -20,12 +19,12 @@ public:
     void GAMEBASEFRAMEWORK_API RefreshPlatformInputTextures();
 #endif
 
-    static inline IGameBaseFrameworkModule & Get()
+    static IGameBaseFrameworkModule & Get()
     {
-        return FModuleManager::LoadModuleChecked< IGameBaseFrameworkModule >("GameBaseFramework");
+        return FModuleManager::LoadModuleChecked< IGameBaseFrameworkModule >( "GameBaseFramework" );
     }
 
-    static inline bool IsAvailable()
+    static bool IsAvailable()
     {
         return FModuleManager::Get().IsModuleLoaded( "GameBaseFramework" );
     }
@@ -37,4 +36,3 @@ private:
 
     TMap< FString, TMap< FKey, UTexture2D * > > PlatformInputTexturesMap;
 };
-

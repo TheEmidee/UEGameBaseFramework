@@ -2,6 +2,7 @@
 
 #include "Engine/World.h"
 #include "SlateApplication.h"
+#include "GameFramework/PlayerController.h"
 
 UGBFPlatformInputSwitcherComponent::UGBFPlatformInputSwitcherComponent()
 {
@@ -38,9 +39,8 @@ UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector
 {
 }
 
-void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::Tick( const float delta_time, FSlateApplication & slate_app, TSharedRef<ICursor> cursor )
+void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::Tick( const float delta_time, FSlateApplication & slate_app, TSharedRef< ICursor > cursor )
 {
-
 }
 
 bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyDownEvent( FSlateApplication & slate_app, const FKeyEvent & event )
@@ -120,7 +120,7 @@ void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
     FSlateApplication::Get().RegisterInputPreProcessor( InputPlatformDetectorPtr );
 }
 
-void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor()
+void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
     if ( InputPlatformDetectorPtr.IsValid() )
     {

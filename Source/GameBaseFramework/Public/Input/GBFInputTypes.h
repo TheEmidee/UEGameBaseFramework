@@ -6,6 +6,7 @@
 #include "GBFInputTypes.generated.h"
 
 UENUM( BlueprintType )
+
 enum class EGBFPlatformInputType : uint8
 {
     Gamepad,
@@ -13,6 +14,7 @@ enum class EGBFPlatformInputType : uint8
 };
 
 UENUM( BlueprintType )
+
 enum class EGBFVirtualKey : uint8
 {
     None,
@@ -21,6 +23,7 @@ enum class EGBFVirtualKey : uint8
 };
 
 UENUM( BlueprintType )
+
 enum EGBFVirtualKeyProcessedFirst
 {
     None = 1 << 0,
@@ -30,13 +33,15 @@ enum EGBFVirtualKeyProcessedFirst
 };
 
 USTRUCT( BlueprintType )
+
 struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 {
     GENERATED_BODY()
 
     FGBFPlatformInputKey()
-        : ProcessVirtualKeyFirstFlag( EGBFVirtualKeyProcessedFirst::Both )
-    {}
+        : ProcessVirtualKeyFirstFlag( Both )
+    {
+    }
 
     UPROPERTY( BlueprintReadWrite, EditAnywhere )
     FKey GamePadKey;
@@ -52,6 +57,7 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 };
 
 USTRUCT(BlueprintType)
+
 struct FGBFPlatformInputTextureData : public FTableRowBase
 {
     GENERATED_USTRUCT_BODY()
@@ -66,6 +72,7 @@ public:
 };
 
 UCLASS( BlueprintType )
+
 class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
 {
     GENERATED_BODY()
@@ -73,7 +80,7 @@ class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
 public:
 
 #if WITH_EDITOR
-    virtual void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
+    void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
     DECLARE_MULTICAST_DELEGATE_TwoParams( FOnPlatformInputTexturesChanged, const FString &, const UGBFPlatformInputTextures * );
     static FOnPlatformInputTexturesChanged & OnPlatformInputTexturesChanged();

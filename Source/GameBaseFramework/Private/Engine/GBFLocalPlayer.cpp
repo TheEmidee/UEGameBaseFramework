@@ -37,8 +37,8 @@ FString UGBFLocalPlayer::GetDisplayName() const
     IOnlineSubsystem * online_subsystem = IOnlineSubsystem::Get();
 
     if ( online_subsystem != nullptr
-          && online_subsystem->GetSubsystemName() != NULL_SUBSYSTEM
-          )
+        && online_subsystem->GetSubsystemName() != NULL_SUBSYSTEM
+        )
     {
         const auto display_name = GetNickname();
 
@@ -55,7 +55,7 @@ UGBFSaveGame * UGBFLocalPlayer::GetSaveGame() const
 {
     if ( SaveGame == nullptr )
     {
-        UGBFLocalPlayer * mutable_this = const_cast< UGBFLocalPlayer* >( this );
+        auto mutable_this = const_cast< UGBFLocalPlayer* >( this );
 
         mutable_this->LoadSaveGame();
     }
@@ -111,8 +111,8 @@ void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
 
     const auto & culture_name = GetSaveGame()->GetActiveCulture();
 
-    if ( !culture_name.IsEmpty() 
-        && culture_name != FInternationalization::Get().GetCurrentCulture()->GetName() 
+    if ( !culture_name.IsEmpty()
+        && culture_name != FInternationalization::Get().GetCurrentCulture()->GetName()
         )
     {
         FInternationalization::Get().SetCurrentCulture( culture_name );
@@ -219,7 +219,7 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
 
 IOnlineAchievementsPtr UGBFLocalPlayer::GetOnlineAchievementsInterface() const
 {
-    IOnlineSubsystem* online_sub_system = IOnlineSubsystem::Get();
+    IOnlineSubsystem * online_sub_system = IOnlineSubsystem::Get();
     if ( online_sub_system == nullptr )
     {
         UE_LOG( LogGBF_OSS, Error, TEXT( "No default online subsystem." ) );
@@ -275,7 +275,7 @@ void UGBFLocalPlayer::CheckChangedControllerId( const FString & save_name )
         && (
             GetControllerId() != SaveGame->GetUserIndex()
             || save_name != SaveGame->GetName()
-            )
+        )
         )
     {
         SaveGame = nullptr;

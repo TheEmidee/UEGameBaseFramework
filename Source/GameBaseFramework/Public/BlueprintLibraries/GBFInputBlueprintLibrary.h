@@ -7,6 +7,7 @@
 #include "GBFInputBlueprintLibrary.generated.h"
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API UGBFInputBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()

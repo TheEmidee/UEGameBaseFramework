@@ -13,6 +13,7 @@
 class UGBFSaveGame;
 
 UCLASS()
+
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public ULocalPlayer
 {
     GENERATED_BODY()
@@ -21,7 +22,7 @@ public:
 
     UGBFLocalPlayer();
 
-    virtual void SetControllerId( int32 new_controller_id ) override;
+    void SetControllerId( int32 new_controller_id ) override;
 
     UFUNCTION( BlueprintPure )
     FString GetDisplayName() const;
@@ -44,7 +45,7 @@ private:
     void QueryAchievements();
     void LoadSaveGame();
     void CheckChangedControllerId( const FString & save_name );
-    void OnQueryAchievementsComplete( const FUniqueNetId & player_id, const bool was_successful );
+    void OnQueryAchievementsComplete( const FUniqueNetId & player_id, bool was_successful );
 
     UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFSaveGame * SaveGame;
@@ -53,4 +54,3 @@ private:
     TArray< FOnlineAchievement > AchievementsArray;
     bool bAreAchievementsCached;
 };
-
