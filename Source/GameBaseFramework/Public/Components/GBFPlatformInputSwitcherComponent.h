@@ -3,12 +3,12 @@
 #include "Components/ActorComponent.h"
 
 #include "Application/IInputProcessor.h"
+#include "Engine/LocalPlayer.h"
 
 #include "GameBaseFrameworkSettings.h"
 #include "Input/GBFInputTypes.h"
 
 #include "GBFPlatformInputSwitcherComponent.generated.h"
-#include "Engine/LocalPlayer.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnPlatformInputTypeUpdatedEvent, EGBFPlatformInputType, new_input_type );
 
