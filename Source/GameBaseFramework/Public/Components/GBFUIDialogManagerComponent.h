@@ -61,7 +61,6 @@ struct FGBFShowDialogOptions
 
 
 UCLASS( ClassGroup=(Custom), meta=( BlueprintSpawnableComponent ) )
-
 class GAMEBASEFRAMEWORK_API UGBFUIDialogManagerComponent : public UActorComponent
 {
     GENERATED_BODY()

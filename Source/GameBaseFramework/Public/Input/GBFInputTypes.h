@@ -72,7 +72,6 @@ public:
 };
 
 UCLASS( BlueprintType )
-
 class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
 {
     GENERATED_BODY()

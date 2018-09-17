@@ -53,7 +53,6 @@ struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
 };
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFLevelStreamingBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()

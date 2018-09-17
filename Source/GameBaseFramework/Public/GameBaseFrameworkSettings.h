@@ -45,7 +45,6 @@ struct FGBFInputSwitchOptions
 };
 
 UCLASS( config = GameBaseFramework, defaultconfig, meta=( DisplayName="GameBaseFramework" ) )
-
 class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()

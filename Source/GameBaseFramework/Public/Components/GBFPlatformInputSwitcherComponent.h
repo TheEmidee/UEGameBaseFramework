@@ -13,7 +13,6 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnPlatformInputTypeUpdatedEvent, EGBFPlatformInputType, new_input_type );
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-
 class GAMEBASEFRAMEWORK_API UGBFPlatformInputSwitcherComponent : public UActorComponent
 {
     GENERATED_BODY()
