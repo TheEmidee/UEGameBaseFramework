@@ -13,7 +13,29 @@
 #include "GameFramework/GBFSaveGame.h"
 #include "GBFLog.h"
 
+IOnlineAchievementsPtr LOCAL_GetOnlineAchievementsInterface()
+{
+    const auto online_sub_system = IOnlineSubsystem::Get();
+    if ( online_sub_system == nullptr )
+    {
+        UE_LOG( LogGBF_OSS, Error, TEXT( "No default online subsystem." ) );
+        return nullptr;
+    }
+
+    auto achievements_interface = online_sub_system->GetAchievementsInterface();
+    if ( !achievements_interface.IsValid() )
+    {
+        UE_LOG( LogGBF_OSS, Error, TEXT( "No online achievements system." ) );
+        return nullptr;
+    }
+
+    return achievements_interface;
+}
+
+// --
+
 UGBFLocalPlayer::UGBFLocalPlayer()
+    : SaveGame{ nullptr }
 {
     bAreAchievementsCached = false;
 }
@@ -22,7 +44,7 @@ void UGBFLocalPlayer::SetControllerId( int32 new_controller_id )
 {
     ULocalPlayer::SetControllerId( new_controller_id );
 
-    FString save_game_name = GetSaveGameFilename();
+    const auto save_game_name = GetSaveGameFilename();
 
     CheckChangedControllerId( save_game_name );
 
@@ -34,7 +56,7 @@ void UGBFLocalPlayer::SetControllerId( int32 new_controller_id )
 
 FString UGBFLocalPlayer::GetDisplayName() const
 {
-    IOnlineSubsystem * online_subsystem = IOnlineSubsystem::Get();
+    const auto online_subsystem = IOnlineSubsystem::Get();
 
     if ( online_subsystem != nullptr
         && online_subsystem->GetSubsystemName() != NULL_SUBSYSTEM
@@ -66,7 +88,7 @@ UGBFSaveGame * UGBFLocalPlayer::GetSaveGame() const
 FPlatformUserId UGBFLocalPlayer::GetPlatformUserId() const
 {
     // Use the platform id here to be resilient in the face of controller swapping and similar situations.
-    FPlatformUserId platform_user_id = GetControllerId();
+    auto platform_user_id = GetControllerId();
 
     auto identity_interface = Online::GetIdentityInterface();
     auto unique_id = GetPreferredUniqueNetId();
@@ -119,7 +141,7 @@ void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
     }
 }
 
-void UGBFLocalPlayer::SetPresenceStatus( const FText & status )
+void UGBFLocalPlayer::SetPresenceStatus( const FText & status ) const
 {
     const auto presence_interface = Online::GetPresenceInterface();
 
@@ -141,7 +163,7 @@ void UGBFLocalPlayer::SetPresenceStatus( const FText & status )
     }
 }
 
-void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count )
+void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count ) const
 {
 #if !WITH_EDITOR
     if ( !bAreAchievementsCached )
@@ -157,7 +179,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
         return;
     }
 
-    auto achievements_interface = GetOnlineAchievementsInterface();
+    auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
 
     if ( achievements_interface.IsValid()
         && ( !OnlineAchievementWriter.IsValid()
@@ -201,7 +223,7 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
 #if PLATFORM_XBOXONE || PLATFORM_SWITCH
     save_game_filename = TEXT( "save" );
 #else
-    IOnlineSubsystem * online_subsystem = IOnlineSubsystem::Get();
+    const auto online_subsystem = IOnlineSubsystem::Get();
 
     if ( online_subsystem != nullptr
         && online_subsystem->GetSubsystemName() == NULL_SUBSYSTEM
@@ -210,30 +232,11 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
         return FGenericPlatformMisc::GetLoginId();
     }
 
-    auto unique_id = GetPreferredUniqueNetId();
+    const auto unique_id = GetPreferredUniqueNetId();
     save_game_filename = unique_id->ToString();
 #endif
 
     return save_game_filename;
-}
-
-IOnlineAchievementsPtr UGBFLocalPlayer::GetOnlineAchievementsInterface() const
-{
-    IOnlineSubsystem * online_sub_system = IOnlineSubsystem::Get();
-    if ( online_sub_system == nullptr )
-    {
-        UE_LOG( LogGBF_OSS, Error, TEXT( "No default online subsystem." ) );
-        return nullptr;
-    }
-
-    IOnlineAchievementsPtr achievements_interface = online_sub_system->GetAchievementsInterface();
-    if ( !achievements_interface.IsValid() )
-    {
-        UE_LOG( LogGBF_OSS, Error, TEXT( "No online achievements system." ) );
-        return nullptr;
-    }
-
-    return achievements_interface;
 }
 
 void UGBFLocalPlayer::QueryAchievements()
@@ -246,7 +249,7 @@ void UGBFLocalPlayer::QueryAchievements()
         return;
     }
 
-    auto achievements_interface = GetOnlineAchievementsInterface();
+    auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
 
     if ( achievements_interface.IsValid() )
     {
@@ -257,13 +260,13 @@ void UGBFLocalPlayer::QueryAchievements()
 
 void UGBFLocalPlayer::LoadSaveGame()
 {
-    FString save_game_name = GetSaveGameFilename();
+    const auto save_game_name = GetSaveGameFilename();
 
     CheckChangedControllerId( save_game_name );
 
     if ( SaveGame == nullptr )
     {
-        FPlatformUserId platform_user_id = GetPlatformUserId();
+        const auto platform_user_id = GetPlatformUserId();
         SaveGame = UGBFSaveGame::LoadSaveGame( save_game_name, platform_user_id );
     }
 }
@@ -290,7 +293,7 @@ void UGBFLocalPlayer::OnQueryAchievementsComplete( const FUniqueNetId & player_i
     {
         UE_LOG( LogGBF_OSS, Log, TEXT( "OnQueryAchievementsComplete successful" ) );
 
-        auto achievements_interface = GetOnlineAchievementsInterface();
+        auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
 
         if ( achievements_interface.IsValid() )
         {

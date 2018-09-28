@@ -2,10 +2,13 @@
 
 #include "GameFramework/PlayerController.h"
 
+#include "Input/GBFInputTypes.h"
+
 #include "GBFPlayerController.generated.h"
 
 class UGBFPlatformInputSwitcherComponent;
 class UGBFUIDialogManagerComponent;
+class UGBFLocalPlayer;
 
 UCLASS()
 
@@ -23,13 +26,23 @@ public:
 
     FORCEINLINE UGBFUIDialogManagerComponent * GetUIDialogManagerComponent() const;
 
+    void BeginPlay() override;
+
+    UFUNCTION( BlueprintPure )
+    UGBFLocalPlayer * GetGBFLocalPlayer() const;
+
 private:
 
-    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent {};
+    UFUNCTION()
+    void OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type );
+
+    void UpdateInputRelatedFlags();
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFUIDialogManagerComponent * UIDialogManagerComponent {};
+    UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
+
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+    UGBFUIDialogManagerComponent * UIDialogManagerComponent;
 };
 
 #if PLATFORM_DESKTOP

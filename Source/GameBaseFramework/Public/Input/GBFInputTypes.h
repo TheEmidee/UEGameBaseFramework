@@ -6,7 +6,6 @@
 #include "GBFInputTypes.generated.h"
 
 UENUM( BlueprintType )
-
 enum class EGBFPlatformInputType : uint8
 {
     Gamepad,
@@ -14,7 +13,6 @@ enum class EGBFPlatformInputType : uint8
 };
 
 UENUM( BlueprintType )
-
 enum class EGBFVirtualKey : uint8
 {
     None,
@@ -23,7 +21,6 @@ enum class EGBFVirtualKey : uint8
 };
 
 UENUM( BlueprintType )
-
 enum EGBFVirtualKeyProcessedFirst
 {
     None = 1 << 0,
@@ -33,7 +30,6 @@ enum EGBFVirtualKeyProcessedFirst
 };
 
 USTRUCT( BlueprintType )
-
 struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 {
     GENERATED_BODY()
@@ -57,7 +53,6 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 };
 
 USTRUCT(BlueprintType)
-
 struct FGBFPlatformInputTextureData : public FTableRowBase
 {
     GENERATED_USTRUCT_BODY()

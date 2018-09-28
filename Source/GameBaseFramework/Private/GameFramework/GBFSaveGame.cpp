@@ -1,9 +1,14 @@
 #include "GBFSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
+UGBFSaveGame::UGBFSaveGame()
+    : bEnableForceFeedback( true )
+{
+}
+
 int UGBFSaveGame::GetAchievementCurrentCount( const FName & achievement_id ) const
 {
-    if ( const int * current_count = AchievementsCurrentCountMap.Find( achievement_id ) )
+    if ( const auto current_count = AchievementsCurrentCountMap.Find( achievement_id ) )
     {
         return *current_count;
     }
@@ -22,7 +27,7 @@ bool UGBFSaveGame::SaveSlotToDisk()
 
         //FGBFSaveIndicatorScope = GetGBFGameInstance()->GetSaveIndicatorScope();
 
-        bool save_to_slot_result = UGameplayStatics::SaveGameToSlot( this, SlotName, UserIndex );
+        const auto save_to_slot_result = UGameplayStatics::SaveGameToSlot( this, SlotName, UserIndex );
 
         if ( save_to_slot_result )
         {

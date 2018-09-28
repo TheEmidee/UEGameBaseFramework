@@ -32,14 +32,13 @@ public:
     ELoginStatus::Type GetLoginStatus() const;
 
     void InitializeAfterLogin( int controller_index );
-    void SetPresenceStatus( const FText & status );
+    void SetPresenceStatus( const FText & status ) const;
 
     UFUNCTION( BlueprintCallable )
-    void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count );
+    void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count ) const;
 
 private:
 
-    IOnlineAchievementsPtr GetOnlineAchievementsInterface() const;
     FString GetSaveGameFilename() const;
 
     void QueryAchievements();

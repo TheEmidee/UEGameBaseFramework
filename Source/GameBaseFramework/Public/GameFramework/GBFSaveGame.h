@@ -12,10 +12,13 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 
 public:
 
+    UGBFSaveGame();
+
     FORCEINLINE const FString & GetSlotName() const;
     FORCEINLINE int GetUserIndex() const;
     FORCEINLINE const FString & GetActiveCulture() const;
     FORCEINLINE bool IsDirty() const;
+    FORCEINLINE bool GetEnableForceFeedback() const;
 
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
@@ -35,6 +38,9 @@ private:
 
     UPROPERTY()
     FString ActiveCulture;
+
+    UPROPERTY()
+    uint8 bEnableForceFeedback : 1;
 
     FString SlotName;
     int UserIndex;
@@ -59,4 +65,9 @@ const FString & UGBFSaveGame::GetActiveCulture() const
 bool UGBFSaveGame::IsDirty() const
 {
     return bIsDirty;
+}
+
+bool UGBFSaveGame::GetEnableForceFeedback() const
+{
+    return bEnableForceFeedback;
 }
