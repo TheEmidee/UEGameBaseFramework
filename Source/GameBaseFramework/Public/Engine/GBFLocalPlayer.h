@@ -35,7 +35,7 @@ public:
     void SetPresenceStatus( const FText & status ) const;
 
     UFUNCTION( BlueprintCallable )
-    void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count ) const;
+    void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count );
 
 private:
 
