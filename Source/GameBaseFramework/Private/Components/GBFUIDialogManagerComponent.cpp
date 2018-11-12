@@ -40,8 +40,21 @@ void UGBFUIDialogManagerComponent::BeginPlay()
         InitializeMainUI( MainUIClass );
     }
 
-    UAssetManager::Get().GetStreamableManager().RequestAsyncLoad( OpenDialogSound.ToSoftObjectPath(), FStreamableDelegate(), 0, true );
-    UAssetManager::Get().GetStreamableManager().RequestAsyncLoad( CloseDialogSound.ToSoftObjectPath(), FStreamableDelegate(), 0, true );
+    TArray< FSoftObjectPath > paths;
+
+    if ( OpenDialogSound != nullptr )
+    {
+        paths.Add( OpenDialogSound.ToSoftObjectPath() );
+    }
+    if ( CloseDialogSound != nullptr )
+    {
+        paths.Add( CloseDialogSound.ToSoftObjectPath() );
+    }
+
+    if ( paths.Num() != 0 )
+    {
+        UAssetManager::Get().GetStreamableManager().RequestAsyncLoad( paths, FStreamableDelegate(), 0, true );
+    }
 }
 
 bool UGBFUIDialogManagerComponent::IsDisplayingDialog() const
