@@ -3,7 +3,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GBFLevelStreamingBlueprintLibrary.generated.h"
 
-class ULevelStreamingKismet;
+class ULevelStreamingDynamic;
 
 USTRUCT( BlueprintType )
 
@@ -60,7 +60,7 @@ class GAMEBASEFRAMEWORK_API UGBFLevelStreamingBlueprintLibrary : public UBluepri
 public:
 
     UFUNCTION()
-    static ULevelStreamingKismet * LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters );
+    static ULevelStreamingDynamic * LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters );
 
 private:
 

@@ -1,11 +1,11 @@
 #include "GBFLevelStreamingBlueprintLibrary.h"
 
-#include "Engine/LevelStreamingKismet.h"
+#include "Engine/LevelStreamingDynamic.h"
 #include "Engine/World.h"
 #include "Kismet/GameplayStatics.h"
 #include "Misc/PackageName.h"
 
-ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters )
+ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters )
 {
     success = false;
     UWorld * const World = world_context->GetWorld();
@@ -31,7 +31,7 @@ ULevelStreamingKismet * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( b
     unique_level_package_name += TEXT( "_LevelInstance_" ) + FString::FromInt( ++UniqueLevelInstanceId );
 
     // Setup streaming level object that will load specified map
-    auto streaming_level = NewObject< ULevelStreamingKismet >( World, ULevelStreamingKismet::StaticClass(), NAME_None, RF_Transient, nullptr );
+    auto streaming_level = NewObject< ULevelStreamingDynamic >( World, ULevelStreamingDynamic::StaticClass(), NAME_None, RF_Transient, nullptr );
     streaming_level->SetWorldAssetByPackageName( FName( *unique_level_package_name ) );
     streaming_level->LevelColor = FColor::MakeRandomColor();
     streaming_level->SetShouldBeLoaded( parameters.bShouldBeLoaded );
