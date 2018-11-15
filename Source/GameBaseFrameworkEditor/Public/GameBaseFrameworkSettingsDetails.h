@@ -2,6 +2,7 @@
 
 #include "IDetailCustomization.h"
 
+// Adds a button in the GameBaseFramework settings panel, to reload input the textures
 class FGameBaseFrameworkSettingsDetails : public IDetailCustomization
 {
 public:
