@@ -10,7 +10,6 @@ class UGBFGameState;
 class UGBFConfirmationWidget;
 
 USTRUCT()
-
 struct FGBFUIOptions
 {
     GENERATED_BODY()
@@ -26,7 +25,6 @@ struct FGBFUIOptions
 };
 
 USTRUCT()
-
 struct FGBFInputSwitchOptions
 {
     GENERATED_BODY()

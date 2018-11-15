@@ -11,8 +11,7 @@ namespace UnrealBuildTool.Rules
             PrivateIncludePaths.AddRange( 
                 new string[]
                 {
-                    "GameBaseFramework/Private",
-                    "GameBaseFramework/Private/Engine"
+                    "GameBaseFramework/Private"
                 }
             );
 
