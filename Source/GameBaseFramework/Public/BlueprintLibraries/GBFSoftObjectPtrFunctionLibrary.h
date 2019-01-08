@@ -22,7 +22,7 @@ class GAMEBASEFRAMEWORK_API UGBFASyncLoadSoftObjectPtr : public UObject
 
 public:
     
-    UFUNCTION( BlueprintCallable, Category = "Utilities", meta = ( DisplayName = "ASyncLoadSoftObjectPtr", BlueprintInternalUseOnly = "TRUE" ) ) )
+    UFUNCTION( BlueprintCallable, Category = "Utilities", meta = ( DisplayName = "ASyncLoadSoftObjectPtr", BlueprintInternalUseOnly = "TRUE" ) )
     static UGBFASyncLoadSoftObjectPtr * ASyncLoadSoftObjectPtr( const TSoftObjectPtr<UObject> & soft_object_reference );
 
     UPROPERTY( BlueprintAssignable )
