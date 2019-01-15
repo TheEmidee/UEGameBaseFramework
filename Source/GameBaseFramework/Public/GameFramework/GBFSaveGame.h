@@ -39,7 +39,7 @@ private:
     UPROPERTY()
     FString ActiveCulture;
 
-    UPROPERTY()
+    UPROPERTY( BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
     uint8 bEnableForceFeedback : 1;
 
     FString SlotName;

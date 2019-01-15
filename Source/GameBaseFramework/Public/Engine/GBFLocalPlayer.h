@@ -13,7 +13,6 @@
 class UGBFSaveGame;
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public ULocalPlayer
 {
     GENERATED_BODY()

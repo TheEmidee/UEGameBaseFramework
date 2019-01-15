@@ -131,7 +131,7 @@ AGameModeBase * UGBFGameInstance::CreateGameModeForURL( FURL in_url )
 
 bool UGBFGameInstance::IsOnWelcomeScreenState() const
 {
-    return IsStateWelcomeScreenState( *CurrentGameState.Get() );
+    return IsStateWelcomeScreenState( CurrentGameState.Get() );
 }
 
 bool UGBFGameInstance::Tick( float delta_seconds )
@@ -153,7 +153,7 @@ bool UGBFGameInstance::Tick( float delta_seconds )
                     ShowMessageThenGotoState(
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
-                        *Settings->WelcomeScreenGameState.Get()
+                        Settings->WelcomeScreenGameState.Get()
                         );
 
                     return true;
@@ -182,7 +182,19 @@ void UGBFGameInstance::GoToWelcomeScreenState()
 
     CurrentUniqueNetId = nullptr;
 
-    GoToState( *Settings->WelcomeScreenGameState );
+    GoToState( Settings->WelcomeScreenGameState.Get() );
+}
+
+void UGBFGameInstance::GoToState( UGBFGameState * new_state )
+{
+    if ( CurrentGameState.Get() != new_state )
+    {
+        CurrentGameState = new_state;
+
+        UGBFHelperBlueprintLibrary::OpenMap( this, new_state->Map );
+
+        OnStateChangedEvent.Broadcast( new_state );
+    }
 }
 
 // -- PRIVATE
@@ -216,9 +228,10 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name )
     return result;
 }
 
-bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState & state ) const
+bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) const
 {
-    return Settings->WelcomeScreenGameState.Get() == &state;
+    return state != nullptr
+        && Settings->WelcomeScreenGameState.Get() == state;
 }
 
 void UGBFGameInstance::LoadGameStates()
@@ -231,18 +244,6 @@ void UGBFGameInstance::LoadGameStates()
         {
             game_state.LoadSynchronous();
         }
-    }
-}
-
-void UGBFGameInstance::GoToState( const UGBFGameState & new_state )
-{
-    if ( CurrentGameState.Get() != &new_state )
-    {
-        CurrentGameState = &new_state;
-
-        UGBFHelperBlueprintLibrary::OpenMap( this, new_state.Map );
-
-        OnStateChangedEvent.Broadcast( &new_state );
     }
 }
 
@@ -432,7 +433,7 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*s
             return_reason = NSLOCTEXT( "GBF", "LocKey_ServiceUnavailableContentFallback", "Connection to the online service has been lost." );
         }
 
-        ShowMessageThenGotoState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason, *Settings->WelcomeScreenGameState.Get() );
+        ShowMessageThenGotoState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason, Settings->WelcomeScreenGameState.Get() );
     }
 
     CurrentConnectionStatus = connection_status;
@@ -509,7 +510,7 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
             ShowMessageThenGotoState(
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                *Settings->WelcomeScreenGameState.Get()
+                Settings->WelcomeScreenGameState.Get()
             );
 #else
             GoToWelcomeScreenState();
@@ -518,7 +519,7 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
     }
 }
 
-void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FText & content, const UGBFGameState & next_state )
+void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state )
 {
     if ( auto * player_controller = Cast< AGBFPlayerController >( GetWorld()->GetFirstPlayerController() ) )
     {

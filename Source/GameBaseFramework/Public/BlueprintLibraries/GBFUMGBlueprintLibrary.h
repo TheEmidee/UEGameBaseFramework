@@ -9,8 +9,9 @@
 class UUserWidget;
 class UWidget;
 
-UCLASS()
+class UGBFSaveGame;
 
+UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFUMGBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
@@ -19,6 +20,9 @@ public:
 
     UFUNCTION( BlueprintPure, Category="UMG" )
     static UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponentFromOwningPlayer( bool & success, UUserWidget * widget );
+
+    UFUNCTION( BlueprintPure, Category = "UMG" )
+    static UGBFSaveGame * GetSaveGameFromOwningPlayer( bool & success, UUserWidget * widget );
 
     template< class _WIDGET_TYPE_ >
     static _WIDGET_TYPE_ * GetFirstChildWidgetOfClass( UWidget * parent_widget )

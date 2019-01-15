@@ -35,6 +35,9 @@ public:
     UFUNCTION( BlueprintCallable )
     void GoToWelcomeScreenState();
 
+    UFUNCTION( BlueprintCallable )
+    void GoToState( UGBFGameState * game_state );
+
     /*UFUNCTION( BlueprintCallable )
     bool ProfileUISwap( const int controller_index );
 
@@ -45,10 +48,9 @@ private:
 
     const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
     const UGBFGameState * GetGameStateFromName( FName state_name ) const;
-    bool IsStateWelcomeScreenState( const UGBFGameState & state ) const;
+    bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;
 
     void LoadGameStates();
-    void GoToState( const UGBFGameState & new_state );
     void HandleAppWillDeactivate();
     void HandleAppHasReactivated();
     void HandleAppWillEnterBackground();
@@ -62,7 +64,7 @@ private:
     void HandleNetworkConnectionStatusChanged( const FString & service_name, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
     void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
     void HandleSignInChangeMessaging();
-    void ShowMessageThenGotoState( const FText & title, const FText & content, const UGBFGameState & next_state );
+    void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;

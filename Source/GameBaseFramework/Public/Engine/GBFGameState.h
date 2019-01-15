@@ -5,7 +5,6 @@
 #include "GBFGameState.generated.h"
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFGameState : public UDataAsset
 {
     GENERATED_BODY()
