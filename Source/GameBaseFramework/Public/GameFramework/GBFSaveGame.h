@@ -5,7 +5,6 @@
 #include "GBFSaveGame.generated.h"
 
 UCLASS( BlueprintType )
-
 class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 {
     GENERATED_BODY()
@@ -19,6 +18,7 @@ public:
     FORCEINLINE const FString & GetActiveCulture() const;
     FORCEINLINE bool IsDirty() const;
     FORCEINLINE bool GetEnableForceFeedback() const;
+    FORCEINLINE bool GetEnableSubtitles() const;
 
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
@@ -28,6 +28,9 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void SetActiveCulture( const FString & active_culture );
+
+    UFUNCTION( BlueprintCallable )
+    void Save();
 
     static UGBFSaveGame * LoadSaveGame( const FString & slot_name, int user_index );
 
@@ -41,6 +44,9 @@ private:
 
     UPROPERTY( BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
     uint8 bEnableForceFeedback : 1;
+
+    UPROPERTY( BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
+    uint8 bEnableSubtitles : 1;
 
     FString SlotName;
     int UserIndex;
@@ -70,4 +76,9 @@ bool UGBFSaveGame::IsDirty() const
 bool UGBFSaveGame::GetEnableForceFeedback() const
 {
     return bEnableForceFeedback;
+}
+
+bool UGBFSaveGame::GetEnableSubtitles() const
+{
+    return bEnableSubtitles;
 }

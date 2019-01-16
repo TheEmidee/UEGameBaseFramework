@@ -1,8 +1,9 @@
 #include "GBFSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 
-UGBFSaveGame::UGBFSaveGame()
-    : bEnableForceFeedback( true )
+UGBFSaveGame::UGBFSaveGame() :
+    bEnableForceFeedback( true ),
+    bEnableSubtitles( true )
 {
 }
 
@@ -58,6 +59,11 @@ void UGBFSaveGame::SetActiveCulture( const FString & active_culture )
 {
     ActiveCulture = active_culture;
     bIsDirty = true;
+}
+
+void UGBFSaveGame::Save()
+{
+    SaveSlotToDisk();
 }
 
 UGBFSaveGame * UGBFSaveGame::LoadSaveGame( const FString & slot_name, int user_index )
