@@ -3,6 +3,7 @@
 #include "Blueprint/UserWidget.h"
 
 #include "Components/GBFPlatformInputSwitcherComponent.h"
+#include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFSaveGame.h"
@@ -30,6 +31,21 @@ UGBFSaveGame * UGBFUMGBlueprintLibrary::GetSaveGameFromOwningPlayer( bool & succ
         {
             success = true;
             return lc->GetSaveGame();
+        }
+    }
+
+    success = false;
+    return nullptr;
+}
+
+UGBFUIDialogManagerComponent * UGBFUMGBlueprintLibrary::GetDialogManagerComponentFromOwningPlayer( bool & success, UUserWidget * widget )
+{
+    if ( auto * pc = Cast< AGBFPlayerController >( widget->GetOwningPlayer() ) )
+    {
+        if ( auto * dialog_manager = pc->GetUIDialogManagerComponent() )
+        {
+            success = true;
+            return dialog_manager;
         }
     }
 
