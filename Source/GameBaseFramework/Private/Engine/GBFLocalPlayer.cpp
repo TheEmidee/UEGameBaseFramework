@@ -267,8 +267,33 @@ void UGBFLocalPlayer::LoadSaveGame()
     if ( SaveGame == nullptr )
     {
         const auto platform_user_id = GetPlatformUserId();
-        SaveGame = UGBFSaveGame::LoadSaveGame( save_game_name, platform_user_id );
+        SaveGame = LoadSaveGameOrCreateFromSlot( save_game_name, platform_user_id );
     }
+}
+
+UGBFSaveGame * UGBFLocalPlayer::LoadSaveGameOrCreateFromSlot( const FString & slot_name, int user_index )
+{
+    UGBFSaveGame * result = nullptr;
+
+    if ( slot_name.Len() > 0 )
+    {
+        result = Cast< UGBFSaveGame >( UGameplayStatics::LoadGameFromSlot( slot_name, user_index ) );
+    }
+
+    if ( result == nullptr )
+    {
+        check( SaveGameClass != nullptr );
+        result = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( SaveGameClass ) );
+    }
+
+    check( result != nullptr );
+
+    if ( slot_name.Len() > 0 )
+    {
+        result->SetSlotNameAndIndex( slot_name, user_index );
+    }
+
+    return result;
 }
 
 void UGBFLocalPlayer::CheckChangedControllerId( const FString & save_name )

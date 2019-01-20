@@ -17,6 +17,12 @@ int UGBFSaveGame::GetAchievementCurrentCount( const FName & achievement_id ) con
     return 0;
 }
 
+void UGBFSaveGame::SetSlotNameAndIndex( const FString & slot_name, const int user_index )
+{
+    SlotName = slot_name;
+    UserIndex = user_index;
+}
+
 bool UGBFSaveGame::SaveSlotToDisk()
 {
     if ( IsDirty() )
@@ -57,36 +63,38 @@ void UGBFSaveGame::ResetAchievementsProgression()
 
 void UGBFSaveGame::SetActiveCulture( const FString & active_culture )
 {
+    if ( ActiveCulture == active_culture )
+    {
+        return;
+    }
+
     ActiveCulture = active_culture;
+    bIsDirty = true;
+}
+
+void UGBFSaveGame::SetEnableForceFeedback( const bool new_value )
+{
+    if ( bEnableForceFeedback == new_value )
+    {
+        return;
+    }
+
+    bEnableForceFeedback = new_value;
+    bIsDirty = true;
+}
+
+void UGBFSaveGame::SetEnableSubtitles( const bool new_value )
+{
+    if ( bEnableSubtitles == new_value )
+    {
+        return;
+    }
+
+    bEnableSubtitles = new_value;
     bIsDirty = true;
 }
 
 void UGBFSaveGame::Save()
 {
     SaveSlotToDisk();
-}
-
-UGBFSaveGame * UGBFSaveGame::LoadSaveGame( const FString & slot_name, int user_index )
-{
-    UGBFSaveGame * result = nullptr;
-
-    if ( slot_name.Len() > 0 )
-    {
-        result = Cast< UGBFSaveGame >( UGameplayStatics::LoadGameFromSlot( slot_name, user_index ) );
-    }
-
-    if ( result == nullptr )
-    {
-        result = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( StaticClass() ) );
-    }
-
-    check( result != nullptr );
-
-    if ( slot_name.Len() > 0 )
-    {
-        result->SlotName = slot_name;
-        result->UserIndex = user_index;
-    }
-
-    return result;
 }

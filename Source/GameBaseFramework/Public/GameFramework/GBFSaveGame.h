@@ -22,30 +22,35 @@ public:
 
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
+    void SetSlotNameAndIndex( const FString & slot_name, const int user_index );
     bool SaveSlotToDisk();
     void UpdateAchievementCurrentCount( const FName & achievement_id, int current_count );
     void ResetAchievementsProgression();
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintSetter )
     void SetActiveCulture( const FString & active_culture );
+
+    UFUNCTION( BlueprintSetter )
+    void SetEnableForceFeedback( const bool new_value );
+
+    UFUNCTION( BlueprintSetter )
+    void SetEnableSubtitles( const bool new_value );
 
     UFUNCTION( BlueprintCallable )
     void Save();
-
-    static UGBFSaveGame * LoadSaveGame( const FString & slot_name, int user_index );
 
 private:
 
     UPROPERTY()
     TMap< FName, int > AchievementsCurrentCountMap;
 
-    UPROPERTY()
+    UPROPERTY( meta = ( AllowPrivateAccess = true ), BlueprintSetter = SetActiveCulture )
     FString ActiveCulture;
 
-    UPROPERTY( BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( meta = ( AllowPrivateAccess = true ), BlueprintSetter = SetEnableForceFeedback )
     uint8 bEnableForceFeedback : 1;
 
-    UPROPERTY( BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( meta = ( AllowPrivateAccess = true ), BlueprintSetter = SetEnableSubtitles )
     uint8 bEnableSubtitles : 1;
 
     FString SlotName;
