@@ -122,6 +122,13 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
             stack_entry.UserWidget->SetVisibility( ESlateVisibility::Hidden );
         }
     }
+    else
+    {
+        for ( auto & stack_entry : DialogStack )
+        {
+            stack_entry.UserWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
+        }
+    }
 
     zOrder++;
 
@@ -207,6 +214,8 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
         }
 
         const auto & last_dialog_options = DialogStack.Last();
+
+        last_dialog_options.UserWidget->SetVisibility( last_dialog_options.OriginalVisibility );
 
         if ( last_dialog_options.Options.bGiveUserFocus )
         {
