@@ -122,7 +122,9 @@ void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 
 void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
-    if ( InputPlatformDetectorPtr.IsValid() )
+    if ( InputPlatformDetectorPtr.IsValid() 
+         && FSlateApplication::IsInitialized()
+         )
     {
         FSlateApplication::Get().UnregisterInputPreProcessor( InputPlatformDetectorPtr );
     }
