@@ -79,6 +79,7 @@ void AGBFPlayerControllerLogin::HandleLoginUIClosed( TSharedPtr< const FUniqueNe
         GetUIDialogManagerComponent()->ShowConfirmationPopup(
             NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
             NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
+            EGBFUIDialogType::AdditiveOnlyOneVisible,
             FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnUserCannotPlay )
         );
         return;
@@ -106,6 +107,7 @@ void AGBFPlayerControllerLogin::HandleLoginUIClosed( TSharedPtr< const FUniqueNe
         GetUIDialogManagerComponent()->ShowConfirmationPopup(
             NSLOCTEXT( "GBF", "LocKey_ProgressWillNotBeSavedTitle", "Sign in" ),
             NSLOCTEXT( "GBF", "LocKey_ProgressWillNotBeSavedContent", "You need to sign in to play Shift Quantum." ),
+            EGBFUIDialogType::AdditiveOnlyOneVisible,
             FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnUserCannotPlay )
         );
     }
@@ -122,6 +124,7 @@ void AGBFPlayerControllerLogin::OnUserCanPlay( const FUniqueNetId & user_id, EUs
         GetUIDialogManagerComponent()->ShowConfirmationPopup(
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresTitleLoggedIn", "Not logged in" ),
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresContentLoggedIn", "You must be logged in to play this game." ),
+            EGBFUIDialogType::AdditiveOnlyOneVisible,
             FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnUserCannotPlay )
         );
     }
@@ -130,6 +133,7 @@ void AGBFPlayerControllerLogin::OnUserCanPlay( const FUniqueNetId & user_id, EUs
         GetUIDialogManagerComponent()->ShowConfirmationPopup(
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresTitleAge", "Age restriction" ),
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresContentAge", "You cannot play this game due to age restrictions." ),
+            EGBFUIDialogType::AdditiveOnlyOneVisible,
             FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnUserCannotPlay )
         );
     }
@@ -138,6 +142,7 @@ void AGBFPlayerControllerLogin::OnUserCanPlay( const FUniqueNetId & user_id, EUs
         GetUIDialogManagerComponent()->ShowConfirmationPopup(
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresTitleDefault", "Not enough privileges" ),
             NSLOCTEXT( "GBF", "LocKey_PrivilegeFailuresContentDefault", "You are not allowed to play this game because of privilege restrictions." ),
+            EGBFUIDialogType::AdditiveOnlyOneVisible,
             FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnUserCannotPlay )
         );
     }
@@ -248,6 +253,7 @@ void AGBFPlayerControllerLogin::OnContinueOffline()
     GetUIDialogManagerComponent()->ShowConfirmationPopup(
         NSLOCTEXT( "GBF", "LocKey_LoginFailuresTitle", "ERROR LOGGING IN" ),
         NSLOCTEXT( "GBF", "LocKey_LoginFailuresContent", "THERE WAS A PROBLEM CONNECTING YOU TO THE ONLINE SERVICE. YOU WILL NOT BE ABLE TO USE THE COMMUNITY FEATURES OF THE GAME." ),
+        EGBFUIDialogType::AdditiveOnlyOneVisible,
         FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::TryToConnectToOnlineInterface ),
         FGBFConfirmationPopupButtonClicked::CreateUObject( this, &AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm ),
         NSLOCTEXT( "GBF", "LocKey_Retry", "RETRY" ),

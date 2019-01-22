@@ -11,7 +11,6 @@ class UGBFUIDialogManagerComponent;
 class UGBFLocalPlayer;
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public APlayerController
 {
     GENERATED_BODY()

@@ -97,6 +97,7 @@ public:
     UGBFConfirmationWidget * ShowConfirmationPopup(
         const FText & title,
         const FText & content,
+        const EGBFUIDialogType type,
         const FGBFConfirmationPopupButtonClicked & ok_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FGBFConfirmationPopupButtonClicked & cancel_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FText & ok_button_text = FText::GetEmpty(),
@@ -107,6 +108,7 @@ public:
     UGBFConfirmationWidget * K2_ShowConfirmationPopup(
         FText title,
         FText content,
+        const EGBFUIDialogType type,
         const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
         const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
         FText ok_button_text,

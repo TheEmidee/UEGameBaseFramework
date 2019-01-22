@@ -462,6 +462,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
                 pc->GetUIDialogManagerComponent()->ShowConfirmationPopup(
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
+                    EGBFUIDialogType::AdditiveOnlyOneVisible,
                     FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                      , &slate_app, input_preprocessor
@@ -538,7 +539,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
                     }
                 } );
 
-            dialog_manager_component->ShowConfirmationPopup( title, content, on_ok_clicked );
+            dialog_manager_component->ShowConfirmationPopup( title, content, EGBFUIDialogType::AdditiveOnlyOneVisible, on_ok_clicked );
         }
     }
 }
