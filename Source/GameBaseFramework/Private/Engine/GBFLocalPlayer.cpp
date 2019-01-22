@@ -38,6 +38,7 @@ UGBFLocalPlayer::UGBFLocalPlayer()
     : SaveGame{ nullptr }
 {
     bAreAchievementsCached = false;
+    SaveGameClass = UGBFSaveGame::StaticClass();
 }
 
 void UGBFLocalPlayer::SetControllerId( int32 new_controller_id )

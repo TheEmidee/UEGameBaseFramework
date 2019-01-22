@@ -14,13 +14,13 @@ struct FGBFUIOptions
 {
     GENERATED_BODY()
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( config, EditAnywhere, Category = UI )
     TSubclassOf< UUserWidget > BackgroundBlurWidgetClass;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( config, EditAnywhere, Category = UI )
     TSubclassOf< UGBFConfirmationWidget > ConfirmationWidgetClass;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( config, EditAnywhere, Category = UI )
     uint8 bConfirmationButtonOnTheLeft : 1;
 };
 
