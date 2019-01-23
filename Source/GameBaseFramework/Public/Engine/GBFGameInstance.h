@@ -9,9 +9,9 @@
 
 class UGBFGameState;
 class UGameBaseFrameworkSettings;
+class USoundMix;
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
 {
     GENERATED_BODY()
@@ -37,6 +37,12 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void GoToState( UGBFGameState * game_state );
+
+    UFUNCTION( BlueprintCallable )
+    void PushSoundMixModifier();
+
+    UFUNCTION( BlueprintCallable )
+    void PopSoundMixModifier();
 
     /*UFUNCTION( BlueprintCallable )
     bool ProfileUISwap( const int controller_index );
@@ -71,6 +77,9 @@ private:
 
     UPROPERTY()
     const UGameBaseFrameworkSettings * Settings;
+
+    UPROPERTY( EditDefaultsOnly )
+    TSoftObjectPtr< USoundMix > SoundMix;
 
     EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
     bool bIsLicensed;

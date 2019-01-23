@@ -11,6 +11,9 @@ class GAMEBASEFRAMEWORK_API AGBFGameModeBase : public AGameModeBase
 
 public:
 
+    void StartPlay() override;
+    void EndPlay( EEndPlayReason::Type reason ) override;
+
     virtual bool CanPauseGame() const;
 
     virtual void HandleAppSuspended();

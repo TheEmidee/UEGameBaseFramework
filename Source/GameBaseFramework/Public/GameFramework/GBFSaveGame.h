@@ -39,6 +39,10 @@ public:
     UFUNCTION( BlueprintCallable )
     void Save();
 
+protected:
+
+    bool bIsDirty;
+
 private:
 
     UPROPERTY()
@@ -55,7 +59,6 @@ private:
 
     FString SlotName;
     int UserIndex;
-    bool bIsDirty;
 };
 
 const FString & UGBFSaveGame::GetSlotName() const

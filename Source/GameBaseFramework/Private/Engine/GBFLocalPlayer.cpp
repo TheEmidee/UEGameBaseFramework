@@ -294,6 +294,8 @@ UGBFSaveGame * UGBFLocalPlayer::LoadSaveGameOrCreateFromSlot( const FString & sl
         result->SetSlotNameAndIndex( slot_name, user_index );
     }
 
+    ReceiveSaveGameLoaded( result );
+
     return result;
 }
 

@@ -17,6 +17,7 @@
 #include "GameFramework/GBFPlayerController.h"
 #include "UI/GBFConfirmationWidget.h"
 #include "Log/GBFLog.h"
+#include "Sound/SoundMix.h"
 
 #if PLATFORM_XBOXONE
 class FGBFXBoxOneDisconnectedInputProcessor : public IInputProcessor
@@ -101,6 +102,11 @@ void UGBFGameInstance::Init()
 
     TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
     TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
+
+    if ( SoundMix.IsValid() )
+    {
+        UAssetManager::GetStreamableManager().RequestAsyncLoad( SoundMix.ToSoftObjectPath() );
+    }
 }
 
 void UGBFGameInstance::Shutdown()
@@ -194,6 +200,22 @@ void UGBFGameInstance::GoToState( UGBFGameState * new_state )
         UGBFHelperBlueprintLibrary::OpenMap( this, new_state->Map );
 
         OnStateChangedEvent.Broadcast( new_state );
+    }
+}
+
+void UGBFGameInstance::PushSoundMixModifier()
+{
+    if ( auto * sound_mix = SoundMix.Get() )
+    {
+        UGameplayStatics::PushSoundMixModifier( this, sound_mix );
+    }
+}
+
+void UGBFGameInstance::PopSoundMixModifier()
+{
+    if ( auto * sound_mix = SoundMix.Get() )
+    {
+        UGameplayStatics::PopSoundMixModifier( this, sound_mix );
     }
 }
 

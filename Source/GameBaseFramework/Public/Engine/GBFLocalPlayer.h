@@ -12,7 +12,7 @@
 
 class UGBFSaveGame;
 
-UCLASS()
+UCLASS( BlueprintType, Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public ULocalPlayer
 {
     GENERATED_BODY()
@@ -40,6 +40,9 @@ protected:
 
     UPROPERTY( EditDefaultsOnly )
     TSubclassOf< UGBFSaveGame > SaveGameClass;
+
+    UFUNCTION( BlueprintImplementableEvent )
+    void ReceiveSaveGameLoaded( UGBFSaveGame * save_game );
 
 private:
 
