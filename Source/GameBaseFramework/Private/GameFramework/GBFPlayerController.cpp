@@ -19,6 +19,19 @@ void AGBFPlayerController::BeginPlay()
     Super::BeginPlay();
 
     UpdateInputRelatedFlags();
+
+#if PLATFORM_DESKTOP
+    PlatformInputSwitcherComponent->OnPlatformInputTypeUpdated().AddUniqueDynamic( this, &AGBFPlayerController::OnPlatformInputTypeUpdatedEvent );
+#endif
+}
+
+void AGBFPlayerController::EndPlay( const EEndPlayReason::Type reason )
+{
+    Super::EndPlay( reason );
+
+#if PLATFORM_DESKTOP
+    PlatformInputSwitcherComponent->OnPlatformInputTypeUpdated().RemoveDynamic( this, &AGBFPlayerController::OnPlatformInputTypeUpdatedEvent );
+#endif
 }
 
 UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const

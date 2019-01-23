@@ -13,7 +13,6 @@ DECLARE_DELEGATE( FGBFConfirmationPopupButtonClicked );
 DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClickedDynamic );
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFConfirmationWidget : public UUserWidget
 {
     GENERATED_BODY()

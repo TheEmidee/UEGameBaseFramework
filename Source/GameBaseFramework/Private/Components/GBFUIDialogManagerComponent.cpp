@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "GameBaseFrameworkSettings.h"
+#include "GBFGameInstance.h"
 
 UGBFUIDialogManagerComponent::UGBFUIDialogManagerComponent()
 {
@@ -122,6 +123,13 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
             stack_entry.UserWidget->SetVisibility( ESlateVisibility::Hidden );
         }
     }
+    else
+    {
+        for ( auto & stack_entry : DialogStack )
+        {
+            stack_entry.UserWidget->SetVisibility( ESlateVisibility::HitTestInvisible );
+        }
+    }
 
     zOrder++;
 
@@ -208,6 +216,8 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
         const auto & last_dialog_options = DialogStack.Last();
 
+        last_dialog_options.UserWidget->SetVisibility( last_dialog_options.OriginalVisibility );
+
         if ( last_dialog_options.Options.bGiveUserFocus )
         {
             must_enable_player_input = false;
@@ -260,6 +270,7 @@ void UGBFUIDialogManagerComponent::CloseAllDialogs( bool show_main_ui /*= true*/
 UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
     const FText & title,
     const FText & content,
+    const EGBFUIDialogType type,
     const FGBFConfirmationPopupButtonClicked & ok_button_clicked /*= FGBFConfirmationPopupButtonClicked()*/,
     const FGBFConfirmationPopupButtonClicked & cancel_button_clicked /*= FGBFConfirmationPopupButtonClicked()*/,
     const FText & ok_button_text /*= FText::GetEmpty()*/,
@@ -274,7 +285,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
             {
                 widget->SetOwningPlayer( OwnerPlayerController.Get() );
 
-                ShowDialog( widget, { true, true, true, EGBFUIDialogType::Exclusive, true } );
+                ShowDialog( widget, { true, true, true, type, true } );
 
                 widget->NativeInitialize( title, content, ok_button_clicked, cancel_button_clicked, ok_button_text, cancel_button_text );
 
@@ -289,6 +300,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
 UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
     FText title,
     FText content,
+    const EGBFUIDialogType type,
     const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
     const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
     FText ok_button_text,
@@ -303,7 +315,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
             {
                 widget->SetOwningPlayer( OwnerPlayerController.Get() );
 
-                ShowDialog( widget, { true, true, true, EGBFUIDialogType::Exclusive, true } );
+                ShowDialog( widget, { true, true, true, type, true } );
 
                 // capture by copy is intended otherwise the delegate is destructed
                 auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ ok_button_clicked ]()

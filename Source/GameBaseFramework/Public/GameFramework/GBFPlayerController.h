@@ -11,7 +11,6 @@ class UGBFUIDialogManagerComponent;
 class UGBFLocalPlayer;
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public APlayerController
 {
     GENERATED_BODY()
@@ -27,6 +26,7 @@ public:
     FORCEINLINE UGBFUIDialogManagerComponent * GetUIDialogManagerComponent() const;
 
     void BeginPlay() override;
+    void EndPlay( const EEndPlayReason::Type reason ) override;
 
     UFUNCTION( BlueprintPure )
     UGBFLocalPlayer * GetGBFLocalPlayer() const;

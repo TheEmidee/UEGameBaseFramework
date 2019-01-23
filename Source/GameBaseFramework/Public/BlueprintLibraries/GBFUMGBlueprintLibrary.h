@@ -9,16 +9,25 @@
 class UUserWidget;
 class UWidget;
 
-UCLASS()
+class UGBFSaveGame;
+class UGBFUIDialogManagerComponent;
+class UGBFPlatformInputSwitcherComponent;
 
+UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFUMGBlueprintLibrary : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 
 public:
 
-    UFUNCTION( BlueprintPure, Category="UMG" )
+    UFUNCTION( BlueprintPure, Category="UMG", Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
     static UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponentFromOwningPlayer( bool & success, UUserWidget * widget );
+
+    UFUNCTION( BlueprintPure, Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
+    static UGBFUIDialogManagerComponent * GetDialogManagerComponentFromOwningPlayer( bool & success, UUserWidget * widget );
+
+    UFUNCTION( BlueprintPure, Category = "UMG", Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
+    static UGBFSaveGame * GetSaveGameFromOwningPlayer( bool & success, UUserWidget * widget );
 
     template< class _WIDGET_TYPE_ >
     static _WIDGET_TYPE_ * GetFirstChildWidgetOfClass( UWidget * parent_widget )

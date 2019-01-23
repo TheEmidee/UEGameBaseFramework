@@ -13,7 +13,6 @@
 class UGBFSaveGame;
 
 UCLASS()
-
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public ULocalPlayer
 {
     GENERATED_BODY()
@@ -37,12 +36,18 @@ public:
     UFUNCTION( BlueprintCallable )
     void WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count );
 
+protected:
+
+    UPROPERTY( EditDefaultsOnly )
+    TSubclassOf< UGBFSaveGame > SaveGameClass;
+
 private:
 
     FString GetSaveGameFilename() const;
 
     void QueryAchievements();
     void LoadSaveGame();
+    UGBFSaveGame * LoadSaveGameOrCreateFromSlot( const FString & slot_name, int user_index );
     void CheckChangedControllerId( const FString & save_name );
     void OnQueryAchievementsComplete( const FUniqueNetId & player_id, bool was_successful );
 
