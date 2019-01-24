@@ -23,30 +23,6 @@ void UGBFSaveGame::SetSlotNameAndIndex( const FString & slot_name, const int use
     UserIndex = user_index;
 }
 
-bool UGBFSaveGame::SaveSlotToDisk()
-{
-    if ( IsDirty() )
-    {
-        if ( SlotName.IsEmpty() )
-        {
-            return false;
-        }
-
-        //FGBFSaveIndicatorScope = GetGBFGameInstance()->GetSaveIndicatorScope();
-
-        const auto save_to_slot_result = UGameplayStatics::SaveGameToSlot( this, SlotName, UserIndex );
-
-        if ( save_to_slot_result )
-        {
-            bIsDirty = false;
-        }
-
-        return save_to_slot_result;
-    }
-
-    return true;
-}
-
 void UGBFSaveGame::UpdateAchievementCurrentCount( const FName & achievement_id, int current_count )
 {
     AchievementsCurrentCountMap.FindOrAdd( achievement_id ) = current_count;
@@ -94,7 +70,26 @@ void UGBFSaveGame::SetEnableSubtitles( const bool new_value )
     bIsDirty = true;
 }
 
-void UGBFSaveGame::Save()
+bool UGBFSaveGame::Save()
 {
-    SaveSlotToDisk();
+    if ( IsDirty() )
+    {
+        if ( !ensure( !SlotName.IsEmpty() ) )
+        {
+            return false;
+        }
+
+        OnSaveGameSavedEvent.Broadcast();
+
+        const auto save_to_slot_result = UGameplayStatics::SaveGameToSlot( this, SlotName, UserIndex );
+
+        if ( save_to_slot_result )
+        {
+            bIsDirty = false;
+        }
+
+        return save_to_slot_result;
+    }
+
+    return true;
 }

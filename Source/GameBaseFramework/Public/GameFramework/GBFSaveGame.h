@@ -11,6 +11,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 
 public:
 
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnSaveGameSavedEvent );
+
     UGBFSaveGame();
 
     FORCEINLINE const FString & GetSlotName() const;
@@ -23,7 +25,6 @@ public:
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
     void SetSlotNameAndIndex( const FString & slot_name, const int user_index );
-    bool SaveSlotToDisk();
     void UpdateAchievementCurrentCount( const FName & achievement_id, int current_count );
     void ResetAchievementsProgression();
 
@@ -37,13 +38,16 @@ public:
     void SetEnableSubtitles( const bool new_value );
 
     UFUNCTION( BlueprintCallable )
-    void Save();
+    bool Save();
 
 protected:
 
     bool bIsDirty;
 
 private:
+
+    UPROPERTY( BlueprintAssignable, meta = ( AllowPrivateAccess = true ) )
+    FOnSaveGameSavedEvent OnSaveGameSavedEvent;
 
     UPROPERTY()
     TMap< FName, int > AchievementsCurrentCountMap;
