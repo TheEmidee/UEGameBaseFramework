@@ -44,11 +44,15 @@ public:
     UFUNCTION( BlueprintCallable )
     void PopSoundMixModifier();
 
-    /*UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable )
     bool ProfileUISwap( const int controller_index );
 
     bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
-    */
+
+    UFUNCTION( BlueprintCallable )
+    void SetPresenceForLocalPlayer( const FText & status );
+
+    ULocalPlayer * GetFirstLocalPlayer() const;
 
 private:
 
@@ -71,6 +75,7 @@ private:
     void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
     void HandleSignInChangeMessaging();
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
+    void OnLoginUIClosed( TSharedPtr< const FUniqueNetId > UniqueId, int controller_index, const FOnlineError & error );
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;

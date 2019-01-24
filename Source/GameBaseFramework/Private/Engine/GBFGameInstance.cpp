@@ -18,6 +18,7 @@
 #include "UI/GBFConfirmationWidget.h"
 #include "Log/GBFLog.h"
 #include "Sound/SoundMix.h"
+#include "OnlineExternalUIInterface.h"
 
 #if PLATFORM_XBOXONE
 class FGBFXBoxOneDisconnectedInputProcessor : public IInputProcessor
@@ -193,6 +194,8 @@ void UGBFGameInstance::GoToWelcomeScreenState()
 
 void UGBFGameInstance::GoToState( UGBFGameState * new_state )
 {
+    check( new_state != nullptr );
+
     if ( CurrentGameState.Get() != new_state )
     {
         CurrentGameState = new_state;
@@ -200,6 +203,11 @@ void UGBFGameInstance::GoToState( UGBFGameState * new_state )
         UGBFHelperBlueprintLibrary::OpenMap( this, new_state->Map );
 
         OnStateChangedEvent.Broadcast( new_state );
+
+        if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
+        {
+            SetPresenceForLocalPlayer( new_state->OnlinePresenceText );
+        }
     }
 }
 
@@ -217,6 +225,72 @@ void UGBFGameInstance::PopSoundMixModifier()
     {
         UGameplayStatics::PopSoundMixModifier( this, sound_mix );
     }
+}
+
+bool UGBFGameInstance::ProfileUISwap( const int controller_index )
+{
+    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda(
+        [ this ] ( TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & )
+    {
+        if ( unique_net_id->IsValid() )
+        {
+            GoToWelcomeScreenState();
+        }
+    } ) );
+}
+
+bool UGBFGameInstance::ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate )
+{
+    if ( ensure( !LoginUIClosedDelegate.IsBound() ) )
+    {
+        if ( const auto * oss = IOnlineSubsystem::Get() )
+        {
+            const auto external_ui_interface = oss->GetExternalUIInterface();
+
+            if ( external_ui_interface.IsValid() )
+            {
+                LoginUIClosedDelegate = delegate;
+                IgnorePairingChangeForControllerId = controller_index;
+
+                if ( external_ui_interface->ShowLoginUI( controller_index, false, false, FOnLoginUIClosedDelegate::CreateUObject( this, &UGBFGameInstance::OnLoginUIClosed ) ) )
+                {
+                    return true;
+                }
+                IgnorePairingChangeForControllerId = -1;
+            }
+        }
+    }
+
+    return false;
+}
+
+void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status )
+{
+    const auto presence_interface = Online::GetPresenceInterface();
+
+    if ( presence_interface.IsValid() )
+    {
+        auto user_id = GetFirstLocalPlayer()->GetPreferredUniqueNetId();
+
+        if ( user_id.IsValid()
+             && user_id->IsValid()
+             )
+        {
+            FOnlineUserPresenceStatus presence_status;
+            // Not ideal to convert from FText to FString since we could potentially loose conversion for some languages
+            // but the whole presence API treats FString only
+            presence_status.Properties.Add( DefaultPresenceKey, FVariantData( status.ToString() ) );
+
+            presence_interface->SetPresence( *user_id, presence_status );
+        }
+    }
+}
+
+ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
+{
+    return LocalPlayers.Num() > 0
+        ? LocalPlayers[ 0 ]
+        : nullptr;
 }
 
 // -- PRIVATE
@@ -563,5 +637,35 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
 
             dialog_manager_component->ShowConfirmationPopup( title, content, EGBFUIDialogType::AdditiveOnlyOneVisible, on_ok_clicked );
         }
+    }
+}
+
+void UGBFGameInstance::OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, const int controller_index, const FOnlineError & error )
+{
+    IgnorePairingChangeForControllerId = -1;
+
+    // If the id is null, the user backed out
+
+    if ( unique_id.IsValid()
+         && unique_id->IsValid()
+         && CurrentUniqueNetId.IsValid()
+         && *CurrentUniqueNetId == *unique_id
+         )
+    {
+        LoginUIClosedDelegate.Unbind();
+        return;
+    }
+
+    if ( LoginUIClosedDelegate.IsBound() )
+    {
+        LoginUIClosedDelegate.Execute( unique_id, controller_index, error );
+        LoginUIClosedDelegate.Unbind();
+    }
+
+    if ( unique_id.IsValid()
+         && unique_id->IsValid()
+         )
+    {
+        CurrentUniqueNetId = unique_id;
     }
 }

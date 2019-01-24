@@ -22,4 +22,7 @@ public:
 
     UPROPERTY( EditAnywhere )
     TSoftObjectPtr< UWorld > Map;
+
+    UPROPERTY( EditAnywhere )
+    FText OnlinePresenceText;
 };
