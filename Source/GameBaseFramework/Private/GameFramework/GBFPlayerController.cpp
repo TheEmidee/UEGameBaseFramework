@@ -39,6 +39,46 @@ UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const
     return Cast< UGBFLocalPlayer >( GetLocalPlayer() );
 }
 
+void AGBFPlayerController::EnableInput( class APlayerController * player_controller )
+{
+    if ( GetWorldTimerManager().IsTimerActive( ReEnableInputTimerHandle ) )
+    {
+        return;
+    }
+
+    Super::EnableInput( player_controller );
+}
+
+void AGBFPlayerController::DisableInput( class APlayerController * player_controller )
+{
+    GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
+    Super::DisableInput( player_controller );
+}
+
+void AGBFPlayerController::ForceEnableInput( class APlayerController * player_controller )
+{
+    GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
+    Super::EnableInput( player_controller );
+}
+
+void AGBFPlayerController::DisableInputForDuration( const float duration )
+{
+    DisableInput( nullptr );
+
+    if ( !ReEnableInputTimerHandle.IsValid()
+         || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < duration
+         )
+    {
+        auto enable_input = [ this ] ()
+        {
+            GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
+            EnableInput( nullptr );
+        };
+
+        GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, duration, false );
+    }
+}
+
 // -- PRIVATE
 
 void AGBFPlayerController::OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type )

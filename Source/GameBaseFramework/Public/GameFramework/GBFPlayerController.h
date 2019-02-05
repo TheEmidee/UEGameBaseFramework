@@ -31,6 +31,14 @@ public:
     UFUNCTION( BlueprintPure )
     UGBFLocalPlayer * GetGBFLocalPlayer() const;
 
+    void EnableInput( class APlayerController * player_controller ) override;
+    void DisableInput( class APlayerController * player_controller ) override;
+
+    UFUNCTION( BlueprintCallable )
+    void ForceEnableInput( class APlayerController * player_controller );
+
+    void DisableInputForDuration( float duration );
+
 private:
 
     UFUNCTION()
@@ -43,6 +51,8 @@ private:
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFUIDialogManagerComponent * UIDialogManagerComponent;
+
+    FTimerHandle ReEnableInputTimerHandle;
 };
 
 #if PLATFORM_DESKTOP
