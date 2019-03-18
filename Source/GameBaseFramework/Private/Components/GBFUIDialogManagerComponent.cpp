@@ -179,8 +179,8 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
         return;
     }
 
-    auto stack_entry = DialogStack.Pop();
-    stack_entry.UserWidget->RemoveFromViewport();
+    auto last_stack_entry = DialogStack.Pop();
+    last_stack_entry.UserWidget->RemoveFromViewport();
 
     zOrder--;
 

@@ -21,7 +21,7 @@ enum class EGBFVirtualKey : uint8
 };
 
 UENUM( BlueprintType )
-enum EGBFVirtualKeyProcessedFirst
+enum class EGBFVirtualKeyProcessedFirst : uint8
 {
     None = 1 << 0,
     GamepadOnly = 1 << 1,
@@ -29,13 +29,23 @@ enum EGBFVirtualKeyProcessedFirst
     Both = GamepadOnly | KeyboardOnly
 };
 
+FORCEINLINE EGBFVirtualKeyProcessedFirst operator| ( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
+{
+    return static_cast< EGBFVirtualKeyProcessedFirst >( static_cast< uint8 >( lhs ) | static_cast< uint8 >( rhs ) );
+}
+
+FORCEINLINE EGBFVirtualKeyProcessedFirst operator& ( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
+{
+    return static_cast< EGBFVirtualKeyProcessedFirst >( static_cast< uint8 >( lhs ) & static_cast< uint8 >( rhs ) );
+}
+
 USTRUCT( BlueprintType )
 struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 {
     GENERATED_BODY()
 
     FGBFPlatformInputKey()
-        : ProcessVirtualKeyFirstFlag( Both )
+        : ProcessVirtualKeyFirstFlag( EGBFVirtualKeyProcessedFirst::Both )
     {
     }
 
@@ -49,7 +59,7 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
     EGBFVirtualKey VirtualKey;
 
     UPROPERTY( BlueprintReadWrite, EditAnywhere )
-    TEnumAsByte< EGBFVirtualKeyProcessedFirst > ProcessVirtualKeyFirstFlag;
+    EGBFVirtualKeyProcessedFirst ProcessVirtualKeyFirstFlag;
 };
 
 USTRUCT(BlueprintType)

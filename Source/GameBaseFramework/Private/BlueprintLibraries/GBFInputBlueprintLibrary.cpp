@@ -50,7 +50,7 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
     if ( platform_input_type == EGBFPlatformInputType::Gamepad )
 #endif
     {
-        if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & GamepadOnly ) == GamepadOnly )
+        if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & EGBFVirtualKeyProcessedFirst::GamepadOnly ) == EGBFVirtualKeyProcessedFirst::GamepadOnly )
         {
             switch ( platform_input_key.VirtualKey )
             {
@@ -71,7 +71,7 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
         return platform_input_key.GamePadKey;
     }
 #if PLATFORM_DESKTOP
-    if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & KeyboardOnly ) == KeyboardOnly )
+    if ( ( platform_input_key.ProcessVirtualKeyFirstFlag & EGBFVirtualKeyProcessedFirst::KeyboardOnly ) == EGBFVirtualKeyProcessedFirst::KeyboardOnly )
     {
         switch ( platform_input_key.VirtualKey )
         {
