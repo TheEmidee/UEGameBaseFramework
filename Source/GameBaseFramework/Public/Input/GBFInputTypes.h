@@ -44,8 +44,9 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 {
     GENERATED_BODY()
 
-    FGBFPlatformInputKey()
-        : ProcessVirtualKeyFirstFlag( EGBFVirtualKeyProcessedFirst::Both )
+    FGBFPlatformInputKey() : 
+        VirtualKey( EGBFVirtualKey::None ),
+        ProcessVirtualKeyFirstFlag( EGBFVirtualKeyProcessedFirst::Both )
     {
     }
 
