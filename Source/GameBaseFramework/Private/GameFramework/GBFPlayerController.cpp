@@ -65,8 +65,15 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
 {
     DisableInput( nullptr );
 
+    auto new_duration = duration;
+
+    if ( ensureMsgf( duration > 0.0f, TEXT( "DisableInputForDuration must be called with a valid duration" ) ) )
+    {
+        new_duration = 1.0f;
+    }
+
     if ( !ReEnableInputTimerHandle.IsValid()
-         || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < duration
+         || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration
          )
     {
         auto enable_input = [ this ] ()
@@ -75,7 +82,7 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
             EnableInput( nullptr );
         };
 
-        GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, duration, false );
+        GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, new_duration, false );
     }
 }
 

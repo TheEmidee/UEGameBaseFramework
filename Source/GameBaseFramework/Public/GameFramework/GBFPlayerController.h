@@ -37,7 +37,7 @@ public:
     UFUNCTION( BlueprintCallable )
     void ForceEnableInput( class APlayerController * player_controller );
 
-    void DisableInputForDuration( float duration );
+    void DisableInputForDuration( const float duration );
 
 private:
 
