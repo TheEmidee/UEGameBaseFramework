@@ -1,6 +1,9 @@
 #pragma once
 
-#include "Engine/DeveloperSettings.h"
+#include <CoreMinimal.h>
+#include <Templates/SubclassOf.h>
+#include <Engine/DeveloperSettings.h>
+
 #include "GameBaseFrameworkSettings.generated.h"
 
 class UUserWidget;
@@ -42,13 +45,12 @@ struct FGBFInputSwitchOptions
     float MouseMoveMinDelta;
 };
 
-UCLASS( config = GameBaseFramework, defaultconfig, meta=( DisplayName="GameBaseFramework" ) )
+UCLASS( config = GameBaseFramework, defaultconfig, meta = ( DisplayName = "GameBaseFramework" ) )
 class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
 
 public:
-
     FName GetCategoryName() const override;
 
 #if WITH_EDITOR
@@ -76,7 +78,6 @@ public:
     FGBFUIOptions UIOptions;
 
 protected:
-
 #if WITH_EDITOR
     static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
 #endif

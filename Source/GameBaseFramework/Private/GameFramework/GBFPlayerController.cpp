@@ -5,6 +5,8 @@
 #include "GBFLocalPlayer.h"
 #include "GBFSaveGame.h"
 
+#include <TimerManager.h>
+
 AGBFPlayerController::AGBFPlayerController()
 {
 #if PLATFORM_DESKTOP

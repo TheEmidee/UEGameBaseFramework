@@ -1,17 +1,18 @@
 #include "GBFLocalPlayer.h"
 
-#include "Application/SlateApplication.h"
-#include "Engine/World.h"
-#include "Interfaces/OnlineIdentityInterface.h"
-#include "Interfaces/OnlineAchievementsInterface.h"
-#include "Internationalization/Internationalization.h"
-#include "Internationalization/Culture.h"
-#include "OnlineSubsystem.h"
-#include "OnlineSubsystemNames.h"
-#include "Online.h"
-
-#include "GameFramework/GBFSaveGame.h"
 #include "GBFLog.h"
+#include "GameFramework/GBFSaveGame.h"
+
+#include <Application/SlateApplication.h>
+#include <Engine/World.h>
+#include <Interfaces/OnlineAchievementsInterface.h>
+#include <Interfaces/OnlineIdentityInterface.h>
+#include <Internationalization/Culture.h>
+#include <Internationalization/Internationalization.h>
+#include <Kismet/GameplayStatics.h>
+#include <Online.h>
+#include <OnlineSubsystem.h>
+#include <OnlineSubsystemNames.h>
 
 IOnlineAchievementsPtr LOCAL_GetOnlineAchievementsInterface()
 {
@@ -34,8 +35,8 @@ IOnlineAchievementsPtr LOCAL_GetOnlineAchievementsInterface()
 
 // --
 
-UGBFLocalPlayer::UGBFLocalPlayer()
-    : SaveGame{ nullptr }
+UGBFLocalPlayer::UGBFLocalPlayer() :
+    SaveGame { nullptr }
 {
     bAreAchievementsCached = false;
     SaveGameClass = UGBFSaveGame::StaticClass();
@@ -59,9 +60,7 @@ FString UGBFLocalPlayer::GetDisplayName() const
 {
     const auto online_subsystem = IOnlineSubsystem::Get();
 
-    if ( online_subsystem != nullptr
-        && online_subsystem->GetSubsystemName() != NULL_SUBSYSTEM
-        )
+    if ( online_subsystem != nullptr && online_subsystem->GetSubsystemName() != NULL_SUBSYSTEM )
     {
         const auto display_name = GetNickname();
 
@@ -78,7 +77,7 @@ UGBFSaveGame * UGBFLocalPlayer::GetSaveGame() const
 {
     if ( SaveGame == nullptr )
     {
-        auto mutable_this = const_cast< UGBFLocalPlayer* >( this );
+        auto mutable_this = const_cast< UGBFLocalPlayer * >( this );
 
         mutable_this->LoadSaveGame();
     }
@@ -94,9 +93,7 @@ FPlatformUserId UGBFLocalPlayer::GetPlatformUserId() const
     auto identity_interface = Online::GetIdentityInterface();
     auto unique_id = GetPreferredUniqueNetId();
 
-    if ( identity_interface.IsValid()
-        && unique_id.IsValid()
-        )
+    if ( identity_interface.IsValid() && unique_id.IsValid() )
     {
         platform_user_id = identity_interface->GetPlatformUserIdFromUniqueNetId( *unique_id );
     }
@@ -134,9 +131,7 @@ void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
 
     const auto & culture_name = GetSaveGame()->GetActiveCulture();
 
-    if ( !culture_name.IsEmpty()
-        && culture_name != FInternationalization::Get().GetCurrentCulture()->GetName()
-        )
+    if ( !culture_name.IsEmpty() && culture_name != FInternationalization::Get().GetCurrentCulture()->GetName() )
     {
         FInternationalization::Get().SetCurrentCulture( culture_name );
     }
@@ -150,9 +145,7 @@ void UGBFLocalPlayer::SetPresenceStatus( const FText & status ) const
     {
         const auto user_id = GetPreferredUniqueNetId();
 
-        if ( user_id.IsValid()
-            && user_id->IsValid()
-            )
+        if ( user_id.IsValid() && user_id->IsValid() )
         {
             FOnlineUserPresenceStatus presence_status;
             // Not ideal to convert from FText to FString since we could potentially loose conversion for some languages
@@ -182,11 +175,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
 
     auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
 
-    if ( achievements_interface.IsValid()
-        && ( !OnlineAchievementWriter.IsValid()
-            || OnlineAchievementWriter->WriteState != EOnlineAsyncTaskState::InProgress
-            )
-        )
+    if ( achievements_interface.IsValid() && ( !OnlineAchievementWriter.IsValid() || OnlineAchievementWriter->WriteState != EOnlineAsyncTaskState::InProgress ) )
     {
         const auto progression = 100.0f * current_count / trigger_count;
 
@@ -194,8 +183,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
         OnlineAchievementWriter->SetFloatStat( achievement_id, progression );
 
         FOnlineAchievementsWriteRef online_achievement_writer_ref = OnlineAchievementWriter.ToSharedRef();
-        FOnAchievementsWrittenDelegate delegate = FOnAchievementsWrittenDelegate::CreateLambda( [ this, achievement_id, progression ] ( const FUniqueNetId & player_id, const bool was_successful )
-        {
+        FOnAchievementsWrittenDelegate delegate = FOnAchievementsWrittenDelegate::CreateLambda( [this, achievement_id, progression]( const FUniqueNetId & player_id, const bool was_successful ) {
             if ( was_successful )
             {
                 UE_LOG( LogGBF_OSS, Error, TEXT( "OnWriteAchievementEnded Success" ) );
@@ -226,9 +214,7 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
 #else
     const auto online_subsystem = IOnlineSubsystem::Get();
 
-    if ( online_subsystem != nullptr
-        && online_subsystem->GetSubsystemName() == NULL_SUBSYSTEM
-        )
+    if ( online_subsystem != nullptr && online_subsystem->GetSubsystemName() == NULL_SUBSYSTEM )
     {
         return FGenericPlatformMisc::GetLoginId();
     }
@@ -302,12 +288,7 @@ UGBFSaveGame * UGBFLocalPlayer::LoadSaveGameOrCreateFromSlot( const FString & sl
 void UGBFLocalPlayer::CheckChangedControllerId( const FString & save_name )
 {
     // if we changed controller id / user, then we need to load the appropriate persistent user.
-    if ( SaveGame != nullptr
-        && (
-            GetControllerId() != SaveGame->GetUserIndex()
-            || save_name != SaveGame->GetName()
-        )
-        )
+    if ( SaveGame != nullptr && ( GetControllerId() != SaveGame->GetUserIndex() || save_name != SaveGame->GetName() ) )
     {
         SaveGame = nullptr;
     }

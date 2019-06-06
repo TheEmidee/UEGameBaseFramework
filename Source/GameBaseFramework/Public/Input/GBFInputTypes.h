@@ -1,9 +1,12 @@
 #pragma once
 
-#include "Engine/DataTable.h"
-#include "Engine/DataAsset.h"
+#include <Engine/DataAsset.h>
+#include <Engine/DataTable.h>
+#include <InputCoreTypes.h>
 
 #include "GBFInputTypes.generated.h"
+
+class UTexture2D;
 
 UENUM( BlueprintType )
 enum class EGBFPlatformInputType : uint8
@@ -29,12 +32,12 @@ enum class EGBFVirtualKeyProcessedFirst : uint8
     Both = GamepadOnly | KeyboardOnly
 };
 
-FORCEINLINE EGBFVirtualKeyProcessedFirst operator| ( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
+FORCEINLINE EGBFVirtualKeyProcessedFirst operator|( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
 {
     return static_cast< EGBFVirtualKeyProcessedFirst >( static_cast< uint8 >( lhs ) | static_cast< uint8 >( rhs ) );
 }
 
-FORCEINLINE EGBFVirtualKeyProcessedFirst operator& ( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
+FORCEINLINE EGBFVirtualKeyProcessedFirst operator&( EGBFVirtualKeyProcessedFirst lhs, EGBFVirtualKeyProcessedFirst rhs )
 {
     return static_cast< EGBFVirtualKeyProcessedFirst >( static_cast< uint8 >( lhs ) & static_cast< uint8 >( rhs ) );
 }
@@ -44,7 +47,7 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
 {
     GENERATED_BODY()
 
-    FGBFPlatformInputKey() : 
+    FGBFPlatformInputKey() :
         VirtualKey( EGBFVirtualKey::None ),
         ProcessVirtualKeyFirstFlag( EGBFVirtualKeyProcessedFirst::Both )
     {
@@ -63,13 +66,12 @@ struct GAMEBASEFRAMEWORK_API FGBFPlatformInputKey
     EGBFVirtualKeyProcessedFirst ProcessVirtualKeyFirstFlag;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT( BlueprintType )
 struct FGBFPlatformInputTextureData : public FTableRowBase
 {
     GENERATED_USTRUCT_BODY()
 
 public:
-
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FKey Key;
 
@@ -83,7 +85,6 @@ class GAMEBASEFRAMEWORK_API UGBFPlatformInputTextures : public UDataAsset
     GENERATED_BODY()
 
 public:
-
 #if WITH_EDITOR
     void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
@@ -98,7 +99,6 @@ public:
     TMap< FString, TSoftObjectPtr< UDataTable > > PlatformInputToTextureMap;
 
 protected:
-
 #if WITH_EDITOR
     static FOnPlatformInputTexturesChanged PlatformInputTexturesChangedDelegate;
 #endif

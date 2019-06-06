@@ -1,32 +1,36 @@
 #include "GBFGameInstance.h"
 
-#include "SoftObjectPtr.h"
-#include "Online.h"
-#include "OnlineSubsystem.h"
-#include "Containers/Ticker.h"
-#include "Engine/Canvas.h"
-#include "GameFramework/GameModeBase.h"
-
-#include "GBFTypes.h"
-#include "GBFGameState.h"
-#include "GBFLocalPlayer.h"
-#include "GameBaseFrameworkSettings.h"
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Components/GBFUIDialogManagerComponent.h"
+#include "GBFGameState.h"
+#include "GBFLocalPlayer.h"
+#include "GBFTypes.h"
+#include "GameBaseFrameworkSettings.h"
 #include "GameFramework/GBFGameModeBase.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "UI/GBFConfirmationWidget.h"
 #include "Log/GBFLog.h"
 #include "Sound/SoundMix.h"
-#include "OnlineExternalUIInterface.h"
+#include "UI/GBFConfirmationWidget.h"
+
+#include <SlateApplication.h>
+#include <Containers/Ticker.h>
+#include <CoreDelegates.h>
+#include <Engine/AssetManager.h>
+#include <Engine/Canvas.h>
+#include <Kismet/GameplayStatics.h>
+#include <GameFramework/GameModeBase.h>
+#include <Online.h>
+#include <OnlineExternalUIInterface.h>
+#include <OnlineSubsystem.h>
+#include <SoftObjectPtr.h>
 
 #if PLATFORM_XBOXONE
 class FGBFXBoxOneDisconnectedInputProcessor : public IInputProcessor
 {
 public:
-    virtual void Tick( const float delta_time, FSlateApplication & slate_application, TSharedRef<ICursor> cursor ) {};
+    virtual void Tick( const float delta_time, FSlateApplication & slate_application, TSharedRef< ICursor > cursor ) {};
 
-    virtual bool HandleKeyUpEvent( FSlateApplication & slate_application, const FKeyEvent & key_event) override
+    virtual bool HandleKeyUpEvent( FSlateApplication & slate_application, const FKeyEvent & key_event ) override
     {
         auto controller_index = key_event.GetUserIndex();
 
@@ -42,21 +46,21 @@ public:
         }
 
         return false;
-}
+    }
 };
 #endif
 
 #if PLATFORM_PS4
-static void LOCAL_ExtendedSaveGameInfoDelegate( const TCHAR* save_name, const EGameDelegates_SaveGame key, FString & value )
+static void LOCAL_ExtendedSaveGameInfoDelegate( const TCHAR * save_name, const EGameDelegates_SaveGame key, FString & value )
 {
     // Fill save parameter : size - icon path - etc...
 }
 #endif
 
-UGBFGameInstance::UGBFGameInstance()
-    :
+UGBFGameInstance::UGBFGameInstance() :
     bIsLicensed( true ) // Default to licensed (should have been checked by OS on boot)
-    , IgnorePairingChangeForControllerId( -1 )
+    ,
+    IgnorePairingChangeForControllerId( -1 )
 {
 }
 
@@ -143,8 +147,7 @@ bool UGBFGameInstance::IsOnWelcomeScreenState() const
 
 bool UGBFGameInstance::Tick( float delta_seconds )
 {
-    if ( !IsOnWelcomeScreenState()
-        && LocalPlayers.Num() > 0 )
+    if ( !IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
     {
         if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
         {
@@ -153,15 +156,12 @@ bool UGBFGameInstance::Tick( float delta_seconds )
                 const auto is_displaying_dialog = player_controller->GetUIDialogManagerComponent()->IsDisplayingDialog();
 
                 // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
-                if ( !bIsLicensed
-                    && !is_displaying_dialog
-                    )
+                if ( !bIsLicensed && !is_displaying_dialog )
                 {
                     ShowMessageThenGotoState(
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
-                        Settings->WelcomeScreenGameState.Get()
-                        );
+                        Settings->WelcomeScreenGameState.Get() );
 
                     return true;
                 }
@@ -229,9 +229,7 @@ void UGBFGameInstance::PopSoundMixModifier()
 
 bool UGBFGameInstance::ProfileUISwap( const int controller_index )
 {
-    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda(
-        [ this ] ( TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & )
-    {
+    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
         if ( unique_net_id->IsValid() )
         {
             GoToWelcomeScreenState();
@@ -272,9 +270,7 @@ void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status )
     {
         auto user_id = GetFirstLocalPlayer()->GetPreferredUniqueNetId();
 
-        if ( user_id.IsValid()
-             && user_id->IsValid()
-             )
+        if ( user_id.IsValid() && user_id->IsValid() )
         {
             FOnlineUserPresenceStatus presence_status;
             // Not ideal to convert from FText to FString since we could potentially loose conversion for some languages
@@ -289,16 +285,15 @@ void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status )
 ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
 {
     return LocalPlayers.Num() > 0
-        ? LocalPlayers[ 0 ]
-        : nullptr;
+               ? LocalPlayers[ 0 ]
+               : nullptr;
 }
 
 // -- PRIVATE
 
 const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
 {
-    auto predicate = [ game_mode_class ]( auto state_soft_ptr )
-    {
+    auto predicate = [game_mode_class]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->GameModeClass == game_mode_class;
     };
 
@@ -314,8 +309,7 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name )
 {
     UGBFGameState * result = nullptr;
 
-    auto predicate = [ state_name ]( auto state_soft_ptr )
-    {
+    auto predicate = [state_name]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->Name == state_name;
     };
 
@@ -326,8 +320,7 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name )
 
 bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) const
 {
-    return state != nullptr
-        && Settings->WelcomeScreenGameState.Get() == state;
+    return state != nullptr && Settings->WelcomeScreenGameState.Get() == state;
 }
 
 void UGBFGameInstance::LoadGameStates()
@@ -397,10 +390,7 @@ void UGBFGameInstance::HandleAppReactivateOrForeground()
         {
             if ( auto * lp = Cast< UGBFLocalPlayer >( LocalPlayers[ i ] ) )
             {
-                if ( lp->GetCachedUniqueNetId().IsValid()
-                    && LocalPlayerOnlineStatus[ i ] == ELoginStatus::LoggedIn
-                    && lp->GetLoginStatus() != ELoginStatus::LoggedIn
-                    )
+                if ( lp->GetCachedUniqueNetId().IsValid() && LocalPlayerOnlineStatus[ i ] == ELoginStatus::LoggedIn && lp->GetLoginStatus() != ELoginStatus::LoggedIn )
                 {
                     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleAppReactivateOrForeground: Signed out during resume." ) );
                     HandleSignInChangeMessaging();
@@ -454,8 +444,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
     // update game_user_index based on previous controller index from stable index
 #endif
 
-    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ),
-        game_user_index, *previous_user.ToString(), *new_user.ToString() );
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ), game_user_index, *previous_user.ToString(), *new_user.ToString() );
 
     if ( IsOnWelcomeScreenState() )
     {
@@ -465,28 +454,22 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
     if ( IgnorePairingChangeForControllerId != -1 && game_user_index == IgnorePairingChangeForControllerId )
     {
         // We were told to ignore
-        IgnorePairingChangeForControllerId = -1;	// Reset now so there there is no chance this remains in a bad state
+        IgnorePairingChangeForControllerId = -1; // Reset now so there there is no chance this remains in a bad state
         return;
     }
 
-    if ( previous_user.IsValid()
-         && !new_user.IsValid()
-         )
+    if ( previous_user.IsValid() && !new_user.IsValid() )
     {
         // Treat this as a disconnect or signout, which is handled somewhere else
         return;
     }
 
-    if ( !previous_user.IsValid()
-         && new_user.IsValid()
-         )
+    if ( !previous_user.IsValid() && new_user.IsValid() )
     {
         // Treat this as a signin
         ULocalPlayer * controlled_local_player = FindLocalPlayerFromControllerId( game_user_index );
 
-        if ( controlled_local_player != nullptr
-             && !controlled_local_player->GetCachedUniqueNetId().IsValid()
-             )
+        if ( controlled_local_player != nullptr && !controlled_local_player->GetCachedUniqueNetId().IsValid() )
         {
             // If a player that previously selected "continue without saving" signs into this controller, move them back to welcome screen
             HandleSignInChangeMessaging();
@@ -495,9 +478,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
         return;
     }
 
-    if ( previous_user.IsValid()
-         && new_user.IsValid()
-         )
+    if ( previous_user.IsValid() && new_user.IsValid() )
     {
         check( previous_user != new_user );
         check( previous_user == *CurrentUniqueNetId );
@@ -511,9 +492,7 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*s
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
-    if ( !IsOnWelcomeScreenState()
-        && connection_status != EOnlineServerConnectionStatus::Connected
-        )
+    if ( !IsOnWelcomeScreenState() && connection_status != EOnlineServerConnectionStatus::Connected )
     {
         UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
 
@@ -549,7 +528,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
         {
 #if PLATFORM_XBOXONE
             auto & slate_app = FSlateApplication::Get();
-            TSharedPtr<IInputProcessor> input_preprocessor = MakeShared< FGBFXBoxOneDisconnectedInputProcessor >();
+            TSharedPtr< IInputProcessor > input_preprocessor = MakeShared< FGBFXBoxOneDisconnectedInputProcessor >();
 
             slate_app.RegisterInputPreProcessor( input_preprocessor );
 #endif
@@ -559,16 +538,17 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
                     EGBFUIDialogType::AdditiveOnlyOneVisible,
-                    FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
+                    FGBFConfirmationPopupButtonClicked::CreateLambda( [this
 #if PLATFORM_XBOXONE
-                                                                     , &slate_app, input_preprocessor
+                                                                          ,
+                                                                          &slate_app,
+                                                                          input_preprocessor
 #endif
-                        ]()
-                        {
+                ]() {
 #if PLATFORM_XBOXONE
-                    slate_app.UnregisterInputPreProcessor( input_preprocessor );
+                        slate_app.UnregisterInputPreProcessor( input_preprocessor );
 #endif
-                        } ) );
+                    } ) );
             }
         }
 #if PLATFORM_PS4
@@ -578,13 +558,9 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
             {
                 const auto identity_interface = oss->GetIdentityInterface();
 
-                TSharedPtr<const FUniqueNetId> unique_id = identity_interface->GetUniquePlayerId( game_user_index );
+                TSharedPtr< const FUniqueNetId > unique_id = identity_interface->GetUniquePlayerId( game_user_index );
 
-                if ( ensure( unique_id.IsValid() )
-                     && unique_id->IsValid()
-                     && CurrentUniqueNetId.IsValid()
-                     && *CurrentUniqueNetId == *unique_id
-                     )
+                if ( ensure( unique_id.IsValid() ) && unique_id->IsValid() && CurrentUniqueNetId.IsValid() && *CurrentUniqueNetId == *unique_id )
                 {
                     return;
                 }
@@ -607,8 +583,7 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
             ShowMessageThenGotoState(
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                Settings->WelcomeScreenGameState.Get()
-            );
+                Settings->WelcomeScreenGameState.Get() );
 #else
             GoToWelcomeScreenState();
 #endif
@@ -623,8 +598,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         if ( auto * dialog_manager_component = player_controller->GetUIDialogManagerComponent() )
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
-                [ this, &next_state ]()
-                {
+                [this, &next_state]() {
                     if ( IsStateWelcomeScreenState( next_state ) )
                     {
                         GoToWelcomeScreenState();
@@ -646,11 +620,7 @@ void UGBFGameInstance::OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_
 
     // If the id is null, the user backed out
 
-    if ( unique_id.IsValid()
-         && unique_id->IsValid()
-         && CurrentUniqueNetId.IsValid()
-         && *CurrentUniqueNetId == *unique_id
-         )
+    if ( unique_id.IsValid() && unique_id->IsValid() && CurrentUniqueNetId.IsValid() && *CurrentUniqueNetId == *unique_id )
     {
         LoginUIClosedDelegate.Unbind();
         return;
@@ -662,9 +632,7 @@ void UGBFGameInstance::OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_
         LoginUIClosedDelegate.Unbind();
     }
 
-    if ( unique_id.IsValid()
-         && unique_id->IsValid()
-         )
+    if ( unique_id.IsValid() && unique_id->IsValid() )
     {
         CurrentUniqueNetId = unique_id;
     }

@@ -1,13 +1,14 @@
 #include "GBFUIDialogManagerComponent.h"
 
-#include "Blueprint/UserWidget.h"
-#include "GameFramework/PlayerController.h"
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
-#include "Kismet/GameplayStatics.h"
-
-#include "GameBaseFrameworkSettings.h"
 #include "GBFGameInstance.h"
+#include "GameBaseFrameworkSettings.h"
+
+#include <Blueprint/UserWidget.h>
+#include <Engine/AssetManager.h>
+#include <Engine/StreamableManager.h>
+#include <GameFramework/PlayerController.h>
+#include <Kismet/GameplayStatics.h>
+#include <Sound/SoundBase.h>
 
 UGBFUIDialogManagerComponent::UGBFUIDialogManagerComponent()
 {
@@ -65,9 +66,7 @@ bool UGBFUIDialogManagerComponent::IsDisplayingDialog() const
 
 void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWidget > & main_ui_class )
 {
-    if ( ensure( main_ui_class != nullptr )
-        && ensure( MainUIWidget == nullptr )
-        )
+    if ( ensure( main_ui_class != nullptr ) && ensure( MainUIWidget == nullptr ) )
     {
         MainUIWidget = CreateWidget< UUserWidget >( OwnerPlayerController.Get(), main_ui_class );
 
@@ -80,9 +79,7 @@ void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWid
 
 void UGBFUIDialogManagerComponent::ShowMainUI()
 {
-    if ( MainUIWidget != nullptr
-        && bIsMainUIHidden
-        )
+    if ( MainUIWidget != nullptr && bIsMainUIHidden )
     {
         MainUIWidget->AddToViewport( 0 );
         bIsMainUIHidden = false;
@@ -91,9 +88,7 @@ void UGBFUIDialogManagerComponent::ShowMainUI()
 
 void UGBFUIDialogManagerComponent::HideMainUI()
 {
-    if ( MainUIWidget != nullptr
-        && !bIsMainUIHidden
-        )
+    if ( MainUIWidget != nullptr && !bIsMainUIHidden )
     {
         MainUIWidget->RemoveFromViewport();
         bIsMainUIHidden = true;
@@ -192,23 +187,17 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
     {
         for ( const auto & stack_entry : DialogStack )
         {
-            if ( must_hide_blur
-                && stack_entry.Options.bBlurBackground
-                )
+            if ( must_hide_blur && stack_entry.Options.bBlurBackground )
             {
                 must_hide_blur = false;
             }
 
-            if ( must_show_main_ui
-                && stack_entry.Options.bHideMainUI
-                )
+            if ( must_show_main_ui && stack_entry.Options.bHideMainUI )
             {
                 must_show_main_ui = false;
             }
 
-            if ( must_enable_player_input
-                && stack_entry.Options.bDisablePlayerControllerInput
-                )
+            if ( must_enable_player_input && stack_entry.Options.bDisablePlayerControllerInput )
             {
                 must_enable_player_input = false;
             }
@@ -275,7 +264,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
     const FGBFConfirmationPopupButtonClicked & cancel_button_clicked /*= FGBFConfirmationPopupButtonClicked()*/,
     const FText & ok_button_text /*= FText::GetEmpty()*/,
     const FText & cancel_button_text /*= FText::GetEmpty()*/
-    )
+)
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
@@ -304,8 +293,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
     const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
     const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
     FText ok_button_text,
-    FText cancel_button_text
-    )
+    FText cancel_button_text )
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
@@ -318,13 +306,11 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
                 ShowDialog( widget, { true, true, true, type, true } );
 
                 // capture by copy is intended otherwise the delegate is destructed
-                auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ ok_button_clicked ]()
-                {
+                auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ok_button_clicked]() {
                     ok_button_clicked.ExecuteIfBound();
                 } );
 
-                auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ cancel_button_clicked ]()
-                {
+                auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [cancel_button_clicked]() {
                     cancel_button_clicked.ExecuteIfBound();
                 } );
 
@@ -342,9 +328,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
 
 void UGBFUIDialogManagerComponent::ShowBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr )
-        && !bIsBlurBackgroundVisible
-        )
+    if ( ensure( BlurBackgroundWidget != nullptr ) && !bIsBlurBackgroundVisible )
     {
         BlurBackgroundWidget->AddToViewport( 1 );
         bIsBlurBackgroundVisible = true;
@@ -353,9 +337,7 @@ void UGBFUIDialogManagerComponent::ShowBlurBackground()
 
 void UGBFUIDialogManagerComponent::HideBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr )
-        && bIsBlurBackgroundVisible
-        )
+    if ( ensure( BlurBackgroundWidget != nullptr ) && bIsBlurBackgroundVisible )
     {
         BlurBackgroundWidget->RemoveFromViewport();
         bIsBlurBackgroundVisible = false;

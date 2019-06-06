@@ -1,11 +1,14 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "UObject/SoftObjectPtr.h"
+#include <CoreMinimal.h>
+#include <Kismet/BlueprintFunctionLibrary.h>
+#include <Templates/SubclassOf.h>
+#include <UObject/SoftObjectPtr.h>
+
 #include "GBFHelperBlueprintLibrary.generated.h"
 
 class UWorld;
+class UObject;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary : public UBlueprintFunctionLibrary
@@ -13,7 +16,6 @@ class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary : public UBlueprintFuncti
     GENERATED_BODY()
 
 public:
-
     UFUNCTION( BlueprintPure, Category = "Helpers", Meta = ( DisplayName = "Create Object", DeterminesOutputType = "Class", DynamicOutputParam = "Object" ) )
     static void CreateObject( TSubclassOf< UObject > class_of, UObject *& object );
 

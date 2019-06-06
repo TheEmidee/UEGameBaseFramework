@@ -1,8 +1,11 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/DataAsset.h"
+#include <CoreMinimal.h>
+#include <Engine/DataAsset.h>
 #include "GBFGameState.generated.h"
+
+class AGameModeBase;
+class UWorld;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGameState : public UDataAsset
@@ -10,9 +13,6 @@ class GAMEBASEFRAMEWORK_API UGBFGameState : public UDataAsset
     GENERATED_BODY()
 
 public:
-
-    UGBFGameState()
-    {}
 
     UPROPERTY( EditAnywhere )
     FName Name;

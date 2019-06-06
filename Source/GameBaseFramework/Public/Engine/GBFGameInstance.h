@@ -1,9 +1,11 @@
 #pragma once
 
-#include "Engine/GameInstance.h"
-
-#include "OnlineSubsystemTypes.h"
-#include "Interfaces/OnlineExternalUIInterface.h"
+#include <CoreMinimal.h>
+#include <Engine/GameInstance.h>
+#include <Interfaces/OnlineExternalUIInterface.h>
+#include <OnlineSubsystemTypes.h>
+#include <TextProperty.h>
+#include <Ticker.h>
 
 #include "GBFGameInstance.generated.h"
 
@@ -17,12 +19,14 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
     GENERATED_BODY()
 
 public:
-
     UGBFGameInstance();
 
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
 
-    FORCEINLINE FOnStateChangedEvent & OnStateChanged() { return OnStateChangedEvent; }
+    FORCEINLINE FOnStateChangedEvent & OnStateChanged()
+    {
+        return OnStateChangedEvent;
+    }
 
     void Init() override;
     void Shutdown() override;
@@ -55,7 +59,6 @@ public:
     ULocalPlayer * GetFirstLocalPlayer() const;
 
 private:
-
     const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
     const UGBFGameState * GetGameStateFromName( FName state_name ) const;
     bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;

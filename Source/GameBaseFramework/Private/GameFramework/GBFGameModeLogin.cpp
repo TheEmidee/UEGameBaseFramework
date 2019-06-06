@@ -1,5 +1,9 @@
 #include "GBFGameModeLogin.h"
 
+#include <Engine/GameInstance.h>
+#include <Engine/LocalPlayer.h>
+#include <OnlineSubsystemTypes.h>
+
 void AGBFGameModeLogin::StartPlay()
 {
     Super::StartPlay();
