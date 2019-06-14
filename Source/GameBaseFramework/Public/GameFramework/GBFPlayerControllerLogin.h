@@ -30,7 +30,7 @@ private:
     void OnUserCannotPlay();
     void OnContinueOffline();
     void OnContinueWithoutSavingConfirm();
-    void SetControllerAndAdvanceToMainMenu( int controller_index );
+    void SetControllerAndAdvanceToMainMenu( int controller_index ) const;
     void SetItIsHandlingLoginFlow( bool result );
 
     int PendingControllerIndex;

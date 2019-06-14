@@ -43,10 +43,10 @@ public:
     void GoToState( UGBFGameState * game_state );
 
     UFUNCTION( BlueprintCallable )
-    void PushSoundMixModifier();
+    void PushSoundMixModifier() const;
 
     UFUNCTION( BlueprintCallable )
-    void PopSoundMixModifier();
+    void PopSoundMixModifier() const;
 
     UFUNCTION( BlueprintCallable )
     bool ProfileUISwap( const int controller_index );
@@ -54,7 +54,7 @@ public:
     bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
 
     UFUNCTION( BlueprintCallable )
-    void SetPresenceForLocalPlayer( const FText & status );
+    void SetPresenceForLocalPlayer( const FText & status ) const;
 
     ULocalPlayer * GetFirstLocalPlayer() const;
 
@@ -63,12 +63,12 @@ private:
     const UGBFGameState * GetGameStateFromName( FName state_name ) const;
     bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;
 
-    void LoadGameStates();
+    void LoadGameStates() const;
     void HandleAppWillDeactivate();
     void HandleAppHasReactivated();
     void HandleAppWillEnterBackground();
     void HandleAppHasEnteredForeground();
-    void HandleAppDeactivateOrBackground();
+    void HandleAppDeactivateOrBackground() const;
     void HandleAppReactivateOrForeground();
     void HandleSafeFrameChanged();
     void HandleAppLicenseUpdate();

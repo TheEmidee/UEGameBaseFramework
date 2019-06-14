@@ -157,7 +157,7 @@ void UGBFLocalPlayer::SetPresenceStatus( const FText & status ) const
     }
 }
 
-void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count )
+void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count ) const
 {
 #if !WITH_EDITOR
     if ( !bAreAchievementsCached )

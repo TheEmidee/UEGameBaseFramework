@@ -23,9 +23,4 @@ public:
     {
         return FModuleManager::Get().IsModuleLoaded( "GameBaseFrameworkEditor" );
     }
-
-private:
-
-    void OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * settings );
-    void OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * settings );
 };

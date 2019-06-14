@@ -211,7 +211,7 @@ void UGBFGameInstance::GoToState( UGBFGameState * new_state )
     }
 }
 
-void UGBFGameInstance::PushSoundMixModifier()
+void UGBFGameInstance::PushSoundMixModifier() const
 {
     if ( auto * sound_mix = SoundMix.Get() )
     {
@@ -219,7 +219,7 @@ void UGBFGameInstance::PushSoundMixModifier()
     }
 }
 
-void UGBFGameInstance::PopSoundMixModifier()
+void UGBFGameInstance::PopSoundMixModifier() const
 {
     if ( auto * sound_mix = SoundMix.Get() )
     {
@@ -262,7 +262,7 @@ bool UGBFGameInstance::ShowLoginUI( const int controller_index, const FOnLoginUI
     return false;
 }
 
-void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status )
+void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status ) const
 {
     const auto presence_interface = Online::GetPresenceInterface();
 
@@ -323,7 +323,7 @@ bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) 
     return state != nullptr && Settings->WelcomeScreenGameState.Get() == state;
 }
 
-void UGBFGameInstance::LoadGameStates()
+void UGBFGameInstance::LoadGameStates() const
 {
     Settings->WelcomeScreenGameState.LoadSynchronous();
 
@@ -372,7 +372,7 @@ void UGBFGameInstance::HandleAppHasEnteredForeground()
 #endif
 }
 
-void UGBFGameInstance::HandleAppDeactivateOrBackground()
+void UGBFGameInstance::HandleAppDeactivateOrBackground() const
 {
     if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
     {

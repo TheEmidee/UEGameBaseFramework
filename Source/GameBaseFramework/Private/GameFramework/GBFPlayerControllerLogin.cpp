@@ -206,7 +206,7 @@ void AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm()
     SetControllerAndAdvanceToMainMenu( PendingControllerIndex );
 }
 
-void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( int controller_index )
+void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( int controller_index ) const
 {
     if ( !ensure( GetGameInstance() != nullptr ) )
     {
