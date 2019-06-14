@@ -306,11 +306,11 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
                 ShowDialog( widget, { true, true, true, type, true } );
 
                 // capture by copy is intended otherwise the delegate is destructed
-                auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ok_button_clicked]() {
+                const auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ok_button_clicked]() {
                     ok_button_clicked.ExecuteIfBound();
                 } );
 
-                auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [cancel_button_clicked]() {
+                const auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [cancel_button_clicked]() {
                     cancel_button_clicked.ExecuteIfBound();
                 } );
 

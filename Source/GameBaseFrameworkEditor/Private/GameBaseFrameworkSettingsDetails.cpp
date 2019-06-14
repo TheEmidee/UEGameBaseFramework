@@ -21,7 +21,7 @@ void FGameBaseFrameworkSettingsDetails::CustomizeDetails( IDetailLayoutBuilder &
     detail_builder.GetObjectsBeingCustomized( objects_being_customized );
     check(objects_being_customized.Num() == 1);
 
-    TWeakObjectPtr< UGameBaseFrameworkSettings > settings = Cast< UGameBaseFrameworkSettings >( objects_being_customized[ 0 ].Get() );
+    const TWeakObjectPtr< UGameBaseFrameworkSettings > settings = Cast< UGameBaseFrameworkSettings >( objects_being_customized[ 0 ].Get() );
 
     IDetailCategoryBuilder & input_textures_category = detail_builder.EditCategory( "InputTextures" );
 

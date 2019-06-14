@@ -42,7 +42,7 @@ void AGBFPlayerControllerLogin::TryLogIn( int player_index )
 
             if ( can_move_to_main_menu )
             {
-                TSharedPtr< const FUniqueNetId > player_id = identity_interface->GetUniquePlayerId( player_index );
+                const auto player_id = identity_interface->GetUniquePlayerId( player_index );
 
 #if PLATFORM_DESKTOP
                 PendingControllerIndex = player_index;

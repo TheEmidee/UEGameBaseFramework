@@ -268,7 +268,7 @@ void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status )
 
     if ( presence_interface.IsValid() )
     {
-        auto user_id = GetFirstLocalPlayer()->GetPreferredUniqueNetId();
+        const auto user_id = GetFirstLocalPlayer()->GetPreferredUniqueNetId();
 
         if ( user_id.IsValid() && user_id->IsValid() )
         {
@@ -293,7 +293,7 @@ ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
 
 const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
 {
-    auto predicate = [game_mode_class]( auto state_soft_ptr ) {
+    const auto predicate = [game_mode_class]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->GameModeClass == game_mode_class;
     };
 
@@ -309,7 +309,7 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name )
 {
     UGBFGameState * result = nullptr;
 
-    auto predicate = [state_name]( auto state_soft_ptr ) {
+    const auto predicate = [state_name]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->Name == state_name;
     };
 

@@ -90,8 +90,8 @@ FPlatformUserId UGBFLocalPlayer::GetPlatformUserId() const
     // Use the platform id here to be resilient in the face of controller swapping and similar situations.
     auto platform_user_id = GetControllerId();
 
-    auto identity_interface = Online::GetIdentityInterface();
-    auto unique_id = GetPreferredUniqueNetId();
+    const auto identity_interface = Online::GetIdentityInterface();
+    const auto unique_id = GetPreferredUniqueNetId();
 
     if ( identity_interface.IsValid() && unique_id.IsValid() )
     {
@@ -228,7 +228,7 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
 
 void UGBFLocalPlayer::QueryAchievements()
 {
-    auto user_id = GetCachedUniqueNetId().GetUniqueNetId();
+    const auto user_id = GetCachedUniqueNetId().GetUniqueNetId();
 
     if ( !user_id.IsValid() )
     {
