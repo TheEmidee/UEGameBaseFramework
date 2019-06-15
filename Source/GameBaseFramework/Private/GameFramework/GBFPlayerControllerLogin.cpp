@@ -24,11 +24,13 @@ void AGBFPlayerControllerLogin::TryLogIn( int player_index )
 
         if ( identity_interface.IsValid() )
         {
-            TSharedPtr< GenericApplication > generic_application = FSlateApplication::Get().GetPlatformApplication();
-            const bool is_licensed = generic_application->ApplicationLicenseValid();
+            auto generic_application = FSlateApplication::Get().GetPlatformApplication();
+            const auto is_licensed = generic_application->ApplicationLicenseValid();
 
             const auto login_status = identity_interface->GetLoginStatus( player_index );
-            bool can_move_to_main_menu = true;
+            // ReSharper disable CppLocalVariableMayBeConst
+            auto can_move_to_main_menu = true;
+            // ReSharper restore CppLocalVariableMayBeConst
 
 #if !PLATFORM_DESKTOP
             if ( login_status == ELoginStatus::NotLoggedIn || !is_licensed )
