@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameFramework/GBFGameModeBase.h"
 #include "GBFGameModeLogin.generated.h"
 

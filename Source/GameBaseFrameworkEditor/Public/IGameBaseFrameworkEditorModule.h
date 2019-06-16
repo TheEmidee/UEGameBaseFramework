@@ -1,8 +1,6 @@
 #pragma once
 
-#include "ModuleManager.h"
-
-#include "InputCoreTypes.h"
+#include <ModuleManager.h>
 
 class UGameBaseFrameworkSettings;
 class UGBFPlatformInputTextures;

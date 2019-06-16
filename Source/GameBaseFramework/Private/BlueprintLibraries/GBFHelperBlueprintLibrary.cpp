@@ -3,7 +3,7 @@
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>
 
-void UGBFHelperBlueprintLibrary::CreateObject( const TSubclassOf< UObject > class_of, UObject *& object )
+void UGBFHelperBlueprintLibrary::CreateObject( const TSubclassOf<UObject> class_of, UObject *& object )
 {
     object = NewObject< UObject >( GetTransientPackage(), class_of );
 }

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
-
 #include "UI/GBFConfirmationWidget.h"
+
+#include <Components/ActorComponent.h>
+#include <CoreMinimal.h>
 
 #include "GBFUIDialogManagerComponent.generated.h"
 
@@ -11,7 +11,6 @@ class APlayerController;
 class UUserWidget;
 
 UENUM( BlueprintType )
-
 enum class EGBFUIDialogType : uint8
 {
     Exclusive,
@@ -20,26 +19,25 @@ enum class EGBFUIDialogType : uint8
 };
 
 USTRUCT( BlueprintType )
-
 struct FGBFShowDialogOptions
 {
     GENERATED_BODY()
 
-    FGBFShowDialogOptions()
-        : bGiveUserFocus( true )
-        , bHideMainUI( false )
-        , bBlurBackground( false )
-        , DialogType( EGBFUIDialogType::AdditiveOnlyOneVisible )
-        , bDisablePlayerControllerInput( true )
+    FGBFShowDialogOptions() :
+        bGiveUserFocus( true ),
+        bHideMainUI( false ),
+        bBlurBackground( false ),
+        DialogType( EGBFUIDialogType::AdditiveOnlyOneVisible ),
+        bDisablePlayerControllerInput( true )
     {
     }
 
-    FGBFShowDialogOptions( bool give_user_focus, bool hide_main_ui, bool blur_background, EGBFUIDialogType dialog_type, bool disable_player_controller_input )
-        : bGiveUserFocus( give_user_focus )
-        , bHideMainUI( hide_main_ui )
-        , bBlurBackground( blur_background )
-        , DialogType( dialog_type )
-        , bDisablePlayerControllerInput( disable_player_controller_input )
+    FGBFShowDialogOptions( bool give_user_focus, bool hide_main_ui, bool blur_background, EGBFUIDialogType dialog_type, bool disable_player_controller_input ) :
+        bGiveUserFocus( give_user_focus ),
+        bHideMainUI( hide_main_ui ),
+        bBlurBackground( blur_background ),
+        DialogType( dialog_type ),
+        bDisablePlayerControllerInput( disable_player_controller_input )
     {
     }
 
@@ -59,14 +57,12 @@ struct FGBFShowDialogOptions
     uint8 bDisablePlayerControllerInput : 1;
 };
 
-
-UCLASS( ClassGroup=(Custom), meta=( BlueprintSpawnableComponent ) )
+UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
 class GAMEBASEFRAMEWORK_API UGBFUIDialogManagerComponent : public UActorComponent
 {
     GENERATED_BODY()
 
 public:
-
     UGBFUIDialogManagerComponent();
 
     void BeginPlay() override;
@@ -101,8 +97,7 @@ public:
         const FGBFConfirmationPopupButtonClicked & ok_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FGBFConfirmationPopupButtonClicked & cancel_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FText & ok_button_text = FText::GetEmpty(),
-        const FText & cancel_button_text = FText::GetEmpty()
-        );
+        const FText & cancel_button_text = FText::GetEmpty() );
 
     UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup", AutoCreateRefTerm = "ok_button_clicked, cancel_button_clicked" ) )
     UGBFConfirmationWidget * K2_ShowConfirmationPopup(
@@ -112,21 +107,20 @@ public:
         const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
         const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
         const FText ok_button_text,
-        const FText cancel_button_text
-        );
+        const FText cancel_button_text );
 
 private:
-
     struct FDialogStackEntry
     {
-        FDialogStackEntry()
-            : UserWidget( nullptr )
+        FDialogStackEntry() :
+            UserWidget { nullptr },
+            OriginalVisibility {}
         {
         }
 
-        FDialogStackEntry( UUserWidget * user_widget, const FGBFShowDialogOptions & options )
-            : UserWidget( user_widget )
-            , Options( options )
+        FDialogStackEntry( UUserWidget * user_widget, const FGBFShowDialogOptions & options ) :
+            UserWidget( user_widget ),
+            Options( options )
         {
             check( user_widget != nullptr );
             OriginalVisibility = user_widget->GetVisibility();

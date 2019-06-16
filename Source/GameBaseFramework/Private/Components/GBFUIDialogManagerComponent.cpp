@@ -179,9 +179,9 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
     zOrder--;
 
-    bool must_hide_blur = true;
-    bool must_show_main_ui = true;
-    bool must_enable_player_input = true;
+    auto must_hide_blur = true;
+    auto must_show_main_ui = true;
+    auto must_enable_player_input = true;
 
     if ( DialogStack.Num() > 0 )
     {

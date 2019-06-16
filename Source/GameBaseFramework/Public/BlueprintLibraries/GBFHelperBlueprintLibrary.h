@@ -2,6 +2,8 @@
 
 #include <CoreMinimal.h>
 #include <Kismet/BlueprintFunctionLibrary.h>
+// ReSharper disable once CppUnusedIncludeDirective
+#include <Templates/SubclassOf.h>
 #include <UObject/SoftObjectPtr.h>
 
 #include "GBFHelperBlueprintLibrary.generated.h"
