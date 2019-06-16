@@ -12,16 +12,16 @@
 #include "Sound/SoundMix.h"
 #include "UI/GBFConfirmationWidget.h"
 
-#include <SlateApplication.h>
 #include <Containers/Ticker.h>
 #include <CoreDelegates.h>
 #include <Engine/AssetManager.h>
 #include <Engine/Canvas.h>
-#include <Kismet/GameplayStatics.h>
 #include <GameFramework/GameModeBase.h>
+#include <Kismet/GameplayStatics.h>
 #include <Online.h>
 #include <OnlineExternalUIInterface.h>
 #include <OnlineSubsystem.h>
+#include <SlateApplication.h>
 #include <SoftObjectPtr.h>
 
 #if PLATFORM_XBOXONE
@@ -307,15 +307,11 @@ const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclas
 
 const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name ) const
 {
-    UGBFGameState * result = nullptr;
-
     const auto predicate = [state_name]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->Name == state_name;
     };
 
     return Settings->GameStates.FindByPredicate( predicate )->Get();
-
-    return result;
 }
 
 bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) const
@@ -325,18 +321,23 @@ bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) 
 
 void UGBFGameInstance::LoadGameStates() const
 {
-    Settings->WelcomeScreenGameState.LoadSynchronous();
-
-    for ( auto & game_state : Settings->GameStates )
+    if ( ensure( Settings != nullptr ) )
     {
-        if ( game_state.Get() == nullptr )
+        Settings->WelcomeScreenGameState.LoadSynchronous();
+
+        for ( auto & game_state : Settings->GameStates )
         {
-            game_state.LoadSynchronous();
+            if ( game_state.Get() == nullptr )
+            {
+                game_state.LoadSynchronous();
+            }
         }
     }
 }
 
+// ReSharper disable CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleAppWillDeactivate()
+// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppWillDeactivate" ) );
 
@@ -345,6 +346,7 @@ void UGBFGameInstance::HandleAppWillDeactivate()
 #endif
 }
 
+// ReSharper disable once CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleAppHasReactivated()
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppHasReactivated" ) );
@@ -354,7 +356,9 @@ void UGBFGameInstance::HandleAppHasReactivated()
 #endif
 }
 
+// ReSharper disable CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleAppWillEnterBackground()
+// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppWillEnterBackground" ) );
 
@@ -363,7 +367,9 @@ void UGBFGameInstance::HandleAppWillEnterBackground()
 #endif
 }
 
+// ReSharper disable CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleAppHasEnteredForeground()
+// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleAppHasEnteredForeground" ) );
 
@@ -406,7 +412,9 @@ void UGBFGameInstance::HandleAppReactivateOrForeground()
     }
 }
 
+// ReSharper disable CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleSafeFrameChanged()
+// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UCanvas::UpdateAllCanvasSafeZoneData();
 }
@@ -427,7 +435,7 @@ void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStat
 
     LocalPlayerOnlineStatus[ game_user_index ] = login_status;
 
-    if ( ULocalPlayer * local_player = FindLocalPlayerFromUniqueNetId( user_id ) )
+    if ( FindLocalPlayerFromUniqueNetId( user_id ) )
     {
         if ( is_downgraded )
         {
@@ -438,7 +446,9 @@ void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStat
     }
 }
 
+// ReSharper disable CppMemberFunctionMayBeConst
 void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user )
+// ReSharper restore CppMemberFunctionMayBeConst
 {
 #if PLATFORM_XBOXONE
     // update game_user_index based on previous controller index from stable index
@@ -574,20 +584,20 @@ void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, i
 
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
-    // Master user signed out, go to initial state (if we aren't there already)
-    if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+    if ( !IsOnWelcomeScreenState() )
     {
-        if ( !IsOnWelcomeScreenState() )
-        {
 #if GBF_CONSOLE_UI
+        // Master user signed out, go to initial state (if we aren't there already)
+        if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+        {
             ShowMessageThenGotoState(
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
                 NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                Settings->WelcomeScreenGameState.Get() );
-#else
-            GoToWelcomeScreenState();
-#endif
+                settings->WelcomeScreenGameState.Get() );
         }
+#else
+        GoToWelcomeScreenState();
+#endif
     }
 }
 

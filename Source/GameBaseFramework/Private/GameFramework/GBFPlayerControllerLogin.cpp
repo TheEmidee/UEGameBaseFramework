@@ -25,14 +25,15 @@ void AGBFPlayerControllerLogin::TryLogIn( int player_index )
         if ( identity_interface.IsValid() )
         {
             auto generic_application = FSlateApplication::Get().GetPlatformApplication();
-            const auto is_licensed = generic_application->ApplicationLicenseValid();
 
-            const auto login_status = identity_interface->GetLoginStatus( player_index );
             // ReSharper disable CppLocalVariableMayBeConst
             auto can_move_to_main_menu = true;
             // ReSharper restore CppLocalVariableMayBeConst
 
 #if !PLATFORM_DESKTOP
+            const auto login_status = identity_interface->GetLoginStatus( player_index );
+            const auto is_licensed = generic_application->ApplicationLicenseValid();
+
             if ( login_status == ELoginStatus::NotLoggedIn || !is_licensed )
             {
                 if ( GameInstance->ShowLoginUI( player_index, FOnLoginUIClosedDelegate::CreateUObject( this, &AGBFPlayerControllerLogin::HandleLoginUIClosed ) ) )
@@ -203,12 +204,12 @@ void AGBFPlayerControllerLogin::OnLoginSucceeded( int32 local_user_num, bool b_w
     }
 }
 
-void AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm()
+void AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm() const
 {
     SetControllerAndAdvanceToMainMenu( PendingControllerIndex );
 }
 
-void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( int controller_index ) const
+void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int controller_index ) const
 {
     if ( !ensure( GetGameInstance() != nullptr ) )
     {

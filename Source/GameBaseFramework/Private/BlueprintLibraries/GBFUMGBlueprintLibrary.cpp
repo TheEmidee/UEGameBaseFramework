@@ -1,12 +1,12 @@
 #include "GBFUMGBlueprintLibrary.h"
 
-#include "Blueprint/UserWidget.h"
-
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFSaveGame.h"
+
+#include <Blueprint/UserWidget.h>
 
 UGBFPlatformInputSwitcherComponent * UGBFUMGBlueprintLibrary::GetPlatformInputSwitcherComponentFromOwningPlayer( bool & success, UUserWidget * widget )
 {

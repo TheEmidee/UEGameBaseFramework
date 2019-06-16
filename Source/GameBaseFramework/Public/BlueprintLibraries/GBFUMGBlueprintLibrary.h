@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Kismet/BlueprintFunctionLibrary.h"
-
 #include "UI/GBFConfirmationWidget.h"
+
+#include <Blueprint/WidgetTree.h>
+#include <Kismet/BlueprintFunctionLibrary.h>
 
 #include "GBFUMGBlueprintLibrary.generated.h"
 
@@ -19,8 +20,7 @@ class GAMEBASEFRAMEWORK_API UGBFUMGBlueprintLibrary : public UBlueprintFunctionL
     GENERATED_BODY()
 
 public:
-
-    UFUNCTION( BlueprintPure, Category="UMG", Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
+    UFUNCTION( BlueprintPure, Category = "UMG", Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
     static UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponentFromOwningPlayer( bool & success, UUserWidget * widget );
 
     UFUNCTION( BlueprintPure, Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
@@ -29,7 +29,7 @@ public:
     UFUNCTION( BlueprintPure, Category = "UMG", Category = "UMG", meta = ( HidePin = "widget", DefaultToSelf = "widget" ) )
     static UGBFSaveGame * GetSaveGameFromOwningPlayer( bool & success, UUserWidget * widget );
 
-    template< class _WIDGET_TYPE_ >
+    template < class _WIDGET_TYPE_ >
     static _WIDGET_TYPE_ * GetFirstChildWidgetOfClass( UWidget * parent_widget )
     {
         _WIDGET_TYPE_ * result = nullptr;
@@ -38,8 +38,7 @@ public:
         {
             widget_tree->RootWidget = parent_widget;
 
-            widget_tree->ForEachWidgetAndDescendants( [ &result ]( UWidget * child_widget )
-            {
+            widget_tree->ForEachWidgetAndDescendants( [&result]( UWidget * child_widget ) {
                 if ( result == nullptr )
                 {
                     if ( auto * widget = Cast< _WIDGET_TYPE_ >( child_widget ) )

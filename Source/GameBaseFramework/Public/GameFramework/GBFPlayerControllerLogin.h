@@ -29,8 +29,8 @@ private:
     void OnLoginSucceeded( int32 local_user_num, bool b_was_successful, const FUniqueNetId & user_id, const FString & error );
     void OnUserCannotPlay();
     void OnContinueOffline();
-    void OnContinueWithoutSavingConfirm();
-    void SetControllerAndAdvanceToMainMenu( int controller_index ) const;
+    void OnContinueWithoutSavingConfirm() const;
+    void SetControllerAndAdvanceToMainMenu( const int controller_index ) const;
     void SetItIsHandlingLoginFlow( bool result );
 
     int PendingControllerIndex;
