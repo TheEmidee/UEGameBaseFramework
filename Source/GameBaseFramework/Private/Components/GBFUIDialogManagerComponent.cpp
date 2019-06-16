@@ -237,7 +237,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
     }
 }
 
-void UGBFUIDialogManagerComponent::CloseAllDialogs( bool show_main_ui /*= true*/ )
+void UGBFUIDialogManagerComponent::CloseAllDialogs( const bool show_main_ui /*= true*/ )
 {
     RemoveAllDialogsFromViewport();
 
@@ -287,13 +287,13 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
 }
 
 UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
-    FText title,
-    FText content,
+    const FText title,
+    const FText content,
     const EGBFUIDialogType type,
     const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
     const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
-    FText ok_button_text,
-    FText cancel_button_text )
+    const FText ok_button_text,
+    const FText cancel_button_text )
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
@@ -307,11 +307,15 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
 
                 // capture by copy is intended otherwise the delegate is destructed
                 const auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ok_button_clicked]() {
+                    // ReSharper disable once CppExpressionWithoutSideEffects
                     ok_button_clicked.ExecuteIfBound();
+                    // ReSharper disable once CppExpressionWithoutSideEffects
                 } );
 
                 const auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [cancel_button_clicked]() {
+                    // ReSharper disable once CppExpressionWithoutSideEffects
                     cancel_button_clicked.ExecuteIfBound();
+                    // ReSharper disable once CppExpressionWithoutSideEffects
                 } );
 
                 widget->NativeInitialize( title, content, native_ok_clicked, native_cancel_clicked, ok_button_text, cancel_button_text );

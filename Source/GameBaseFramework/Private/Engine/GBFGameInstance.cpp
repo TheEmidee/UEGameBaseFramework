@@ -84,7 +84,7 @@ void UGBFGameInstance::Init()
 
     LocalPlayerOnlineStatus.InsertDefaulted( 0, MAX_LOCAL_PLAYERS );
 
-    for ( int i = 0; i < MAX_LOCAL_PLAYERS; ++i )
+    for ( auto i = 0; i < MAX_LOCAL_PLAYERS; ++i )
     {
         identity_interface->AddOnLoginStatusChangedDelegate_Handle( i, FOnLoginStatusChangedDelegate::CreateUObject( this, &UGBFGameInstance::HandleUserLoginChanged ) );
     }
@@ -121,9 +121,9 @@ void UGBFGameInstance::Shutdown()
     FTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
 }
 
-AGameModeBase * UGBFGameInstance::CreateGameModeForURL( FURL in_url )
+AGameModeBase * UGBFGameInstance::CreateGameModeForURL( const FURL url )
 {
-    auto * game_mode = Super::CreateGameModeForURL( in_url );
+    auto * game_mode = Super::CreateGameModeForURL( url );
 
     // Workaround for when running in PIE, to set the correct state based on the game mode created by the URL
     if ( GetWorld()->WorldType != EWorldType::Game )
@@ -229,7 +229,7 @@ void UGBFGameInstance::PopSoundMixModifier() const
 
 bool UGBFGameInstance::ProfileUISwap( const int controller_index )
 {
-    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
+    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
         if ( unique_net_id->IsValid() )
         {
             GoToWelcomeScreenState();
@@ -323,15 +323,17 @@ void UGBFGameInstance::LoadGameStates() const
 {
     if ( ensure( Settings != nullptr ) )
     {
-        Settings->WelcomeScreenGameState.LoadSynchronous();
+        TArray< FSoftObjectPath > state_paths;
+        state_paths.Reserve( Settings->GameStates.Num() + 1 );
+
+        state_paths.Add( Settings->WelcomeScreenGameState.ToSoftObjectPath() );
 
         for ( auto & game_state : Settings->GameStates )
         {
-            if ( game_state.Get() == nullptr )
-            {
-                game_state.LoadSynchronous();
-            }
+            state_paths.Add( game_state.ToSoftObjectPath() );
         }
+
+        UAssetManager::Get().GetStreamableManager().RequestSyncLoad( state_paths );
     }
 }
 
@@ -421,13 +423,13 @@ void UGBFGameInstance::HandleSafeFrameChanged()
 
 void UGBFGameInstance::HandleAppLicenseUpdate()
 {
-    TSharedPtr< GenericApplication > GenericApplication = FSlateApplication::Get().GetPlatformApplication();
-    bIsLicensed = GenericApplication->ApplicationLicenseValid();
+    auto generic_application = FSlateApplication::Get().GetPlatformApplication();
+    bIsLicensed = generic_application->ApplicationLicenseValid();
 }
 
-void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id )
+void UGBFGameInstance::HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type previous_login_status, const ELoginStatus::Type login_status, const FUniqueNetId & user_id )
 {
-    const bool is_downgraded = login_status == ELoginStatus::NotLoggedIn;
+    const auto is_downgraded = login_status == ELoginStatus::NotLoggedIn;
 
     UE_LOG( LogGBF_OSS, Verbose, TEXT( "HandleUserLoginChanged: bDownGraded: %i" ), ( int ) is_downgraded );
 
@@ -447,7 +449,7 @@ void UGBFGameInstance::HandleUserLoginChanged( int32 game_user_index, ELoginStat
 }
 
 // ReSharper disable CppMemberFunctionMayBeConst
-void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user )
+void UGBFGameInstance::HandleControllerPairingChanged( const int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user )
 // ReSharper restore CppMemberFunctionMayBeConst
 {
 #if PLATFORM_XBOXONE
@@ -470,7 +472,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
 
     if ( previous_user.IsValid() && !new_user.IsValid() )
     {
-        // Treat this as a disconnect or signout, which is handled somewhere else
+        // Treat this as a disconnect or sign-out, which is handled somewhere else
         return;
     }
 
@@ -498,7 +500,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( int game_user_index, cons
 #endif
 }
 
-void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*service_name*/, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status )
+void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*service_name*/, const EOnlineServerConnectionStatus::Type last_connection_status, const EOnlineServerConnectionStatus::Type connection_status )
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
@@ -524,17 +526,17 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*s
     CurrentConnectionStatus = connection_status;
 }
 
-void UGBFGameInstance::HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index )
+void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connection, const int32 unused, const int32 game_user_index )
 {
 #if PLATFORM_XBOXONE
     // update game_user_index based on previous controller index from stable index
 #endif
 
-    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerConnectionChange bIsConnection %d GameUserIndex %d" ), b_is_connection, game_user_index );
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerConnectionChange bIsConnection %d GameUserIndex %d" ), is_connection, game_user_index );
 
     if ( auto * local_player = Cast< UGBFLocalPlayer >( FindLocalPlayerFromControllerId( game_user_index ) ) )
     {
-        if ( !b_is_connection )
+        if ( !is_connection )
         {
 #if PLATFORM_XBOXONE
             auto & slate_app = FSlateApplication::Get();
@@ -624,7 +626,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
     }
 }
 
-void UGBFGameInstance::OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, const int controller_index, const FOnlineError & error )
+void UGBFGameInstance::OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, const int controller_index, const FOnlineError & error )
 {
     IgnorePairingChangeForControllerId = -1;
 

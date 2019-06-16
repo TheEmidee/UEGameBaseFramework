@@ -4,7 +4,6 @@
 #include <Engine/GameInstance.h>
 #include <Interfaces/OnlineExternalUIInterface.h>
 #include <OnlineSubsystemTypes.h>
-#include <TextProperty.h>
 #include <Ticker.h>
 
 #include "GBFGameInstance.generated.h"
@@ -30,7 +29,7 @@ public:
 
     void Init() override;
     void Shutdown() override;
-    class AGameModeBase * CreateGameModeForURL( FURL InURL ) override;
+    class AGameModeBase * CreateGameModeForURL( FURL url ) override;
 
     bool IsOnWelcomeScreenState() const;
 
@@ -72,13 +71,13 @@ private:
     void HandleAppReactivateOrForeground();
     void HandleSafeFrameChanged();
     void HandleAppLicenseUpdate();
-    void HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id );
-    void HandleControllerPairingChanged( int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user );
-    void HandleNetworkConnectionStatusChanged( const FString & service_name, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
-    void HandleControllerConnectionChange( bool b_is_connection, int32 unused, int32 game_user_index );
+    void HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type previous_login_status, const ELoginStatus::Type login_status, const FUniqueNetId & user_id );
+    void HandleControllerPairingChanged( const int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user );
+    void HandleNetworkConnectionStatusChanged( const FString & service_name, const EOnlineServerConnectionStatus::Type last_connection_status, const EOnlineServerConnectionStatus::Type connection_status );
+    void HandleControllerConnectionChange( const bool is_connection, const int32 unused, const int32 game_user_index );
     void HandleSignInChangeMessaging();
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
-    void OnLoginUIClosed( TSharedPtr< const FUniqueNetId > UniqueId, int controller_index, const FOnlineError & error );
+    void OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, int controller_index, const FOnlineError & error );
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedEvent OnStateChangedEvent;

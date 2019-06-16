@@ -1,10 +1,9 @@
 #include "GBFConfirmationWidget.h"
 
-#include "Blueprint/WidgetTree.h"
-#include "Components/Button.h"
-
-#include "GameFramework/GBFPlayerController.h"
 #include "Components/GBFUIDialogManagerComponent.h"
+
+#include <Blueprint/WidgetTree.h>
+#include <Components/Button.h>
 
 void UGBFConfirmationWidget::NativeInitialize(
     const FText & title,
@@ -12,8 +11,7 @@ void UGBFConfirmationWidget::NativeInitialize(
     const FGBFConfirmationPopupButtonClicked & ok_button_clicked_delegate,
     const FGBFConfirmationPopupButtonClicked & cancel_button_clicked_delegate,
     const FText & ok_button_text,
-    const FText & cancel_button_text
-    )
+    const FText & cancel_button_text )
 {
     OwnerDialogManagerComponent = Cast< UGBFUIDialogManagerComponent >( GetOuter() );
     check( OwnerDialogManagerComponent.IsValid() );
@@ -25,14 +23,18 @@ void UGBFConfirmationWidget::NativeInitialize(
 
 // -- PROTECTED
 
-void UGBFConfirmationWidget::K2Call_OkButtonDelegate()
+// ReSharper disable once CppInconsistentNaming
+void UGBFConfirmationWidget::K2Call_OkButtonDelegate() const
 {
     OwnerDialogManagerComponent->CloseLastDialog();
+    // ReSharper disable once CppExpressionWithoutSideEffects
     OkButtonClickedDelegate.ExecuteIfBound();
 }
 
-void UGBFConfirmationWidget::K2Call_CancelButtonDelegate()
+// ReSharper disable once CppInconsistentNaming
+void UGBFConfirmationWidget::K2Call_CancelButtonDelegate() const
 {
     OwnerDialogManagerComponent->CloseLastDialog();
+    // ReSharper disable once CppExpressionWithoutSideEffects
     CancelButtonClickedDelegate.ExecuteIfBound();
 }

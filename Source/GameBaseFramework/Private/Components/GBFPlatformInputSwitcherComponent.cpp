@@ -1,8 +1,8 @@
 #include "GBFPlatformInputSwitcherComponent.h"
 
-#include "Engine/World.h"
-#include "SlateApplication.h"
-#include "GameFramework/PlayerController.h"
+#include <Engine/World.h>
+#include <GameFramework/PlayerController.h>
+#include <SlateApplication.h>
 
 UGBFPlatformInputSwitcherComponent::UGBFPlatformInputSwitcherComponent()
 {
@@ -31,11 +31,11 @@ APlayerController * UGBFPlatformInputSwitcherComponent::GetPlayerController() co
 
 // -- PRIVATE
 
-UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchOptions & config )
-    : InputSwitcherComponent( &input_switcher_component )
-    , LocalPlayer( input_switcher_component.GetPlayerController()->GetLocalPlayer() )
-    , Config( config )
-    , MouseMoveMinDeltaSquared( config.MouseMoveMinDelta * config.MouseMoveMinDelta )
+UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector( UGBFPlatformInputSwitcherComponent & input_switcher_component, const FGBFInputSwitchOptions & config ) :
+    InputSwitcherComponent( &input_switcher_component ),
+    LocalPlayer( input_switcher_component.GetPlayerController()->GetLocalPlayer() ),
+    Config( config ),
+    MouseMoveMinDeltaSquared( config.MouseMoveMinDelta * config.MouseMoveMinDelta )
 {
 }
 
@@ -65,9 +65,7 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyUpEvent
 
 bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleAnalogInputEvent( FSlateApplication & slate_app, const FAnalogInputEvent & event )
 {
-    if ( event.GetUserIndex() == LocalPlayer->GetControllerId()
-        && FMath::Abs( event.GetAnalogValue() ) > Config.AxisMinThreshold
-        )
+    if ( event.GetUserIndex() == LocalPlayer->GetControllerId() && FMath::Abs( event.GetAnalogValue() ) > Config.AxisMinThreshold )
     {
         SetLocalPlayerPlatformInputType( event.GetKey().IsGamepadKey() );
     }
@@ -77,9 +75,7 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleAnalogInpu
 
 bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseMoveEvent( FSlateApplication & slate_app, const FPointerEvent & event )
 {
-    if ( event.GetUserIndex() == LocalPlayer->GetControllerId()
-        && event.GetCursorDelta().SizeSquared() >= MouseMoveMinDeltaSquared
-        )
+    if ( event.GetUserIndex() == LocalPlayer->GetControllerId() && event.GetCursorDelta().SizeSquared() >= MouseMoveMinDeltaSquared )
     {
         SetLocalPlayerPlatformInputType( false );
     }
@@ -122,15 +118,13 @@ void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 
 void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
-    if ( InputPlatformDetectorPtr.IsValid() 
-         && FSlateApplication::IsInitialized()
-         )
+    if ( InputPlatformDetectorPtr.IsValid() && FSlateApplication::IsInitialized() )
     {
         FSlateApplication::Get().UnregisterInputPreProcessor( InputPlatformDetectorPtr );
     }
 }
 
-void UGBFPlatformInputSwitcherComponent::SetPlatformInputType( EGBFPlatformInputType new_platform_input_type )
+void UGBFPlatformInputSwitcherComponent::SetPlatformInputType( const EGBFPlatformInputType new_platform_input_type )
 {
     const auto elapsed_time = GetWorld()->GetRealTimeSeconds();
 

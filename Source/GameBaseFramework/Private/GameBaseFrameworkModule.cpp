@@ -1,9 +1,8 @@
-#include "IGameBaseFrameworkModule.h"
-
-#include "Engine/Texture2D.h"
-
 #include "GameBaseFrameworkSettings.h"
+#include "IGameBaseFrameworkModule.h"
 #include "Input/GBFInputTypes.h"
+
+#include <Engine/Texture2D.h>
 
 IMPLEMENT_MODULE( IGameBaseFrameworkModule, GameBaseFramework )
 
@@ -43,6 +42,7 @@ void IGameBaseFrameworkModule::LoadAllPlatformInputTextures()
 {
     if ( auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
+        // ReSharper disable once CppExpressionWithoutSideEffects
         settings->PlatformInputTextures.LoadSynchronous();
 
 #if PLATFORM_DESKTOP

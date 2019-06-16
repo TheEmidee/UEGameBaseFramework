@@ -92,7 +92,7 @@ public:
     void CloseLastDialog();
 
     UFUNCTION( BlueprintCallable )
-    void CloseAllDialogs( bool show_main_ui = true );
+    void CloseAllDialogs( const bool show_main_ui = true );
 
     UGBFConfirmationWidget * ShowConfirmationPopup(
         const FText & title,
@@ -106,13 +106,13 @@ public:
 
     UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup", AutoCreateRefTerm = "ok_button_clicked, cancel_button_clicked" ) )
     UGBFConfirmationWidget * K2_ShowConfirmationPopup(
-        FText title,
-        FText content,
+        const FText title,
+        const FText content,
         const EGBFUIDialogType type,
         const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
         const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
-        FText ok_button_text,
-        FText cancel_button_text
+        const FText ok_button_text,
+        const FText cancel_button_text
         );
 
 private:

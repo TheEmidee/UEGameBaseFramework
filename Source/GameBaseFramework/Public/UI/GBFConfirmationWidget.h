@@ -34,10 +34,10 @@ protected:
     void K2Event_Initialize( const FText & title, const FText & content, const FText & ok_button_text, const FText & cancel_button_text );
 
     UFUNCTION( BlueprintCallable )
-    void K2Call_OkButtonDelegate();
+    void K2Call_OkButtonDelegate() const;
 
     UFUNCTION( BlueprintCallable )
-    void K2Call_CancelButtonDelegate();
+    void K2Call_CancelButtonDelegate() const;
 
 private:
 

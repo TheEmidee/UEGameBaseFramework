@@ -8,7 +8,7 @@ void AGBFGameModeBase::StartPlay()
     GetGameInstance< UGBFGameInstance >()->PushSoundMixModifier();
 }
 
-void AGBFGameModeBase::EndPlay( EEndPlayReason::Type reason )
+void AGBFGameModeBase::EndPlay( const EEndPlayReason::Type reason )
 {
     Super::EndPlay( reason );
 

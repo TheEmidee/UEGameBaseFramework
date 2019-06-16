@@ -4,7 +4,6 @@
 #include "GameFramework/GBFSaveGame.h"
 
 #include <Application/SlateApplication.h>
-#include <Engine/World.h>
 #include <Interfaces/OnlineAchievementsInterface.h>
 #include <Interfaces/OnlineIdentityInterface.h>
 #include <Internationalization/Culture.h>
@@ -38,11 +37,11 @@ IOnlineAchievementsPtr LOCAL_GetOnlineAchievementsInterface()
 UGBFLocalPlayer::UGBFLocalPlayer() :
     SaveGame { nullptr }
 {
-    bAreAchievementsCached = false;
+    AreAchievementsCached = false;
     SaveGameClass = UGBFSaveGame::StaticClass();
 }
 
-void UGBFLocalPlayer::SetControllerId( int32 new_controller_id )
+void UGBFLocalPlayer::SetControllerId( const int32 new_controller_id )
 {
     ULocalPlayer::SetControllerId( new_controller_id );
 
@@ -121,7 +120,7 @@ ELoginStatus::Type UGBFLocalPlayer::GetLoginStatus() const
     return ELoginStatus::NotLoggedIn;
 }
 
-void UGBFLocalPlayer::InitializeAfterLogin( int controller_index )
+void UGBFLocalPlayer::InitializeAfterLogin( const int controller_index )
 {
     SetControllerId( controller_index );
 
@@ -157,10 +156,12 @@ void UGBFLocalPlayer::SetPresenceStatus( const FText & status ) const
     }
 }
 
-void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, int current_count, int trigger_count ) const
+// ReSharper disable CppMemberFunctionMayBeConst
+void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, const int current_count, const int trigger_count )
+// ReSharper restore CppMemberFunctionMayBeConst
 {
 #if !WITH_EDITOR
-    if ( !bAreAchievementsCached )
+    if ( !AreAchievementsCached )
     {
         UE_LOG( LogGBF_OSS, Error, TEXT( "Achievements have not been retrieved yet." ) );
         return;
@@ -258,7 +259,7 @@ void UGBFLocalPlayer::LoadSaveGame()
     }
 }
 
-UGBFSaveGame * UGBFLocalPlayer::LoadSaveGameOrCreateFromSlot( const FString & slot_name, int user_index )
+UGBFSaveGame * UGBFLocalPlayer::LoadSaveGameOrCreateFromSlot( const FString & slot_name, const int user_index )
 {
     UGBFSaveGame * result = nullptr;
 
@@ -296,7 +297,7 @@ void UGBFLocalPlayer::CheckChangedControllerId( const FString & save_name )
 
 void UGBFLocalPlayer::OnQueryAchievementsComplete( const FUniqueNetId & player_id, const bool was_successful )
 {
-    bAreAchievementsCached = was_successful;
+    AreAchievementsCached = was_successful;
 
     if ( was_successful )
     {
