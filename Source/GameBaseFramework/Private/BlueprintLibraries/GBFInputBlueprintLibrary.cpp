@@ -13,7 +13,7 @@ TArray< FKey > UGBFInputBlueprintLibrary::GetCancelKeys()
         EKeys::Escape,
         EKeys::Virtual_Back
 #elif PLATFORM_XBOXONE || PLATFORM_PS4 || PLATFORM_SWITCH
-        EKeys::Virtual_Back
+        EKeys::VirtualBack
 #endif
     };
 
@@ -27,7 +27,7 @@ TArray< FKey > UGBFInputBlueprintLibrary::GetConfirmKeys()
         EKeys::Enter,
         EKeys::Virtual_Accept,
 #elif PLATFORM_XBOXONE || PLATFORM_PS4 || PLATFORM_SWITCH
-        EKeys::Virtual_Accept
+        EKeys::VirtualAccept
 #endif
     };
 
