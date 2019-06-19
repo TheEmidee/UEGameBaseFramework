@@ -28,7 +28,7 @@ private: \
 }; \
 FSQScopedLog InstanceName( FString::Printf( InitialLogFormat, ##__VA_ARGS__ ) );
 
-FORCEINLINE FColor GetColorForLogVerbosity( ELogVerbosity::Type verbosity )
+FORCEINLINE FColor GetColorForLogVerbosity( const ELogVerbosity::Type verbosity )
 {
     FColor color;
 

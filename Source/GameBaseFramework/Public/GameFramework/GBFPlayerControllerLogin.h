@@ -5,6 +5,7 @@
 #include "OnlineIdentityInterface.h"
 
 #include "GameFramework/GBFPlayerController.h"
+#include "SharedPointerInternals.h"
 
 #include "GBFPlayerControllerLogin.generated.h"
 
@@ -16,22 +17,22 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerControllerLogin : public AGBFPlayerControl
 public:
 
     UFUNCTION( BlueprintCallable )
-    void TryLogIn( int player_index );
+    void TryLogIn( const int player_index );
 
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required );
     FOnRequiresUserAction & ReceiveRequiresUserAction( bool is_required ) { return OnRequiresUserAction; }
 
 private:
 
-    void HandleLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index );
-    void OnUserCanPlay( const FUniqueNetId & user_id, EUserPrivileges::Type privilege, uint32 privilege_result );
+    void HandleLoginUIClosed( const TSharedPtr<const FUniqueNetId> unique_id, const int controller_index );
+    void OnUserCanPlay( const FUniqueNetId & user_id, const EUserPrivileges::Type privilege, const uint32 privilege_result );
     void TryToConnectToOnlineInterface();
-    void OnLoginSucceeded( int32 local_user_num, bool b_was_successful, const FUniqueNetId & user_id, const FString & error );
+    void OnLoginSucceeded( const int32 local_user_num, const bool was_successful, const FUniqueNetId & user_id, const FString & error );
     void OnUserCannotPlay();
     void OnContinueOffline();
     void OnContinueWithoutSavingConfirm() const;
     void SetControllerAndAdvanceToMainMenu( const int controller_index ) const;
-    void SetItIsHandlingLoginFlow( bool result );
+    void SetItIsHandlingLoginFlow( const bool result );
 
     int PendingControllerIndex;
     bool bItIsHandlingLoginFlow;

@@ -25,7 +25,7 @@ public:
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
     void SetSlotNameAndIndex( const FString & slot_name, const int user_index );
-    void UpdateAchievementCurrentCount( const FName & achievement_id, int current_count );
+    void UpdateAchievementCurrentCount( const FName achievement_id, const int current_count );
     void ResetAchievementsProgression();
 
     UFUNCTION( BlueprintSetter )

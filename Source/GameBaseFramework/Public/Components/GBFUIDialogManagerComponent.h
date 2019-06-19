@@ -32,7 +32,7 @@ struct FGBFShowDialogOptions
     {
     }
 
-    FGBFShowDialogOptions( bool give_user_focus, bool hide_main_ui, bool blur_background, EGBFUIDialogType dialog_type, bool disable_player_controller_input ) :
+    FGBFShowDialogOptions( const bool give_user_focus, const bool hide_main_ui, const bool blur_background, const EGBFUIDialogType dialog_type, const bool disable_player_controller_input ) :
         bGiveUserFocus( give_user_focus ),
         bHideMainUI( hide_main_ui ),
         bBlurBackground( blur_background ),

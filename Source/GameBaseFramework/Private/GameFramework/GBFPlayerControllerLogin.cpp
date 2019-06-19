@@ -9,7 +9,7 @@
 #include <OnlineSubsystem.h>
 #include <SlateApplication.h>
 
-void AGBFPlayerControllerLogin::TryLogIn( int player_index )
+void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
 {
     if ( bItIsHandlingLoginFlow )
     {
@@ -26,9 +26,8 @@ void AGBFPlayerControllerLogin::TryLogIn( int player_index )
         {
             auto generic_application = FSlateApplication::Get().GetPlatformApplication();
 
-            // ReSharper disable CppLocalVariableMayBeConst
+            // ReSharper disable once CppLocalVariableMayBeConst
             auto can_move_to_main_menu = true;
-            // ReSharper restore CppLocalVariableMayBeConst
 
 #if !PLATFORM_DESKTOP
             const auto login_status = identity_interface->GetLoginStatus( player_index );
@@ -63,7 +62,7 @@ void AGBFPlayerControllerLogin::TryLogIn( int player_index )
 
 // -- PRIVATE
 
-void AGBFPlayerControllerLogin::HandleLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index )
+void AGBFPlayerControllerLogin::HandleLoginUIClosed( const TSharedPtr<const FUniqueNetId> unique_id, const int controller_index )
 {
     if ( !ensure( GetGameInstance() != nullptr ) )
     {
@@ -76,8 +75,8 @@ void AGBFPlayerControllerLogin::HandleLoginUIClosed( TSharedPtr< const FUniqueNe
         return;
     }
 
-    TSharedPtr< GenericApplication > generic_application = FSlateApplication::Get().GetPlatformApplication();
-    const bool is_licensed = generic_application->ApplicationLicenseValid();
+    auto generic_application = FSlateApplication::Get().GetPlatformApplication();
+    const auto is_licensed = generic_application->ApplicationLicenseValid();
 
     // If they don't currently have a license, let them know, but don't let them proceed
     if ( !is_licensed )
@@ -115,7 +114,7 @@ void AGBFPlayerControllerLogin::HandleLoginUIClosed( TSharedPtr< const FUniqueNe
     }
 }
 
-void AGBFPlayerControllerLogin::OnUserCanPlay( const FUniqueNetId & user_id, EUserPrivileges::Type privilege, uint32 privilege_result )
+void AGBFPlayerControllerLogin::OnUserCanPlay( const FUniqueNetId & /*user_id*/, const EUserPrivileges::Type /*privilege*/, const uint32 privilege_result )
 {
     if ( privilege_result == static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::NoFailures ) )
     {
@@ -180,7 +179,7 @@ void AGBFPlayerControllerLogin::TryToConnectToOnlineInterface()
     }
 }
 
-void AGBFPlayerControllerLogin::OnLoginSucceeded( int32 local_user_num, bool b_was_successful, const FUniqueNetId & user_id, const FString & error )
+void AGBFPlayerControllerLogin::OnLoginSucceeded( const int32 local_user_num, const bool was_successful, const FUniqueNetId & /*user_id*/, const FString & error )
 {
     // Some online interfaces (Steam for example) call OnLoginCompleteDelegate directly in Login, and return immediately.
     // If for some reason its not possible to connect to the OSS, we end up here twice. Don't allow that, using that flag
@@ -193,7 +192,7 @@ void AGBFPlayerControllerLogin::OnLoginSucceeded( int32 local_user_num, bool b_w
 
     IOnlineSubsystem::Get()->GetIdentityInterface()->ClearOnLoginCompleteDelegate_Handle( local_user_num, OnLoginCompleteDelegateHandle );
 
-    if ( b_was_successful )
+    if ( was_successful )
     {
         SetControllerAndAdvanceToMainMenu( PendingControllerIndex );
     }
@@ -232,7 +231,7 @@ void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int con
     }
 }
 
-void AGBFPlayerControllerLogin::SetItIsHandlingLoginFlow( bool result )
+void AGBFPlayerControllerLogin::SetItIsHandlingLoginFlow( const bool result )
 {
     if ( bItIsHandlingLoginFlow != result )
     {

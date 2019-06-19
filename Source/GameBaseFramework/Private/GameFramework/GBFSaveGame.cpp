@@ -23,7 +23,7 @@ void UGBFSaveGame::SetSlotNameAndIndex( const FString & slot_name, const int use
     UserIndex = user_index;
 }
 
-void UGBFSaveGame::UpdateAchievementCurrentCount( const FName & achievement_id, int current_count )
+void UGBFSaveGame::UpdateAchievementCurrentCount( const FName achievement_id, const int current_count )
 {
     AchievementsCurrentCountMap.FindOrAdd( achievement_id ) = current_count;
     bIsDirty = true;

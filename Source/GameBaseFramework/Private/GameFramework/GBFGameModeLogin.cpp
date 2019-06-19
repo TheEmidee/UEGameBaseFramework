@@ -16,7 +16,7 @@ void AGBFGameModeLogin::StartPlay()
     }
 }
 
-void AGBFGameModeLogin::InitializeLocalPlayer( int controller_index )
+void AGBFGameModeLogin::InitializeLocalPlayer( const int controller_index )
 {
     auto local_players = GetGameInstance()->GetLocalPlayers();
 
