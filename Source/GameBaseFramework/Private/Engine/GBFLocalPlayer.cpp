@@ -156,9 +156,9 @@ void UGBFLocalPlayer::SetPresenceStatus( const FText & status ) const
     }
 }
 
-// ReSharper disable CppMemberFunctionMayBeConst
+// ReSharper disable once CppMemberFunctionMayBeConst
+// ReSharper disable once CppParameterNeverUsed
 void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id, const int current_count, const int trigger_count )
-// ReSharper restore CppMemberFunctionMayBeConst
 {
 #if !WITH_EDITOR
     if ( !AreAchievementsCached )
@@ -295,7 +295,7 @@ void UGBFLocalPlayer::CheckChangedControllerId( const FString & save_name )
     }
 }
 
-void UGBFLocalPlayer::OnQueryAchievementsComplete( const FUniqueNetId & player_id, const bool was_successful )
+void UGBFLocalPlayer::OnQueryAchievementsComplete( const FUniqueNetId & /*player_id*/, const bool was_successful )
 {
     AreAchievementsCached = was_successful;
 

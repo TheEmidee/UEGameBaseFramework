@@ -1,13 +1,12 @@
-#include "IGameBaseFrameworkEditorModule.h"
-
-#include "PropertyEditorModule.h"
-
-#include "IGameBaseFrameworkModule.h"
+#include "GBFInputTypes.h"
 #include "GameBaseFrameworkSettings.h"
 #include "GameBaseFrameworkSettingsDetails.h"
-#include "GBFInputTypes.h"
+#include "IGameBaseFrameworkEditorModule.h"
+#include "IGameBaseFrameworkModule.h"
 
-void LOCAL_OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * settings )
+#include <PropertyEditorModule.h>
+
+void LOCAL_OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * /*settings*/ )
 {
     if ( property_name == "PlatformInputTextures" )
     {
@@ -15,11 +14,9 @@ void LOCAL_OnGameBaseFrameworkSettingsChangedEvent( const FString & property_nam
     }
 }
 
-void LOCAL_OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * settings )
+void LOCAL_OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * /*settings*/ )
 {
-    if ( property_name == "Fallback"
-        || property_name == "PlatformInputToTextureMap"
-        )
+    if ( property_name == "Fallback" || property_name == "PlatformInputToTextureMap" )
     {
         IGameBaseFrameworkModule::Get().RefreshPlatformInputTextures();
     }
@@ -46,5 +43,3 @@ void IGameBaseFrameworkEditorModule::ShutdownModule()
 }
 
 // -- PRIVATE
-
-

@@ -40,7 +40,7 @@ public:
     void GoToWelcomeScreenState();
 
     UFUNCTION( BlueprintCallable )
-    void GoToState( UGBFGameState * game_state );
+    void GoToState( UGBFGameState * new_state );
 
     UFUNCTION( BlueprintCallable )
     void PushSoundMixModifier() const;

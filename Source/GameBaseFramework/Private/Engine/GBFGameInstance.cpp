@@ -145,7 +145,7 @@ bool UGBFGameInstance::IsOnWelcomeScreenState() const
     return IsStateWelcomeScreenState( CurrentGameState.Get() );
 }
 
-bool UGBFGameInstance::Tick( float delta_seconds )
+bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
 {
     if ( !IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
     {
@@ -427,7 +427,7 @@ void UGBFGameInstance::HandleAppLicenseUpdate()
     bIsLicensed = generic_application->ApplicationLicenseValid();
 }
 
-void UGBFGameInstance::HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type previous_login_status, const ELoginStatus::Type login_status, const FUniqueNetId & user_id )
+void UGBFGameInstance::HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type /*previous_login_status*/, const ELoginStatus::Type login_status, const FUniqueNetId & user_id )
 {
     const auto is_downgraded = login_status == ELoginStatus::NotLoggedIn;
 
@@ -500,7 +500,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( const int game_user_index
 #endif
 }
 
-void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*service_name*/, const EOnlineServerConnectionStatus::Type last_connection_status, const EOnlineServerConnectionStatus::Type connection_status )
+void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*service_name*/, const EOnlineServerConnectionStatus::Type /*last_connection_status*/, const EOnlineServerConnectionStatus::Type connection_status )
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
@@ -526,7 +526,7 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*s
     CurrentConnectionStatus = connection_status;
 }
 
-void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connection, const int32 unused, const int32 game_user_index )
+void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connection, const int32 /*unused*/, const int32 game_user_index )
 {
 #if PLATFORM_XBOXONE
     // update game_user_index based on previous controller index from stable index

@@ -90,7 +90,7 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
 
 // -- PRIVATE
 
-void AGBFPlayerController::OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type )
+void AGBFPlayerController::OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType /*input_type*/ )
 {
     UpdateInputRelatedFlags();
 }

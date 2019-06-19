@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Components/ActorComponent.h"
 #include "GameBaseFrameworkSettings.h"
 #include "Input/GBFInputTypes.h"
 
 #include <Application/IInputProcessor.h>
+#include <Components/ActorComponent.h>
 #include <Engine/LocalPlayer.h>
 
 #include "GBFPlatformInputSwitcherComponent.generated.h"

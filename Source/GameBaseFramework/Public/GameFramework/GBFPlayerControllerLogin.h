@@ -20,7 +20,7 @@ public:
     void TryLogIn( const int player_index );
 
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required );
-    FOnRequiresUserAction & ReceiveRequiresUserAction( bool is_required ) { return OnRequiresUserAction; }
+    FOnRequiresUserAction & ReceiveRequiresUserAction();
 
 private:
 
@@ -43,3 +43,8 @@ private:
     UPROPERTY( BlueprintAssignable )
     FOnRequiresUserAction OnRequiresUserAction;
 };
+
+FORCEINLINE AGBFPlayerControllerLogin::FOnRequiresUserAction & AGBFPlayerControllerLogin::ReceiveRequiresUserAction()
+{
+    return OnRequiresUserAction;
+}

@@ -39,21 +39,11 @@ UGBFPlatformInputSwitcherComponent::InputPlatformDetector::InputPlatformDetector
 {
 }
 
-void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::Tick( const float delta_time, FSlateApplication & slate_app, TSharedRef< ICursor > cursor )
+void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::Tick( const float /*delta_time*/, FSlateApplication & /*slate_app*/, TSharedRef< ICursor > /*cursor*/ )
 {
 }
 
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyDownEvent( FSlateApplication & slate_app, const FKeyEvent & event )
-{
-    if ( event.GetUserIndex() == LocalPlayer->GetControllerId() )
-    {
-        SetLocalPlayerPlatformInputType( event.GetKey().IsGamepadKey() );
-    }
-
-    return false;
-}
-
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyUpEvent( FSlateApplication & slate_app, const FKeyEvent & event )
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyDownEvent( FSlateApplication & /*slate_app*/, const FKeyEvent & event )
 {
     if ( event.GetUserIndex() == LocalPlayer->GetControllerId() )
     {
@@ -63,7 +53,17 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyUpEvent
     return false;
 }
 
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleAnalogInputEvent( FSlateApplication & slate_app, const FAnalogInputEvent & event )
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleKeyUpEvent( FSlateApplication & /*slate_app*/, const FKeyEvent & event )
+{
+    if ( event.GetUserIndex() == LocalPlayer->GetControllerId() )
+    {
+        SetLocalPlayerPlatformInputType( event.GetKey().IsGamepadKey() );
+    }
+
+    return false;
+}
+
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleAnalogInputEvent( FSlateApplication & /*slate_app*/, const FAnalogInputEvent & event )
 {
     if ( event.GetUserIndex() == LocalPlayer->GetControllerId() && FMath::Abs( event.GetAnalogValue() ) > Config.AxisMinThreshold )
     {
@@ -73,7 +73,7 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleAnalogInpu
     return false;
 }
 
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseMoveEvent( FSlateApplication & slate_app, const FPointerEvent & event )
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseMoveEvent( FSlateApplication & /*slate_app*/, const FPointerEvent & event )
 {
     if ( event.GetUserIndex() == LocalPlayer->GetControllerId() && event.GetCursorDelta().SizeSquared() >= MouseMoveMinDeltaSquared )
     {
@@ -83,7 +83,7 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseMoveE
     return false;
 }
 
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseButtonDownEvent( FSlateApplication & slate_app, const FPointerEvent & event )
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseButtonDownEvent( FSlateApplication & /*slate_app*/, const FPointerEvent & event )
 {
     if ( event.GetUserIndex() == LocalPlayer->GetControllerId() )
     {
@@ -93,7 +93,7 @@ bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseButto
     return false;
 }
 
-bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseButtonUpEvent( FSlateApplication & slate_app, const FPointerEvent & event )
+bool UGBFPlatformInputSwitcherComponent::InputPlatformDetector::HandleMouseButtonUpEvent( FSlateApplication & /*slate_app*/, const FPointerEvent & event )
 {
     if ( event.GetUserIndex() == LocalPlayer->GetControllerId() )
     {
