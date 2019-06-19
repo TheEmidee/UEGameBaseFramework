@@ -24,37 +24,37 @@ struct FGBFShowDialogOptions
     GENERATED_BODY()
 
     FGBFShowDialogOptions() :
-        bGiveUserFocus( true ),
-        bHideMainUI( false ),
-        bBlurBackground( false ),
+        GiveUserFocus( true ),
+        HideMainUI( false ),
+        BlurBackground( false ),
         DialogType( EGBFUIDialogType::AdditiveOnlyOneVisible ),
-        bDisablePlayerControllerInput( true )
+        DisablePlayerControllerInput( true )
     {
     }
 
     FGBFShowDialogOptions( const bool give_user_focus, const bool hide_main_ui, const bool blur_background, const EGBFUIDialogType dialog_type, const bool disable_player_controller_input ) :
-        bGiveUserFocus( give_user_focus ),
-        bHideMainUI( hide_main_ui ),
-        bBlurBackground( blur_background ),
+        GiveUserFocus( give_user_focus ),
+        HideMainUI( hide_main_ui ),
+        BlurBackground( blur_background ),
         DialogType( dialog_type ),
-        bDisablePlayerControllerInput( disable_player_controller_input )
+        DisablePlayerControllerInput( disable_player_controller_input )
     {
     }
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bGiveUserFocus : 1;
+    uint8 GiveUserFocus : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bHideMainUI : 1;
+    uint8 HideMainUI : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bBlurBackground : 1;
+    uint8 BlurBackground : 1;
 
     UPROPERTY( BlueprintReadWrite )
     EGBFUIDialogType DialogType;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bDisablePlayerControllerInput : 1;
+    uint8 DisablePlayerControllerInput : 1;
 };
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
@@ -152,7 +152,7 @@ private:
 
     TArray< FDialogStackEntry > DialogStack;
     TWeakObjectPtr< APlayerController > OwnerPlayerController;
-    int zOrder;
-    bool bIsMainUIHidden;
-    bool bIsBlurBackgroundVisible;
+    int ZOrder;
+    bool IsMainUIHidden;
+    bool IsBlurBackgroundVisible;
 };

@@ -35,8 +35,8 @@ private:
     void SetItIsHandlingLoginFlow( const bool result );
 
     int PendingControllerIndex;
-    bool bItIsHandlingLoginFlow;
-    bool bIsHandlingLoginSuccess;
+    bool IsHandlingLoginFlow;
+    bool IsHandlingLoginSuccess;
 
     FDelegateHandle OnLoginCompleteDelegateHandle;
 

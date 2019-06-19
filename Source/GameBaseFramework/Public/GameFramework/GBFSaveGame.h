@@ -15,12 +15,12 @@ public:
 
     UGBFSaveGame();
 
-    FORCEINLINE const FString & GetSlotName() const;
-    FORCEINLINE int GetUserIndex() const;
-    FORCEINLINE const FString & GetActiveCulture() const;
-    FORCEINLINE bool IsDirty() const;
-    FORCEINLINE bool GetEnableForceFeedback() const;
-    FORCEINLINE bool GetEnableSubtitles() const;
+    const FString & GetSlotName() const;
+    int GetUserIndex() const;
+    const FString & GetActiveCulture() const;
+    bool GetIsDirty() const;
+    bool GetEnableForceFeedback() const;
+    bool GetEnableSubtitles() const;
 
     int GetAchievementCurrentCount( const FName & achievement_id ) const;
 
@@ -42,7 +42,7 @@ public:
 
 protected:
 
-    bool bIsDirty;
+    bool IsDirty;
 
 private:
 
@@ -56,41 +56,41 @@ private:
     FString ActiveCulture;
 
     UPROPERTY( meta = ( AllowPrivateAccess = true ), BlueprintSetter = SetEnableForceFeedback )
-    uint8 bEnableForceFeedback : 1;
+    uint8 EnableForceFeedback : 1;
 
     UPROPERTY( meta = ( AllowPrivateAccess = true ), BlueprintSetter = SetEnableSubtitles )
-    uint8 bEnableSubtitles : 1;
+    uint8 EnableSubtitles : 1;
 
     FString SlotName;
     int UserIndex;
 };
 
-const FString & UGBFSaveGame::GetSlotName() const
+FORCEINLINE const FString & UGBFSaveGame::GetSlotName() const
 {
     return SlotName;
 }
 
-int UGBFSaveGame::GetUserIndex() const
+FORCEINLINE int UGBFSaveGame::GetUserIndex() const
 {
     return UserIndex;
 }
 
-const FString & UGBFSaveGame::GetActiveCulture() const
+FORCEINLINE const FString & UGBFSaveGame::GetActiveCulture() const
 {
     return ActiveCulture;
 }
 
-bool UGBFSaveGame::IsDirty() const
+FORCEINLINE bool UGBFSaveGame::GetIsDirty() const
 {
-    return bIsDirty;
+    return IsDirty;
 }
 
-bool UGBFSaveGame::GetEnableForceFeedback() const
+FORCEINLINE bool UGBFSaveGame::GetEnableForceFeedback() const
 {
-    return bEnableForceFeedback;
+    return EnableForceFeedback;
 }
 
-bool UGBFSaveGame::GetEnableSubtitles() const
+FORCEINLINE bool UGBFSaveGame::GetEnableSubtitles() const
 {
-    return bEnableSubtitles;
+    return EnableSubtitles;
 }

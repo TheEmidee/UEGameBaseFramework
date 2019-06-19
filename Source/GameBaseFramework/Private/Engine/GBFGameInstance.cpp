@@ -58,7 +58,7 @@ static void LOCAL_ExtendedSaveGameInfoDelegate( const TCHAR * save_name, const E
 #endif
 
 UGBFGameInstance::UGBFGameInstance() :
-    bIsLicensed( true ) // Default to licensed (should have been checked by OS on boot)
+    IsLicensed( true ) // Default to licensed (should have been checked by OS on boot)
     ,
     IgnorePairingChangeForControllerId( -1 )
 {
@@ -156,7 +156,7 @@ bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
                 const auto is_displaying_dialog = player_controller->GetUIDialogManagerComponent()->IsDisplayingDialog();
 
                 // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
-                if ( !bIsLicensed && !is_displaying_dialog )
+                if ( !IsLicensed && !is_displaying_dialog )
                 {
                     ShowMessageThenGotoState(
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
@@ -424,7 +424,7 @@ void UGBFGameInstance::HandleSafeFrameChanged()
 void UGBFGameInstance::HandleAppLicenseUpdate()
 {
     auto generic_application = FSlateApplication::Get().GetPlatformApplication();
-    bIsLicensed = generic_application->ApplicationLicenseValid();
+    IsLicensed = generic_application->ApplicationLicenseValid();
 }
 
 void UGBFGameInstance::HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type /*previous_login_status*/, const ELoginStatus::Type login_status, const FUniqueNetId & user_id )

@@ -19,8 +19,8 @@ UENUM( BlueprintType )
 enum class EGBFVirtualKey : uint8
 {
     None,
-    Virtual_Back,
-    Virtual_Accept
+    VirtualBack,
+    VirtualAccept
 };
 
 UENUM( BlueprintType )

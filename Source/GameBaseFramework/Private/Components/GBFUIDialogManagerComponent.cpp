@@ -15,10 +15,10 @@ UGBFUIDialogManagerComponent::UGBFUIDialogManagerComponent()
     PrimaryComponentTick.bCanEverTick = false;
 
     // Keep ZOrder 0 for main UI and 1 for blur
-    zOrder = 2;
+    ZOrder = 2;
 
-    bIsMainUIHidden = true;
-    bIsBlurBackgroundVisible = false;
+    IsMainUIHidden = true;
+    IsBlurBackgroundVisible = false;
 }
 
 void UGBFUIDialogManagerComponent::BeginPlay()
@@ -79,19 +79,19 @@ void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWid
 
 void UGBFUIDialogManagerComponent::ShowMainUI()
 {
-    if ( MainUIWidget != nullptr && bIsMainUIHidden )
+    if ( MainUIWidget != nullptr && IsMainUIHidden )
     {
         MainUIWidget->AddToViewport( 0 );
-        bIsMainUIHidden = false;
+        IsMainUIHidden = false;
     }
 }
 
 void UGBFUIDialogManagerComponent::HideMainUI()
 {
-    if ( MainUIWidget != nullptr && !bIsMainUIHidden )
+    if ( MainUIWidget != nullptr && !IsMainUIHidden )
     {
         MainUIWidget->RemoveFromViewport();
-        bIsMainUIHidden = true;
+        IsMainUIHidden = true;
     }
 }
 
@@ -102,7 +102,7 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
         return;
     }
 
-    if ( options.bBlurBackground )
+    if ( options.BlurBackground )
     {
         ShowBlurBackground();
     }
@@ -126,23 +126,23 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
         }
     }
 
-    zOrder++;
+    ZOrder++;
 
     DialogStack.Add( FDialogStackEntry( widget, options ) );
-    widget->AddToViewport( zOrder );
+    widget->AddToViewport( ZOrder );
 
-    if ( options.bHideMainUI )
+    if ( options.HideMainUI )
     {
         HideMainUI();
     }
 
-    if ( options.bGiveUserFocus )
+    if ( options.GiveUserFocus )
     {
         OwnerPlayerController->DisableInput( nullptr );
         widget->SetKeyboardFocus();
         widget->SetUserFocus( OwnerPlayerController.Get() );
     }
-    else if ( options.bDisablePlayerControllerInput )
+    else if ( options.DisablePlayerControllerInput )
     {
         OwnerPlayerController->DisableInput( nullptr );
     }
@@ -177,7 +177,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
     auto last_stack_entry = DialogStack.Pop();
     last_stack_entry.UserWidget->RemoveFromViewport();
 
-    zOrder--;
+    ZOrder--;
 
     auto must_hide_blur = true;
     auto must_show_main_ui = true;
@@ -187,17 +187,17 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
     {
         for ( const auto & stack_entry : DialogStack )
         {
-            if ( must_hide_blur && stack_entry.Options.bBlurBackground )
+            if ( must_hide_blur && stack_entry.Options.BlurBackground )
             {
                 must_hide_blur = false;
             }
 
-            if ( must_show_main_ui && stack_entry.Options.bHideMainUI )
+            if ( must_show_main_ui && stack_entry.Options.HideMainUI )
             {
                 must_show_main_ui = false;
             }
 
-            if ( must_enable_player_input && stack_entry.Options.bDisablePlayerControllerInput )
+            if ( must_enable_player_input && stack_entry.Options.DisablePlayerControllerInput )
             {
                 must_enable_player_input = false;
             }
@@ -207,7 +207,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
         last_dialog_options.UserWidget->SetVisibility( last_dialog_options.OriginalVisibility );
 
-        if ( last_dialog_options.Options.bGiveUserFocus )
+        if ( last_dialog_options.Options.GiveUserFocus )
         {
             must_enable_player_input = false;
 
@@ -332,19 +332,19 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
 
 void UGBFUIDialogManagerComponent::ShowBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr ) && !bIsBlurBackgroundVisible )
+    if ( ensure( BlurBackgroundWidget != nullptr ) && !IsBlurBackgroundVisible )
     {
         BlurBackgroundWidget->AddToViewport( 1 );
-        bIsBlurBackgroundVisible = true;
+        IsBlurBackgroundVisible = true;
     }
 }
 
 void UGBFUIDialogManagerComponent::HideBlurBackground()
 {
-    if ( ensure( BlurBackgroundWidget != nullptr ) && bIsBlurBackgroundVisible )
+    if ( ensure( BlurBackgroundWidget != nullptr ) && IsBlurBackgroundVisible )
     {
         BlurBackgroundWidget->RemoveFromViewport();
-        bIsBlurBackgroundVisible = false;
+        IsBlurBackgroundVisible = false;
     }
 }
 
@@ -357,5 +357,5 @@ void UGBFUIDialogManagerComponent::RemoveAllDialogsFromViewport()
         info.UserWidget->RemoveFromViewport();
     }
 
-    zOrder = 2;
+    ZOrder = 2;
 }

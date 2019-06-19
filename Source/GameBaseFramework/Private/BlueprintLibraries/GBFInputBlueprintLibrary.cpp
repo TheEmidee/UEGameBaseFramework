@@ -8,7 +8,7 @@
 
 TArray< FKey > UGBFInputBlueprintLibrary::GetCancelKeys()
 {
-    static const TArray< FKey > cancel_keys_for_platform {
+    static const TArray< FKey > CancelKeysForPlatform {
 #if PLATFORM_DESKTOP
         EKeys::Escape,
         EKeys::Virtual_Back
@@ -17,12 +17,12 @@ TArray< FKey > UGBFInputBlueprintLibrary::GetCancelKeys()
 #endif
     };
 
-    return cancel_keys_for_platform;
+    return CancelKeysForPlatform;
 }
 
 TArray< FKey > UGBFInputBlueprintLibrary::GetConfirmKeys()
 {
-    static const TArray< FKey > confirm_keys_for_platform = {
+    static const TArray< FKey > ConfirmKeysForPlatform = {
 #if PLATFORM_DESKTOP
         EKeys::Enter,
         EKeys::Virtual_Accept,
@@ -31,7 +31,7 @@ TArray< FKey > UGBFInputBlueprintLibrary::GetConfirmKeys()
 #endif
     };
 
-    return confirm_keys_for_platform;
+    return ConfirmKeysForPlatform;
 }
 
 const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatformInputKey & platform_input_key, APlayerController * player_controller )
@@ -54,11 +54,11 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
         {
             switch ( platform_input_key.VirtualKey )
             {
-                case EGBFVirtualKey::Virtual_Back:
+                case EGBFVirtualKey::VirtualBack:
                 {
                     return EKeys::Virtual_Back;
                 }
-                case EGBFVirtualKey::Virtual_Accept:
+                case EGBFVirtualKey::VirtualAccept:
                 {
                     return EKeys::Virtual_Accept;
                 }
@@ -75,11 +75,11 @@ const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatf
     {
         switch ( platform_input_key.VirtualKey )
         {
-            case EGBFVirtualKey::Virtual_Back:
+            case EGBFVirtualKey::VirtualBack:
             {
                 return EKeys::Escape;
             }
-            case EGBFVirtualKey::Virtual_Accept:
+            case EGBFVirtualKey::VirtualAccept:
             {
                 return EKeys::Enter;
             }

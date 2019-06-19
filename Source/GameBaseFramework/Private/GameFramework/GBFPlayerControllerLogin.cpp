@@ -11,7 +11,7 @@
 
 void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
 {
-    if ( bItIsHandlingLoginFlow )
+    if ( IsHandlingLoginFlow )
     {
         return;
     }
@@ -153,7 +153,7 @@ void AGBFPlayerControllerLogin::TryToConnectToOnlineInterface()
         return;
     }
 
-    bIsHandlingLoginSuccess = false;
+    IsHandlingLoginSuccess = false;
 
     if ( const auto * oss = IOnlineSubsystem::Get() )
     {
@@ -183,12 +183,12 @@ void AGBFPlayerControllerLogin::OnLoginSucceeded( const int32 local_user_num, co
 {
     // Some online interfaces (Steam for example) call OnLoginCompleteDelegate directly in Login, and return immediately.
     // If for some reason its not possible to connect to the OSS, we end up here twice. Don't allow that, using that flag
-    if ( bIsHandlingLoginSuccess )
+    if ( IsHandlingLoginSuccess )
     {
         return;
     }
 
-    bIsHandlingLoginSuccess = true;
+    IsHandlingLoginSuccess = true;
 
     IOnlineSubsystem::Get()->GetIdentityInterface()->ClearOnLoginCompleteDelegate_Handle( local_user_num, OnLoginCompleteDelegateHandle );
 
@@ -233,10 +233,10 @@ void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int con
 
 void AGBFPlayerControllerLogin::SetItIsHandlingLoginFlow( const bool result )
 {
-    if ( bItIsHandlingLoginFlow != result )
+    if ( IsHandlingLoginFlow != result )
     {
-        bItIsHandlingLoginFlow = result;
-        OnRequiresUserAction.Broadcast( !bItIsHandlingLoginFlow );
+        IsHandlingLoginFlow = result;
+        OnRequiresUserAction.Broadcast( !IsHandlingLoginFlow );
     }
 }
 

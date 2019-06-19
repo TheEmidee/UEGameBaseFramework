@@ -90,7 +90,7 @@ private:
     TSoftObjectPtr< USoundMix > SoundMix;
 
     EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
-    bool bIsLicensed;
+    bool IsLicensed;
     int IgnorePairingChangeForControllerId;
     FTickerDelegate TickDelegate;
     FDelegateHandle TickDelegateHandle;

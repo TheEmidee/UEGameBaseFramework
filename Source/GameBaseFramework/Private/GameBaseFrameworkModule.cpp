@@ -70,8 +70,8 @@ void IGameBaseFrameworkModule::LoadPlatformInputTextures( const FString & platfo
                 auto & key_to_texture_map = PlatformInputTexturesMap.Add( platform_input_name );
 
                 TArray< FGBFPlatformInputTextureData * > platform_input_texture_data_table;
-                static const FString context_string( TEXT( "GENERAL" ) );
-                data_table->GetAllRows( context_string, platform_input_texture_data_table );
+                static const FString ContextString( TEXT( "GENERAL" ) );
+                data_table->GetAllRows( ContextString, platform_input_texture_data_table );
 
                 for ( auto * platform_input_texture_data_row : platform_input_texture_data_table )
                 {

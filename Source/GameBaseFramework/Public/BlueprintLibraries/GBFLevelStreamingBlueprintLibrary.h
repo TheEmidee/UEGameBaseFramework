@@ -6,7 +6,6 @@
 class ULevelStreamingDynamic;
 
 USTRUCT( BlueprintType )
-
 struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
 {
     GENERATED_BODY()
@@ -14,13 +13,13 @@ struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
     FGBFLoadLevelStreamingParameters()
         : Location( FVector::ZeroVector )
         , Rotation( FRotator::ZeroRotator )
-        , bShouldBeLoaded( true )
-        , bIsStatic( true )
-        , bLocked( true )
-        , bShouldBeVisible( true )
-        , bShouldBlockOnLoad( false )
-        , bInitiallyLoaded( true )
-        , bInitiallyVisible( true )
+        , ShouldBeLoaded( true )
+        , IsStatic( true )
+        , IsLocked( true )
+        , ShouldBeVisible( true )
+        , ShouldBlockOnLoad( false )
+        , IsInitiallyLoaded( true )
+        , IsInitiallyVisible( true )
     {
     }
 
@@ -31,25 +30,25 @@ struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
     FRotator Rotation;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bShouldBeLoaded : 1;
+    uint8 ShouldBeLoaded : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bIsStatic : 1;
+    uint8 IsStatic : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bLocked : 1;
+    uint8 IsLocked : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bShouldBeVisible : 1;
+    uint8 ShouldBeVisible : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bShouldBlockOnLoad : 1;
+    uint8 ShouldBlockOnLoad : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bInitiallyLoaded : 1;
+    uint8 IsInitiallyLoaded : 1;
 
     UPROPERTY( BlueprintReadWrite )
-    uint8 bInitiallyVisible : 1;
+    uint8 IsInitiallyVisible : 1;
 };
 
 UCLASS()

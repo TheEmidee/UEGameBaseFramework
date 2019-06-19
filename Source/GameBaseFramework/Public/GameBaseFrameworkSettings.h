@@ -24,7 +24,7 @@ struct FGBFUIOptions
     TSubclassOf< UGBFConfirmationWidget > ConfirmationWidgetClass;
 
     UPROPERTY( config, EditAnywhere, Category = UI )
-    uint8 bConfirmationButtonOnTheLeft : 1;
+    uint8 IsConfirmationButtonOnTheLeft : 1;
 };
 
 USTRUCT()

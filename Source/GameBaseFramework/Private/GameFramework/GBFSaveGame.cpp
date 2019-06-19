@@ -2,8 +2,8 @@
 #include "Kismet/GameplayStatics.h"
 
 UGBFSaveGame::UGBFSaveGame() :
-    bEnableForceFeedback( true ),
-    bEnableSubtitles( true )
+    EnableForceFeedback( true ),
+    EnableSubtitles( true )
 {
 }
 
@@ -26,14 +26,14 @@ void UGBFSaveGame::SetSlotNameAndIndex( const FString & slot_name, const int use
 void UGBFSaveGame::UpdateAchievementCurrentCount( const FName achievement_id, const int current_count )
 {
     AchievementsCurrentCountMap.FindOrAdd( achievement_id ) = current_count;
-    bIsDirty = true;
+    IsDirty = true;
 }
 
 void UGBFSaveGame::ResetAchievementsProgression()
 {
 #if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
     AchievementsCurrentCountMap.Reset();
-    bIsDirty = true;
+    IsDirty = true;
 #endif
 }
 
@@ -45,34 +45,34 @@ void UGBFSaveGame::SetActiveCulture( const FString & active_culture )
     }
 
     ActiveCulture = active_culture;
-    bIsDirty = true;
+    IsDirty = true;
 }
 
 void UGBFSaveGame::SetEnableForceFeedback( const bool new_value )
 {
-    if ( bEnableForceFeedback == new_value )
+    if ( EnableForceFeedback == new_value )
     {
         return;
     }
 
-    bEnableForceFeedback = new_value;
-    bIsDirty = true;
+    EnableForceFeedback = new_value;
+    IsDirty = true;
 }
 
 void UGBFSaveGame::SetEnableSubtitles( const bool new_value )
 {
-    if ( bEnableSubtitles == new_value )
+    if ( EnableSubtitles == new_value )
     {
         return;
     }
 
-    bEnableSubtitles = new_value;
-    bIsDirty = true;
+    EnableSubtitles = new_value;
+    IsDirty = true;
 }
 
 bool UGBFSaveGame::Save()
 {
-    if ( IsDirty() )
+    if ( GetIsDirty() )
     {
         if ( !ensure( !SlotName.IsEmpty() ) )
         {
@@ -85,7 +85,7 @@ bool UGBFSaveGame::Save()
 
         if ( save_to_slot_result )
         {
-            bIsDirty = false;
+            IsDirty = false;
         }
 
         return save_to_slot_result;
