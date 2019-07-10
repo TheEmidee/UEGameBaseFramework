@@ -174,7 +174,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
         return;
     }
 
-    auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
+    auto achievements_interface = GetOnlineAchievementsInterface();
 
     if ( achievements_interface.IsValid() && ( !OnlineAchievementWriter.IsValid() || OnlineAchievementWriter->WriteState != EOnlineAsyncTaskState::InProgress ) )
     {
