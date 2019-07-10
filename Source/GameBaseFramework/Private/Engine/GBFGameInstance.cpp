@@ -51,7 +51,7 @@ public:
 #endif
 
 #if PLATFORM_PS4
-static void LOCAL_ExtendedSaveGameInfoDelegate( const TCHAR * save_name, const EGameDelegates_SaveGame key, FString & value )
+static void ExtendedSaveGameInfoDelegate( const TCHAR * save_name, const EGameDelegates_SaveGame key, FString & value )
 {
     // Fill save parameter : size - icon path - etc...
 }

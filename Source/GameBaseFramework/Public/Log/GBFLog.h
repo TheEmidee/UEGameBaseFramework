@@ -31,7 +31,7 @@ DECLARE_LOG_CATEGORY_EXTERN( LogGBF_OSS, Log, All );
 
 namespace Private
 {
-    FORCEINLINE FColor LOCAL_GetColorForLogVerbosity( const ELogVerbosity::Type verbosity )
+    FORCEINLINE FColor GetColorForLogVerbosity( const ELogVerbosity::Type verbosity )
     {
         FColor color;
 

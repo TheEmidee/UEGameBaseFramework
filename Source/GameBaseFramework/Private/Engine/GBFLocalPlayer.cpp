@@ -13,7 +13,7 @@
 #include <OnlineSubsystem.h>
 #include <OnlineSubsystemNames.h>
 
-IOnlineAchievementsPtr LOCAL_GetOnlineAchievementsInterface()
+IOnlineAchievementsPtr GetOnlineAchievementsInterface()
 {
     const auto online_sub_system = IOnlineSubsystem::Get();
     if ( online_sub_system == nullptr )
@@ -237,7 +237,7 @@ void UGBFLocalPlayer::QueryAchievements()
         return;
     }
 
-    auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
+    auto achievements_interface = GetOnlineAchievementsInterface();
 
     if ( achievements_interface.IsValid() )
     {
@@ -303,7 +303,7 @@ void UGBFLocalPlayer::OnQueryAchievementsComplete( const FUniqueNetId & /*player
     {
         UE_LOG( LogGBF_OSS, Log, TEXT( "OnQueryAchievementsComplete successful" ) );
 
-        auto achievements_interface = LOCAL_GetOnlineAchievementsInterface();
+        auto achievements_interface = GetOnlineAchievementsInterface();
 
         if ( achievements_interface.IsValid() )
         {

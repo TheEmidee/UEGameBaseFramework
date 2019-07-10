@@ -6,7 +6,7 @@
 
 #include <PropertyEditorModule.h>
 
-void LOCAL_OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * /*settings*/ )
+void OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * /*settings*/ )
 {
     if ( property_name == "PlatformInputTextures" )
     {
@@ -14,7 +14,7 @@ void LOCAL_OnGameBaseFrameworkSettingsChangedEvent( const FString & property_nam
     }
 }
 
-void LOCAL_OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * /*settings*/ )
+void OnPlatformInputTexturesChangedEvent( const FString & property_name, const UGBFPlatformInputTextures * /*settings*/ )
 {
     if ( property_name == "Fallback" || property_name == "PlatformInputToTextureMap" )
     {
@@ -26,8 +26,8 @@ IMPLEMENT_MODULE( IGameBaseFrameworkEditorModule, GameBaseFrameworkEditor )
 
 void IGameBaseFrameworkEditorModule::StartupModule()
 {
-    UGameBaseFrameworkSettings::OnSettingsChanged().AddStatic( LOCAL_OnGameBaseFrameworkSettingsChangedEvent );
-    UGBFPlatformInputTextures::OnPlatformInputTexturesChanged().AddStatic( LOCAL_OnPlatformInputTexturesChangedEvent );
+    UGameBaseFrameworkSettings::OnSettingsChanged().AddStatic( OnGameBaseFrameworkSettingsChangedEvent );
+    UGBFPlatformInputTextures::OnPlatformInputTexturesChanged().AddStatic( OnPlatformInputTexturesChangedEvent );
 
     FPropertyEditorModule & property_module = FModuleManager::GetModuleChecked< FPropertyEditorModule >( "PropertyEditor" );
     property_module.RegisterCustomClassLayout( UGameBaseFrameworkSettings::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic( &FGameBaseFrameworkSettingsDetails::MakeInstance ) );
