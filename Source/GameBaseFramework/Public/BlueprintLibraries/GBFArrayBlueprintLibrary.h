@@ -17,7 +17,7 @@ public:
     {
         for ( int index = array.Num() - 1; index > 0; index-- )
         {
-            int new_index = random_stream.RandRange( 0, index + 1 );
+            int new_index = random_stream.RandRange( 0, index );
             Swap( array[ index ], array[ new_index ] );
         }
     }
