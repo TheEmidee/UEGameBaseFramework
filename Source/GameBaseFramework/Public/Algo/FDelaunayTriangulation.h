@@ -39,6 +39,7 @@ struct FEdge2D
     }
 
     float Size() const;
+    float SizeSquared() const;
 };
 
 class GAMEBASEFRAMEWORK_API FDelaunayTriangulation

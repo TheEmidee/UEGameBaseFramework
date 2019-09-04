@@ -62,6 +62,11 @@ float FEdge2D::Size() const
     return ( Vertex[ 1 ] - Vertex[ 0 ] ).Size();
 }
 
+float FEdge2D::SizeSquared() const
+{
+    return ( Vertex[ 1 ] - Vertex[ 0 ] ).SizeSquared();
+}
+
 void FDelaunayTriangulation::Triangulate( const TArray< FVector2D > & vertices )
 {
     Vertices = vertices;

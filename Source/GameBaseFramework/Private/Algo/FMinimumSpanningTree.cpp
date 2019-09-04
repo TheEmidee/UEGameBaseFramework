@@ -2,6 +2,11 @@
 
 // Based on code found here : https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
 
+FMSTEdge::FMSTEdge( const FEdge2D & edge ) :
+    Edge( edge ),
+    Weight( edge.SizeSquared() )
+{}
+
 struct FSubset
 {
     explicit FSubset( const FVector2D & parent ) :
@@ -62,7 +67,7 @@ void FMinimumSpanningTree::Generate( const TArray< FVector2D > & vertices, const
     int i = 0;
 
     fmst_edges.Sort( []( const FMSTEdge & left, const FMSTEdge & right ) {
-        return left.Weight > right.Weight;
+        return left.Weight < right.Weight;
     } );
 
     TMap< FVector2D, FSubset > subsets;

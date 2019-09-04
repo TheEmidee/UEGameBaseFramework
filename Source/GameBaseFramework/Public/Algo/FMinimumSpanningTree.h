@@ -6,12 +6,8 @@
 
 struct FMSTEdge
 {
-    FMSTEdge() = default;
-    
-    explicit FMSTEdge( const FEdge2D & edge ) :
-        Edge( edge ),
-        Weight( edge.Size() )
-    {}
+    FMSTEdge() = default;    
+    explicit FMSTEdge( const FEdge2D & edge );
 
     FEdge2D Edge;
     int Weight;
