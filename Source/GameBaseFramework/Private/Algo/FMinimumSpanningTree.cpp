@@ -1,5 +1,7 @@
 #include "Algo/FMinimumSpanningTree.h"
 
+// Based on code found here : https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
+
 struct FSubset
 {
     explicit FSubset( const FVector2D & parent ) :
