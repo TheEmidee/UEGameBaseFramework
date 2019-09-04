@@ -10,7 +10,7 @@ struct FMSTEdge
     
     explicit FMSTEdge( const FEdge2D & edge ) :
         Edge( edge ),
-        Weight( edge.Vertex[ 0 ].Size() )
+        Weight( edge.Size() )
     {}
 
     FEdge2D Edge;
