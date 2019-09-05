@@ -4,10 +4,10 @@
 
 struct FEdge2D;
 
-struct FMSTEdge
+struct GAMEBASEFRAMEWORK_API FMSTWeightedEdge2D
 {
-    FMSTEdge() = default;
-    explicit FMSTEdge( const FEdge2D & edge );
+    FMSTWeightedEdge2D() = default;
+    FMSTWeightedEdge2D( const FEdge2D & edge, const int weight );
 
     FEdge2D Edge;
     int Weight;
@@ -16,7 +16,7 @@ struct FMSTEdge
 class GAMEBASEFRAMEWORK_API FMinimumSpanningTree
 {
 public:
-    void Generate( const TArray< FVector2D > & vertices, const TArray< FEdge2D > & edges );
+    void Generate( const TArray< FVector2D > & vertices, const TArray< FMSTWeightedEdge2D > & edges );
 
-    TArray< FMSTEdge > Result;
+    TArray< FEdge2D > Result;
 };

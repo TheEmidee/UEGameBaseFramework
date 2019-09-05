@@ -17,3 +17,10 @@ struct GAMEBASEFRAMEWORK_API FEdge2D
     FVector2D From;
     FVector2D To;
 };
+
+FORCEINLINE uint32 GetTypeHash( const FEdge2D & key )
+{
+    int hash = GetTypeHash( key.From );
+    hash = HashCombine( hash, GetTypeHash( key.To ) );
+    return hash;
+};
