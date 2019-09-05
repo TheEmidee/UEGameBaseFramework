@@ -1,6 +1,7 @@
-#include "Algo/FMinimumSpanningTree.h"
+#include "Algo/MinimumSpanningTree.h"
+#include "Edge2D.h"
 
-// Based on code found here : https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
+// From : https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
 
 FMSTEdge::FMSTEdge( const FEdge2D & edge ) :
     Edge( edge ),
@@ -77,18 +78,12 @@ void FMinimumSpanningTree::Generate( const TArray< FVector2D > & vertices, const
         subsets.Add( vertex, FSubset( vertex ) );
     }
 
-    /*for ( int index = 0; index < VerticeCount; index++ )
-    {
-        subsets[ index ].Parent = index;
-        subsets[ index ].Rank = 0;
-    }*/
-
     while ( e < vertices.Num() - 1 && i < edges.Num() )
     {
         FMSTEdge next_edge = fmst_edges[ i++ ];
 
-        const auto x = find( subsets, next_edge.Edge.Vertex[ 0 ] );
-        const auto y = find( subsets, next_edge.Edge.Vertex[ 1 ] );
+        const auto x = find( subsets, next_edge.Edge.From );
+        const auto y = find( subsets, next_edge.Edge.To );
 
         // If including this edge does't cause cycle,
         // include it in result and increment the index

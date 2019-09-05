@@ -1,12 +1,12 @@
 #pragma once
 
-#include "FDelaunayTriangulation.h"
-
 #include <CoreMinimal.h>
+
+struct FEdge2D;
 
 struct FMSTEdge
 {
-    FMSTEdge() = default;    
+    FMSTEdge() = default;
     explicit FMSTEdge( const FEdge2D & edge );
 
     FEdge2D Edge;
@@ -19,8 +19,4 @@ public:
     void Generate( const TArray< FVector2D > & vertices, const TArray< FEdge2D > & edges );
 
     TArray< FMSTEdge > Result;
-
-private:
-    /*int VerticeCount;
-    int EdgeCount;*/
 };
