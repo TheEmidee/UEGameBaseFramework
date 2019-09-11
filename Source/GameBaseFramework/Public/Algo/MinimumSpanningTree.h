@@ -1,8 +1,8 @@
 #pragma once
 
-#include <CoreMinimal.h>
+#include "Math/Edge2D.h"
 
-struct FEdge2D;
+#include <CoreMinimal.h>
 
 struct GAMEBASEFRAMEWORK_API FMSTWeightedEdge2D
 {
