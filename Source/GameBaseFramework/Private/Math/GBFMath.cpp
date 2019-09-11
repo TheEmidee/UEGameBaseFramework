@@ -10,6 +10,16 @@ TArray< FEdge, TFixedAllocator< 4 > > FGBFMath::GetBoxEdges( const FBox & box )
     };
 }
 
+TArray< FEdge2D, TFixedAllocator< 4 > > FGBFMath::GetBoxEdges2D( const FBox & box )
+{
+    return {
+        FEdge2D( FVector2D( box.Min ), FVector2D( box.Min.X, box.Max.Y ) ),
+        FEdge2D( FVector2D( box.Min ), FVector2D( box.Max.X, box.Min.Y ) ),
+        FEdge2D( FVector2D( box.Max.X, box.Min.Y ), FVector2D( box.Max.X, box.Max.Y ) ),
+        FEdge2D( FVector2D( box.Min.X, box.Max.Y ), FVector2D( box.Max.X, box.Max.Y ) ),
+    };
+}
+
 FVector FGBFMath::GetEdgeCenter( const FEdge & edge )
 {
     return ( edge.Vertex[ 0 ] + edge.Vertex[ 1 ] ) * 0.5f;
