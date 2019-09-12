@@ -122,3 +122,9 @@ FEdge2D FEdge2D::Overlap( const FEdge2D & edge_2d ) const
             FMath::Min( To.X, edge_2d.To.X ),
             FMath::Min( To.Y, edge_2d.To.Y ) ) );
 }
+
+bool FEdge2D::IsColinear( const FEdge2D & other ) const
+{
+    return GetTripletOrientation( From, To, other.From ) == ETripletOrientation::Colinear
+        && GetTripletOrientation( From, To, other.To ) == ETripletOrientation::Colinear;
+}

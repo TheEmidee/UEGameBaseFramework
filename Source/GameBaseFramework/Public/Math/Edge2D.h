@@ -17,6 +17,7 @@ struct GAMEBASEFRAMEWORK_API FEdge2D
     bool Contains( const FEdge2D & edge_2d ) const;
     bool Contains( const FVector2D & point ) const;
     FEdge2D Overlap( const FEdge2D & edge_2d ) const;
+    bool IsColinear( const FEdge2D & other ) const;
 
     FVector2D From;
     FVector2D To;
