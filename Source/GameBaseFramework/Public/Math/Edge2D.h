@@ -27,7 +27,6 @@ struct GAMEBASEFRAMEWORK_API FEdge2D
 
 FORCEINLINE uint32 GetTypeHash( const FEdge2D & key )
 {
-    int hash = GetTypeHash( key.From );
-    hash = HashCombine( hash, GetTypeHash( key.To ) );
-    return hash;
+    // Don't use HashCombine to assure commutativity
+    return GetTypeHash( key.From ) ^ GetTypeHash( key.To );
 };
