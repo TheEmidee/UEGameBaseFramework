@@ -16,7 +16,7 @@ struct GAMEBASEFRAMEWORK_API FMSTWeightedEdge2D
 class GAMEBASEFRAMEWORK_API FMinimumSpanningTree
 {
 public:
-    void Generate( const TArray< FVector2D > & vertices, const TArray< FMSTWeightedEdge2D > & edges );
+    void Generate( const TArray< FVector2D > & vertices, const TArray< FMSTWeightedEdge2D > & weighted_edges );
 
     TArray< FEdge2D > Result;
 };

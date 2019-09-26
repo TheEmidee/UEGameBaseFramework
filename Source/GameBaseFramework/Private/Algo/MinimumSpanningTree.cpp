@@ -32,33 +32,33 @@ FVector2D Find( TMap< FVector2D, FSubset > & subsets, const FVector2D & vertex )
 
 void Union( TMap< FVector2D, FSubset > & subsets, const FVector2D & x, const FVector2D & y )
 {
-    const auto xroot = Find( subsets, x );
-    const auto yroot = Find( subsets, y );
+    const auto x_root = Find( subsets, x );
+    const auto y_root = Find( subsets, y );
 
     // Attach smaller rank tree under root of high rank tree (Union by Rank)
-    if ( subsets[ xroot ].Rank < subsets[ yroot ].Rank )
+    if ( subsets[ x_root ].Rank < subsets[ y_root ].Rank )
     {
-        subsets[ xroot ].Parent = yroot;
+        subsets[ x_root ].Parent = y_root;
     }
-    else if ( subsets[ xroot ].Rank > subsets[ yroot ].Rank )
+    else if ( subsets[ x_root ].Rank > subsets[ y_root ].Rank )
     {
-        subsets[ yroot ].Parent = xroot;
+        subsets[ y_root ].Parent = x_root;
     }
     // If ranks are same, then make one as root and increment its rank by one
     else
     {
-        subsets[ yroot ].Parent = xroot;
-        subsets[ xroot ].Rank++;
+        subsets[ y_root ].Parent = x_root;
+        subsets[ x_root ].Rank++;
     }
 }
 
 void FMinimumSpanningTree::Generate( const TArray< FVector2D > & vertices, const TArray< FMSTWeightedEdge2D > & weighted_edges )
 {
-    TArray< FMSTWeightedEdge2D > fmst_edges = weighted_edges;
+    auto fmst_edges = weighted_edges;
     Result.SetNum( vertices.Num() - 1 );
 
-    int vertex_index = 0;
-    int edge_index = 0;
+    auto vertex_index = 0;
+    auto edge_index = 0;
 
     fmst_edges.Sort( []( const FMSTWeightedEdge2D & left, const FMSTWeightedEdge2D & right ) {
         return left.Weight < right.Weight;
@@ -78,7 +78,7 @@ void FMinimumSpanningTree::Generate( const TArray< FVector2D > & vertices, const
         const auto x = Find( subsets, next_edge.Edge.From );
         const auto y = Find( subsets, next_edge.Edge.To );
 
-        // If including this edge does't cause cycle,
+        // If including this edge doesn't cause cycle,
         // include it in result and increment the index
         // of result for next edge
         if ( x != y )
