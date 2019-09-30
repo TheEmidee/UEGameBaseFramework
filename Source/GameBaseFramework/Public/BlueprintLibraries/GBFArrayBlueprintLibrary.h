@@ -11,7 +11,6 @@ class GAMEBASEFRAMEWORK_API UGBFArrayBlueprintLibrary : public UBlueprintFunctio
     GENERATED_BODY()
 
 public:
-
     template < typename _ARRAY_TYPE_ >
     static void ShuffleArray( _ARRAY_TYPE_ & array, const FRandomStream & random_stream )
     {
@@ -42,5 +41,11 @@ public:
         auto array = GetInlinedArrayFromEnum< _ENUM_TYPE_ >();
         ShuffleArray( array, random_stream );
         return array;
+    }
+
+    template < typename _ARRAY_TYPE_, typename _ARRAY_ALLOCATOR_TYPE_ >
+    static _ARRAY_TYPE_ GetRandomArrayValue( const TArray< _ARRAY_TYPE_, _ARRAY_ALLOCATOR_TYPE_ > & array, const FRandomStream & random_stream )
+    {
+        return array[ random_stream.RandRange( 0, array.Num() - 1 ) ];
     }
 };
