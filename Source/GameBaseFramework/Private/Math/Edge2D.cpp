@@ -128,3 +128,8 @@ bool FEdge2D::IsColinear( const FEdge2D & other ) const
     return GetTripletOrientation( From, To, other.From ) == ETripletOrientation::Colinear
         && GetTripletOrientation( From, To, other.To ) == ETripletOrientation::Colinear;
 }
+
+void FEdge2D::Reverse()
+{
+    Swap( From, To );
+}
