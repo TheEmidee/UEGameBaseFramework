@@ -1,6 +1,8 @@
 #include "GBFInputBlueprintLibrary.h"
 
+#if !PLATFORM_DESKTOP
 #include "Kismet/GameplayStatics.h"
+#endif
 
 #include "IGameBaseFrameworkModule.h"
 #include "Components/GBFPlatformInputSwitcherComponent.h"
