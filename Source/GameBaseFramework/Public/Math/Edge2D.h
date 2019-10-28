@@ -10,12 +10,12 @@ struct GAMEBASEFRAMEWORK_API FEdge2D
     FEdge2D & operator=( const FEdge2D & other ) = default;
     FEdge2D & operator=( FEdge2D && other ) = default;
 
-
     bool operator==( const FEdge2D & other ) const;
     bool operator!=( const FEdge2D & other ) const;
 
     FEdge2D( const FVector2D & from, const FVector2D & to );
 
+    FVector2D GetSafeNormal() const;
     float Size() const;
     float SizeSquared() const;
     bool IntersectsWith( const FEdge2D & segment ) const;

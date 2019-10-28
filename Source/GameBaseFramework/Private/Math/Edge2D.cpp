@@ -39,6 +39,11 @@ bool FEdge2D::operator!=( const FEdge2D & other ) const
     return !operator==( other );
 }
 
+FVector2D FEdge2D::GetSafeNormal() const
+{
+    return ( To - From ).GetSafeNormal();
+}
+
 float FEdge2D::Size() const
 {
     return ( To - From ).Size();
@@ -125,8 +130,7 @@ FEdge2D FEdge2D::Overlap( const FEdge2D & edge_2d ) const
 
 bool FEdge2D::IsColinear( const FEdge2D & other ) const
 {
-    return GetTripletOrientation( From, To, other.From ) == ETripletOrientation::Colinear
-        && GetTripletOrientation( From, To, other.To ) == ETripletOrientation::Colinear;
+    return GetTripletOrientation( From, To, other.From ) == ETripletOrientation::Colinear && GetTripletOrientation( From, To, other.To ) == ETripletOrientation::Colinear;
 }
 
 void FEdge2D::Reverse()
