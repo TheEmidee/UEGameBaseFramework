@@ -35,8 +35,8 @@ TArray< FEdge2D, TFixedAllocator< 4 > > FGBFMath::GetOrderedBoxEdges2D( const FB
     return {
         FEdge2D( FVector2D( box.Min ), FVector2D( box.Min.X, box.Max.Y ) ),
         FEdge2D( FVector2D( box.Max.X, box.Min.Y ), FVector2D( box.Min ) ),
-        FEdge2D( FVector2D( box.Max.X, box.Min.Y ), FVector2D( box.Max ) ),
-        FEdge2D( FVector2D( box.Max ), FVector2D( box.Min.X, box.Max.Y ) ),
+        FEdge2D( FVector2D( box.Max ), FVector2D( box.Max.X, box.Min.Y ) ),
+        FEdge2D( FVector2D( box.Min.X, box.Max.Y ), FVector2D( box.Max ) )
     };
 }
 
