@@ -11,7 +11,7 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 
 public:
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnSaveGameSavedEvent );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnSaveGameSavedEvent )
 
     UGBFSaveGame();
 

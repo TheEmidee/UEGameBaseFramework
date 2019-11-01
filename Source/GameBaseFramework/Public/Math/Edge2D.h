@@ -36,4 +36,4 @@ FORCEINLINE uint32 GetTypeHash( const FEdge2D & key )
 {
     // Don't use HashCombine to assure commutativity
     return GetTypeHash( key.From ) ^ GetTypeHash( key.To );
-};
+}

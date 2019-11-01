@@ -9,8 +9,8 @@ class UButton;
 
 class UGBFUIDialogManagerComponent;
 
-DECLARE_DELEGATE( FGBFConfirmationPopupButtonClicked );
-DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClickedDynamic );
+DECLARE_DELEGATE( FGBFConfirmationPopupButtonClicked )
+DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClickedDynamic )
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConfirmationWidget : public UUserWidget

@@ -21,7 +21,7 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
 public:
     UGBFGameInstance();
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state )
 
     FORCEINLINE FOnStateChangedEvent & OnStateChanged()
     {

@@ -57,7 +57,7 @@ public:
     FText GetSectionText() const override;
     void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
-    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * );
+    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
 
     static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
 #endif

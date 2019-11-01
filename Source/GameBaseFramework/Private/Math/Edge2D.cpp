@@ -31,7 +31,7 @@ FEdge2D::FEdge2D( const FVector2D & from, const FVector2D & to ) :
 
 bool FEdge2D::operator==( const FEdge2D & other ) const
 {
-    return ( other.From.Equals( From ) && other.To.Equals( To ) || ( other.From.Equals( To ) && other.To.Equals( From ) ) );
+    return other.From.Equals( From ) && other.To.Equals( To ) || other.From.Equals( To ) && other.To.Equals( From );
 }
 
 bool FEdge2D::operator!=( const FEdge2D & other ) const
@@ -116,7 +116,7 @@ FEdge2D FEdge2D::Overlap( const FEdge2D & edge_2d ) const
 {
     if ( !Contains( edge_2d ) )
     {
-        return FEdge2D::ZeroEdge2D;
+        return ZeroEdge2D;
     }
 
     return FEdge2D(

@@ -19,7 +19,7 @@ public:
     UFUNCTION( BlueprintCallable )
     void TryLogIn( const int player_index );
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required )
     FOnRequiresUserAction & ReceiveRequiresUserAction();
 
 private:
