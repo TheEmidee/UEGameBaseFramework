@@ -11,7 +11,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
 
 public:
 
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnSaveGameSavedEvent )
+    // ReSharper disable once CppRedundantEmptyDeclaration
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnSaveGameSavedEvent );
 
     UGBFSaveGame();
 

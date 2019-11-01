@@ -10,7 +10,8 @@ class UButton;
 class UGBFUIDialogManagerComponent;
 
 DECLARE_DELEGATE( FGBFConfirmationPopupButtonClicked )
-DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClickedDynamic )
+// ReSharper disable once CppRedundantEmptyDeclaration
+DECLARE_DYNAMIC_DELEGATE( FGBFConfirmationPopupButtonClickedDynamic );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConfirmationWidget : public UUserWidget
