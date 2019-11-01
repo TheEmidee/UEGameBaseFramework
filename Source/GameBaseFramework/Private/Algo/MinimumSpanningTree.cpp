@@ -73,7 +73,7 @@ void FMinimumSpanningTree::Generate( const TArray< FVector2D > & vertices, const
 
     while ( vertex_index < vertices.Num() - 1 && edge_index < fmst_edges.Num() )
     {
-        FMSTWeightedEdge2D next_edge = fmst_edges[ edge_index++ ];
+        auto next_edge = fmst_edges[ edge_index++ ];
 
         const auto x = Find( subsets, next_edge.Edge.From );
         const auto y = Find( subsets, next_edge.Edge.To );

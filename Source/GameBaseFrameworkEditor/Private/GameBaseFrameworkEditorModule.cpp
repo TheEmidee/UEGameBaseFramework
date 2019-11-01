@@ -29,7 +29,7 @@ void IGameBaseFrameworkEditorModule::StartupModule()
     UGameBaseFrameworkSettings::OnSettingsChanged().AddStatic( OnGameBaseFrameworkSettingsChangedEvent );
     UGBFPlatformInputTextures::OnPlatformInputTexturesChanged().AddStatic( OnPlatformInputTexturesChangedEvent );
 
-    FPropertyEditorModule & property_module = FModuleManager::GetModuleChecked< FPropertyEditorModule >( "PropertyEditor" );
+    auto & property_module = FModuleManager::GetModuleChecked< FPropertyEditorModule >( "PropertyEditor" );
     property_module.RegisterCustomClassLayout( UGameBaseFrameworkSettings::StaticClass()->GetFName(), FOnGetDetailCustomizationInstance::CreateStatic( &FGameBaseFrameworkSettingsDetails::MakeInstance ) );
 }
 
@@ -37,7 +37,7 @@ void IGameBaseFrameworkEditorModule::ShutdownModule()
 {
     if ( UObjectInitialized() )
     {
-        FPropertyEditorModule & property_module = FModuleManager::GetModuleChecked< FPropertyEditorModule >( "PropertyEditor" );
+        auto & property_module = FModuleManager::GetModuleChecked< FPropertyEditorModule >( "PropertyEditor" );
         property_module.UnregisterCustomClassLayout( UGameBaseFrameworkSettings::StaticClass()->GetFName() );
     }
 }

@@ -23,7 +23,7 @@ void FGameBaseFrameworkSettingsDetails::CustomizeDetails( IDetailLayoutBuilder &
 
     const TWeakObjectPtr< UGameBaseFrameworkSettings > settings = Cast< UGameBaseFrameworkSettings >( objects_being_customized[ 0 ].Get() );
 
-    IDetailCategoryBuilder & input_textures_category = detail_builder.EditCategory( "InputTextures" );
+    auto & input_textures_category = detail_builder.EditCategory( "InputTextures" );
 
     input_textures_category.AddCustomRow( LOCTEXT( "PlatformTextures", "PlatformTextures" ) )
                            .ValueContent()

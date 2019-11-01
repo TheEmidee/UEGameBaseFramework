@@ -38,7 +38,7 @@ TArray< FKey > UGBFInputBlueprintLibrary::GetConfirmKeys()
 
 const FKey & UGBFInputBlueprintLibrary::ResolvePlatformInputKey( const FGBFPlatformInputKey & platform_input_key, APlayerController * player_controller )
 {
-    EGBFPlatformInputType platform_input_type = EGBFPlatformInputType::Gamepad;
+    auto platform_input_type = EGBFPlatformInputType::Gamepad;
 
 #if PLATFORM_DESKTOP
     if ( auto * pc = Cast< AGBFPlayerController >( player_controller ) )
