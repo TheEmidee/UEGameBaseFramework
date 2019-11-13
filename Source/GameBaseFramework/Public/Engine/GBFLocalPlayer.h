@@ -1,7 +1,6 @@
 #pragma once
 
 #include <CoreMinimal.h>
-#include <CoreOnline.h>
 #include <Engine/LocalPlayer.h>
 #include <OnlineAchievementsInterface.h>
 #include <OnlineStats.h>
