@@ -21,27 +21,11 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
 public:
     UGBFGameInstance();
 
-    // ReSharper disable once CppRedundantEmptyDeclaration
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
-
-    FORCEINLINE FOnStateChangedEvent & OnStateChanged()
-    {
-        return OnStateChangedEvent;
-    }
-
     void Init() override;
     void Shutdown() override;
     class AGameModeBase * CreateGameModeForURL( FURL url ) override;
 
-    bool IsOnWelcomeScreenState() const;
-
     bool Tick( float delta_seconds );
-
-    UFUNCTION( BlueprintCallable )
-    void GoToWelcomeScreenState();
-
-    UFUNCTION( BlueprintCallable )
-    void GoToState( UGBFGameState * new_state );
 
     UFUNCTION( BlueprintCallable )
     void PushSoundMixModifier() const;
@@ -54,17 +38,9 @@ public:
 
     bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
 
-    UFUNCTION( BlueprintCallable )
-    void SetPresenceForLocalPlayer( const FText & status ) const;
-
     ULocalPlayer * GetFirstLocalPlayer() const;
 
 private:
-    const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
-    const UGBFGameState * GetGameStateFromName( FName state_name ) const;
-    bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;
-
-    void LoadGameStates() const;
     void HandleAppWillDeactivate();
     void HandleAppHasReactivated();
     void HandleAppWillEnterBackground();
@@ -81,8 +57,8 @@ private:
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
     void OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, int controller_index, const FOnlineError & error );
 
-    UPROPERTY( BlueprintAssignable )
-    FOnStateChangedEvent OnStateChangedEvent;
+    UFUNCTION()
+    void OnGameStateChanged( const UGBFGameState * new_state );
 
     UPROPERTY()
     const UGameBaseFrameworkSettings * Settings;
@@ -97,6 +73,5 @@ private:
     FDelegateHandle TickDelegateHandle;
     TSharedPtr< const FUniqueNetId > CurrentUniqueNetId;
     FOnLoginUIClosedDelegate LoginUIClosedDelegate;
-    TWeakObjectPtr< const UGBFGameState > CurrentGameState;
     TArray< ELoginStatus::Type > LocalPlayerOnlineStatus;
 };

@@ -2,6 +2,7 @@
 
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Components/GBFUIDialogManagerComponent.h"
+#include "GBFGameInstanceGameStateSystem.h"
 #include "GBFGameState.h"
 #include "GBFLocalPlayer.h"
 #include "GBFTypes.h"
@@ -72,8 +73,6 @@ void UGBFGameInstance::Init()
 
     check( Settings != nullptr );
 
-    LoadGameStates();
-
     CurrentConnectionStatus = EOnlineServerConnectionStatus::Connected;
 
     const auto oss = IOnlineSubsystem::Get();
@@ -112,6 +111,8 @@ void UGBFGameInstance::Init()
     {
         UAssetManager::GetStreamableManager().RequestAsyncLoad( SoundMix.ToSoftObjectPath() );
     }
+
+    GetSubsystem< UGBFGameInstanceGameStateSystem >()->OnStateChanged().AddDynamic( this, &UGBFGameInstance::OnGameStateChanged );
 }
 
 void UGBFGameInstance::Shutdown()
@@ -125,29 +126,14 @@ AGameModeBase * UGBFGameInstance::CreateGameModeForURL( const FURL url )
 {
     auto * game_mode = Super::CreateGameModeForURL( url );
 
-    // Workaround for when running in PIE, to set the correct state based on the game mode created by the URL
-    if ( GetWorld()->WorldType != EWorldType::Game )
-    {
-        if ( !CurrentGameState.IsValid() )
-        {
-            if ( auto * current_state = GetGameStateFromGameMode( game_mode->GetClass() ) )
-            {
-                CurrentGameState = current_state;
-            }
-        }
-    }
+    GetSubsystem< UGBFGameInstanceGameStateSystem >()->UpdateCurrentGameStateFromCurrentWorld();
 
     return game_mode;
 }
 
-bool UGBFGameInstance::IsOnWelcomeScreenState() const
-{
-    return IsStateWelcomeScreenState( CurrentGameState.Get() );
-}
-
 bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
 {
-    if ( !IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
+    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
     {
         if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
         {
@@ -172,45 +158,6 @@ bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
     return true;
 }
 
-void UGBFGameInstance::GoToWelcomeScreenState()
-{
-    if ( IsOnWelcomeScreenState() )
-    {
-        return;
-    }
-
-    if ( CurrentUniqueNetId.IsValid() )
-    {
-        if ( auto * local_player = FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
-        {
-            local_player->SetCachedUniqueNetId( nullptr );
-        }
-    }
-
-    CurrentUniqueNetId = nullptr;
-
-    GoToState( Settings->WelcomeScreenGameState.Get() );
-}
-
-void UGBFGameInstance::GoToState( UGBFGameState * new_state )
-{
-    check( new_state != nullptr );
-
-    if ( CurrentGameState.Get() != new_state )
-    {
-        CurrentGameState = new_state;
-
-        UGBFHelperBlueprintLibrary::OpenMap( this, new_state->Map );
-
-        OnStateChangedEvent.Broadcast( new_state );
-
-        if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
-        {
-            SetPresenceForLocalPlayer( new_state->OnlinePresenceText );
-        }
-    }
-}
-
 void UGBFGameInstance::PushSoundMixModifier() const
 {
     if ( auto * sound_mix = SoundMix.Get() )
@@ -229,10 +176,10 @@ void UGBFGameInstance::PopSoundMixModifier() const
 
 bool UGBFGameInstance::ProfileUISwap( const int controller_index )
 {
-    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
+    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [ this ]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
         if ( unique_net_id->IsValid() )
         {
-            GoToWelcomeScreenState();
+            GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
         }
     } ) );
 }
@@ -262,26 +209,6 @@ bool UGBFGameInstance::ShowLoginUI( const int controller_index, const FOnLoginUI
     return false;
 }
 
-void UGBFGameInstance::SetPresenceForLocalPlayer( const FText & status ) const
-{
-    const auto presence_interface = Online::GetPresenceInterface();
-
-    if ( presence_interface.IsValid() )
-    {
-        const auto user_id = GetFirstLocalPlayer()->GetPreferredUniqueNetId();
-
-        if ( user_id.IsValid() && user_id->IsValid() )
-        {
-            FOnlineUserPresenceStatus presence_status;
-            // Not ideal to convert from FText to FString since we could potentially loose conversion for some languages
-            // but the whole presence API treats FString only
-            presence_status.Properties.Add( DefaultPresenceKey, FVariantData( status.ToString() ) );
-
-            presence_interface->SetPresence( *user_id, presence_status );
-        }
-    }
-}
-
 ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
 {
     return LocalPlayers.Num() > 0
@@ -290,52 +217,6 @@ ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
 }
 
 // -- PRIVATE
-
-const UGBFGameState * UGBFGameInstance::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
-{
-    const auto predicate = [game_mode_class]( auto state_soft_ptr ) {
-        return state_soft_ptr.Get()->GameModeClass == game_mode_class;
-    };
-
-    if ( auto * state = Settings->GameStates.FindByPredicate( predicate ) )
-    {
-        return state->Get();
-    }
-
-    return nullptr;
-}
-
-const UGBFGameState * UGBFGameInstance::GetGameStateFromName( FName state_name ) const
-{
-    const auto predicate = [state_name]( auto state_soft_ptr ) {
-        return state_soft_ptr.Get()->Name == state_name;
-    };
-
-    return Settings->GameStates.FindByPredicate( predicate )->Get();
-}
-
-bool UGBFGameInstance::IsStateWelcomeScreenState( const UGBFGameState * state ) const
-{
-    return state != nullptr && Settings->WelcomeScreenGameState.Get() == state;
-}
-
-void UGBFGameInstance::LoadGameStates() const
-{
-    if ( ensure( Settings != nullptr ) )
-    {
-        TArray< FSoftObjectPath > state_paths;
-        state_paths.Reserve( Settings->GameStates.Num() + 1 );
-
-        state_paths.Add( Settings->WelcomeScreenGameState.ToSoftObjectPath() );
-
-        for ( auto & game_state : Settings->GameStates )
-        {
-            state_paths.Add( game_state.ToSoftObjectPath() );
-        }
-
-        UAssetManager::Get().GetStreamableManager().RequestSyncLoad( state_paths );
-    }
-}
 
 // ReSharper disable CppMemberFunctionMayBeStatic
 void UGBFGameInstance::HandleAppWillDeactivate()
@@ -390,7 +271,7 @@ void UGBFGameInstance::HandleAppDeactivateOrBackground() const
 
 void UGBFGameInstance::HandleAppReactivateOrForeground()
 {
-    if ( !IsOnWelcomeScreenState() )
+    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
         UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleAppReactivateOrForeground: Attempting to sign out players" ) );
 
@@ -458,7 +339,7 @@ void UGBFGameInstance::HandleControllerPairingChanged( const int game_user_index
 
     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ), game_user_index, *previous_user.ToString(), *new_user.ToString() );
 
-    if ( IsOnWelcomeScreenState() )
+    if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
     }
 
@@ -504,7 +385,7 @@ void UGBFGameInstance::HandleNetworkConnectionStatusChanged( const FString & /*s
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
-    if ( !IsOnWelcomeScreenState() && connection_status != EOnlineServerConnectionStatus::Connected )
+    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() && connection_status != EOnlineServerConnectionStatus::Connected )
     {
         UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
 
@@ -550,7 +431,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connectio
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
                     EGBFUIDialogType::AdditiveOnlyOneVisible,
-                    FGBFConfirmationPopupButtonClicked::CreateLambda( [this
+                    FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                           ,
                                                                           &slate_app,
@@ -586,7 +467,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connectio
 
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
-    if ( !IsOnWelcomeScreenState() )
+    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
 #if GBF_CONSOLE_UI
         // Master user signed out, go to initial state (if we aren't there already)
@@ -598,7 +479,7 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
                 settings->WelcomeScreenGameState.Get() );
         }
 #else
-        GoToWelcomeScreenState();
+        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
 #endif
     }
 }
@@ -610,14 +491,14 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         if ( auto * dialog_manager_component = player_controller->GetUIDialogManagerComponent() )
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
-                [this, &next_state]() {
-                    if ( IsStateWelcomeScreenState( next_state ) )
+                [ this, &next_state ]() {
+                    if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsStateWelcomeScreenState( next_state ) )
                     {
-                        GoToWelcomeScreenState();
+                        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
                     }
                     else
                     {
-                        GoToState( next_state );
+                        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToState( next_state );
                     }
                 } );
 
@@ -648,4 +529,22 @@ void UGBFGameInstance::OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > u
     {
         CurrentUniqueNetId = unique_id;
     }
+}
+
+void UGBFGameInstance::OnGameStateChanged( const UGBFGameState * new_state )
+{
+    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
+    {
+        return;
+    }
+
+    if ( CurrentUniqueNetId.IsValid() )
+    {
+        if ( auto * local_player = FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
+        {
+            local_player->SetCachedUniqueNetId( nullptr );
+        }
+    }
+
+    CurrentUniqueNetId = nullptr;
 }
