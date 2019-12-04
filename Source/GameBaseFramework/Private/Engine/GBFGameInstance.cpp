@@ -465,6 +465,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connectio
     }
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
     if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
@@ -531,7 +532,7 @@ void UGBFGameInstance::OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > u
     }
 }
 
-void UGBFGameInstance::OnGameStateChanged( const UGBFGameState * new_state )
+void UGBFGameInstance::OnGameStateChanged( const UGBFGameState * /*new_state*/ )
 {
     if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
