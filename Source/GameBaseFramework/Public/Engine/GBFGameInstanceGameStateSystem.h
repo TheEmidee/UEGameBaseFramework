@@ -29,7 +29,7 @@ public:
     UFUNCTION( BlueprintCallable )
     void GoToState( UGBFGameState * new_state );
 
-    UFUNCTION( BlueprintCallable, meta = ( DisplayName = "GoToState" ) )
+    UFUNCTION( BlueprintCallable )
     void GoToStateWithMap( UGBFGameState * new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr );
 
     void Initialize( FSubsystemCollectionBase & collection ) override;
