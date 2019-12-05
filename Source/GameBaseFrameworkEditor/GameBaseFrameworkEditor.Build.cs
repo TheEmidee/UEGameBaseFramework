@@ -16,6 +16,13 @@ namespace UnrealBuildTool.Rules
                 }
             );
 
+            PrivateIncludePaths.AddRange(
+                new string[]
+                { 
+                    "GameBaseFrameworkEditor/Private",
+                }
+            );
+
             PrivateDependencyModuleNames.AddRange(
                 new string[]
                 {
