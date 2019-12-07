@@ -2,8 +2,6 @@
 
 #if WITH_EDITOR
 
-#define DATA_VALIDATION_BEGIN( ClassName ) EDataValidationResult ClassName::IsDataValid( TArray< FText > & validation_errors ) {
-
 #define DATA_VALIDATION_CALL_IS_DATA_VALID( VariableName ) \
     VariableName->IsDataValid( validation_errors );
 
@@ -28,6 +26,7 @@
         } \
     }
 
-#define DATA_VALIDATION_END() return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid; }
+#define DATA_VALIDATION_RETURN() \
+    return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
 
 #endif
