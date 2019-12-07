@@ -2,6 +2,7 @@
 
 #include <CoreMinimal.h>
 #include <Subsystems/LocalPlayerSubsystem.h>
+#include <UObject/TextProperty.h>
 
 #include "GBFLocalPlayerPresenceSystem.generated.h"
 
