@@ -5,7 +5,7 @@
 #include <CoreMinimal.h>
 
 template < typename ASSET_TYPE >
-struct FGBFAssetEditorValidator
+struct GAMEBASEFRAMEWORK_API FGBFAssetEditorValidator
 {
 public:
     template < typename FILENAME_FILTER_BUILDER_TYPE >
