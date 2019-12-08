@@ -24,8 +24,7 @@
     {
       "Name": "GameBaseFrameworkEditor",
       "Type": "Editor",
-      "LoadingPhase": "Default",
-      "WhitelistPlatforms": [ "Win64", "Win32", "PS4", "XboxOne", "Mac" ]
+      "LoadingPhase": "Default"
     }
   ],
   "Plugins": [

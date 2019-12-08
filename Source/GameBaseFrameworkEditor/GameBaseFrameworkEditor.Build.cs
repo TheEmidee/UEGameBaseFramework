@@ -12,7 +12,7 @@ namespace UnrealBuildTool.Rules
                 new string[] 
                 {
                     "Engine",
-                    "GameBaseFramework"
+                    "GameBaseFramework",
                 }
             );
 
@@ -20,6 +20,13 @@ namespace UnrealBuildTool.Rules
                 new string[]
                 { 
                     "GameBaseFrameworkEditor/Private",
+                }
+            );
+
+            PublicIncludePaths.AddRange(
+                new string[]
+                { 
+                    "GameBaseFrameworkEditor",
                 }
             );
 
