@@ -23,6 +23,24 @@
 #define DATA_VALIDATION_NOT_NULL2( VariableName ) \
     DATA_VALIDATION_NOT_NULL( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be null" ), TEXT( #VariableName ) ) ) )
 
+#define DATA_VALIDATION_NOT_ISNULL( VariableName, ErrorMessageText ) \
+    if ( VariableName.IsNull() ) \
+    { \
+        validation_errors.Emplace( ErrorMessageText ); \
+    }
+
+#define DATA_VALIDATION_NOT_ISNULL2( VariableName ) \
+    DATA_VALIDATION_NOT_ISNULL( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be null" ), TEXT( #VariableName ) ) ) )
+
+#define DATA_VALIDATION_NAME_NOT_NONE( VariableName, ErrorMessageText ) \
+    if ( VariableName.IsNone() ) \
+    { \
+        validation_errors.Emplace( ErrorMessageText ); \
+    }
+
+#define DATA_VALIDATION_NAME_NOT_NONE2( VariableName ) \
+    DATA_VALIDATION_NAME_NOT_NONE( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be None" ), TEXT( #VariableName ) ) ) )
+
 #define DATA_VALIDATION_CONTAINER_NOT_EMPTY( ContainerName, ErrorMessageText ) \
     if ( ContainerName.Num() == 0 ) \
     { \

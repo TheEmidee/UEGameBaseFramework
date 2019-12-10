@@ -47,32 +47,38 @@ FGBFPathFilter & FGBFPathFilter::MustNotContain( const FGBFTokenSelector token_s
 
 FGBFPathFilter & FGBFPathFilter::MustStartWith( FString pattern )
 {
-    MustStartWithPattern = MoveTemp( pattern );
+    StringStartPattern.SetPattern( MoveTemp( pattern ), true );
     return *this;
 }
 
 FGBFPathFilter & FGBFPathFilter::MustEndWith( FString pattern )
 {
-    MustEndWithPattern = MoveTemp( pattern );
+    StringEndPattern.SetPattern( MoveTemp( pattern ), true );
+    return *this;
+}
+
+FGBFPathFilter & FGBFPathFilter::MustNotStartWith( FString pattern )
+{
+    StringStartPattern.SetPattern( MoveTemp( pattern ), false );
+    return *this;
+}
+
+FGBFPathFilter & FGBFPathFilter::MustNotEndWith( FString pattern )
+{
+    StringEndPattern.SetPattern( MoveTemp( pattern ), false );
     return *this;
 }
 
 bool FGBFPathFilter::Matches( const FString & path ) const
 {
-    if ( MustStartWithPattern.Len() > 0 )
+    if ( !StringStartPattern.Matches( path ) )
     {
-        if ( !path.StartsWith( MustStartWithPattern ) )
-        {
-            return false;
-        }
+        return false;
     }
 
-    if ( MustEndWithPattern.Len() > 0 )
+    if ( !StringEndPattern.Matches( path ) )
     {
-        if ( !path.EndsWith( MustEndWithPattern ) )
-        {
-            return false;
-        }
+        return false;
     }
 
     for ( const auto & token_selector : MustNotContainPatterns )
@@ -131,5 +137,48 @@ bool FGBFPathFilter::Matches( const FString & path ) const
             return false;
         }
     }
+    return true;
+}
+
+void FGBFPathFilter::StringExtremityPattern::SetPattern( FString pattern, const bool must_be )
+{
+    ensureAlwaysMsgf( Pattern.IsEmpty(), TEXT( "Trying to set Pattern twice" ) );
+    Pattern = MoveTemp( pattern );
+    MustContain = must_be;
+}
+
+bool FGBFPathFilter::StringExtremityPattern::Matches( const FString & path ) const
+{
+    if ( Pattern.IsEmpty() )
+    {
+        return true;
+    }
+
+    if ( MustContain )
+    {
+        if ( CheckStringStart )
+        {
+            if ( !path.StartsWith( Pattern ) )
+            {
+                return false;
+            }
+        }
+        else if ( !path.EndsWith( Pattern ) )
+        {
+            return false;
+        }
+    }
+    else if ( CheckStringStart )
+    {
+        if ( path.StartsWith( Pattern ) )
+        {
+            return false;
+        }
+    }
+    else if ( path.EndsWith( Pattern ) )
+    {
+        return false;
+    }
+
     return true;
 }

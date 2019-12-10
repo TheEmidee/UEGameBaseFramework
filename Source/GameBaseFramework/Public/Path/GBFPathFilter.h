@@ -33,12 +33,32 @@ struct GAMEBASEFRAMEWORK_API FGBFPathFilter
     FGBFPathFilter & MustNotContain( const FGBFTokenSelector token_selector );
     FGBFPathFilter & MustStartWith( FString pattern );
     FGBFPathFilter & MustEndWith( FString pattern );
+    FGBFPathFilter & MustNotStartWith( FString pattern );
+    FGBFPathFilter & MustNotEndWith( FString pattern );
 
     bool Matches( const FString & path ) const;
 
 private:
+
+    struct StringExtremityPattern
+    {
+        explicit StringExtremityPattern( const bool string_start )
+            : CheckStringStart { string_start }
+        {
+        }
+
+        void SetPattern( FString pattern, const bool must_be );
+        bool Matches( const FString & path ) const;
+
+    private:
+
+        FString Pattern;
+        bool MustContain { false };
+        bool CheckStringStart;
+    };
+
     TArray< FGBFTokenSelector > MustContainPatterns;
     TArray< FGBFTokenSelector > MustNotContainPatterns;
-    FString MustStartWithPattern;
-    FString MustEndWithPattern;
+    StringExtremityPattern StringStartPattern { true };
+    StringExtremityPattern StringEndPattern { false };
 };
