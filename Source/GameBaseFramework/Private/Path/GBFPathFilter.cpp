@@ -1,6 +1,5 @@
 #include "GBFPathFilter.h"
 
-#include <FileHelpers.h>
 #include <Paths.h>
 
 void AddTokenSelectorIfNotEmpty( TArray< FGBFTokenSelector > & array, FGBFTokenSelector token_selector )
