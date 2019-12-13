@@ -74,12 +74,9 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
         new_duration = 1.0f;
     }
 
-    if ( !ReEnableInputTimerHandle.IsValid()
-         || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration
-         )
+    if ( !ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration )
     {
-        auto enable_input = [ this ] ()
-        {
+        auto enable_input = [ this ]() {
             GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
             EnableInput( nullptr );
         };
@@ -99,13 +96,19 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
 {
     const auto is_using_game_pad =
 #if PLATFORM_DESKTOP
-     PlatformInputSwitcherComponent->GetPlatformInputType() == EGBFPlatformInputType::Gamepad;
+        PlatformInputSwitcherComponent->GetPlatformInputType() == EGBFPlatformInputType::Gamepad;
 #else
-    true;
+        true;
 #endif
-    
-    bForceFeedbackEnabled = GetGBFLocalPlayer()->GetSaveGame()->GetEnableForceFeedback()
-        && is_using_game_pad;
+
+    // Can be null when the debug camera is toggled for example
+    if ( auto * local_player = GetGBFLocalPlayer() )
+    {
+        if ( auto * save_game = local_player->GetSaveGame() )
+        {
+            bForceFeedbackEnabled = save_game->GetEnableForceFeedback() && is_using_game_pad;
+        }
+    }
 
     bShowMouseCursor = !is_using_game_pad;
 }
