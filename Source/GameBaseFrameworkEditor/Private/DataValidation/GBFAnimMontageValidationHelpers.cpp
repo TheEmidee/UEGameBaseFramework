@@ -21,7 +21,7 @@ namespace
 
 void GBFAnimMontageValidationHelpers::CheckMontageSlots( TArray< FText > & validation_errors, const UAnimMontage * montage, const TArray< FName > & slots )
 {
-    DATA_VALIDATION_CONTAINER_HAS_SIZE2( montage->SlotAnimTracks, slots.Num() )
+    DATA_VALIDATION_CONTAINER_HAS_SIZE_AUTO_MESSAGE( montage->SlotAnimTracks, slots.Num() )
 
     for ( const auto & slot : montage->SlotAnimTracks )
     {

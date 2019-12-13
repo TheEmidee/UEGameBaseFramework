@@ -2,80 +2,80 @@
 
 #if WITH_EDITOR
 
+#define DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( ErrorCondition, ErrorMessageText, SuffixText )           \
+    if ( ErrorCondition )                                                                                   \
+    {                                                                                                       \
+        FText text = SuffixText.IsEmpty()                                                                   \
+                         ? ErrorMessageText                                                                 \
+                         : FText::Join( FText::FromString( TEXT( " - " ) ), ErrorMessageText, SuffixText ); \
+        validation_errors.Emplace( MoveTemp( text ) );                                                      \
+    }
+
+#define DATA_VALIDATION_INTERNAL_CONDITION( ErrorCondition, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( ErrorCondition, ErrorMessageText, FText::FromString( TEXT( "" ) ) )
+
 #define DATA_VALIDATION_CALL_IS_DATA_VALID( VariableName ) \
     VariableName->IsDataValid( validation_errors );
 
 #define DATA_VALIDATION_IS_TRUE( VariableName, ErrorMessageText ) \
-    if ( !VariableName ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( !VariableName, ErrorMessageText )
 
-#define DATA_VALIDATION_IS_TRUE2( VariableName ) \
+#define DATA_VALIDATION_IS_TRUE_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_IS_TRUE( VariableName, FText::FromString( FString::Printf( TEXT( "%s must be true" ), TEXT( #VariableName ) ) ) )
 
 #define DATA_VALIDATION_NOT_NULL( VariableName, ErrorMessageText ) \
-    if ( VariableName == nullptr ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( VariableName == nullptr, ErrorMessageText )
 
-#define DATA_VALIDATION_NOT_NULL2( VariableName ) \
+#define DATA_VALIDATION_NOT_NULL_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_NOT_NULL( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be null" ), TEXT( #VariableName ) ) ) )
 
 #define DATA_VALIDATION_NOT_ISNULL( VariableName, ErrorMessageText ) \
-    if ( VariableName.IsNull() ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( VariableName.IsNull(), ErrorMessageText )
 
-#define DATA_VALIDATION_NOT_ISNULL2( VariableName ) \
+#define DATA_VALIDATION_NOT_ISNULL_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_NOT_ISNULL( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be null" ), TEXT( #VariableName ) ) ) )
 
 #define DATA_VALIDATION_NAME_NOT_NONE( VariableName, ErrorMessageText ) \
-    if ( VariableName.IsNone() ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( VariableName.IsNone(), ErrorMessageText )
 
-#define DATA_VALIDATION_NAME_NOT_NONE2( VariableName ) \
+#define DATA_VALIDATION_NAME_NOT_NONE_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_NAME_NOT_NONE( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be None" ), TEXT( #VariableName ) ) ) )
 
 #define DATA_VALIDATION_CONTAINER_NOT_EMPTY( ContainerName, ErrorMessageText ) \
-    if ( ContainerName.Num() == 0 ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( ContainerName.Num() == 0, ErrorMessageText )
 
-#define DATA_VALIDATION_CONTAINER_NOT_EMPTY2( ContainerName ) \
+#define DATA_VALIDATION_CONTAINER_NOT_EMPTY_AUTO_MESSAGE( ContainerName ) \
     DATA_VALIDATION_CONTAINER_NOT_EMPTY( ContainerName, FText::FromString( FString::Printf( TEXT( "%s can not be empty" ), TEXT( #ContainerName ) ) ) )
 
 #define DATA_VALIDATION_CONTAINER_HAS_SIZE( ContainerName, ExpectedSize, ErrorMessageText ) \
-    if ( ContainerName.Num() != ExpectedSize ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( ContainerName.Num() != ExpectedSize, ErrorMessageText )
 
-#define DATA_VALIDATION_CONTAINER_HAS_SIZE2( ContainerName, ExpectedSize ) \
+#define DATA_VALIDATION_CONTAINER_HAS_SIZE_AUTO_MESSAGE( ContainerName, ExpectedSize ) \
     DATA_VALIDATION_CONTAINER_HAS_SIZE( ContainerName, ExpectedSize, FText::FromString( FString::Printf( TEXT( "%s must have %i elements" ), TEXT( #ContainerName ), ExpectedSize ) ) )
 
-#define DATA_VALIDATION_CONTAINER_NO_NULL_ITEM( ContainerName ) \
-    for ( const auto & item : ContainerName ) \
-    { \
-        if ( item == nullptr ) \
-        { \
+#define DATA_VALIDATION_CONTAINER_NO_NULL_ITEM( ContainerName )                                                                                  \
+    for ( const auto & item : ContainerName )                                                                                                    \
+    {                                                                                                                                            \
+        if ( item == nullptr )                                                                                                                   \
+        {                                                                                                                                        \
             validation_errors.Emplace( FText::FromString( FString::Printf( TEXT( "%s cannot contain null items" ), TEXT( #ContainerName ) ) ) ); \
-        } \
+        }                                                                                                                                        \
     }
 
 #define DATA_VALIDATION_ARE_EQUAL( FirstItemName, SecondItemName, ErrorMessageText ) \
-    if ( FirstItemName != SecondItemName ) \
-    { \
-        validation_errors.Emplace( ErrorMessageText ); \
-    }
+    DATA_VALIDATION_INTERNAL_CONDITION( FirstItemName != SecondItemName, ErrorMessageText )
 
-#define DATA_VALIDATION_ARE_EQUAL2( FirstItemName, SecondItemName ) \
+#define DATA_VALIDATION_ARE_EQUAL_AUTO_MESSAGE( FirstItemName, SecondItemName ) \
     DATA_VALIDATION_ARE_EQUAL( FirstItemName, SecondItemName, FText::FromString( FString::Printf( TEXT( "%s must be equal to %s" ), TEXT( #FirstItemName ), TEXT( #SecondItemName ) ) ) );
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG( ContainerTagName, TagName, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( ContainerTagName.HasTag( TagName ), ErrorMessageText )
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, SuffixText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( ContainerTagName.HasTag( TagName ), FText::FromString( FString::Printf( TEXT( "%s must not contain the tag %s" ), TEXT( #ContainerTagName ), *TagName.ToString() ) ), SuffixText );
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE( ContainerTagName, TagName ) \
+    DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, "" );
 
 #define DATA_VALIDATION_RETURN() \
     return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
