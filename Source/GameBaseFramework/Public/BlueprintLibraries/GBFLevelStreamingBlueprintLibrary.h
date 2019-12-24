@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include <Kismet/BlueprintFunctionLibrary.h>
+
 #include "GBFLevelStreamingBlueprintLibrary.generated.h"
 
 class ULevelStreamingDynamic;

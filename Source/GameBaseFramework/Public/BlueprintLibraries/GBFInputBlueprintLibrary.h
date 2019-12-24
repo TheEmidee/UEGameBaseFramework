@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Kismet/BlueprintFunctionLibrary.h"
-
 #include "Input/GBFInputTypes.h"
+
+#include <Kismet/BlueprintFunctionLibrary.h>
 
 #include "GBFInputBlueprintLibrary.generated.h"
 
@@ -13,7 +13,6 @@ class GAMEBASEFRAMEWORK_API UGBFInputBlueprintLibrary : public UBlueprintFunctio
     GENERATED_BODY()
 
 public:
-
     UFUNCTION( BlueprintPure, Category = "Input" )
     static TArray< FKey > GetCancelKeys();
 

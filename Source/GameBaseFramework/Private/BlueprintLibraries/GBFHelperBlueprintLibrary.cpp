@@ -1,4 +1,4 @@
-#include "GBFHelperBlueprintLibrary.h"
+#include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>

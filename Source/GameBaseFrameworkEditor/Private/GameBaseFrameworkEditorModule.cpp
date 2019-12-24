@@ -1,9 +1,10 @@
-#include "GBFInputTypes.h"
 #include "GameBaseFrameworkSettings.h"
 #include "GameBaseFrameworkSettingsDetails.h"
 #include "IGameBaseFrameworkEditorModule.h"
 #include "IGameBaseFrameworkModule.h"
+#include "Input/GBFInputTypes.h"
 
+#include <Modules/ModuleManager.h>
 #include <PropertyEditorModule.h>
 
 void OnGameBaseFrameworkSettingsChangedEvent( const FString & property_name, const UGameBaseFrameworkSettings * /*settings*/ )

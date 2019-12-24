@@ -1,6 +1,6 @@
 #include "Algo/MinimumSpanningTree.h"
 
-#include "Edge2D.h"
+#include "Math/Edge2D.h"
 
 // From : https://www.geeksforgeeks.org/kruskals-minimum-spanning-tree-algorithm-greedy-algo-2/
 

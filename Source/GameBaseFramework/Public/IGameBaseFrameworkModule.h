@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ModuleManager.h"
-
-#include "InputCoreTypes.h"
+#include <InputCoreTypes.h>
+#include <Modules/ModuleManager.h>
 
 class UTexture2D;
 

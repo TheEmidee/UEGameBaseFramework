@@ -1,13 +1,12 @@
-#include "GBFLocalPlayerPresenceSystem.h"
+#include "Engine/GBFLocalPlayerPresenceSystem.h"
 
-#include "GBFGameInstance.h"
-#include "GBFGameInstanceGameStateSystem.h"
-#include "GBFGameState.h"
+#include "Engine/GBFGameInstance.h"
+#include "Engine/GBFGameInstanceGameStateSystem.h"
+#include "Engine/GBFGameState.h"
 
 #include <Engine/LocalPlayer.h>
 #include <Engine/World.h>
 #include <Online.h>
-#include <SubsystemCollection.h>
 
 void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & collection )
 {

@@ -26,9 +26,9 @@ enum class EGBFVirtualKey : uint8
 UENUM( BlueprintType )
 enum class EGBFVirtualKeyProcessedFirst : uint8
 {
-    None = 1 << 0,
-    GamepadOnly = 1 << 1,
-    KeyboardOnly = 1 << 2,
+    None = 0,
+    GamepadOnly = 1 << 0,
+    KeyboardOnly = 1 << 1,
     Both = GamepadOnly | KeyboardOnly
 };
 

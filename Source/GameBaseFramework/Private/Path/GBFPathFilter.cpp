@@ -1,25 +1,26 @@
-#include "GBFPathFilter.h"
+#include "Path/GBFPathFilter.h"
 
-#include <Paths.h>
-
-void AddTokenSelectorIfNotEmpty( TArray< FGBFTokenSelector > & array, FGBFTokenSelector token_selector )
+namespace
 {
-    for ( auto index = token_selector.Tokens.Num() - 1; index >= 0; index-- )
+    void AddTokenSelectorIfNotEmpty( TArray< FGBFTokenSelector > & array, FGBFTokenSelector token_selector )
     {
-        token_selector.Tokens[ index ].TrimStartAndEndInline();
-
-        if ( token_selector.Tokens[ index ].Len() == 0 )
+        for ( auto index = token_selector.Tokens.Num() - 1; index >= 0; index-- )
         {
-            token_selector.Tokens.RemoveAt( index );
+            token_selector.Tokens[ index ].TrimStartAndEndInline();
+
+            if ( token_selector.Tokens[ index ].Len() == 0 )
+            {
+                token_selector.Tokens.RemoveAt( index );
+            }
         }
-    }
 
-    if ( token_selector.Tokens.Num() == 0 )
-    {
-        return;
-    }
+        if ( token_selector.Tokens.Num() == 0 )
+        {
+            return;
+        }
 
-    array.Emplace( MoveTemp( token_selector ) );
+        array.Emplace( MoveTemp( token_selector ) );
+    }
 }
 
 FGBFPathFilter & FGBFPathFilter::MustContain( const FString token )

@@ -26,7 +26,7 @@ namespace UnrealBuildTool.Rules
             PublicIncludePaths.AddRange(
                 new string[]
                 { 
-                    "GameBaseFrameworkEditor",
+                    //"GameBaseFrameworkEditor",
                 }
             );
 

@@ -4,7 +4,6 @@
 #include <Engine/GameInstance.h>
 #include <Interfaces/OnlineExternalUIInterface.h>
 #include <OnlineSubsystemTypes.h>
-#include <Ticker.h>
 #include <UObject/TextProperty.h>
 
 #include "GBFGameInstance.generated.h"

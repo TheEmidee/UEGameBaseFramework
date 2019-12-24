@@ -3,9 +3,9 @@
 #include "GameBaseFrameworkSettings.h"
 #include "Input/GBFInputTypes.h"
 
-#include <Application/IInputProcessor.h>
 #include <Components/ActorComponent.h>
 #include <Engine/LocalPlayer.h>
+#include <Framework/Application/IInputProcessor.h>
 
 #include "GBFPlatformInputSwitcherComponent.generated.h"
 

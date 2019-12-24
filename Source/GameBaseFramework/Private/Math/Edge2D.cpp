@@ -1,4 +1,4 @@
-#include "Edge2D.h"
+#include "Math/Edge2D.h"
 
 const FEdge2D FEdge2D::ZeroEdge2D( FVector2D::ZeroVector, FVector2D::ZeroVector );
 

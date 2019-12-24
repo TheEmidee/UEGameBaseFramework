@@ -1,9 +1,8 @@
-#include "GBFLevelStreamingBlueprintLibrary.h"
+#include "BlueprintLibraries/GBFLevelStreamingBlueprintLibrary.h"
 
-#include "Engine/LevelStreamingDynamic.h"
-#include "Engine/World.h"
-#include "Kismet/GameplayStatics.h"
-#include "Misc/PackageName.h"
+#include <Engine/LevelStreamingDynamic.h>
+#include <Engine/World.h>
+#include <Misc/PackageName.h>
 
 ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters )
 {

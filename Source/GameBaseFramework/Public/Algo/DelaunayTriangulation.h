@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Edge2D.h"
-#include "Triangle2D.h"
+#include "Math/Edge2D.h"
+#include "Math/Triangle2D.h"
 
 #include <CoreMinimal.h>
 

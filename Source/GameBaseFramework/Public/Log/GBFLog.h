@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Color.h>
 #include <Engine/Engine.h>
-#include <LogMacros.h>
+#include <Logging/LogMacros.h>
+#include <Math/Color.h>
 
 // ReSharper disable CppInconsistentNaming
 DECLARE_LOG_CATEGORY_EXTERN( LogGBF, Log, All )
@@ -76,7 +76,7 @@ namespace Private
             {                                                                                                                                                                                                                                          \
                 if ( GEngine != nullptr )                                                                                                                                                                                                              \
                 {                                                                                                                                                                                                                                      \
-                    GEngine->AddOnScreenDebugMessage( -1, 5.0f, Private::GetColorForLogVerbosity( ELogVerbosity::Verbosity ), FString::Printf( Format, ##__VA_ARGS__ ) );                                                                        \
+                    GEngine->AddOnScreenDebugMessage( -1, 5.0f, Private::GetColorForLogVerbosity( ELogVerbosity::Verbosity ), FString::Printf( Format, ##__VA_ARGS__ ) );                                                                              \
                 }                                                                                                                                                                                                                                      \
             }                                                                                                                                                                                                                                          \
         }                                                                                                                                                                                                                                              \

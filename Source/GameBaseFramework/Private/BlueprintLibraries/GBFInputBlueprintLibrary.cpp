@@ -1,4 +1,4 @@
-#include "GBFInputBlueprintLibrary.h"
+#include "BlueprintLibraries/GBFInputBlueprintLibrary.h"
 
 #if !PLATFORM_DESKTOP
 #include "Kismet/GameplayStatics.h"

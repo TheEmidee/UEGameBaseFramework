@@ -1,6 +1,6 @@
-#include "GBFAnimMontageValidationHelpers.h"
+#include "DataValidation/GBFAnimMontageValidationHelpers.h"
 
-#include "GBFDataValidationMacros.h"
+#include "DataValidation/GBFDataValidationMacros.h"
 
 #include <Animation/AnimMontage.h>
 

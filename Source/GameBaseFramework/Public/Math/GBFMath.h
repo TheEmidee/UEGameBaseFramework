@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "Edge2D.h"
+#include "Math/Edge2D.h"
 
 #include <CoreMinimal.h>
 
