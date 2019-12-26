@@ -1,13 +1,12 @@
-#include "GBFPlayerControllerLogin.h"
+#include "GameFramework/GBFPlayerControllerLogin.h"
 
 #include "Components/GBFUIDialogManagerComponent.h"
-#include "GBFGameModeLogin.h"
-#include "GBFPlayerController.h"
+#include "Engine/GBFLocalPlayer.h"
+#include "GameFramework/GBFGameModeLogin.h"
 #include "Log/GBFLog.h"
-#include "GBFLocalPlayer.h"
 
+#include <Framework/Application/SlateApplication.h>
 #include <OnlineSubsystem.h>
-#include <SlateApplication.h>
 
 void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
 {
@@ -62,7 +61,7 @@ void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
 
 // -- PRIVATE
 
-void AGBFPlayerControllerLogin::HandleLoginUIClosed( const TSharedPtr<const FUniqueNetId> unique_id, const int controller_index )
+void AGBFPlayerControllerLogin::HandleLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, const int controller_index )
 {
     if ( !ensure( GetGameInstance() != nullptr ) )
     {

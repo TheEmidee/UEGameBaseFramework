@@ -1,4 +1,4 @@
-#include "GBFMath.h"
+#include "Math/GBFMath.h"
 
 TArray< FEdge, TFixedAllocator< 4 > > FGBFMath::GetBoxEdges( const FBox & box )
 {

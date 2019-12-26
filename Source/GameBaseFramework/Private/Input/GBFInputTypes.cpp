@@ -1,4 +1,4 @@
-#include "GBFInputTypes.h"
+#include "Input/GBFInputTypes.h"
 
 #if WITH_EDITOR
 

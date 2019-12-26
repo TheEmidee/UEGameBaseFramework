@@ -1,5 +1,5 @@
-#include "GBFGameModeBase.h"
-#include "GBFGameInstance.h"
+#include "GameFramework/GBFGameModeBase.h"
+#include "Engine/GBFGameInstance.h"
 
 void AGBFGameModeBase::StartPlay()
 {

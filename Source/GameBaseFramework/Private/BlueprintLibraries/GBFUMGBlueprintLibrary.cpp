@@ -1,4 +1,4 @@
-#include "GBFUMGBlueprintLibrary.h"
+#include "BlueprintLibraries/GBFUMGBlueprintLibrary.h"
 
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"

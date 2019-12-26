@@ -1,4 +1,4 @@
-#include "GBFConfirmationWidget.h"
+#include "UI/GBFConfirmationWidget.h"
 
 #include "Components/GBFUIDialogManagerComponent.h"
 

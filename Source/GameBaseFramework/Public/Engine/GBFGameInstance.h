@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Containers/Ticker.h>
 #include <CoreMinimal.h>
 #include <Engine/GameInstance.h>
 #include <Interfaces/OnlineExternalUIInterface.h>

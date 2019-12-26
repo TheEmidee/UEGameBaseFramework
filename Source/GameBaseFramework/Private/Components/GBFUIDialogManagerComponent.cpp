@@ -1,6 +1,5 @@
-#include "GBFUIDialogManagerComponent.h"
+#include "Components/GBFUIDialogManagerComponent.h"
 
-#include "GBFGameInstance.h"
 #include "GameBaseFrameworkSettings.h"
 
 #include <Blueprint/UserWidget.h>

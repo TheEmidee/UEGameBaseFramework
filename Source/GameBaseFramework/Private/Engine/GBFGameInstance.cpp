@@ -1,10 +1,9 @@
-#include "GBFGameInstance.h"
+#include "Engine/GBFGameInstance.h"
 
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Components/GBFUIDialogManagerComponent.h"
-#include "GBFGameInstanceGameStateSystem.h"
-#include "GBFGameState.h"
-#include "GBFLocalPlayer.h"
+#include "Engine/GBFGameInstanceGameStateSystem.h"
+#include "Engine/GBFLocalPlayer.h"
 #include "GBFTypes.h"
 #include "GameBaseFrameworkSettings.h"
 #include "GameFramework/GBFGameModeBase.h"
@@ -14,16 +13,14 @@
 #include "UI/GBFConfirmationWidget.h"
 
 #include <Containers/Ticker.h>
-#include <CoreDelegates.h>
 #include <Engine/AssetManager.h>
 #include <Engine/Canvas.h>
+#include <Framework/Application/SlateApplication.h>
 #include <GameFramework/GameModeBase.h>
 #include <Kismet/GameplayStatics.h>
+#include <Misc/CoreDelegates.h>
 #include <Online.h>
-#include <OnlineExternalUIInterface.h>
 #include <OnlineSubsystem.h>
-#include <SlateApplication.h>
-#include <SoftObjectPtr.h>
 
 #if PLATFORM_XBOXONE
 class FGBFXBoxOneDisconnectedInputProcessor : public IInputProcessor
@@ -176,7 +173,7 @@ void UGBFGameInstance::PopSoundMixModifier() const
 
 bool UGBFGameInstance::ProfileUISwap( const int controller_index )
 {
-    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [ this ]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
+    return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
         if ( unique_net_id->IsValid() )
         {
             GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
@@ -431,7 +428,7 @@ void UGBFGameInstance::HandleControllerConnectionChange( const bool is_connectio
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
                     EGBFUIDialogType::AdditiveOnlyOneVisible,
-                    FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
+                    FGBFConfirmationPopupButtonClicked::CreateLambda( [this
 #if PLATFORM_XBOXONE
                                                                           ,
                                                                           &slate_app,
@@ -492,7 +489,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         if ( auto * dialog_manager_component = player_controller->GetUIDialogManagerComponent() )
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
-                [ this, &next_state ]() {
+                [this, &next_state]() {
                     if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsStateWelcomeScreenState( next_state ) )
                     {
                         GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();

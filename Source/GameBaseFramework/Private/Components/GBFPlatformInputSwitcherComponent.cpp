@@ -1,8 +1,8 @@
-#include "GBFPlatformInputSwitcherComponent.h"
+#include "Components/GBFPlatformInputSwitcherComponent.h"
 
 #include <Engine/World.h>
+#include <Framework/Application/SlateApplication.h>
 #include <GameFramework/PlayerController.h>
-#include <SlateApplication.h>
 
 UGBFPlatformInputSwitcherComponent::UGBFPlatformInputSwitcherComponent()
 {

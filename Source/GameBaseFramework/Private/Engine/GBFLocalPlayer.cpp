@@ -1,9 +1,9 @@
-#include "GBFLocalPlayer.h"
+#include "Engine/GBFLocalPlayer.h"
 
-#include "GBFLog.h"
 #include "GameFramework/GBFSaveGame.h"
+#include "Log/GBFLog.h"
 
-#include <Application/SlateApplication.h>
+#include <Framework/Application/SlateApplication.h>
 #include <Interfaces/OnlineAchievementsInterface.h>
 #include <Interfaces/OnlineIdentityInterface.h>
 #include <Internationalization/Culture.h>

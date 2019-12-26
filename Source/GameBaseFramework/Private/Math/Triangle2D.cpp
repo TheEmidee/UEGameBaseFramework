@@ -1,4 +1,4 @@
-#include "Triangle2D.h"
+#include "Math/Triangle2D.h"
 
 FTriangle2D::FTriangle2D( const FVector2D & v1, const FVector2D & v2, const FVector2D & v3 ) :
     PointA( v1 ),

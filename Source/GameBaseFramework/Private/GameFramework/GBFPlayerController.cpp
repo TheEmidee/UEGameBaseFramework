@@ -1,9 +1,9 @@
-#include "GBFPlayerController.h"
+#include "GameFramework/GBFPlayerController.h"
 
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
-#include "GBFLocalPlayer.h"
-#include "GBFSaveGame.h"
+#include "Engine/GBFLocalPlayer.h"
+#include "GameFramework/GBFSaveGame.h"
 
 #include <TimerManager.h>
 
@@ -76,7 +76,7 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
 
     if ( !ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration )
     {
-        auto enable_input = [ this ]() {
+        auto enable_input = [this]() {
             GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
             EnableInput( nullptr );
         };

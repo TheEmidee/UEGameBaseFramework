@@ -1,12 +1,12 @@
-#include "GBFGameInstanceGameStateSystem.h"
+#include "Engine/GBFGameInstanceGameStateSystem.h"
 
-#include "Engine/AssetManager.h"
-#include "Engine/World.h"
-#include "GBFGameInstance.h"
-#include "GBFGameState.h"
-#include "GBFHelperBlueprintLibrary.h"
-#include "GameBaseFrameworkSettings.h"
-#include "GameFramework/GameModeBase.h"
+#include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
+#include "Engine/GBFGameState.h"
+
+#include <Engine/AssetManager.h>
+#include <Engine/World.h>
+#include <GameBaseFrameworkSettings.h>
+#include <GameFramework/GameModeBase.h>
 
 void UGBFGameInstanceGameStateSystem::Initialize( FSubsystemCollectionBase & collection )
 {
@@ -69,9 +69,9 @@ void UGBFGameInstanceGameStateSystem::UpdateCurrentGameStateFromCurrentWorld()
             if ( auto * game_mode = GetWorld()->GetAuthGameMode() )
             {
                 if ( auto * current_state = GetGameStateFromGameMode( game_mode->GetClass() ) )
-            {
-                CurrentGameState = current_state;
-            }
+                {
+                    CurrentGameState = current_state;
+                }
             }
         }
     }
@@ -84,7 +84,7 @@ bool UGBFGameInstanceGameStateSystem::IsStateWelcomeScreenState( const UGBFGameS
 
 const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
 {
-    const auto predicate = [ game_mode_class ]( auto state_soft_ptr ) {
+    const auto predicate = [game_mode_class]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->GameModeClass == game_mode_class;
     };
 
@@ -98,7 +98,7 @@ const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromGameMode(
 
 const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromName( FName state_name ) const
 {
-    const auto predicate = [ state_name ]( auto state_soft_ptr ) {
+    const auto predicate = [state_name]( auto state_soft_ptr ) {
         return state_soft_ptr.Get()->Name == state_name;
     };
 

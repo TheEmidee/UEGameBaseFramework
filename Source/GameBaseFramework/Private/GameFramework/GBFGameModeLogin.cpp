@@ -1,4 +1,4 @@
-#include "GBFGameModeLogin.h"
+#include "GameFramework/GBFGameModeLogin.h"
 
 #include <Engine/GameInstance.h>
 #include <Engine/LocalPlayer.h>

@@ -1,5 +1,6 @@
-#include "GBFSaveGame.h"
-#include "Kismet/GameplayStatics.h"
+#include "GameFramework/GBFSaveGame.h"
+
+#include <Kismet/GameplayStatics.h>
 
 UGBFSaveGame::UGBFSaveGame() :
     EnableForceFeedback( true ),
@@ -31,7 +32,7 @@ void UGBFSaveGame::UpdateAchievementCurrentCount( const FName achievement_id, co
 
 void UGBFSaveGame::ResetAchievementsProgression()
 {
-#if !(UE_BUILD_SHIPPING || UE_BUILD_TEST)
+#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
     AchievementsCurrentCountMap.Reset();
     IsDirty = true;
 #endif

@@ -1,11 +1,9 @@
 #pragma once
 
-#include "CoreMinimal.h"
-
-#include "OnlineIdentityInterface.h"
-
 #include "GameFramework/GBFPlayerController.h"
-#include "SharedPointerInternals.h"
+
+#include <CoreMinimal.h>
+#include <Interfaces/OnlineIdentityInterface.h>
 
 #include "GBFPlayerControllerLogin.generated.h"
 
@@ -15,7 +13,6 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerControllerLogin : public AGBFPlayerControl
     GENERATED_BODY()
 
 public:
-
     UFUNCTION( BlueprintCallable )
     void TryLogIn( const int player_index );
 
@@ -24,8 +21,7 @@ public:
     FOnRequiresUserAction & ReceiveRequiresUserAction();
 
 private:
-
-    void HandleLoginUIClosed( const TSharedPtr<const FUniqueNetId> unique_id, const int controller_index );
+    void HandleLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, const int controller_index );
     void OnUserCanPlay( const FUniqueNetId & user_id, const EUserPrivileges::Type privilege, const uint32 privilege_result );
     void TryToConnectToOnlineInterface();
     void OnLoginSucceeded( const int32 local_user_num, const bool was_successful, const FUniqueNetId & user_id, const FString & error );
