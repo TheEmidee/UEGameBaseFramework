@@ -3,6 +3,7 @@
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFGameInstanceGameStateSystem.h"
+#include "Engine/GBFGameState.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFTypes.h"
 #include "GameBaseFrameworkSettings.h"
