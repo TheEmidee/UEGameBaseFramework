@@ -23,6 +23,12 @@
 #define DATA_VALIDATION_IS_TRUE_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_IS_TRUE( VariableName, FText::FromString( FString::Printf( TEXT( "%s must be true" ), TEXT( #VariableName ) ) ) )
 
+#define DATA_VALIDATION_IS_FALSE( VariableName, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( VariableName, ErrorMessageText )
+
+#define DATA_VALIDATION_IS_FALSE_AUTO_MESSAGE( VariableName ) \
+    DATA_VALIDATION_IS_FALSE( VariableName, FText::FromString( FString::Printf( TEXT( "%s must be false" ), TEXT( #VariableName ) ) ) )
+
 #define DATA_VALIDATION_IS_GREATER_THAN( VariableName, MinValue, ErrorMessageText ) \
     DATA_VALIDATION_INTERNAL_CONDITION( VariableName > 0, ErrorMessageText )
 
