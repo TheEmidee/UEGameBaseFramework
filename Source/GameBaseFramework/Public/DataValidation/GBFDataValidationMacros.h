@@ -80,6 +80,12 @@
 #define DATA_VALIDATION_ARE_EQUAL_AUTO_MESSAGE( FirstItemName, SecondItemName ) \
     DATA_VALIDATION_ARE_EQUAL( FirstItemName, SecondItemName, FText::FromString( FString::Printf( TEXT( "%s must be equal to %s" ), TEXT( #FirstItemName ), TEXT( #SecondItemName ) ) ) );
 
+#define DATA_VALIDATION_ARE_NOT_EQUAL( FirstItemName, SecondItemName, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( FirstItemName == SecondItemName, ErrorMessageText )
+
+#define DATA_VALIDATION_ARE_NOT_EQUAL_AUTO_MESSAGE( FirstItemName, SecondItemName ) \
+    DATA_VALIDATION_ARE_NOT_EQUAL( FirstItemName, SecondItemName, FText::FromString( FString::Printf( TEXT( "%s must not be equal to %s" ), TEXT( #FirstItemName ), TEXT( #SecondItemName ) ) ) );
+
 #define DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG( ContainerTagName, TagName, ErrorMessageText ) \
     DATA_VALIDATION_INTERNAL_CONDITION( ContainerTagName.HasTag( TagName ), ErrorMessageText )
 
