@@ -17,6 +17,12 @@
 #define DATA_VALIDATION_CALL_IS_DATA_VALID( VariableName ) \
     VariableName->IsDataValid( validation_errors );
 
+#define DATA_VALIDATION_IS_VALID( VariableName, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( !VariableName.IsValid(), ErrorMessageText )
+
+#define DATA_VALIDATION_IS_VALID_AUTO_MESSAGE( VariableName ) \
+    DATA_VALIDATION_IS_VALID( VariableName, FText::FromString( FString::Printf( TEXT( "%s must be valid" ), TEXT( #VariableName ) ) ) )
+
 #define DATA_VALIDATION_IS_TRUE( VariableName, ErrorMessageText ) \
     DATA_VALIDATION_INTERNAL_CONDITION( !VariableName, ErrorMessageText )
 
