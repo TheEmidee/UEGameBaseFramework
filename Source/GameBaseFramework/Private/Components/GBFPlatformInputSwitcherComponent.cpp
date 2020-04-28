@@ -110,17 +110,27 @@ void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::SetLocalPlayerPl
 
 void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 {
-    const auto * settings = GetDefault< UGameBaseFrameworkSettings >();
+    return;
+    
+    if ( GetOwner()->HasLocalNetOwner() )
+    {
+        const auto * settings = GetDefault< UGameBaseFrameworkSettings >();
 
-    InputPlatformDetectorPtr = MakeShared< InputPlatformDetector >( *this, settings->InputSwitchConfig );
-    FSlateApplication::Get().RegisterInputPreProcessor( InputPlatformDetectorPtr );
+        InputPlatformDetectorPtr = MakeShared< InputPlatformDetector >( *this, settings->InputSwitchConfig );
+        FSlateApplication::Get().RegisterInputPreProcessor( InputPlatformDetectorPtr );
+    }
 }
 
 void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
-    if ( InputPlatformDetectorPtr.IsValid() && FSlateApplication::IsInitialized() )
+    return;
+
+    if ( IsValid( GetOwner() ) && GetOwner()->HasLocalNetOwner() )
     {
-        FSlateApplication::Get().UnregisterInputPreProcessor( InputPlatformDetectorPtr );
+        if ( InputPlatformDetectorPtr.IsValid() && FSlateApplication::IsInitialized() )
+        {
+            FSlateApplication::Get().UnregisterInputPreProcessor( InputPlatformDetectorPtr );
+        }
     }
 }
 
