@@ -12,7 +12,7 @@ class UWorld;
 class UObject;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary : public UBlueprintFunctionLibrary
+class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary final : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 
