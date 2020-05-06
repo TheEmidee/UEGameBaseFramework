@@ -8,7 +8,7 @@
 
 UCLASS()
 
-class GAMEBASEFRAMEWORK_API UGBFInputBlueprintLibrary : public UBlueprintFunctionLibrary
+class GAMEBASEFRAMEWORK_API UGBFInputBlueprintLibrary final : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 
