@@ -28,6 +28,8 @@ public:
 private:
     void HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id );
     void OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index, const FOnlineError & error );
+
+    UFUNCTION()
     void OnGameStateChanged( const UGBFGameState * new_state );
 
     FOnLoginUIClosedDelegate LoginUIClosedDelegate;
