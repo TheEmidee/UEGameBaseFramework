@@ -37,6 +37,7 @@ public:
 
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
     void ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content );
+    void ShowMessageThenGotoMainMenuState( const FText & title, const FText & content );
 
     void HandleSignInChangeMessaging();
 

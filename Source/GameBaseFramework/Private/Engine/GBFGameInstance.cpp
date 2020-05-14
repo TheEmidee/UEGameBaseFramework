@@ -140,6 +140,11 @@ void UGBFGameInstance::ShowMessageThenGotoWelcomeScreenState( const FText & titl
     ShowMessageThenGotoState( title, content, Settings->WelcomeScreenGameState.Get() );
 }
 
+void UGBFGameInstance::ShowMessageThenGotoMainMenuState( const FText & title, const FText & content )
+{
+    ShowMessageThenGotoState( title, content, Settings->MainMenuGameState.Get() );
+}
+
 // ReSharper disable once CppMemberFunctionMayBeConst
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
