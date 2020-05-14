@@ -55,7 +55,7 @@ void UGBFGameInstanceGameStateSystem::GoToStateWithMap( UGBFGameState * new_stat
             UGBFHelperBlueprintLibrary::OpenMap( this, new_world );
         }
 
-        OnStateChangedEvent.Broadcast( new_state );
+        OnStateChangedDelegate.Broadcast( new_state );
     }
 }
 

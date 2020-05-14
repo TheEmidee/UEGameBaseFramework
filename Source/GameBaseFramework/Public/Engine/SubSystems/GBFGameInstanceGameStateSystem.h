@@ -17,9 +17,9 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstanceGameStateSystem final : public UGBFG
 
 public:
     // ReSharper disable once CppRedundantEmptyDeclaration
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedDelegate, const UGBFGameState *, new_state );
 
-    FOnStateChangedEvent & OnStateChanged();
+    FOnStateChangedDelegate & OnStateChanged();
 
     bool IsOnWelcomeScreenState() const;
 
@@ -43,7 +43,7 @@ private:
     void LoadGameStates() const;
 
     UPROPERTY( BlueprintAssignable )
-    FOnStateChangedEvent OnStateChangedEvent;
+    FOnStateChangedDelegate OnStateChangedDelegate;
 
     TWeakObjectPtr< const UGBFGameState > CurrentGameState;
 
@@ -51,7 +51,7 @@ private:
     const UGameBaseFrameworkSettings * Settings;
 };
 
-FORCEINLINE UGBFGameInstanceGameStateSystem::FOnStateChangedEvent & UGBFGameInstanceGameStateSystem::OnStateChanged()
+FORCEINLINE UGBFGameInstanceGameStateSystem::FOnStateChangedDelegate & UGBFGameInstanceGameStateSystem::OnStateChanged()
 {
-    return OnStateChangedEvent;
+    return OnStateChangedDelegate;
 }

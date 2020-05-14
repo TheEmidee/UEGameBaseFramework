@@ -5,6 +5,8 @@
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "GameBaseFrameworkSettings.h"
 
+#include <Engine/LocalPlayer.h>
+#include <GameFramework/GameModeBase.h>
 #include <OnlineSubsystemUtils.h>
 
 void UGBFGameInstanceSessionSubsystem::Initialize( FSubsystemCollectionBase & collection )
@@ -19,6 +21,19 @@ void UGBFGameInstanceSessionSubsystem::Initialize( FSubsystemCollectionBase & co
 
     session_interface->AddOnSessionFailureDelegate_Handle( FOnSessionFailureDelegate::CreateUObject( this, &UGBFGameInstanceSessionSubsystem::HandleSessionFailure ) );
     OnEndSessionCompleteDelegate = FOnEndSessionCompleteDelegate::CreateUObject( this, &UGBFGameInstanceSessionSubsystem::OnEndSessionComplete );
+}
+
+AGBFGameSession * UGBFGameInstanceSessionSubsystem::GetGameSession() const
+{
+    if ( const auto * world = GetWorld() )
+    {
+        if ( const auto * game_mode = world->GetAuthGameMode() )
+        {
+            return Cast< AGBFGameSession >( game_mode->GameSession );
+        }
+    }
+
+    return nullptr;
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
@@ -64,7 +79,7 @@ void UGBFGameInstanceSessionSubsystem::CleanupSessionOnReturnToMenu()
     {
         const FName game_session( NAME_GameSession );
         const auto session_state = sessions->GetSessionState( NAME_GameSession );
-        
+
         UE_LOG( LogOnline, Log, TEXT( "Session %s is '%s'" ), *game_session.ToString(), EOnlineSessionState::ToString( session_state ) );
 
         if ( EOnlineSessionState::InProgress == session_state )
@@ -117,4 +132,93 @@ void UGBFGameInstanceSessionSubsystem::OnEndSessionComplete( const FName session
     }
 
     CleanupSessionOnReturnToMenu();
+}
+
+void UGBFGameInstanceSessionSubsystem::BroadcastOnSessionPrivilegeTaskEnded() const
+{
+    OnSessionPrivilegeTaskEndedDelegate.Broadcast();
+}
+
+void UGBFGameInstanceSessionSubsystem::BroadcastOnSessionPrivilegeTaskFailed( const FUniqueNetId & user_id, EUserPrivileges::Type privilege, const uint32 privilege_results )
+{
+    if ( GEngine == nullptr )
+    {
+        return;
+    }
+
+    TWeakObjectPtr< ULocalPlayer > owning_player;
+
+    for ( auto local_player_iterator = GEngine->GetLocalPlayerIterator( GetWorld() ); local_player_iterator; ++local_player_iterator )
+    {
+        const auto other_id = ( *local_player_iterator )->GetPreferredUniqueNetId();
+        if ( other_id.IsValid() )
+        {
+            if ( user_id == ( *other_id ) )
+            {
+                owning_player = *local_player_iterator;
+                break;
+            }
+        }
+    }
+
+    if ( !owning_player.IsValid() )
+    {
+        return;
+    }
+
+    if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::AccountTypeFailure ) ) != 0 )
+    {
+        auto external_ui = Online::GetExternalUIInterface( GetWorld() );
+        if ( external_ui.IsValid() )
+        {
+            external_ui->ShowAccountUpgradeUI( user_id );
+        }
+        return;
+    }
+
+    FText error_text;
+
+    if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::RequiredSystemUpdate ) ) != 0 )
+    {
+        error_text = NSLOCTEXT( "OnlinePrivilegeResult", "RequiredSystemUpdate", "A required system update is available.  Please upgrade to access online features." );
+    }
+    else if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::RequiredPatchAvailable ) ) != 0 )
+    {
+        error_text = NSLOCTEXT( "OnlinePrivilegeResult", "RequiredPatchAvailable", "A required game patch is available.  Please upgrade to access online features." );
+    }
+    else if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::AgeRestrictionFailure ) ) != 0 )
+    {
+        error_text = NSLOCTEXT( "OnlinePrivilegeResult", "AgeRestrictionFailure", "Cannot play due to age restrictions!" );
+    }
+    else if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::UserNotFound ) ) != 0 )
+    {
+        error_text = NSLOCTEXT( "OnlinePrivilegeResult", "UserNotFound", "Cannot play due invalid user!" );
+    }
+    else if ( ( privilege_results & static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::GenericFailure ) ) != 0 )
+    {
+        error_text = NSLOCTEXT( "OnlinePrivilegeResult", "GenericFailure", "Cannot play online.  Check your network connection." );
+    }
+
+    if ( !error_text.IsEmpty() )
+    {
+        OnSessionPrivilegeTaskFailedDelegate.Broadcast( owning_player.Get(), error_text );
+    }
+}
+
+void UGBFGameInstanceSessionSubsystem::OnUserCanPlayInvite( const FUniqueNetId & user_id, const EUserPrivileges::Type privilege, const uint32 privilege_results )
+{
+    BroadcastOnSessionPrivilegeTaskEnded();
+
+    if ( privilege_results == static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::NoFailures ) )
+    {
+        if ( user_id == *PendingInvite.UserId )
+        {
+            PendingInvite.PrivilegesCheckedAndAllowed = true;
+        }
+    }
+    else
+    {
+        BroadcastOnSessionPrivilegeTaskFailed( user_id, privilege, privilege_results );
+        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
+    }
 }
