@@ -1,7 +1,8 @@
 #pragma once
 
+#include "GBFGameInstanceSubsystemBase.h"
+
 #include <CoreMinimal.h>
-#include <Subsystems/GameInstanceSubsystem.h>
 
 #include "GBFGameInstanceGameStateSystem.generated.h"
 
@@ -10,12 +11,11 @@ class AGameModeBase;
 class UGBFGameState;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFGameInstanceGameStateSystem : public UGameInstanceSubsystem
+class GAMEBASEFRAMEWORK_API UGBFGameInstanceGameStateSystem final : public UGBFGameInstanceSubsystemBase
 {
     GENERATED_BODY()
 
 public:
-
     // ReSharper disable once CppRedundantEmptyDeclaration
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
 
@@ -35,11 +35,10 @@ public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void UpdateCurrentGameStateFromCurrentWorld();
     bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;
+    UGBFGameState * GetGameStateFromName( FName state_name ) const;
 
 private:
-
     const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
-    const UGBFGameState * GetGameStateFromName( FName state_name ) const;
 
     void LoadGameStates() const;
 
