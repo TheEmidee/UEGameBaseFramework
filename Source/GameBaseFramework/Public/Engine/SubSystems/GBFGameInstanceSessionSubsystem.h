@@ -44,8 +44,12 @@ public:
 private:
 
     void HandleSessionFailure( const FUniqueNetId & unique_net_id, ESessionFailure::Type failure_type );
+    void CleanupSessionOnReturnToMenu();
     void OnEndSessionComplete( FName session_name, bool was_successful );
 
     FOnEndSessionCompleteDelegate OnEndSessionCompleteDelegate;
     EGBFOnlineMode OnlineMode;
+    FDelegateHandle OnStartSessionCompleteDelegateHandle;
+    FDelegateHandle OnEndSessionCompleteDelegateHandle;
+    FDelegateHandle OnDestroySessionCompleteDelegateHandle;
 };
