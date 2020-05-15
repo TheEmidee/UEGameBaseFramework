@@ -33,32 +33,17 @@ public:
     UFUNCTION( BlueprintCallable )
     void PopSoundMixModifier() const;
 
-    UFUNCTION( BlueprintCallable )
-    bool ProfileUISwap( const int controller_index );
-
-    bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
-
     ULocalPlayer * GetFirstLocalPlayer() const;
 
-private:
-    void HandleAppWillDeactivate();
-    void HandleAppHasReactivated();
-    void HandleAppWillEnterBackground();
-    void HandleAppHasEnteredForeground();
-    void HandleAppDeactivateOrBackground() const;
-    void HandleAppReactivateOrForeground();
-    void HandleSafeFrameChanged();
-    void HandleAppLicenseUpdate();
-    void HandleUserLoginChanged( const int32 game_user_index, const ELoginStatus::Type previous_login_status, const ELoginStatus::Type login_status, const FUniqueNetId & user_id );
-    void HandleControllerPairingChanged( const int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user );
-    void HandleNetworkConnectionStatusChanged( const FString & service_name, const EOnlineServerConnectionStatus::Type last_connection_status, const EOnlineServerConnectionStatus::Type connection_status );
-    void HandleControllerConnectionChange( const bool is_connection, const int32 unused, const int32 game_user_index );
-    void HandleSignInChangeMessaging();
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
-    void OnLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, int controller_index, const FOnlineError & error );
+    void ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content );
+
+    void HandleSignInChangeMessaging();
+
+private:
 
     UFUNCTION()
-    void OnGameStateChanged( const UGBFGameState * new_state );
+    void OnAppReactivateOrForeground();
 
     UPROPERTY()
     const UGameBaseFrameworkSettings * Settings;
@@ -66,12 +51,6 @@ private:
     UPROPERTY( EditDefaultsOnly )
     TSoftObjectPtr< USoundMix > SoundMix;
 
-    EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
-    bool IsLicensed;
-    int IgnorePairingChangeForControllerId;
     FTickerDelegate TickDelegate;
     FDelegateHandle TickDelegateHandle;
-    TSharedPtr< const FUniqueNetId > CurrentUniqueNetId;
-    FOnLoginUIClosedDelegate LoginUIClosedDelegate;
-    TArray< ELoginStatus::Type > LocalPlayerOnlineStatus;
 };

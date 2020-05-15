@@ -1,8 +1,9 @@
 #include "Engine/GBFLocalPlayerPresenceSystem.h"
 
 #include "Engine/GBFGameInstance.h"
-#include "Engine/GBFGameInstanceGameStateSystem.h"
 #include "Engine/GBFGameState.h"
+#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
+
 
 #include <Engine/LocalPlayer.h>
 #include <Engine/World.h>

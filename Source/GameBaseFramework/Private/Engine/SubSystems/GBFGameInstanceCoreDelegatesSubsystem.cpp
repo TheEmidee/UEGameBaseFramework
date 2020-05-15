@@ -1,0 +1,116 @@
+#include "Engine/SubSystems//GBFGameInstanceCoreDelegatesSubsystem.h"
+
+
+#include "Engine/Canvas.h"
+#include "GameFramework/GBFGameModeBase.h"
+#include "Log/GBFLog.h"
+
+#include <Framework/Application/SlateApplication.h>
+#include <Interfaces/OnlineIdentityInterface.h>
+#include <Misc/CoreDelegates.h>
+#include <OnlineSubsystem.h>
+#include <OnlineSubsystemTypes.h>
+
+UGBFGameInstanceCoreDelegatesSubsystem::UGBFGameInstanceCoreDelegatesSubsystem() :
+    ItIsLicensed( true )
+{
+}
+
+void UGBFGameInstanceCoreDelegatesSubsystem::Initialize( FSubsystemCollectionBase & collection )
+{
+    Super::Initialize( collection );
+
+    const auto oss = IOnlineSubsystem::Get();
+    check( oss != nullptr );
+
+    const auto identity_interface = oss->GetIdentityInterface();
+    check( identity_interface.IsValid() );
+
+    for ( auto i = 0; i < MAX_LOCAL_PLAYERS; ++i )
+    {
+        identity_interface->AddOnLoginStatusChangedDelegate_Handle( i, FOnLoginStatusChangedDelegate::CreateUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleUserLoginChanged ) );
+    }
+
+    FCoreDelegates::ApplicationWillDeactivateDelegate.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate );
+    FCoreDelegates::ApplicationHasReactivatedDelegate.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated );
+    FCoreDelegates::ApplicationWillEnterBackgroundDelegate.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground );
+    FCoreDelegates::ApplicationHasEnteredForegroundDelegate.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground );
+    FCoreDelegates::OnSafeFrameChangedEvent.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleSafeFrameChanged );
+    FCoreDelegates::ApplicationLicenseChange.AddUObject( this, &UGBFGameInstanceCoreDelegatesSubsystem::HandleAppLicenseUpdate );
+}
+
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleUserLoginChanged( int32 /* game_user_index */, ELoginStatus::Type /* previous_login_status */, ELoginStatus::Type /* login_status */, const FUniqueNetId & /* user_id */ )
+{
+    HandleAppLicenseUpdate();
+}
+
+// ReSharper disable CppMemberFunctionMayBeStatic
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate()
+// ReSharper restore CppMemberFunctionMayBeStatic
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate" ) );
+
+#if PLATFORM_PS4
+    HandleAppDeactivateOrBackground();
+#endif
+}
+
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated()
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated" ) );
+
+#if PLATFORM_PS4
+    HandleAppReactivateOrForeground();
+#endif
+}
+
+// ReSharper disable CppMemberFunctionMayBeStatic
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground()
+// ReSharper restore CppMemberFunctionMayBeStatic
+{
+    UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground" ) );
+
+#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+    HandleAppDeactivateOrBackground();
+#endif
+}
+
+// ReSharper disable CppMemberFunctionMayBeStatic
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground()
+// ReSharper restore CppMemberFunctionMayBeStatic
+{
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground" ) );
+
+#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+    HandleAppReactivateOrForeground();
+#endif
+}
+
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppDeactivateOrBackground() const
+{
+    OnAppDeactivateOrBackgroundDelegate.Broadcast();
+    
+    if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
+    {
+        gm->HandleAppSuspended();
+    }
+}
+
+// ReSharper disable once CppMemberFunctionMayBeConst
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppReactivateOrForeground()
+{
+    OnAppReactivatedOrForegroundDelegate.Broadcast();
+}
+
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleSafeFrameChanged()
+{
+    UCanvas::UpdateAllCanvasSafeZoneData();
+}
+
+void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppLicenseUpdate()
+{
+    auto generic_application = FSlateApplication::Get().GetPlatformApplication();
+    ItIsLicensed = generic_application->ApplicationLicenseValid();
+}

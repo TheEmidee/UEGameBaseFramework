@@ -72,6 +72,12 @@ public:
     TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
 
     UPROPERTY( config, EditAnywhere, Category = GameStates )
+    TSoftObjectPtr< UGBFGameState > MainMenuGameState;
+
+    UPROPERTY( config, EditAnywhere, Category = GameStates )
+    TSoftObjectPtr< UGBFGameState > InGameGameState;
+
+    UPROPERTY( config, EditAnywhere, Category = GameStates )
     TArray< TSoftObjectPtr< UGBFGameState > > GameStates;
 
     UPROPERTY( config, EditAnywhere, Category = UI )

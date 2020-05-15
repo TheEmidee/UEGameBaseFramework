@@ -25,7 +25,8 @@ namespace UnrealBuildTool.Rules
                     "Slate",
                     "SlateCore",
                     "UMG",
-                    "OnlineSubsystem"
+                    "OnlineSubsystem",
+                    "OnlineSubsystemUtils"
                 }
             );
         }

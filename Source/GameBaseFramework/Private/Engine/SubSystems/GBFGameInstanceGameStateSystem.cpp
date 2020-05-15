@@ -1,4 +1,4 @@
-#include "Engine/GBFGameInstanceGameStateSystem.h"
+#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Engine/GBFGameState.h"
@@ -82,6 +82,15 @@ bool UGBFGameInstanceGameStateSystem::IsStateWelcomeScreenState( const UGBFGameS
     return state != nullptr && Settings->WelcomeScreenGameState.Get() == state;
 }
 
+UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromName( FName state_name ) const
+{
+    const auto predicate = [state_name]( auto state_soft_ptr ) {
+        return state_soft_ptr.Get()->Name == state_name;
+    };
+
+    return Settings->GameStates.FindByPredicate( predicate )->Get();
+}
+
 const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
 {
     const auto predicate = [game_mode_class]( auto state_soft_ptr ) {
@@ -94,15 +103,6 @@ const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromGameMode(
     }
 
     return nullptr;
-}
-
-const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromName( FName state_name ) const
-{
-    const auto predicate = [state_name]( auto state_soft_ptr ) {
-        return state_soft_ptr.Get()->Name == state_name;
-    };
-
-    return Settings->GameStates.FindByPredicate( predicate )->Get();
 }
 
 void UGBFGameInstanceGameStateSystem::LoadGameStates() const
