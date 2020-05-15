@@ -19,11 +19,18 @@ public:
     ELoginStatus::Type GetLocalPlayerOnlineStatus( int player_index ) const;
 
     void Initialize( FSubsystemCollectionBase & collection ) override;
-    
-    UFUNCTION( BlueprintCallable )
-    bool ProfileUISwap( const int controller_index );
 
-    bool ShowLoginUI( const int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
+    UFUNCTION( BlueprintCallable )
+    bool ProfileUISwap( int controller_index );
+
+    bool ShowLoginUI( int controller_index, const FOnLoginUIClosedDelegate & delegate = FOnLoginUIClosedDelegate() );
+    ULocalPlayer * GetLocalPlayerFromUniqueNetId( const FUniqueNetId & user_id ) const;
+    APlayerController * GetPlayerControllerFromUniqueNetId( const FUniqueNetId & user_id ) const;
+
+    bool IsLocalPlayerOnline( ULocalPlayer * local_player ) const;
+    bool IsLocalPlayerSignedIn( ULocalPlayer * local_player ) const;
+    bool ValidatePlayerForOnlinePlay( ULocalPlayer * local_player ) const;
+    bool ValidatePlayerIsSignedIn( ULocalPlayer * local_player ) const;
 
 private:
     void HandleUserLoginChanged( int32 game_user_index, ELoginStatus::Type previous_login_status, ELoginStatus::Type login_status, const FUniqueNetId & user_id );

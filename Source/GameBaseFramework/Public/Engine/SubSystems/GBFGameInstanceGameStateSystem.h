@@ -21,10 +21,20 @@ public:
 
     FOnStateChangedDelegate & OnStateChanged();
 
+    UFUNCTION( BlueprintPure )
     bool IsOnWelcomeScreenState() const;
+
+    UFUNCTION( BlueprintPure )
+    bool IsOnMainMenuState() const;
 
     UFUNCTION( BlueprintCallable )
     void GoToWelcomeScreenState();
+
+    UFUNCTION( BlueprintCallable )
+    void GoToMainMenuState();
+
+    UFUNCTION( BlueprintCallable )
+    void GoToInGameState();
 
     UFUNCTION( BlueprintCallable )
     void GoToState( UGBFGameState * new_state );

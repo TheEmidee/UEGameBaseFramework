@@ -22,6 +22,11 @@ bool UGBFGameInstanceGameStateSystem::IsOnWelcomeScreenState() const
     return IsStateWelcomeScreenState( CurrentGameState.Get() );
 }
 
+bool UGBFGameInstanceGameStateSystem::IsOnMainMenuState() const
+{
+    return IsStateWelcomeScreenState( CurrentGameState.Get() );
+}
+
 void UGBFGameInstanceGameStateSystem::GoToWelcomeScreenState()
 {
     if ( IsOnWelcomeScreenState() )
@@ -30,6 +35,22 @@ void UGBFGameInstanceGameStateSystem::GoToWelcomeScreenState()
     }
 
     GoToState( Settings->WelcomeScreenGameState.Get() );
+}
+
+void UGBFGameInstanceGameStateSystem::GoToMainMenuState()
+{
+    if ( CurrentGameState != Settings->MainMenuGameState.Get() )
+    {
+        GoToState( Settings->MainMenuGameState.Get() );
+    }
+}
+
+void UGBFGameInstanceGameStateSystem::GoToInGameState()
+{
+    if ( CurrentGameState != Settings->InGameGameState.Get() )
+    {
+        GoToState( Settings->InGameGameState.Get() );
+    }
 }
 
 void UGBFGameInstanceGameStateSystem::GoToState( UGBFGameState * new_state )
@@ -52,7 +73,7 @@ void UGBFGameInstanceGameStateSystem::GoToStateWithMap( UGBFGameState * new_stat
 
         if ( !new_world.IsNull() )
         {
-            UGBFHelperBlueprintLibrary::OpenMap( this, new_world );
+            UGBFHelperBlueprintLibrary::BrowseMap( *GetOuterUGameInstance()->GetWorldContext(), new_world );
         }
 
         OnStateChangedDelegate.Broadcast( new_state );

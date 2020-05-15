@@ -1,14 +1,16 @@
 #pragma once
 
-#include <Containers/Ticker.h>
+#include "Containers/BackgroundableTicker.h"
+
 #include <CoreMinimal.h>
 #include <Engine/GameInstance.h>
-#include <Interfaces/OnlineExternalUIInterface.h>
-#include <OnlineSubsystemTypes.h>
 #include <UObject/TextProperty.h>
 
 #include "GBFGameInstance.generated.h"
 
+class UGBFGameInstanceIdentitySubsystem;
+class UGBFGameInstanceGameStateSystem;
+class UGBFGameInstanceSessionSubsystem;
 class UGBFGameState;
 class UGameBaseFrameworkSettings;
 class USoundMix;
@@ -19,6 +21,9 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
     GENERATED_BODY()
 
 public:
+
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnExistingLocalPlayerRemovedDelegate, ULocalPlayer *, local_player );
+    
     UGBFGameInstance();
 
     void Init() override;
@@ -38,11 +43,13 @@ public:
     void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
     void ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content );
     void ShowMessageThenGotoMainMenuState( const FText & title, const FText & content );
-
     void HandleSignInChangeMessaging();
+    void RemoveSplitScreenPlayers();
+    void RemoveExistingLocalPlayer( ULocalPlayer * local_player );
+
+    TSubclassOf< UOnlineSession > GetOnlineSessionClass() override;
 
 private:
-
     UFUNCTION()
     void OnAppReactivateOrForeground();
 
@@ -52,6 +59,13 @@ private:
     UPROPERTY( EditDefaultsOnly )
     TSoftObjectPtr< USoundMix > SoundMix;
 
+    UPROPERTY( BlueprintAssignable )
+    FOnExistingLocalPlayerRemovedDelegate OnExistingLocalPlayerRemovedDelegate;
+
     FTickerDelegate TickDelegate;
     FDelegateHandle TickDelegateHandle;
+
+    TWeakObjectPtr< UGBFGameInstanceGameStateSystem > GameStateSubsystem;
+    TWeakObjectPtr< UGBFGameInstanceIdentitySubsystem > IdentitySubsystem;
+    TWeakObjectPtr< UGBFGameInstanceSessionSubsystem > SessionSubsystem;
 };

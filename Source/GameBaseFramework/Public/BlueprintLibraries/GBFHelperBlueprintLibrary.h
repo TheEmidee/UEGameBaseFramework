@@ -8,6 +8,7 @@
 
 #include "GBFHelperBlueprintLibrary.generated.h"
 
+struct FWorldContext;
 class UWorld;
 class UObject;
 
@@ -18,8 +19,10 @@ class GAMEBASEFRAMEWORK_API UGBFHelperBlueprintLibrary final : public UBlueprint
 
 public:
     UFUNCTION( BlueprintPure, Category = "Helpers", Meta = ( DisplayName = "Create Object", DeterminesOutputType = "Class", DynamicOutputParam = "Object" ) )
-    static void CreateObject( const TSubclassOf< UObject > class_of, UObject *& object );
+    static void CreateObject( TSubclassOf< UObject > class_of, UObject *& object );
 
     UFUNCTION( BlueprintCallable, Category = "Maps" )
-    static void OpenMap( const UObject * world_context, const TSoftObjectPtr< UWorld > & map_soft_object_ptr, const bool open_if_current = false );
+    static void OpenMap( const UObject * world_context, const TSoftObjectPtr< UWorld > & map_soft_object_ptr, bool open_if_current = false );
+
+    static bool BrowseMap( FWorldContext & world_context, const TSoftObjectPtr< UWorld > & map_soft_object_ptr, bool open_if_current = false );
 };
