@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Engine/Engine.h"
 #include "GBFGameInstanceSubsystemBase.h"
-#include "Interfaces/OnlineIdentityInterface.h"
 #include "Online/GBFGameSession.h"
-#include "OnlineSessionSettings.h"
 
 #include <CoreMinimal.h>
+#include <Engine/Engine.h>
+#include <Interfaces/OnlineIdentityInterface.h>
 #include <Interfaces/OnlineSessionInterface.h>
+#include <OnlineSessionSettings.h>
 
 #include "GBFGameInstanceSessionSubsystem.generated.h"
 
@@ -78,7 +78,6 @@ public:
     bool HostGame( ULocalPlayer * local_player, const FString & game_type, const FString & travel_url );
 
 protected:
-
     FString GetMapNameFromTravelURL() const;
 
 private:

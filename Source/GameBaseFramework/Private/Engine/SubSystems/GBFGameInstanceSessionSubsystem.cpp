@@ -60,7 +60,7 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player,
 
         if ( game_session->JoinSession( local_player->GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, session_index_in_search_results ) )
         {
-            // If any error occured in the above, pending state would be set
+            // :TODO: Keep? If any error occured in the above, pending state would be set
             //if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
             {
                 // Go ahead and go into loading state now
@@ -84,7 +84,7 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player,
         OnJoinSessionCompleteDelegateHandle = game_session->OnJoinSessionComplete().AddUObject( this, &UGBFGameInstanceSessionSubsystem::OnJoinSessionComplete );
         if ( game_session->JoinSession( local_player->GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, search_result ) )
         {
-            // If any error occured in the above, pending state would be set
+            // :TODO: Keep? If any error occured in the above, pending state would be set
             //if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
             {
                 // Go ahead and go into loading state now
@@ -230,7 +230,7 @@ bool UGBFGameInstanceSessionSubsystem::HostQuickSession( ULocalPlayer & local_pl
 
         if ( game_session->HostSession( local_player.GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, session_settings ) )
         {
-            // If any error occurred in the above, pending state would be set
+            // :TODO: Keep? If any error occurred in the above, pending state would be set
             // if ( PendingState == CurrentState || PendingState == ShooterGameInstanceState::None )
             // {
             //     // Go ahead and go into loading state now
@@ -280,7 +280,7 @@ bool UGBFGameInstanceSessionSubsystem::HostGame( ULocalPlayer * local_player, co
         // :TODO: Allow to define the max number of players dynamically
         if ( game_session->HostSession( local_player->GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, game_type, map_name, is_lan_match, true, 4 ) )
         {
-            // If any error occurred in the above, pending state would be set
+            // :TODO: Keep? If any error occurred in the above, pending state would be set
             // if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
             // {
             //     // Go ahead and go into loading state now
@@ -402,6 +402,7 @@ void UGBFGameInstanceSessionSubsystem::CleanupSessionOnReturnToMenu()
 
     if ( !pending_online_operation )
     {
+        // :TODO:
         //GEngine->HandleDisconnect( GetWorld(), GetWorld()->GetNetDriver() );
     }
 }
@@ -678,6 +679,8 @@ void UGBFGameInstanceSessionSubsystem::InternalTravelToSession( const FName sess
         GetGBFGameInstance()->ShowMessageThenGotoMainMenuState( NSLOCTEXT( "NetworkErrors", "LocKey_JoinSessionFailedTitle", "Impossible to join the session" ), error_reason );
         return;
     }
+
+    // :TODO:
     // Add debug encryption token if desired.
     // if ( CVarShooterGameTestEncryption->GetInt() != 0 )
     // {

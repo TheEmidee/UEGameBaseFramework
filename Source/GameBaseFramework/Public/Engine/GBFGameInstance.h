@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Containers/BackgroundableTicker.h"
-
+#include <Containers/BackgroundableTicker.h>
 #include <CoreMinimal.h>
 #include <Engine/GameInstance.h>
 #include <UObject/TextProperty.h>
@@ -21,9 +20,8 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UGameInstance
     GENERATED_BODY()
 
 public:
-
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnExistingLocalPlayerRemovedDelegate, ULocalPlayer *, local_player );
-    
+
     UGBFGameInstance();
 
     void Init() override;
