@@ -1,6 +1,7 @@
 #include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 
 #include "Engine/GBFGameInstance.h"
+#include "Engine/GBFGameState.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
 #include "GameBaseFrameworkSettings.h"

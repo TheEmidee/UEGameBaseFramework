@@ -2,6 +2,7 @@
 
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "Engine/GBFGameState.h"
 #include "Engine/SubSystems/GBFGameInstanceCoreDelegatesSubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
