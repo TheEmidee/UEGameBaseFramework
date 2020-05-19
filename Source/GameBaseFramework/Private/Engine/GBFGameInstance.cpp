@@ -2,14 +2,17 @@
 
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "Engine/GBFGameState.h"
 #include "Engine/SubSystems/GBFGameInstanceCoreDelegatesSubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
+#include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 #include "GBFTypes.h"
 #include "GameBaseFrameworkSettings.h"
 #include "GameFramework/GBFGameModeBase.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "Log/GBFLog.h"
+#include "Online/GBFOnlineSessionClient.h"
 
 #include <Engine/AssetManager.h>
 #include <Kismet/GameplayStatics.h>
@@ -42,8 +45,15 @@ void UGBFGameInstance::Init()
         UAssetManager::GetStreamableManager().RequestAsyncLoad( SoundMix.ToSoftObjectPath() );
     }
 
-    TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
-    TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
+    if ( !IsDedicatedServerInstance() )
+    {
+        TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
+        TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
+    }
+
+    GameStateSubsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
+    IdentitySubsystem = GetSubsystem< UGBFGameInstanceIdentitySubsystem >();
+    SessionSubsystem = GetSubsystem< UGBFGameInstanceSessionSubsystem >();
 }
 
 void UGBFGameInstance::Shutdown()
@@ -57,14 +67,14 @@ AGameModeBase * UGBFGameInstance::CreateGameModeForURL( const FURL url )
 {
     auto * game_mode = Super::CreateGameModeForURL( url );
 
-    GetSubsystem< UGBFGameInstanceGameStateSystem >()->UpdateCurrentGameStateFromCurrentWorld();
+    GameStateSubsystem->UpdateCurrentGameStateFromCurrentWorld();
 
     return game_mode;
 }
 
 bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
 {
-    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
+    if ( !GameStateSubsystem->IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
     {
         if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
         {
@@ -85,6 +95,8 @@ bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
             }
         }
     }
+
+    SessionSubsystem->HandlePendingSessionInvite();
 
     return true;
 }
@@ -120,13 +132,13 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
                 [this, &next_state]() {
-                    if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsStateWelcomeScreenState( next_state ) )
+                    if ( GameStateSubsystem->IsStateWelcomeScreenState( next_state ) )
                     {
-                        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
+                        GameStateSubsystem->GoToWelcomeScreenState();
                     }
                     else
                     {
-                        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToState( next_state );
+                        GameStateSubsystem->GoToState( next_state );
                     }
                 } );
 
@@ -140,10 +152,15 @@ void UGBFGameInstance::ShowMessageThenGotoWelcomeScreenState( const FText & titl
     ShowMessageThenGotoState( title, content, Settings->WelcomeScreenGameState.Get() );
 }
 
+void UGBFGameInstance::ShowMessageThenGotoMainMenuState( const FText & title, const FText & content )
+{
+    ShowMessageThenGotoState( title, content, Settings->MainMenuGameState.Get() );
+}
+
 // ReSharper disable once CppMemberFunctionMayBeConst
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
-    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
+    if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
     {
 #if GBF_CONSOLE_UI
         // Master user signed out, go to initial state (if we aren't there already)
@@ -155,24 +172,48 @@ void UGBFGameInstance::HandleSignInChangeMessaging()
                 settings->WelcomeScreenGameState.Get() );
         }
 #else
-        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
+        GameStateSubsystem->GoToWelcomeScreenState();
 #endif
     }
 }
 
+void UGBFGameInstance::RemoveSplitScreenPlayers()
+{
+    while ( LocalPlayers.Num() > 1 )
+    {
+        auto * player_to_remove = LocalPlayers.Last();
+        RemoveExistingLocalPlayer( player_to_remove );
+    }
+}
+
+void UGBFGameInstance::RemoveExistingLocalPlayer( ULocalPlayer * local_player )
+{
+    check( local_player );
+    if ( local_player->PlayerController != nullptr )
+    {
+        OnExistingLocalPlayerRemovedDelegate.Broadcast( local_player );
+    }
+
+    // Remove local split-screen players from the list
+    RemoveLocalPlayer( local_player );
+}
+
+TSubclassOf< UOnlineSession > UGBFGameInstance::GetOnlineSessionClass()
+{
+    return UGBFOnlineSessionClient::StaticClass();
+}
+
 void UGBFGameInstance::OnAppReactivateOrForeground()
 {
-    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
+    if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
     {
         UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppReactivateOrForeground: Attempting to sign out players" ) );
-
-        auto * identity_sub_system = GetSubsystem< UGBFGameInstanceIdentitySubsystem >();
 
         for ( auto player_index = 0; player_index < LocalPlayers.Num(); ++player_index )
         {
             if ( auto * lp = Cast< UGBFLocalPlayer >( LocalPlayers[ player_index ] ) )
             {
-                const auto local_player_online_status = identity_sub_system->GetLocalPlayerOnlineStatus( player_index );
+                const auto local_player_online_status = IdentitySubsystem->GetLocalPlayerOnlineStatus( player_index );
                 if ( lp->GetCachedUniqueNetId().IsValid() && local_player_online_status && lp->GetLoginStatus() != ELoginStatus::LoggedIn )
                 {
                     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppReactivateOrForeground: Signed out during resume." ) );

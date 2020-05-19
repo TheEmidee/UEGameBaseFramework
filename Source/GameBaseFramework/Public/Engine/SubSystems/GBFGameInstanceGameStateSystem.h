@@ -17,14 +17,24 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstanceGameStateSystem final : public UGBFG
 
 public:
     // ReSharper disable once CppRedundantEmptyDeclaration
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedEvent, const UGBFGameState *, new_state );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedDelegate, const UGBFGameState *, new_state );
 
-    FOnStateChangedEvent & OnStateChanged();
+    FOnStateChangedDelegate & OnStateChanged();
 
+    UFUNCTION( BlueprintPure )
     bool IsOnWelcomeScreenState() const;
+
+    UFUNCTION( BlueprintPure )
+    bool IsOnMainMenuState() const;
 
     UFUNCTION( BlueprintCallable )
     void GoToWelcomeScreenState();
+
+    UFUNCTION( BlueprintCallable )
+    void GoToMainMenuState();
+
+    UFUNCTION( BlueprintCallable )
+    void GoToInGameState();
 
     UFUNCTION( BlueprintCallable )
     void GoToState( UGBFGameState * new_state );
@@ -43,7 +53,7 @@ private:
     void LoadGameStates() const;
 
     UPROPERTY( BlueprintAssignable )
-    FOnStateChangedEvent OnStateChangedEvent;
+    FOnStateChangedDelegate OnStateChangedDelegate;
 
     TWeakObjectPtr< const UGBFGameState > CurrentGameState;
 
@@ -51,7 +61,7 @@ private:
     const UGameBaseFrameworkSettings * Settings;
 };
 
-FORCEINLINE UGBFGameInstanceGameStateSystem::FOnStateChangedEvent & UGBFGameInstanceGameStateSystem::OnStateChanged()
+FORCEINLINE UGBFGameInstanceGameStateSystem::FOnStateChangedDelegate & UGBFGameInstanceGameStateSystem::OnStateChanged()
 {
-    return OnStateChangedEvent;
+    return OnStateChangedDelegate;
 }

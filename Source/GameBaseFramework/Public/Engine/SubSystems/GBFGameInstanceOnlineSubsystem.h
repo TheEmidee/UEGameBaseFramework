@@ -14,9 +14,15 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstanceOnlineSubsystem final : public UGBFG
 
 public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
+    EOnlineServerConnectionStatus::Type GetCurrentConnectionStatus() const;
 
 private:
     void HandleNetworkConnectionStatusChanged( const FString & service_name, EOnlineServerConnectionStatus::Type last_connection_status, EOnlineServerConnectionStatus::Type connection_status );
 
     EOnlineServerConnectionStatus::Type CurrentConnectionStatus;
 };
+
+FORCEINLINE EOnlineServerConnectionStatus::Type UGBFGameInstanceOnlineSubsystem::GetCurrentConnectionStatus() const
+{
+    return CurrentConnectionStatus;
+}

@@ -1,10 +1,9 @@
 #include "Engine/SubSystems//GBFGameInstanceCoreDelegatesSubsystem.h"
 
-
-#include "Engine/Canvas.h"
 #include "GameFramework/GBFGameModeBase.h"
 #include "Log/GBFLog.h"
 
+#include <Engine/Canvas.h>
 #include <Framework/Application/SlateApplication.h>
 #include <Interfaces/OnlineIdentityInterface.h>
 #include <Misc/CoreDelegates.h>
@@ -44,9 +43,8 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleUserLoginChanged( int32 /* ga
     HandleAppLicenseUpdate();
 }
 
-// ReSharper disable CppMemberFunctionMayBeStatic
+// ReSharper disable once CppMemberFunctionMayBeStatic
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate()
-// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate" ) );
 
@@ -65,9 +63,8 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated()
 #endif
 }
 
-// ReSharper disable CppMemberFunctionMayBeStatic
+// ReSharper disable once CppMemberFunctionMayBeStatic
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground()
-// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground" ) );
 
@@ -76,9 +73,8 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground()
 #endif
 }
 
-// ReSharper disable CppMemberFunctionMayBeStatic
+// ReSharper disable once CppMemberFunctionMayBeStatic
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground()
-// ReSharper restore CppMemberFunctionMayBeStatic
 {
     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground" ) );
 
@@ -90,7 +86,7 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground()
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppDeactivateOrBackground() const
 {
     OnAppDeactivateOrBackgroundDelegate.Broadcast();
-    
+
     if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
     {
         gm->HandleAppSuspended();

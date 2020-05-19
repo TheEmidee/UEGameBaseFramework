@@ -14,22 +14,23 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerControllerLogin : public AGBFPlayerControl
 
 public:
     UFUNCTION( BlueprintCallable )
-    void TryLogIn( const int player_index );
+    void TryLogIn( int player_index );
 
     // ReSharper disable once CppRedundantEmptyDeclaration
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required );
     FOnRequiresUserAction & ReceiveRequiresUserAction();
 
+    void SetControllerAndAdvanceToMainMenu( int controller_index ) const;
+
 private:
-    void HandleLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, const int controller_index );
-    void OnUserCanPlay( const FUniqueNetId & user_id, const EUserPrivileges::Type privilege, const uint32 privilege_result );
+    void HandleLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index );
+    void OnUserCanPlay( const FUniqueNetId & user_id, EUserPrivileges::Type privilege, uint32 privilege_result );
     void TryToConnectToOnlineInterface();
-    void OnLoginSucceeded( const int32 local_user_num, const bool was_successful, const FUniqueNetId & user_id, const FString & error );
+    void OnLoginSucceeded( int32 local_user_num, bool was_successful, const FUniqueNetId & user_id, const FString & error );
     void OnUserCannotPlay();
     void OnContinueOffline();
     void OnContinueWithoutSavingConfirm() const;
-    void SetControllerAndAdvanceToMainMenu( const int controller_index ) const;
-    void SetItIsHandlingLoginFlow( const bool result );
+    void SetItIsHandlingLoginFlow( bool result );
 
     int PendingControllerIndex;
     bool IsHandlingLoginFlow;
