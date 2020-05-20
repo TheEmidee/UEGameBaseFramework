@@ -18,13 +18,14 @@ void AGBFGameModeLogin::StartPlay()
 
 void AGBFGameModeLogin::InitializeLocalPlayer( const int controller_index )
 {
-    auto local_players = GetGameInstance()->GetLocalPlayers();
+    const auto & local_players = GetGameInstance()->GetLocalPlayers();
 
-    for ( auto player : local_players )
+    for ( auto index = local_players.Num() - 1; index >= 0; index-- )
     {
-        if ( player->GetControllerId() != controller_index )
+        auto * local_player = local_players[ index ];
+        if ( local_player->GetControllerId() != controller_index )
         {
-            GetGameInstance()->RemoveLocalPlayer( player );
+            GetGameInstance()->RemoveLocalPlayer( local_player );
         }
     }
 

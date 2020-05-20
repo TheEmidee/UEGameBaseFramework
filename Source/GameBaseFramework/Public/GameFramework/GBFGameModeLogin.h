@@ -12,7 +12,7 @@ public:
 
     void StartPlay() override;
 
-    virtual void InitializeLocalPlayer( const int controller_index );
+    virtual void InitializeLocalPlayer( int controller_index );
 
     UFUNCTION( BlueprintImplementableEvent )
     void ReceiveInitializeLocalPlayer( int controller_index );

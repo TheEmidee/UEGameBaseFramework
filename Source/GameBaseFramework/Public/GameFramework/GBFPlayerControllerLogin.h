@@ -20,7 +20,8 @@ public:
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnRequiresUserAction, bool, is_required );
     FOnRequiresUserAction & ReceiveRequiresUserAction();
 
-    void SetControllerAndAdvanceToMainMenu( int controller_index ) const;
+protected:
+    virtual void SetControllerAndAdvanceToMainMenu( int controller_index );
 
 private:
     void HandleLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index );
@@ -29,7 +30,7 @@ private:
     void OnLoginSucceeded( int32 local_user_num, bool was_successful, const FUniqueNetId & user_id, const FString & error );
     void OnUserCannotPlay();
     void OnContinueOffline();
-    void OnContinueWithoutSavingConfirm() const;
+    void OnContinueWithoutSavingConfirm();
     void SetItIsHandlingLoginFlow( bool result );
 
     int PendingControllerIndex;

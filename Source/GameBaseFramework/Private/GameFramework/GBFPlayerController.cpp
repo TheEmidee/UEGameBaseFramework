@@ -18,6 +18,13 @@ AGBFPlayerController::AGBFPlayerController()
 
 void AGBFPlayerController::BeginPlay()
 {
+    if ( !IsLocalPlayerController()
+        || Player == nullptr )
+    {
+        PlatformInputSwitcherComponent->UnregisterComponent();
+        UIDialogManagerComponent->UnregisterComponent();
+    }
+
     Super::BeginPlay();
 
     UpdateInputRelatedFlags();

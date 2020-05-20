@@ -1,5 +1,11 @@
 #include "GameFramework/GBFGameModeBase.h"
 #include "Engine/GBFGameInstance.h"
+#include "Online/GBFGameSession.h"
+
+AGBFGameModeBase::AGBFGameModeBase()
+{
+    GameSessionClass = AGBFGameSession::StaticClass();
+}
 
 void AGBFGameModeBase::StartPlay()
 {
