@@ -10,7 +10,7 @@
 
 void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
 {
-    if ( IsHandlingLoginFlow )
+    if ( IsHandlingLoginFlow || player_index == INDEX_NONE )
     {
         return;
     }
@@ -59,8 +59,10 @@ void AGBFPlayerControllerLogin::TryLogIn( const int player_index )
     }
 }
 
-void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int controller_index ) const
+void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int controller_index )
 {
+    SetItIsHandlingLoginFlow( false );
+
     if ( !ensure( GetGameInstance() != nullptr ) )
     {
         return;
@@ -81,8 +83,6 @@ void AGBFPlayerControllerLogin::SetControllerAndAdvanceToMainMenu( const int con
         login_game_mode->InitializeLocalPlayer( controller_index );
     }
 }
-
-// -- PRIVATE
 
 void AGBFPlayerControllerLogin::HandleLoginUIClosed( const TSharedPtr< const FUniqueNetId > unique_id, const int controller_index )
 {
@@ -225,7 +225,7 @@ void AGBFPlayerControllerLogin::OnLoginSucceeded( const int32 local_user_num, co
     }
 }
 
-void AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm() const
+void AGBFPlayerControllerLogin::OnContinueWithoutSavingConfirm()
 {
     SetControllerAndAdvanceToMainMenu( PendingControllerIndex );
 }

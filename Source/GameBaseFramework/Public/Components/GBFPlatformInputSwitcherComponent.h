@@ -24,7 +24,7 @@ public:
     FORCEINLINE EGBFPlatformInputType GetPlatformInputType() const;
 
     void BeginPlay() override;
-    void BeginDestroy() override;
+    void EndPlay( EEndPlayReason::Type end_play_reason ) override;
 
     APlayerController * GetPlayerController() const;
 

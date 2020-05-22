@@ -28,6 +28,13 @@ void UGBFUIDialogManagerComponent::BeginPlay()
 
     check( OwnerPlayerController.IsValid() );
 
+    if ( !OwnerPlayerController->IsLocalPlayerController() 
+        || OwnerPlayerController->Player == nullptr 
+        )
+    {
+        return;
+    }
+
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
         if ( settings->UIOptions.BackgroundBlurWidgetClass != nullptr )

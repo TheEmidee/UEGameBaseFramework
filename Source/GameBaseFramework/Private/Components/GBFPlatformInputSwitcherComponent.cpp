@@ -17,11 +17,10 @@ void UGBFPlatformInputSwitcherComponent::BeginPlay()
     RegisterSlateInputPreprocessor();
 }
 
-void UGBFPlatformInputSwitcherComponent::BeginDestroy()
+void UGBFPlatformInputSwitcherComponent::EndPlay( const EEndPlayReason::Type end_play_reason )
 {
-    Super::BeginDestroy();
-
     UnRegisterSlateInputPreprocessor();
+    Super::EndPlay( end_play_reason );
 }
 
 APlayerController * UGBFPlatformInputSwitcherComponent::GetPlayerController() const
@@ -110,8 +109,6 @@ void UGBFPlatformInputSwitcherComponent::InputPlatformDetector::SetLocalPlayerPl
 
 void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 {
-    return;
-    
     if ( GetOwner()->HasLocalNetOwner() )
     {
         const auto * settings = GetDefault< UGameBaseFrameworkSettings >();
@@ -123,9 +120,8 @@ void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 
 void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
-    return;
-
-    if ( IsValid( GetOwner() ) && GetOwner()->HasLocalNetOwner() )
+    // :NOTE: That function can be called when the owner if already destroyed. Un-register nonetheless
+    //if ( IsValid( GetOwner() ) && GetOwner()->HasLocalNetOwner() )
     {
         if ( InputPlatformDetectorPtr.IsValid() && FSlateApplication::IsInitialized() )
         {
