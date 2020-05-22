@@ -120,6 +120,7 @@ void UGBFPlatformInputSwitcherComponent::RegisterSlateInputPreprocessor()
 
 void UGBFPlatformInputSwitcherComponent::UnRegisterSlateInputPreprocessor() const
 {
+    // :NOTE: That function can be called when the owner if already destroyed. Un-register nonetheless
     //if ( IsValid( GetOwner() ) && GetOwner()->HasLocalNetOwner() )
     {
         if ( InputPlatformDetectorPtr.IsValid() && FSlateApplication::IsInitialized() )
