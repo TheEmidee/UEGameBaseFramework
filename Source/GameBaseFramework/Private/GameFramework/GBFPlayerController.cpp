@@ -117,5 +117,6 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
         }
     }
 
-    bShowMouseCursor = !is_using_game_pad;
+    // :TODO: It's not a good idea to always show the cursor. This breaks FPS camera because the player must always click on the game viewport to turn the camera
+    //bShowMouseCursor = !is_using_game_pad;
 }
