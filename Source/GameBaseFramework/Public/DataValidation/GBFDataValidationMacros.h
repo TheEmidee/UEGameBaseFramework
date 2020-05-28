@@ -36,7 +36,7 @@
     DATA_VALIDATION_IS_FALSE( VariableName, FText::FromString( FString::Printf( TEXT( "%s must be false" ), TEXT( #VariableName ) ) ) )
 
 #define DATA_VALIDATION_IS_GREATER_THAN( VariableName, MinValue, ErrorMessageText ) \
-    DATA_VALIDATION_INTERNAL_CONDITION( VariableName > 0, ErrorMessageText )
+    DATA_VALIDATION_INTERNAL_CONDITION( VariableName <= MinValue, ErrorMessageText )
 
 #define DATA_VALIDATION_IS_GREATER_THAN_AUTO_MESSAGE( VariableName, MinValue ) \
     DATA_VALIDATION_IS_GREATER_THAN( VariableName, MinValue, FText::FromString( FString::Printf( TEXT( "%s must be greater than %i" ), TEXT( #VariableName ), MinValue ) ) )
