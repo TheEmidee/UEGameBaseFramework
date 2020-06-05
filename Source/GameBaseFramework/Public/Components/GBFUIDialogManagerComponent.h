@@ -69,11 +69,17 @@ public:
 
     bool IsDisplayingDialog() const;
 
-    UFUNCTION( BlueprintCallable )
-    void InitializeMainUI( const TSubclassOf< UUserWidget > & main_ui_class );
+    UFUNCTION( BlueprintCallable , DisplayName = "InitializeMainUI")
+    void InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class );
+
+    UFUNCTION( BlueprintCallable , DisplayName = "InitializeMainUI")
+    void InitializeMainUI();
 
     UFUNCTION( BlueprintCallable )
     void ShowMainUI();
+
+    UFUNCTION( BlueprintCallable )
+    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
 
     UFUNCTION( BlueprintCallable )
     void HideMainUI();
@@ -155,4 +161,5 @@ private:
     int ZOrder;
     bool IsMainUIHidden;
     bool IsBlurBackgroundVisible;
+    bool InitializeMainUIOnBeginPlay;
 };
