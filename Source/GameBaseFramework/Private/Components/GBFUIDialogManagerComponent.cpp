@@ -96,11 +96,6 @@ void UGBFUIDialogManagerComponent::ShowMainUI()
     }
 }
 
-void UGBFUIDialogManagerComponent::SetInitializeMainUIOnBeginPlay( const bool initialize_on_begin_play )
-{
-    InitializeMainUIOnBeginPlay = initialize_on_begin_play;
-}
-
 void UGBFUIDialogManagerComponent::HideMainUI()
 {
     if ( MainUIWidget != nullptr && !IsMainUIHidden )

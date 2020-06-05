@@ -78,8 +78,7 @@ public:
     UFUNCTION( BlueprintCallable )
     void ShowMainUI();
 
-    UFUNCTION()
-    FORCEINLINE void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
+    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
 
     UFUNCTION( BlueprintCallable )
     void HideMainUI();
@@ -165,3 +164,8 @@ private:
     bool IsMainUIHidden;
     bool IsBlurBackgroundVisible;
 };
+
+FORCEINLINE void UGBFUIDialogManagerComponent::SetInitializeMainUIOnBeginPlay( const bool initialize_on_begin_play )
+{
+    InitializeMainUIOnBeginPlay = initialize_on_begin_play;
+}
