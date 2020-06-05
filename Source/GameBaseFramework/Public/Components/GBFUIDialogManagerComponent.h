@@ -69,10 +69,10 @@ public:
 
     bool IsDisplayingDialog() const;
 
-    UFUNCTION( BlueprintCallable , DisplayName = "InitializeMainUI")
+    UFUNCTION( BlueprintCallable, DisplayName = "InitializeMainUI" )
     void InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class );
 
-    UFUNCTION( BlueprintCallable , DisplayName = "InitializeMainUI")
+    UFUNCTION( BlueprintCallable, DisplayName = "InitializeMainUI" )
     void InitializeMainUI();
 
     UFUNCTION( BlueprintCallable )
