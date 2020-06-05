@@ -78,8 +78,8 @@ public:
     UFUNCTION( BlueprintCallable )
     void ShowMainUI();
 
-    UFUNCTION( BlueprintCallable )
-    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
+    UFUNCTION()
+    FORCEINLINE void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
 
     UFUNCTION( BlueprintCallable )
     void HideMainUI();
@@ -156,10 +156,12 @@ private:
     UPROPERTY( EditAnywhere )
     TSoftObjectPtr< USoundBase > CloseDialogSound;
 
+    UPROPERTY( EditDefaultsOnly )
+    uint8 InitializeMainUIOnBeginPlay : 1;
+
     TArray< FDialogStackEntry > DialogStack;
     TWeakObjectPtr< APlayerController > OwnerPlayerController;
     int ZOrder;
     bool IsMainUIHidden;
     bool IsBlurBackgroundVisible;
-    bool InitializeMainUIOnBeginPlay;
 };
