@@ -65,6 +65,8 @@ class GAMEBASEFRAMEWORK_API UGBFUIDialogManagerComponent : public UActorComponen
 public:
     UGBFUIDialogManagerComponent();
 
+    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
+    
     void BeginPlay() override;
 
     bool IsDisplayingDialog() const;
@@ -77,8 +79,6 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void ShowMainUI();
-
-    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
 
     UFUNCTION( BlueprintCallable )
     void HideMainUI();
