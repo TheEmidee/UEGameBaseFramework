@@ -18,6 +18,7 @@ UGBFUIDialogManagerComponent::UGBFUIDialogManagerComponent()
 
     IsMainUIHidden = true;
     IsBlurBackgroundVisible = false;
+    InitializeMainUIOnBeginPlay = true;
 }
 
 void UGBFUIDialogManagerComponent::BeginPlay()
@@ -28,9 +29,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
 
     check( OwnerPlayerController.IsValid() );
 
-    if ( !OwnerPlayerController->IsLocalPlayerController() 
-        || OwnerPlayerController->Player == nullptr 
-        )
+    if ( !OwnerPlayerController->IsLocalPlayerController() || OwnerPlayerController->Player == nullptr )
     {
         return;
     }
@@ -43,9 +42,9 @@ void UGBFUIDialogManagerComponent::BeginPlay()
         }
     }
 
-    if ( MainUIClass != nullptr )
+    if ( MainUIClass != nullptr && InitializeMainUIOnBeginPlay )
     {
-        InitializeMainUI( MainUIClass );
+        InitializeMainUIWithClass( MainUIClass );
     }
 
     TArray< FSoftObjectPath > paths;
@@ -70,7 +69,7 @@ bool UGBFUIDialogManagerComponent::IsDisplayingDialog() const
     return DialogStack.Num() > 0;
 }
 
-void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWidget > & main_ui_class )
+void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class )
 {
     if ( ensure( main_ui_class != nullptr ) && ensure( MainUIWidget == nullptr ) )
     {
@@ -81,6 +80,11 @@ void UGBFUIDialogManagerComponent::InitializeMainUI( const TSubclassOf< UUserWid
             ShowMainUI();
         }
     }
+}
+
+void UGBFUIDialogManagerComponent::InitializeMainUI()
+{
+    InitializeMainUIWithClass( MainUIClass );
 }
 
 void UGBFUIDialogManagerComponent::ShowMainUI()

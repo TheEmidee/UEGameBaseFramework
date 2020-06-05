@@ -65,12 +65,17 @@ class GAMEBASEFRAMEWORK_API UGBFUIDialogManagerComponent : public UActorComponen
 public:
     UGBFUIDialogManagerComponent();
 
+    void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
+    
     void BeginPlay() override;
 
     bool IsDisplayingDialog() const;
 
-    UFUNCTION( BlueprintCallable )
-    void InitializeMainUI( const TSubclassOf< UUserWidget > & main_ui_class );
+    UFUNCTION( BlueprintCallable, DisplayName = "InitializeMainUI" )
+    void InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class );
+
+    UFUNCTION( BlueprintCallable, DisplayName = "InitializeMainUI" )
+    void InitializeMainUI();
 
     UFUNCTION( BlueprintCallable )
     void ShowMainUI();
@@ -150,9 +155,17 @@ private:
     UPROPERTY( EditAnywhere )
     TSoftObjectPtr< USoundBase > CloseDialogSound;
 
+    UPROPERTY( EditDefaultsOnly )
+    uint8 InitializeMainUIOnBeginPlay : 1;
+
     TArray< FDialogStackEntry > DialogStack;
     TWeakObjectPtr< APlayerController > OwnerPlayerController;
     int ZOrder;
     bool IsMainUIHidden;
     bool IsBlurBackgroundVisible;
 };
+
+FORCEINLINE void UGBFUIDialogManagerComponent::SetInitializeMainUIOnBeginPlay( const bool initialize_on_begin_play )
+{
+    InitializeMainUIOnBeginPlay = initialize_on_begin_play;
+}
