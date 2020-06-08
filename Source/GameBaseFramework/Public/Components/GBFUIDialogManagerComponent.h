@@ -66,7 +66,7 @@ public:
     UGBFUIDialogManagerComponent();
 
     void SetInitializeMainUIOnBeginPlay( bool initialize_on_begin_play );
-    
+
     void BeginPlay() override;
 
     bool IsDisplayingDialog() const;
@@ -139,7 +139,7 @@ private:
     void ShowBlurBackground();
     void HideBlurBackground();
     void RemoveAllDialogsFromViewport();
-
+    TWeakObjectPtr< APlayerController > GetPlayerController() const;
     UPROPERTY( EditAnywhere )
     TSubclassOf< UUserWidget > MainUIClass;
 

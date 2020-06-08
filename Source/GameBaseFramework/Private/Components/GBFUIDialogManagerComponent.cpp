@@ -25,11 +25,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    OwnerPlayerController = Cast< APlayerController >( GetOwner() );
-
-    check( OwnerPlayerController.IsValid() );
-
-    if ( !OwnerPlayerController->IsLocalPlayerController() || OwnerPlayerController->Player == nullptr )
+    if ( !GetPlayerController()->IsLocalPlayerController() || GetPlayerController()->Player == nullptr )
     {
         return;
     }
@@ -38,7 +34,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
     {
         if ( settings->UIOptions.BackgroundBlurWidgetClass != nullptr )
         {
-            BlurBackgroundWidget = CreateWidget< UUserWidget >( OwnerPlayerController.Get(), settings->UIOptions.BackgroundBlurWidgetClass );
+            BlurBackgroundWidget = CreateWidget< UUserWidget >( GetPlayerController().Get(), settings->UIOptions.BackgroundBlurWidgetClass );
         }
     }
 
@@ -73,7 +69,7 @@ void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf<
 {
     if ( ensure( main_ui_class != nullptr ) && ensure( MainUIWidget == nullptr ) )
     {
-        MainUIWidget = CreateWidget< UUserWidget >( OwnerPlayerController.Get(), main_ui_class );
+        MainUIWidget = CreateWidget< UUserWidget >( GetPlayerController().Get(), main_ui_class );
 
         if ( ensure( MainUIWidget != nullptr ) )
         {
@@ -148,13 +144,13 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
 
     if ( options.GiveUserFocus )
     {
-        OwnerPlayerController->DisableInput( nullptr );
+        GetPlayerController()->DisableInput( nullptr );
         widget->SetKeyboardFocus();
-        widget->SetUserFocus( OwnerPlayerController.Get() );
+        widget->SetUserFocus( GetPlayerController().Get() );
     }
     else if ( options.DisablePlayerControllerInput )
     {
-        OwnerPlayerController->DisableInput( nullptr );
+        GetPlayerController()->DisableInput( nullptr );
     }
 
     if ( OpenDialogSound.IsValid() )
@@ -169,7 +165,7 @@ UUserWidget * UGBFUIDialogManagerComponent::CreateAndShowDialog( const TSubclass
 
     if ( ensure( widget_class != nullptr ) )
     {
-        widget = CreateWidget< UUserWidget >( OwnerPlayerController.Get(), widget_class );
+        widget = CreateWidget< UUserWidget >( GetPlayerController().Get(), widget_class );
 
         ShowDialog( widget, options );
     }
@@ -222,7 +218,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
             must_enable_player_input = false;
 
             last_dialog_options.UserWidget->SetKeyboardFocus();
-            last_dialog_options.UserWidget->SetUserFocus( OwnerPlayerController.Get() );
+            last_dialog_options.UserWidget->SetUserFocus( GetPlayerController().Get() );
         }
     }
 
@@ -238,7 +234,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
     if ( must_enable_player_input )
     {
-        OwnerPlayerController->EnableInput( nullptr );
+        GetPlayerController()->EnableInput( nullptr );
     }
 
     if ( CloseDialogSound.IsValid() )
@@ -258,7 +254,7 @@ void UGBFUIDialogManagerComponent::CloseAllDialogs( const bool show_main_ui /*= 
         ShowMainUI();
     }
 
-    OwnerPlayerController->EnableInput( nullptr );
+    GetPlayerController()->EnableInput( nullptr );
 
     if ( CloseDialogSound.IsValid() )
     {
@@ -282,7 +278,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
         {
             if ( auto * widget = NewObject< UGBFConfirmationWidget >( this, settings->UIOptions.ConfirmationWidgetClass ) )
             {
-                widget->SetOwningPlayer( OwnerPlayerController.Get() );
+                widget->SetOwningPlayer( GetPlayerController().Get() );
 
                 ShowDialog( widget, { true, true, true, type, true } );
 
@@ -311,7 +307,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
         {
             if ( auto * widget = NewObject< UGBFConfirmationWidget >( this, settings->UIOptions.ConfirmationWidgetClass ) )
             {
-                widget->SetOwningPlayer( OwnerPlayerController.Get() );
+                widget->SetOwningPlayer( GetPlayerController().Get() );
 
                 ShowDialog( widget, { true, true, true, type, true } );
 
@@ -368,4 +364,9 @@ void UGBFUIDialogManagerComponent::RemoveAllDialogsFromViewport()
     }
 
     ZOrder = 2;
+}
+
+TWeakObjectPtr< APlayerController > UGBFUIDialogManagerComponent::GetPlayerController() const
+{
+    return Cast< APlayerController >( GetOwner() );
 }
