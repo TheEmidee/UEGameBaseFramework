@@ -25,7 +25,8 @@ void UGBFUIDialogManagerComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    if ( !GetPlayerController()->IsLocalPlayerController() || GetPlayerController()->Player == nullptr )
+    auto * player_controller = GetPlayerController();
+    if ( !player_controller->IsLocalPlayerController() || player_controller->Player == nullptr )
     {
         return;
     }
@@ -34,7 +35,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
     {
         if ( settings->UIOptions.BackgroundBlurWidgetClass != nullptr )
         {
-            BlurBackgroundWidget = CreateWidget< UUserWidget >( GetPlayerController(), settings->UIOptions.BackgroundBlurWidgetClass );
+            BlurBackgroundWidget = CreateWidget< UUserWidget >( player_controller, settings->UIOptions.BackgroundBlurWidgetClass );
         }
     }
 
@@ -103,6 +104,8 @@ void UGBFUIDialogManagerComponent::HideMainUI()
 
 void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFShowDialogOptions & options )
 {
+    auto * player_controller = GetPlayerController();
+
     if ( !ensure( widget != nullptr ) )
     {
         return;
@@ -144,13 +147,13 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
 
     if ( options.GiveUserFocus )
     {
-        GetPlayerController()->DisableInput( nullptr );
+        player_controller->DisableInput( nullptr );
         widget->SetKeyboardFocus();
-        widget->SetUserFocus( GetPlayerController() );
+        widget->SetUserFocus( player_controller );
     }
     else if ( options.DisablePlayerControllerInput )
     {
-        GetPlayerController()->DisableInput( nullptr );
+        player_controller->DisableInput( nullptr );
     }
 
     if ( OpenDialogSound.IsValid() )
@@ -175,6 +178,8 @@ UUserWidget * UGBFUIDialogManagerComponent::CreateAndShowDialog( const TSubclass
 
 void UGBFUIDialogManagerComponent::CloseLastDialog()
 {
+    auto * player_controller = GetPlayerController();
+
     if ( DialogStack.Num() == 0 )
     {
         return;
@@ -218,7 +223,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
             must_enable_player_input = false;
 
             last_dialog_options.UserWidget->SetKeyboardFocus();
-            last_dialog_options.UserWidget->SetUserFocus( GetPlayerController() );
+            last_dialog_options.UserWidget->SetUserFocus( player_controller );
         }
     }
 
@@ -234,7 +239,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
 
     if ( must_enable_player_input )
     {
-        GetPlayerController()->EnableInput( nullptr );
+        player_controller->EnableInput( nullptr );
     }
 
     if ( CloseDialogSound.IsValid() )
