@@ -139,7 +139,7 @@ private:
     void ShowBlurBackground();
     void HideBlurBackground();
     void RemoveAllDialogsFromViewport();
-    TWeakObjectPtr< APlayerController > GetPlayerController() const;
+    APlayerController * GetPlayerController() const;
     UPROPERTY( EditAnywhere )
     TSubclassOf< UUserWidget > MainUIClass;
 

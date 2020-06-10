@@ -34,7 +34,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
     {
         if ( settings->UIOptions.BackgroundBlurWidgetClass != nullptr )
         {
-            BlurBackgroundWidget = CreateWidget< UUserWidget >( GetPlayerController().Get(), settings->UIOptions.BackgroundBlurWidgetClass );
+            BlurBackgroundWidget = CreateWidget< UUserWidget >( GetPlayerController(), settings->UIOptions.BackgroundBlurWidgetClass );
         }
     }
 
@@ -69,7 +69,7 @@ void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf<
 {
     if ( ensure( main_ui_class != nullptr ) && ensure( MainUIWidget == nullptr ) )
     {
-        MainUIWidget = CreateWidget< UUserWidget >( GetPlayerController().Get(), main_ui_class );
+        MainUIWidget = CreateWidget< UUserWidget >( GetPlayerController(), main_ui_class );
 
         if ( ensure( MainUIWidget != nullptr ) )
         {
@@ -146,7 +146,7 @@ void UGBFUIDialogManagerComponent::ShowDialog( UUserWidget * widget, const FGBFS
     {
         GetPlayerController()->DisableInput( nullptr );
         widget->SetKeyboardFocus();
-        widget->SetUserFocus( GetPlayerController().Get() );
+        widget->SetUserFocus( GetPlayerController() );
     }
     else if ( options.DisablePlayerControllerInput )
     {
@@ -165,7 +165,7 @@ UUserWidget * UGBFUIDialogManagerComponent::CreateAndShowDialog( const TSubclass
 
     if ( ensure( widget_class != nullptr ) )
     {
-        widget = CreateWidget< UUserWidget >( GetPlayerController().Get(), widget_class );
+        widget = CreateWidget< UUserWidget >( GetPlayerController(), widget_class );
 
         ShowDialog( widget, options );
     }
@@ -218,7 +218,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
             must_enable_player_input = false;
 
             last_dialog_options.UserWidget->SetKeyboardFocus();
-            last_dialog_options.UserWidget->SetUserFocus( GetPlayerController().Get() );
+            last_dialog_options.UserWidget->SetUserFocus( GetPlayerController() );
         }
     }
 
@@ -278,7 +278,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
         {
             if ( auto * widget = NewObject< UGBFConfirmationWidget >( this, settings->UIOptions.ConfirmationWidgetClass ) )
             {
-                widget->SetOwningPlayer( GetPlayerController().Get() );
+                widget->SetOwningPlayer( GetPlayerController() );
 
                 ShowDialog( widget, { true, true, true, type, true } );
 
@@ -307,7 +307,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
         {
             if ( auto * widget = NewObject< UGBFConfirmationWidget >( this, settings->UIOptions.ConfirmationWidgetClass ) )
             {
-                widget->SetOwningPlayer( GetPlayerController().Get() );
+                widget->SetOwningPlayer( GetPlayerController() );
 
                 ShowDialog( widget, { true, true, true, type, true } );
 
@@ -366,7 +366,7 @@ void UGBFUIDialogManagerComponent::RemoveAllDialogsFromViewport()
     ZOrder = 2;
 }
 
-TWeakObjectPtr< APlayerController > UGBFUIDialogManagerComponent::GetPlayerController() const
+APlayerController * UGBFUIDialogManagerComponent::GetPlayerController() const
 {
     return Cast< APlayerController >( GetOwner() );
 }
