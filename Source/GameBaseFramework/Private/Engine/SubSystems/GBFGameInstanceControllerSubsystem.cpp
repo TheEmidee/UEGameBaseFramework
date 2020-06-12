@@ -59,13 +59,13 @@ void UGBFGameInstanceControllerSubsystem::Initialize( FSubsystemCollectionBase &
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFGameInstanceControllerSubsystem::HandleControllerPairingChanged( const int game_user_index, const FUniqueNetId & previous_user, const FUniqueNetId & new_user )
+void UGBFGameInstanceControllerSubsystem::HandleControllerPairingChanged( const int game_user_index, FControllerPairingChangedUserInfo previous_user, FControllerPairingChangedUserInfo new_user )
 {
 #if PLATFORM_XBOXONE
 // update game_user_index based on previous controller index from stable index
 #endif
 
-    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ), game_user_index, *previous_user.ToString(), *new_user.ToString() );
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ), game_user_index, *previous_user.User.ToString(), *new_user.User.ToString() );
 
     if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
