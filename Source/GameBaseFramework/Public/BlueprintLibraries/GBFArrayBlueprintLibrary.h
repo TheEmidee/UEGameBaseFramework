@@ -49,8 +49,8 @@ public:
         return array[ random_stream.RandRange( 0, array.Num() - 1 ) ];
     }
 
-    template < typename _ARRAY_TYPE_ >
-    static int GetWrappedIndex( const int index, const _ARRAY_TYPE_ & array )
+    template < typename _ARRAY_TYPE_, typename _ARRAY_ALLOCATOR_TYPE_ >
+    static int GetWrappedIndex( const int index, const TArray< _ARRAY_TYPE_, _ARRAY_ALLOCATOR_TYPE_ > & array )
     {
         const auto array_size = array.Num();
         return ( ( index % array_size ) + array_size ) % array_size;
