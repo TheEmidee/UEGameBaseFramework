@@ -52,7 +52,7 @@ public:
     template < typename _ARRAY_TYPE_ >
     static int GetWrappedIndex( const int index, const _ARRAY_TYPE_ & array )
     {
-        auto array_size = array.Num();
+        const auto array_size = array.Num();
         return ( ( index % array_size ) + array_size ) % array_size;
     }
 };
