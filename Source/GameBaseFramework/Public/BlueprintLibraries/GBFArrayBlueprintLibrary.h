@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GBFMathBlueprintLibrary.h"
+
 #include <CoreMinimal.h>
 #include <Kismet/BlueprintFunctionLibrary.h>
 
@@ -52,7 +54,6 @@ public:
     template < typename _ARRAY_TYPE_, typename _ARRAY_ALLOCATOR_TYPE_ >
     static int GetWrappedIndex( const int index, const TArray< _ARRAY_TYPE_, _ARRAY_ALLOCATOR_TYPE_ > & array )
     {
-        const auto array_size = array.Num();
-        return ( ( index % array_size ) + array_size ) % array_size;
+        return UGBFMathBlueprintLibrary::GetWrappedIndex( index, array.Num() );
     }
 };
