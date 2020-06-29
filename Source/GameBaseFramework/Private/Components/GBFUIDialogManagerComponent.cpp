@@ -68,7 +68,12 @@ bool UGBFUIDialogManagerComponent::IsDisplayingDialog() const
 
 void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class )
 {
-    if ( ensure( main_ui_class != nullptr ) && ensure( MainUIWidget == nullptr ) )
+    if ( MainUIWidget != nullptr && MainUIWidget->StaticClass() == main_ui_class )
+    {
+        return;
+    }
+
+    if ( ensure( main_ui_class != nullptr ) )
     {
         MainUIWidget = CreateWidget< UUserWidget >( GetPlayerController(), main_ui_class );
 
