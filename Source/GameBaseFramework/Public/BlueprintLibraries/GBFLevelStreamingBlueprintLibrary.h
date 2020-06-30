@@ -63,16 +63,16 @@ class GAMEBASEFRAMEWORK_API UGBFLevelStreamingBlueprintLibrary final : public UB
 
 public:
     UFUNCTION()
-    static ULevelStreamingDynamic * LoadLevelInstance( const UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters, bool & success );
+    static ULevelStreamingDynamic * LoadLevelInstance( bool & success, const UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters );
 
     UFUNCTION()
-    static ULevelStreamingDynamic * LoadLevelInstanceBySoftObjectPtr( const UObject * world_context, const TSoftObjectPtr< UWorld > level, const FGBFLoadLevelStreamingParameters & parameters, bool & success );
+    static ULevelStreamingDynamic * LoadLevelInstanceBySoftObjectPtr( bool & success, const UObject * world_context, const TSoftObjectPtr< UWorld > level, const FGBFLoadLevelStreamingParameters & parameters );
 
     UFUNCTION()
-    static void UnloadLevelInstance( ULevelStreaming * streaming_level_to_unload, const FGBFLoadLevelStreamingParameters & parameters );
+    static void UnloadLevelInstance( ULevelStreaming * streaming_level_to_unload, bool should_block_on_unload );
 
 private:
-    static ULevelStreamingDynamic * LoadLevelInstance_Internal( UWorld * world, const FString & long_package_name, const FGBFLoadLevelStreamingParameters & parameters, bool & success );
+    static ULevelStreamingDynamic * LoadLevelInstance_Internal( bool & success, UWorld * world, const FString & long_package_name, const FGBFLoadLevelStreamingParameters & parameters );
 
     static int UniqueLevelInstanceId;
 };

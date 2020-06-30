@@ -4,7 +4,7 @@
 #include <Engine/World.h>
 #include <Misc/PackageName.h>
 
-ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( const UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters, bool & success )
+ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( bool & success, const UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters )
 {
     success = false;
     auto * world = world_context->GetWorld();
@@ -23,10 +23,10 @@ ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance( 
         return nullptr;
     }
 
-    return LoadLevelInstance_Internal( world, long_package_name, parameters, success );
+    return LoadLevelInstance_Internal( success, world, long_package_name, parameters );
 }
 
-ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstanceBySoftObjectPtr( const UObject * world_context, const TSoftObjectPtr< UWorld > level, const FGBFLoadLevelStreamingParameters & parameters, bool & success )
+ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstanceBySoftObjectPtr( bool & success, const UObject * world_context, const TSoftObjectPtr< UWorld > level, const FGBFLoadLevelStreamingParameters & parameters )
 {
     success = false;
     auto * world = world_context->GetWorld();
@@ -41,10 +41,10 @@ ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstanceBy
         return nullptr;
     }
 
-    return LoadLevelInstance_Internal( world, level.GetLongPackageName(), parameters, success );
+    return LoadLevelInstance_Internal( success, world, level.GetLongPackageName(), parameters );
 }
 
-ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance_Internal( UWorld * world, const FString & long_package_name, const FGBFLoadLevelStreamingParameters & parameters, bool & success )
+ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance_Internal( bool & success, UWorld * world, const FString & long_package_name, const FGBFLoadLevelStreamingParameters & parameters )
 {
     // Create Unique Name for sub-level package
     const auto package_path = FPackageName::GetLongPackagePath( long_package_name );
@@ -76,9 +76,9 @@ ULevelStreamingDynamic * UGBFLevelStreamingBlueprintLibrary::LoadLevelInstance_I
     return streaming_level;
 }
 
-void UGBFLevelStreamingBlueprintLibrary::UnloadLevelInstance( ULevelStreaming * streaming_level_to_unload, const FGBFLoadLevelStreamingParameters & parameters )
+void UGBFLevelStreamingBlueprintLibrary::UnloadLevelInstance( ULevelStreaming * streaming_level_to_unload, bool should_block_on_unload )
 {
-    streaming_level_to_unload->bShouldBlockOnUnload = parameters.ShouldBlockOnUnload;
+    streaming_level_to_unload->bShouldBlockOnUnload = should_block_on_unload;
     streaming_level_to_unload->SetShouldBeLoaded( false );
 }
 
