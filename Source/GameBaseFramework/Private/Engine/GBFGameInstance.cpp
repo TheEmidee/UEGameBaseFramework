@@ -63,9 +63,9 @@ void UGBFGameInstance::Shutdown()
     FTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
 }
 
-AGameModeBase * UGBFGameInstance::CreateGameModeForURL( const FURL url )
+AGameModeBase * UGBFGameInstance::CreateGameModeForURL( FURL url, UWorld* world )
 {
-    auto * game_mode = Super::CreateGameModeForURL( url );
+    auto * game_mode = Super::CreateGameModeForURL( url, world );
 
     GameStateSubsystem->UpdateCurrentGameStateFromCurrentWorld();
 

@@ -98,9 +98,9 @@ APlayerController * UGBFGameInstanceIdentitySubsystem::GetPlayerControllerFromUn
         {
             if ( auto * player_controller = iterator->Get() )
             {
-                if ( player_controller->PlayerState != nullptr && player_controller->PlayerState->UniqueId.IsValid() )
+                if ( player_controller->PlayerState != nullptr && player_controller->PlayerState->GetUniqueId().IsValid() )
                 {
-                    if ( *player_controller->PlayerState->UniqueId == user_id )
+                    if ( *player_controller->PlayerState->GetUniqueId() == user_id )
                     {
                         return player_controller;
                     }

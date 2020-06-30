@@ -26,7 +26,7 @@ public:
 
     void Init() override;
     void Shutdown() override;
-    class AGameModeBase * CreateGameModeForURL( FURL url ) override;
+    class AGameModeBase * CreateGameModeForURL( FURL url, UWorld* world ) override;
 
     bool Tick( float delta_seconds );
 
