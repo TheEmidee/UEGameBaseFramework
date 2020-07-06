@@ -11,16 +11,17 @@ struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
 {
     GENERATED_BODY()
 
-    FGBFLoadLevelStreamingParameters()
-        : Location( FVector::ZeroVector )
-        , Rotation( FRotator::ZeroRotator )
-        , ShouldBeLoaded( true )
-        , IsStatic( true )
-        , IsLocked( true )
-        , ShouldBeVisible( true )
-        , ShouldBlockOnLoad( false )
-        , IsInitiallyLoaded( true )
-        , IsInitiallyVisible( true )
+    FGBFLoadLevelStreamingParameters() :
+        Location( FVector::ZeroVector ),
+        Rotation( FRotator::ZeroRotator ),
+        ShouldBeLoaded( true ),
+        IsStatic( true ),
+        IsLocked( true ),
+        ShouldBeVisible( true ),
+        ShouldBlockOnLoad( false ),
+        ShouldBlockOnUnload( false ),
+        IsInitiallyLoaded( true ),
+        IsInitiallyVisible( true )
     {
     }
 
@@ -46,6 +47,9 @@ struct GAMEBASEFRAMEWORK_API FGBFLoadLevelStreamingParameters
     uint8 ShouldBlockOnLoad : 1;
 
     UPROPERTY( BlueprintReadWrite )
+    uint8 ShouldBlockOnUnload : 1;
+
+    UPROPERTY( BlueprintReadWrite )
     uint8 IsInitiallyLoaded : 1;
 
     UPROPERTY( BlueprintReadWrite )
@@ -58,11 +62,17 @@ class GAMEBASEFRAMEWORK_API UGBFLevelStreamingBlueprintLibrary final : public UB
     GENERATED_BODY()
 
 public:
+    UFUNCTION()
+    static ULevelStreamingDynamic * LoadLevelInstance( bool & success, const UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters );
 
     UFUNCTION()
-    static ULevelStreamingDynamic * LoadLevelInstance( bool & success, UObject * world_context, const FString & level_name, const FGBFLoadLevelStreamingParameters & parameters );
+    static ULevelStreamingDynamic * LoadLevelInstanceBySoftObjectPtr( bool & success, const UObject * world_context, const TSoftObjectPtr< UWorld > level, const FGBFLoadLevelStreamingParameters & parameters );
+
+    UFUNCTION()
+    static void UnloadLevelInstance( ULevelStreaming * streaming_level_to_unload, bool should_block_on_unload );
 
 private:
+    static ULevelStreamingDynamic * LoadLevelInstance_Internal( bool & success, UWorld * world, const FString & long_package_name, const FGBFLoadLevelStreamingParameters & parameters );
 
     static int UniqueLevelInstanceId;
 };
