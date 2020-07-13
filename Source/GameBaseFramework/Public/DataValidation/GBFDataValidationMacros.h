@@ -59,6 +59,12 @@
 #define DATA_VALIDATION_NAME_NOT_NONE_AUTO_MESSAGE( VariableName ) \
     DATA_VALIDATION_NAME_NOT_NONE( VariableName, FText::FromString( FString::Printf( TEXT( "%s can not be None" ), TEXT( #VariableName ) ) ) )
 
+#define DATA_VALIDATION_IS_REFERENCE_INVALID( VariableName, ErrorMessageText ) \
+    DATA_VALIDATION_NOT_NULL( VariableName.ToSoftObjectPath().TryLoad(), ErrorMessageText )
+
+#define DATA_VALIDATION_IS_REFERENCE_INVALID_AUTO_MESSAGE( VariableName ) \
+    DATA_VALIDATION_IS_REFERENCE_INVALID( VariableName, FText::FromString( FString::Printf( TEXT( "%s is not a valid reference" ), TEXT( #VariableName ) ) ) )
+
 #define DATA_VALIDATION_CONTAINER_NOT_EMPTY( ContainerName, ErrorMessageText ) \
     DATA_VALIDATION_INTERNAL_CONDITION( ContainerName.Num() == 0, ErrorMessageText )
 
@@ -78,6 +84,12 @@
         {                                                                                                                                        \
             validation_errors.Emplace( FText::FromString( FString::Printf( TEXT( "%s cannot contain null items" ), TEXT( #ContainerName ) ) ) ); \
         }                                                                                                                                        \
+    }
+
+#define DATA_VALIDATION_CONTAINER_NO_INVALID_REFERENCE( ContainerName )                                                                                               \
+    for ( const auto & item : ContainerName )                                                                                                                         \
+    {                                                                                                                                                                 \
+        DATA_VALIDATION_IS_REFERENCE_INVALID( item, FText::FromString( FString::Printf( TEXT( "%s cannot contain invalid references" ), TEXT( #ContainerName ) ) ) ); \
     }
 
 #define DATA_VALIDATION_ARE_EQUAL( FirstItemName, SecondItemName, ErrorMessageText ) \
