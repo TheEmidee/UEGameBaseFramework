@@ -104,4 +104,7 @@
 #define DATA_VALIDATION_RETURN() \
     return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
 
+#define DATA_VALIDATION_NOT_ALL_NULL( FirstItemName, SecondItemName ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( FirstItemName == nullptr && SecondItemName == nullptr, FText::FromString( FString::Printf( TEXT( "%s and %s can not both be null" ), TEXT( #FirstItemName ), TEXT( #SecondItemName ) ) ) );
+
 #endif
