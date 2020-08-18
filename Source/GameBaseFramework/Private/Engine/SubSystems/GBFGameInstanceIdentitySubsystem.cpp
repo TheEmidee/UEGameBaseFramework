@@ -277,7 +277,7 @@ void UGBFGameInstanceIdentitySubsystem::OnLoginUIClosed( const TSharedPtr< const
     }
 }
 
-void UGBFGameInstanceIdentitySubsystem::OnGameStateChanged( const UGBFGameState * /*new_state*/ )
+void UGBFGameInstanceIdentitySubsystem::OnGameStateChanged( FName /*state_name*/, const UGBFGameState * /*new_state*/ )
 {
     if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {

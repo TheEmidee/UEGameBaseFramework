@@ -45,12 +45,14 @@ struct FGBFInputSwitchOptions
     float MouseMoveMinDelta;
 };
 
-UCLASS( config = GameBaseFramework, defaultconfig, meta = ( DisplayName = "GameBaseFramework" ) )
+UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "GameBaseFramework" ) )
 class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
 
 public:
+    UGameBaseFrameworkSettings();
+
     FName GetCategoryName() const override;
 
 #if WITH_EDITOR
@@ -68,17 +70,17 @@ public:
     UPROPERTY( config, EditAnywhere, Category = InputTextures )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
+    /*UPROPERTY( config, EditAnywhere, Category = GameStates )
     TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
 
     UPROPERTY( config, EditAnywhere, Category = GameStates )
     TSoftObjectPtr< UGBFGameState > MainMenuGameState;
 
     UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > InGameGameState;
+    TSoftObjectPtr< UGBFGameState > InGameGameState;*/
 
     UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TArray< TSoftObjectPtr< UGBFGameState > > GameStates;
+    TMap< FName, TSoftObjectPtr< UGBFGameState > > GameStates;
 
     UPROPERTY( config, EditAnywhere, Category = UI )
     FGBFUIOptions UIOptions;

@@ -6,7 +6,6 @@
 
 
 #include <Engine/LocalPlayer.h>
-#include <Engine/World.h>
 #include <Online.h>
 
 void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & collection )
@@ -53,7 +52,7 @@ void UGBFLocalPlayerPresenceSystem::SetPresenceForLocalPlayer( const FText & sta
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( const UGBFGameState * new_state )
+void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
 {
     if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
     {

@@ -17,7 +17,7 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstanceGameStateSystem final : public UGBFG
 
 public:
     // ReSharper disable once CppRedundantEmptyDeclaration
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnStateChangedDelegate, const UGBFGameState *, new_state );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnStateChangedDelegate, FName, state_name, const UGBFGameState *, new_state );
 
     FOnStateChangedDelegate & OnStateChanged();
 
@@ -37,28 +37,27 @@ public:
     void GoToInGameState();
 
     UFUNCTION( BlueprintCallable )
-    void GoToState( UGBFGameState * new_state );
+    void GoToState( FName new_state );
 
     UFUNCTION( BlueprintCallable )
-    void GoToStateWithMap( UGBFGameState * new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr );
+    void GoToStateWithMap( FName new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr );
 
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void UpdateCurrentGameStateFromCurrentWorld();
-    bool IsStateWelcomeScreenState( const UGBFGameState * state ) const;
-    UGBFGameState * GetGameStateFromName( FName state_name ) const;
 
 private:
-    const UGBFGameState * GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const;
-
-    void LoadGameStates() const;
+    void LoadGameStates();
 
     UPROPERTY( BlueprintAssignable )
     FOnStateChangedDelegate OnStateChangedDelegate;
 
-    TWeakObjectPtr< const UGBFGameState > CurrentGameState;
+    FName CurrentGameState;
 
     UPROPERTY()
     const UGameBaseFrameworkSettings * Settings;
+
+    UPROPERTY()
+    TMap< FName, UGBFGameState * > GameStates;
 };
 
 FORCEINLINE UGBFGameInstanceGameStateSystem::FOnStateChangedDelegate & UGBFGameInstanceGameStateSystem::OnStateChanged()

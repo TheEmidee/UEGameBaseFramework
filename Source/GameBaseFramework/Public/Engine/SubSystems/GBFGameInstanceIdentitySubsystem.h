@@ -37,7 +37,7 @@ private:
     void OnLoginUIClosed( TSharedPtr< const FUniqueNetId > unique_id, int controller_index, const FOnlineError & error );
 
     UFUNCTION()
-    void OnGameStateChanged( const UGBFGameState * new_state );
+    void OnGameStateChanged( FName state_name, const UGBFGameState * new_state );
 
     FOnLoginUIClosedDelegate LoginUIClosedDelegate;
 

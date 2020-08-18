@@ -353,7 +353,7 @@ void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId 
         GetGBFGameInstance()->ShowMessageThenGotoState(
             NSLOCTEXT( "GBF", "LocKey_NetworkFailure", "NetworkFailures" ),
             return_reason,
-            settings->MainMenuGameState.Get() );
+            UGBFGameState::MainMenuStateName );
     }
 #endif
 }
