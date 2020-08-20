@@ -330,7 +330,7 @@ void AGBFGameSession::RegisterServer()
             host_settings->Set( SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineService );
             host_settings->bAllowInvites = true;
             host_settings->bIsDedicated = true;
-            
+
             if ( FParse::Param( FCommandLine::Get(), TEXT( "forcelan" ) ) )
             {
                 UE_LOG( LogOnlineGame, Log, TEXT( "Registering server as a LAN server" ) );

@@ -8,7 +8,6 @@
 #include <Engine/GameInstance.h>
 #include <Engine/World.h>
 #include <GameBaseFrameworkSettings.h>
-#include <GameFramework/GameModeBase.h>
 
 void UGBFGameInstanceGameStateSystem::Initialize( FSubsystemCollectionBase & collection )
 {
@@ -17,6 +16,8 @@ void UGBFGameInstanceGameStateSystem::Initialize( FSubsystemCollectionBase & col
     Settings = GetDefault< UGameBaseFrameworkSettings >();
 
     LoadGameStates();
+
+    CurrentGameState = NAME_None;
 }
 
 bool UGBFGameInstanceGameStateSystem::IsOnWelcomeScreenState() const
@@ -46,14 +47,6 @@ void UGBFGameInstanceGameStateSystem::GoToInGameState()
 
 void UGBFGameInstanceGameStateSystem::GoToState( FName new_state )
 {
-    if ( CurrentGameState != new_state )
-    {
-        GoToStateWithMap( new_state, nullptr );
-    }
-}
-
-void UGBFGameInstanceGameStateSystem::GoToStateWithMap( FName new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr )
-{
     if ( !ensureAlwaysMsgf( new_state != NAME_None, TEXT( "new_state must not be None" ) ) )
     {
         return;
@@ -67,22 +60,15 @@ void UGBFGameInstanceGameStateSystem::GoToStateWithMap( FName new_state, TSoftOb
             {
                 CurrentGameState = new_state;
 
-                auto new_world = world_soft_object_ptr;
-
-                if ( new_world.IsNull() )
-                {
-                    new_world = state->Map;
-                }
-
-                if ( !new_world.IsNull() )
-                {
-                    UGBFHelperBlueprintLibrary::BrowseMap( *GetOuterUGameInstance()->GetWorldContext(), new_world );
-                }
-
                 OnStateChangedDelegate.Broadcast( new_state, state );
             }
         }
     }
+}
+
+FName UGBFGameInstanceGameStateSystem::GetCurrentState() const
+{
+    return CurrentGameState;
 }
 
 void UGBFGameInstanceGameStateSystem::UpdateCurrentGameStateFromCurrentWorld()

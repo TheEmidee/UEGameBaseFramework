@@ -40,7 +40,7 @@ public:
     void GoToState( FName new_state );
 
     UFUNCTION( BlueprintCallable )
-    void GoToStateWithMap( FName new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr );
+    FName GetCurrentState() const;
 
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void UpdateCurrentGameStateFromCurrentWorld();
