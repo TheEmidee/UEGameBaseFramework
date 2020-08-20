@@ -9,14 +9,11 @@ class AGameModeBase;
 class UWorld;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFGameState : public UDataAsset
+class GAMEBASEFRAMEWORK_API UGBFGameState final : public UDataAsset
 {
     GENERATED_BODY()
 
 public:
-    /*UPROPERTY( EditAnywhere )
-    FName Name;*/
-
     UPROPERTY( EditAnywhere )
     TSoftObjectPtr< UWorld > Map;
 
