@@ -4,7 +4,6 @@
 #include "Engine/GBFGameState.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 
-
 #include <Engine/LocalPlayer.h>
 #include <Online.h>
 
@@ -12,9 +11,15 @@ void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & colle
 {
     Super::Initialize( collection );
 
-    if ( auto * game_instance_state_system = GetLocalPlayer()->GetGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+    if ( auto * lp = GetLocalPlayer() )
     {
-        game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+        if ( auto * gi = lp->GetGameInstance() )
+        {
+            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            {
+                game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            }
+        }
     }
 }
 
@@ -22,9 +27,15 @@ void UGBFLocalPlayerPresenceSystem::Deinitialize()
 {
     Super::Deinitialize();
 
-    if ( auto * game_instance_state_system = GetLocalPlayer()->GetGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+    if ( auto * lp = GetLocalPlayer() )
     {
-        game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+        if ( auto * gi = lp->GetGameInstance() )
+        {
+            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            {
+                game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            }
+        }
     }
 }
 
