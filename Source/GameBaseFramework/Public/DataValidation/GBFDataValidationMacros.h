@@ -104,4 +104,15 @@
 #define DATA_VALIDATION_RETURN() \
     return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
 
+#define DATA_VALIDATION_RETURN_FROM_VALIDATOR( asset )             \
+    if ( validation_errors.Num() == 0 )                            \
+    {                                                              \
+        AssetPasses( asset );                                      \
+    }                                                              \
+    else                                                           \
+    {                                                              \
+        AssetFails( asset, FText::GetEmpty(), validation_errors ); \
+    }                                                              \
+    DATA_VALIDATION_RETURN();
+
 #endif
