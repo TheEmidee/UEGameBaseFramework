@@ -63,7 +63,8 @@ protected:
     virtual void OnFindSessionsComplete( bool was_successful );
     virtual void OnJoinSessionComplete( FName session_name, EOnJoinSessionCompleteResult::Type result );
     virtual void OnDestroySessionComplete( FName session_name, bool was_successful );
-    void RegisterServer() override;
+    virtual void RegisterServer();
+    virtual void FillHostSettings( FGBFOnlineSessionSettings & host_settings );
 
     FOnCreatePresenceSessionCompleteEvent OnCreatePresenceSessionCompleteEvent;
     FOnFindSessionsCompleteEvent OnFindSessionsCompleteEvent;

@@ -147,7 +147,7 @@ void AGBFGameSession::FindSessions( const TSharedPtr< const FUniqueNetId > & use
     }
 }
 
-bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const FString & game_type, const FString & map_name, const bool is_lan, const bool is_presence, const int32 max_num_players )
+bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const FString & /*game_type*/, const FString & /*map_name*/, const bool is_lan, const bool is_presence, const int32 max_num_players )
 {
     if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
@@ -161,25 +161,13 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
         if ( session_interface_ptr.IsValid() && CurrentSessionParams.UserId.IsValid() )
         {
             HostSettings = MakeShareable( new FGBFOnlineSessionSettings( is_lan, is_presence, MaxPlayers ) );
-            HostSettings->Set( SETTING_GAMEMODE, game_type, EOnlineDataAdvertisementType::ViaOnlineService );
-            HostSettings->Set( SETTING_MAPNAME, map_name, EOnlineDataAdvertisementType::ViaOnlineService );
-            HostSettings->Set( SETTING_MATCHING_HOPPER, FString( "TeamDeathMatch" ), EOnlineDataAdvertisementType::DontAdvertise );
-            HostSettings->Set( SETTING_MATCHING_TIMEOUT, 120.0f, EOnlineDataAdvertisementType::ViaOnlineService );
-            HostSettings->Set( SETTING_SESSION_TEMPLATE_NAME, FString( "GameSession" ), EOnlineDataAdvertisementType::DontAdvertise );
-
-#if !PLATFORM_SWITCH
-            // On Switch, we don't have room for this in the session data (and it's not used anyway when searching), so there's no need to add it.
-            // Can be re-added if the buffer size increases.
-            HostSettings->Set( SEARCH_KEYWORDS, CustomMatchKeyword, EOnlineDataAdvertisementType::ViaOnlineService );
-#endif
+            FillHostSettings( *HostSettings );
 
             OnCreateSessionCompleteDelegateHandle = session_interface_ptr->AddOnCreateSessionCompleteDelegate_Handle( OnCreateSessionCompleteDelegate );
             return session_interface_ptr->CreateSession( *CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings );
         }
-        else
-        {
-            OnCreateSessionComplete( session_name, false );
-        }
+        
+        OnCreateSessionComplete( session_name, false );
     }
 #if !UE_BUILD_SHIPPING
     else
@@ -317,29 +305,10 @@ void AGBFGameSession::OnDestroySessionComplete( const FName session_name, const 
 
 void AGBFGameSession::RegisterServer()
 {
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
-    {
-        auto session_interface_ptr = oss->GetSessionInterface();
-        if ( session_interface_ptr.IsValid() )
-        {
-            TSharedPtr< class FGBFOnlineSessionSettings > host_settings = MakeShareable( new FGBFOnlineSessionSettings( false, false, 16 ) );
-            host_settings->Set( SETTING_MATCHING_HOPPER, FString( "TeamDeathMatch" ), EOnlineDataAdvertisementType::DontAdvertise );
-            host_settings->Set( SETTING_MATCHING_TIMEOUT, 120.0f, EOnlineDataAdvertisementType::ViaOnlineService );
-            host_settings->Set( SETTING_SESSION_TEMPLATE_NAME, FString( "GameSession" ), EOnlineDataAdvertisementType::DontAdvertise );
-            host_settings->Set( SETTING_GAMEMODE, FString( "TeamDeathMatch" ), EOnlineDataAdvertisementType::ViaOnlineService );
-            host_settings->Set( SETTING_MAPNAME, GetWorld()->GetMapName(), EOnlineDataAdvertisementType::ViaOnlineService );
-            host_settings->bAllowInvites = true;
-            host_settings->bIsDedicated = true;
+    checkf( false, TEXT( "To be implemented by the game project" ) );
+}
 
-            if ( FParse::Param( FCommandLine::Get(), TEXT( "forcelan" ) ) )
-            {
-                UE_LOG( LogOnlineGame, Log, TEXT( "Registering server as a LAN server" ) );
-                host_settings->bIsLANMatch = true;
-            }
-            
-            HostSettings = host_settings;
-            OnCreateSessionCompleteDelegateHandle = session_interface_ptr->AddOnCreateSessionCompleteDelegate_Handle( OnCreateSessionCompleteDelegate );
-            session_interface_ptr->CreateSession( 0, NAME_GameSession, *HostSettings );
-        }
-    }
+void AGBFGameSession::FillHostSettings( FGBFOnlineSessionSettings & host_settings )
+{
+    checkf( false, TEXT( "To be implemented by the game project" ) );
 }

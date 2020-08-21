@@ -3,7 +3,7 @@
 #include <OnlineSessionSettings.h>
 
 // ReSharper disable once CppClassCanBeFinal
-class FGBFOnlineSessionSettings : public FOnlineSessionSettings
+class GAMEBASEFRAMEWORK_API FGBFOnlineSessionSettings : public FOnlineSessionSettings
 {
 public:
     explicit FGBFOnlineSessionSettings( bool is_lan = false, bool is_presence = false, int32 max_num_players = 4 );
