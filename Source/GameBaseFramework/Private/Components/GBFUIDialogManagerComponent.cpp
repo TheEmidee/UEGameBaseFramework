@@ -86,7 +86,10 @@ void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf<
 
 void UGBFUIDialogManagerComponent::InitializeMainUI()
 {
-    InitializeMainUIWithClass( MainUIClass );
+    if ( MainUIClass != nullptr )
+    {
+        InitializeMainUIWithClass( MainUIClass );
+    }
 }
 
 void UGBFUIDialogManagerComponent::ShowMainUI()
