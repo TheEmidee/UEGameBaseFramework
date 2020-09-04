@@ -25,8 +25,12 @@ public:
     UGBFGameInstance();
 
     void Init() override;
+    void StartGameInstance() override;
     void Shutdown() override;
-    class AGameModeBase * CreateGameModeForURL( FURL url, UWorld* world ) override;
+
+#if WITH_EDITOR
+    FGameInstancePIEResult StartPlayInEditorGameInstance( ULocalPlayer * local_player, const FGameInstancePIEParameters & params ) override;
+#endif // WITH_EDITOR
 
     bool Tick( float delta_seconds );
 
@@ -38,7 +42,7 @@ public:
 
     ULocalPlayer * GetFirstLocalPlayer() const;
 
-    void ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state );
+    void ShowMessageThenGotoState( const FText & title, const FText & content, FName next_state );
     void ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content );
     void ShowMessageThenGotoMainMenuState( const FText & title, const FText & content );
     void HandleSignInChangeMessaging();
@@ -48,6 +52,9 @@ public:
     TSubclassOf< UOnlineSession > GetOnlineSessionClass() override;
 
 private:
+
+    void OnStart() override;
+
     UFUNCTION()
     void OnAppReactivateOrForeground();
 

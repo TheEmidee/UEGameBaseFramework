@@ -353,7 +353,7 @@ void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId 
         GetGBFGameInstance()->ShowMessageThenGotoState(
             NSLOCTEXT( "GBF", "LocKey_NetworkFailure", "NetworkFailures" ),
             return_reason,
-            settings->MainMenuGameState.Get() );
+            UGBFGameState::MainMenuStateName );
     }
 #endif
 }
@@ -588,8 +588,8 @@ void UGBFGameInstanceSessionSubsystem::OnJoinSessionComplete( const EOnJoinSessi
 
     const auto & local_players = GetOuterUGameInstance()->GetLocalPlayers();
 
-    // Add the split screen player if one exists
-    if ( result == EOnJoinSessionCompleteResult::Success && local_players.Num() > 1 )
+    // :TODO: Add the split screen player if one exists
+    /*if ( result == EOnJoinSessionCompleteResult::Success && local_players.Num() > 1 )
     {
         auto sessions = Online::GetSessionInterface( GetWorld() );
         const auto * local_player = local_players[ 1 ];
@@ -600,7 +600,7 @@ void UGBFGameInstanceSessionSubsystem::OnJoinSessionComplete( const EOnJoinSessi
             sessions->RegisterLocalPlayer( *local_player_unique_net_id, NAME_GameSession, FOnRegisterLocalPlayerCompleteDelegate::CreateUObject( this, &UGBFGameInstanceSessionSubsystem::OnRegisterJoiningLocalPlayerComplete ) );
         }
     }
-    else
+    else*/
     {
         // We either failed or there is only a single local user
         FinishJoinSession( result );

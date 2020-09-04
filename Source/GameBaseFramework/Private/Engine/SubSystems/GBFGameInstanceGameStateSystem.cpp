@@ -2,11 +2,12 @@
 
 #include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Engine/GBFGameState.h"
+#include "Log/GBFLog.h"
 
 #include <Engine/AssetManager.h>
+#include <Engine/GameInstance.h>
 #include <Engine/World.h>
 #include <GameBaseFrameworkSettings.h>
-#include <GameFramework/GameModeBase.h>
 
 void UGBFGameInstanceGameStateSystem::Initialize( FSubsystemCollectionBase & collection )
 {
@@ -15,131 +16,117 @@ void UGBFGameInstanceGameStateSystem::Initialize( FSubsystemCollectionBase & col
     Settings = GetDefault< UGameBaseFrameworkSettings >();
 
     LoadGameStates();
+
+    CurrentGameState = NAME_None;
 }
 
 bool UGBFGameInstanceGameStateSystem::IsOnWelcomeScreenState() const
 {
-    return IsStateWelcomeScreenState( CurrentGameState.Get() );
+    return CurrentGameState == UGBFGameState::WelcomeScreenStateName;
 }
 
 bool UGBFGameInstanceGameStateSystem::IsOnMainMenuState() const
 {
-    return IsStateWelcomeScreenState( CurrentGameState.Get() );
+    return CurrentGameState == UGBFGameState::InGameStateName;
 }
 
 void UGBFGameInstanceGameStateSystem::GoToWelcomeScreenState()
 {
-    if ( IsOnWelcomeScreenState() )
-    {
-        return;
-    }
-
-    GoToState( Settings->WelcomeScreenGameState.Get() );
+    GoToState( UGBFGameState::WelcomeScreenStateName );
 }
 
 void UGBFGameInstanceGameStateSystem::GoToMainMenuState()
 {
-    if ( CurrentGameState != Settings->MainMenuGameState.Get() )
-    {
-        GoToState( Settings->MainMenuGameState.Get() );
-    }
+    GoToState( UGBFGameState::MainMenuStateName );
 }
 
 void UGBFGameInstanceGameStateSystem::GoToInGameState()
 {
-    if ( CurrentGameState != Settings->InGameGameState.Get() )
-    {
-        GoToState( Settings->InGameGameState.Get() );
-    }
+    GoToState( UGBFGameState::InGameStateName );
 }
 
-void UGBFGameInstanceGameStateSystem::GoToState( UGBFGameState * new_state )
+void UGBFGameInstanceGameStateSystem::GoToState( FName new_state )
 {
-    GoToStateWithMap( new_state, nullptr );
-}
-
-void UGBFGameInstanceGameStateSystem::GoToStateWithMap( UGBFGameState * new_state, TSoftObjectPtr< UWorld > world_soft_object_ptr )
-{
-    if ( !ensureAlwaysMsgf( new_state != nullptr, TEXT( "new_state must not be null" ) ) )
+    if ( !ensureAlwaysMsgf( new_state != NAME_None, TEXT( "new_state must not be None" ) ) )
     {
         return;
     }
 
-    if ( CurrentGameState.Get() != new_state )
+    if ( const auto * state_ptr = GameStates.Find( new_state ) )
     {
-        CurrentGameState = new_state;
-
-        const auto new_world = world_soft_object_ptr.IsNull() ? new_state->Map : world_soft_object_ptr;
-
-        if ( !new_world.IsNull() )
+        if ( const auto * state = *state_ptr )
         {
-            UGBFHelperBlueprintLibrary::BrowseMap( *GetOuterUGameInstance()->GetWorldContext(), new_world );
-        }
-
-        OnStateChangedDelegate.Broadcast( new_state );
-    }
-}
-
-void UGBFGameInstanceGameStateSystem::UpdateCurrentGameStateFromCurrentWorld()
-{
-    // Workaround for when running in PIE, to set the correct state based on the game mode created by the URL
-    if ( GetWorld()->WorldType != EWorldType::Game )
-    {
-        if ( !CurrentGameState.IsValid() )
-        {
-            if ( auto * game_mode = GetWorld()->GetAuthGameMode() )
+            if ( CurrentGameState != new_state )
             {
-                if ( auto * current_state = GetGameStateFromGameMode( game_mode->GetClass() ) )
-                {
-                    CurrentGameState = current_state;
-                }
+                CurrentGameState = new_state;
+
+                OnStateChangedDelegate.Broadcast( new_state, state );
             }
         }
     }
 }
 
-bool UGBFGameInstanceGameStateSystem::IsStateWelcomeScreenState( const UGBFGameState * state ) const
+FName UGBFGameInstanceGameStateSystem::GetCurrentState() const
 {
-    return state != nullptr && Settings->WelcomeScreenGameState.Get() == state;
+    return CurrentGameState;
 }
 
-UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromName( FName state_name ) const
+void UGBFGameInstanceGameStateSystem::UpdateCurrentGameStateFromCurrentWorld()
 {
-    const auto predicate = [state_name]( auto state_soft_ptr ) {
-        return state_soft_ptr.Get()->Name == state_name;
-    };
+    auto * play_world_context = GetOuterUGameInstance()->GetWorldContext();
+    check( play_world_context );
 
-    return Settings->GameStates.FindByPredicate( predicate )->Get();
-}
+    auto * play_world = play_world_context->World();
+    check( play_world );
 
-const UGBFGameState * UGBFGameInstanceGameStateSystem::GetGameStateFromGameMode( const TSubclassOf< AGameModeBase > & game_mode_class ) const
-{
-    const auto predicate = [game_mode_class]( auto state_soft_ptr ) {
-        return state_soft_ptr.Get()->GameModeClass == game_mode_class;
-    };
-
-    if ( auto * state = Settings->GameStates.FindByPredicate( predicate ) )
+    auto current_map_name = play_world->GetOutermost()->GetName();
+    if ( !play_world_context->PIEPrefix.IsEmpty() )
     {
-        return state->Get();
+        current_map_name.ReplaceInline( *play_world_context->PIEPrefix, TEXT( "" ) );
     }
 
-    return nullptr;
+    for ( const auto & key_pair : GameStates )
+    {
+        if ( key_pair.Value->Map.IsValid() && key_pair.Value->Map->GetName() == current_map_name )
+        {
+            GoToState( key_pair.Key );
+            return;
+        }
+    }
+
+    GoToInGameState();
+
+    //// Workaround for when running in PIE, to set the correct state based on the game mode created by the URL
+    //if ( GetWorld()->WorldType != EWorldType::Game )
+    //{
+    //    if ( !CurrentGameState.IsValid() )
+    //    {
+    //        if ( auto * game_mode = GetWorld()->GetAuthGameMode() )
+    //        {
+    //            if ( auto * current_state = GetGameStateFromGameMode( game_mode->GetClass() ) )
+    //            {
+    //                CurrentGameState = current_state;
+    //            }
+    //        }
+    //    }
+    //}
 }
 
-void UGBFGameInstanceGameStateSystem::LoadGameStates() const
+void UGBFGameInstanceGameStateSystem::LoadGameStates()
 {
     if ( ensureAlwaysMsgf( Settings != nullptr, TEXT( "Null settings" ) ) )
     {
-        TArray< FSoftObjectPath > state_paths;
-        state_paths.Reserve( Settings->GameStates.Num() + 1 );
-
-        state_paths.Add( Settings->WelcomeScreenGameState.ToSoftObjectPath() );
+        UE_LOG( LogGBF, Log, TEXT( "Loading game states" ) )
 
         for ( auto & game_state : Settings->GameStates )
         {
-            state_paths.Add( game_state.ToSoftObjectPath() );
-        }
+            if ( ensureAlwaysMsgf( !game_state.Value.IsNull(), TEXT( "Invalid asset for game state %s" ), *game_state.Key.ToString() ) )
+            {
+                auto * state = UAssetManager::Get().GetStreamableManager().LoadSynchronous< UGBFGameState >( game_state.Value.ToSoftObjectPath() );
+                GameStates.Add( game_state.Key, state );
 
-        UAssetManager::Get().GetStreamableManager().RequestSyncLoad( state_paths );
+                UE_LOG( LogGBF, Log, TEXT( "Loaded game state %s" ), *game_state.Key.ToString() )
+            }
+        }
     }
 }

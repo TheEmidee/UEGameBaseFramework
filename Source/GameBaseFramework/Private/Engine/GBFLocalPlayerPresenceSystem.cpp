@@ -4,18 +4,22 @@
 #include "Engine/GBFGameState.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 
-
 #include <Engine/LocalPlayer.h>
-#include <Engine/World.h>
 #include <Online.h>
 
 void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & collection )
 {
     Super::Initialize( collection );
 
-    if ( auto * game_instance_state_system = GetLocalPlayer()->GetGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+    if ( auto * lp = GetLocalPlayer() )
     {
-        game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+        if ( auto * gi = lp->GetGameInstance() )
+        {
+            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            {
+                game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            }
+        }
     }
 }
 
@@ -23,9 +27,15 @@ void UGBFLocalPlayerPresenceSystem::Deinitialize()
 {
     Super::Deinitialize();
 
-    if ( auto * game_instance_state_system = GetLocalPlayer()->GetGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+    if ( auto * lp = GetLocalPlayer() )
     {
-        game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+        if ( auto * gi = lp->GetGameInstance() )
+        {
+            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            {
+                game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            }
+        }
     }
 }
 
@@ -53,7 +63,7 @@ void UGBFLocalPlayerPresenceSystem::SetPresenceForLocalPlayer( const FText & sta
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( const UGBFGameState * new_state )
+void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
 {
     if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
     {

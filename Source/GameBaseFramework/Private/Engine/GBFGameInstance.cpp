@@ -1,8 +1,8 @@
 #include "Engine/GBFGameInstance.h"
 
 #include "Components/GBFUIDialogManagerComponent.h"
-#include "Engine/GBFLocalPlayer.h"
 #include "Engine/GBFGameState.h"
+#include "Engine/GBFLocalPlayer.h"
 #include "Engine/SubSystems/GBFGameInstanceCoreDelegatesSubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
@@ -56,6 +56,11 @@ void UGBFGameInstance::Init()
     SessionSubsystem = GetSubsystem< UGBFGameInstanceSessionSubsystem >();
 }
 
+void UGBFGameInstance::StartGameInstance()
+{
+    Super::StartGameInstance();
+}
+
 void UGBFGameInstance::Shutdown()
 {
     Super::Shutdown();
@@ -63,14 +68,14 @@ void UGBFGameInstance::Shutdown()
     FTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
 }
 
-AGameModeBase * UGBFGameInstance::CreateGameModeForURL( FURL url, UWorld* world )
+#if WITH_EDITOR
+FGameInstancePIEResult UGBFGameInstance::StartPlayInEditorGameInstance( ULocalPlayer * local_player, const FGameInstancePIEParameters & params )
 {
-    auto * game_mode = Super::CreateGameModeForURL( url, world );
-
     GameStateSubsystem->UpdateCurrentGameStateFromCurrentWorld();
 
-    return game_mode;
+    return Super::StartPlayInEditorGameInstance( local_player, params );
 }
+#endif
 
 bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
 {
@@ -88,7 +93,7 @@ bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
                     ShowMessageThenGotoState(
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
                         NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
-                        Settings->WelcomeScreenGameState.Get() );
+                        UGBFGameState::WelcomeScreenStateName );
 
                     return true;
                 }
@@ -124,7 +129,7 @@ ULocalPlayer * UGBFGameInstance::GetFirstLocalPlayer() const
                : nullptr;
 }
 
-void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FText & content, UGBFGameState * next_state )
+void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FText & content, FName next_state )
 {
     if ( auto * player_controller = Cast< AGBFPlayerController >( GetWorld()->GetFirstPlayerController() ) )
     {
@@ -132,14 +137,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
                 [this, &next_state]() {
-                    if ( GameStateSubsystem->IsStateWelcomeScreenState( next_state ) )
-                    {
-                        GameStateSubsystem->GoToWelcomeScreenState();
-                    }
-                    else
-                    {
-                        GameStateSubsystem->GoToState( next_state );
-                    }
+                    GameStateSubsystem->GoToState( next_state );
                 } );
 
             dialog_manager_component->ShowConfirmationPopup( title, content, EGBFUIDialogType::AdditiveOnlyOneVisible, on_ok_clicked );
@@ -149,12 +147,12 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
 
 void UGBFGameInstance::ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content )
 {
-    ShowMessageThenGotoState( title, content, Settings->WelcomeScreenGameState.Get() );
+    ShowMessageThenGotoState( title, content,  UGBFGameState::WelcomeScreenStateName );
 }
 
 void UGBFGameInstance::ShowMessageThenGotoMainMenuState( const FText & title, const FText & content )
 {
-    ShowMessageThenGotoState( title, content, Settings->MainMenuGameState.Get() );
+    ShowMessageThenGotoState( title, content, UGBFGameState::MainMenuStateName );
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
@@ -201,6 +199,11 @@ void UGBFGameInstance::RemoveExistingLocalPlayer( ULocalPlayer * local_player )
 TSubclassOf< UOnlineSession > UGBFGameInstance::GetOnlineSessionClass()
 {
     return UGBFOnlineSessionClient::StaticClass();
+}
+
+void UGBFGameInstance::OnStart()
+{
+    GameStateSubsystem->GoToWelcomeScreenState();
 }
 
 void UGBFGameInstance::OnAppReactivateOrForeground()
