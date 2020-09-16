@@ -18,7 +18,4 @@ public:
     void EndPlay( const EEndPlayReason::Type reason ) override;
 
     virtual bool CanPauseGame() const;
-
-    virtual void HandleAppSuspended();
-    virtual void HandleAppResumed();
 };

@@ -86,11 +86,6 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground()
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppDeactivateOrBackground() const
 {
     OnAppDeactivateOrBackgroundDelegate.Broadcast();
-
-    if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
-    {
-        gm->HandleAppSuspended();
-    }
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
