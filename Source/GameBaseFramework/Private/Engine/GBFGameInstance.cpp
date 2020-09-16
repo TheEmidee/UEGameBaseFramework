@@ -226,9 +226,4 @@ void UGBFGameInstance::OnAppReactivateOrForeground()
             }
         }
     }
-
-    if ( auto * gm = GetWorld()->GetAuthGameMode< AGBFGameModeBase >() )
-    {
-        gm->HandleAppResumed();
-    }
 }
