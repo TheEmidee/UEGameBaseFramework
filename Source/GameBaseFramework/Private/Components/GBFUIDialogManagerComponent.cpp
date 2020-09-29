@@ -282,8 +282,9 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
     const FGBFConfirmationPopupButtonClicked & ok_button_clicked /*= FGBFConfirmationPopupButtonClicked()*/,
     const FGBFConfirmationPopupButtonClicked & cancel_button_clicked /*= FGBFConfirmationPopupButtonClicked()*/,
     const FText & ok_button_text /*= FText::GetEmpty()*/,
-    const FText & cancel_button_text /*= FText::GetEmpty()*/
-)
+    const FText & cancel_button_text /*= FText::GetEmpty()*/,
+    const bool hide_main_ui /*= true*/,
+    const bool blur_background /*= true*/ )
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
@@ -293,7 +294,7 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::ShowConfirmationPopup(
             {
                 widget->SetOwningPlayer( GetPlayerController() );
 
-                ShowDialog( widget, { true, true, true, type, true } );
+                ShowDialog( widget, { true, hide_main_ui, blur_background, type, true } );
 
                 widget->NativeInitialize( title, content, ok_button_clicked, cancel_button_clicked, ok_button_text, cancel_button_text );
 
@@ -312,7 +313,9 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
     const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
     const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
     const FText ok_button_text,
-    const FText cancel_button_text )
+    const FText cancel_button_text,
+    const bool hide_main_ui /*= true*/,
+    const bool blur_background /*= true*/ )
 {
     if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
     {
@@ -322,16 +325,16 @@ UGBFConfirmationWidget * UGBFUIDialogManagerComponent::K2_ShowConfirmationPopup(
             {
                 widget->SetOwningPlayer( GetPlayerController() );
 
-                ShowDialog( widget, { true, true, true, type, true } );
+                ShowDialog( widget, { true, hide_main_ui, blur_background, type, true } );
 
                 // capture by copy is intended otherwise the delegate is destructed
-                const auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ok_button_clicked]() {
+                const auto native_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ ok_button_clicked ]() {
                     // ReSharper disable once CppExpressionWithoutSideEffects
                     ok_button_clicked.ExecuteIfBound();
                     // ReSharper disable once CppExpressionWithoutSideEffects
                 } );
 
-                const auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [cancel_button_clicked]() {
+                const auto native_cancel_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda( [ cancel_button_clicked ]() {
                     // ReSharper disable once CppExpressionWithoutSideEffects
                     cancel_button_clicked.ExecuteIfBound();
                     // ReSharper disable once CppExpressionWithoutSideEffects

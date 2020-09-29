@@ -102,7 +102,9 @@ public:
         const FGBFConfirmationPopupButtonClicked & ok_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FGBFConfirmationPopupButtonClicked & cancel_button_clicked = FGBFConfirmationPopupButtonClicked(),
         const FText & ok_button_text = FText::GetEmpty(),
-        const FText & cancel_button_text = FText::GetEmpty() );
+        const FText & cancel_button_text = FText::GetEmpty(),
+        const bool hide_main_ui = true,
+        const bool blur_background = true );
 
     UFUNCTION( BlueprintCallable, meta = ( DisplayName = "ShowConfirmationPopup", AutoCreateRefTerm = "ok_button_clicked, cancel_button_clicked" ) )
     UGBFConfirmationWidget * K2_ShowConfirmationPopup(
@@ -112,7 +114,9 @@ public:
         const FGBFConfirmationPopupButtonClickedDynamic & ok_button_clicked,
         const FGBFConfirmationPopupButtonClickedDynamic & cancel_button_clicked,
         const FText ok_button_text,
-        const FText cancel_button_text );
+        const FText cancel_button_text,
+        const bool hide_main_ui = true,
+        const bool blur_background = true );
 
 private:
     struct FDialogStackEntry
