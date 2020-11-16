@@ -110,6 +110,15 @@
 #define DATA_VALIDATION_TAG_CONTAINER_HAS_TAG_AUTO_MESSAGE( ContainerTagName, TagName ) \
     DATA_VALIDATION_TAG_CONTAINER_HAS_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, FText::FromString( TEXT( "" ) ) );
 
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_ALL( ContainerTagName, OtherContainerTag, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( !ContainerTagName.HasAll( OtherContainerTag ), ErrorMessageText )
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_ALL_AUTO_MESSAGE_SUFFIX( ContainerTagName, OtherContainerTag, SuffixText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( !ContainerTagName.HasAll( OtherContainerTag ), FText::FromString( FString::Printf( TEXT( "%s must contain all the tags %s" ), TEXT( #ContainerTagName ), *OtherContainerTag.ToString() ) ), SuffixText );
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_ALL_AUTO_MESSAGE( ContainerTagName, OtherContainerTag ) \
+    DATA_VALIDATION_TAG_CONTAINER_HAS_ALL_AUTO_MESSAGE_SUFFIX( ContainerTagName, OtherContainerTag, FText::FromString( TEXT( "" ) ) );
+
 #define DATA_VALIDATION_RETURN() \
     return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
 
