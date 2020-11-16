@@ -99,7 +99,16 @@
     DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( ContainerTagName.HasTag( TagName ), FText::FromString( FString::Printf( TEXT( "%s must not contain the tag %s" ), TEXT( #ContainerTagName ), *TagName.ToString() ) ), SuffixText );
 
 #define DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE( ContainerTagName, TagName ) \
-    DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, "" );
+    DATA_VALIDATION_TAG_CONTAINER_HAS_NOT_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, FText::FromString( TEXT( "" ) ) );
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_TAG( ContainerTagName, TagName, ErrorMessageText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION( !ContainerTagName.HasTag( TagName ), ErrorMessageText )
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, SuffixText ) \
+    DATA_VALIDATION_INTERNAL_CONDITION_SUFFIX( !ContainerTagName.HasTag( TagName ), FText::FromString( FString::Printf( TEXT( "%s must contain the tag %s" ), TEXT( #ContainerTagName ), *TagName.ToString() ) ), SuffixText );
+
+#define DATA_VALIDATION_TAG_CONTAINER_HAS_TAG_AUTO_MESSAGE( ContainerTagName, TagName ) \
+    DATA_VALIDATION_TAG_CONTAINER_HAS_TAG_AUTO_MESSAGE_SUFFIX( ContainerTagName, TagName, FText::FromString( TEXT( "" ) ) );
 
 #define DATA_VALIDATION_RETURN() \
     return validation_errors.Num() > 0 ? EDataValidationResult::Invalid : EDataValidationResult::Valid;
