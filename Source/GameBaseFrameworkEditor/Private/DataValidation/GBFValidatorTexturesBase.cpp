@@ -105,7 +105,7 @@ EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementat
     else if ( name_parts.Last() == TEXT( "M" ) )
     {
         texture_settings.RequiredCompressionSettings = { TextureCompressionSettings::TC_Masks, TextureCompressionSettings::TC_Grayscale };
-        texture_settings.SetCheckSRGB( ECheckFlag::CheckItIsOff );
+        // :NOTE: sRGB is checked later for those compression settings
     }
     else if ( name_parts.Last() == TEXT( "DM" ) )
     {
@@ -129,6 +129,22 @@ EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementat
     else if ( name_parts.Last() == TEXT( "DFF" ) )
     {
         texture_settings.RequiredCompressionSettings = { TextureCompressionSettings::TC_DistanceFieldFont };
+    }
+
+    switch ( texture->CompressionSettings )
+    {
+        case TextureCompressionSettings::TC_Masks:
+        {
+            texture_settings.SetCheckSRGB( ECheckFlag::CheckItIsOff );        
+        }
+        break;
+        case TextureCompressionSettings::TC_Grayscale:
+        {
+            texture_settings.SetCheckSRGB( ECheckFlag::CheckItIsOn );
+        }
+        break;
+        default:
+            break;
     }
 
     const auto check_power_of_two = [ &validation_errors, texture ]( const int32 dimension, const FString & dimension_str ) {
