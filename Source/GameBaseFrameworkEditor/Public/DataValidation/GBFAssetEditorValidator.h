@@ -16,7 +16,6 @@ struct FGBFAssetEditorValidator
         FileNameFilter { filename_filter_builder() },
         FolderFilter { folder_filter_builder() }
     {
-        
     }
 
     bool IsValid( UObject * object ) const
