@@ -130,14 +130,15 @@ EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementat
         texture_settings.RequiredCompressionSettings = { TextureCompressionSettings::TC_DistanceFieldFont };
     }
 
-    const auto check_power_of_two = [ &validation_errors, in_asset ]( const int32 dimension, const FString & dimension_str ) {
-        if ( !FMath::IsPowerOfTwo( dimension ) )
+    const auto check_power_of_two = [ &validation_errors, texture ]( const int32 dimension, const FString & dimension_str ) {
+        if ( !FMath::IsPowerOfTwo( dimension )
+            && texture->PowerOfTwoMode == ETexturePowerOfTwoSetting::None )
         {
             validation_errors.Emplace(
                 FText::FromString(
                     FString::Printf(
-                        TEXT( "%s must a power of two %s. Current : %i" ),
-                        *GetNameSafe( in_asset ),
+                        TEXT( "%s must a power of two %s. Current : %i. You can also change PowerOfTwoMode." ),
+                        *GetNameSafe( texture ),
                         *dimension_str,
                         dimension ) ) );
         }
