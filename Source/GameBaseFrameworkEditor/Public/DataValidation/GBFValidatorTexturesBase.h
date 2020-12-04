@@ -63,10 +63,8 @@ protected:
     struct FTextureSettingsApplicator
     {
         FTextureSettingsApplicator( const TFunction< bool( const FString &, const FString & ) > & predicate, const TFunction< void( FTextureSettings & ) > & update_settings ) :
-            Predicate( predicate ),
-            UpdateSettings( update_settings ),
-            Priority( 0 ),
-            IsExclusive( false ) {};
+            FTextureSettingsApplicator( predicate, update_settings, 0, false )
+        {};
 
         FTextureSettingsApplicator( const TFunction< bool( const FString &, const FString & ) > & predicate, const TFunction< void( FTextureSettings & ) > & update_settings, const int priority, const bool is_exclusive ) :
             Predicate( predicate ),
