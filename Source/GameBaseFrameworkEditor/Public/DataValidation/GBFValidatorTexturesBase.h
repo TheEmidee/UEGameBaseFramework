@@ -38,6 +38,7 @@ protected:
 
         TextureGroup RequiredTextureGroup = TextureGroup::TEXTUREGROUP_World;
         TArray< TextureCompressionSettings > RequiredCompressionSettings = { TextureCompressionSettings::TC_Default };
+        TOptional< TextureMipGenSettings > OptionalMipGenSettings;
 
         void SetCheckSRGB( const ECheckFlag new_value )
         {

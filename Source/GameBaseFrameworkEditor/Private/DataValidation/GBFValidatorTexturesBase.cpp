@@ -148,8 +148,7 @@ EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementat
     }
 
     const auto check_power_of_two = [ &validation_errors, texture ]( const int32 dimension, const FString & dimension_str ) {
-        if ( !FMath::IsPowerOfTwo( dimension )
-            && texture->PowerOfTwoMode == ETexturePowerOfTwoSetting::None )
+        if ( !FMath::IsPowerOfTwo( dimension ) && texture->PowerOfTwoMode == ETexturePowerOfTwoSetting::None )
         {
             validation_errors.Emplace(
                 FText::FromString(
@@ -239,6 +238,16 @@ EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementat
     CHECK_FLAG( NeverStream, texture_settings.GetCheckNeverStream() )
 
 #undef CHECK_FLAG
+
+    if ( texture_settings.OptionalMipGenSettings.IsSet() && texture_settings.OptionalMipGenSettings.GetValue() != texture->MipGenSettings )
+    {
+        validation_errors.Emplace(
+            FText::FromString(
+                FString::Printf(
+                    TEXT( "%s must have MipGenSettings set to %s" ),
+                    *GetNameSafe( in_asset ),
+                    *UEnum::GetValueAsString( texture_settings.OptionalMipGenSettings.GetValue() ) ) ) );
+    }
 
     DATA_VALIDATION_RETURN_FROM_VALIDATOR( in_asset );
 }
