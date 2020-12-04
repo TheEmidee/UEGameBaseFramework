@@ -10,7 +10,7 @@ UGBFValidatorTexturesBase::UGBFValidatorTexturesBase()
     RegisterTextureSettingsApplicator(
         { []( const FString & path, const FString & /* name */ ) {
              FGBFPathFilter path_filter;
-             path_filter.MustContain( TEXT( "UI" ) );
+             path_filter.MustContain( TEXT( "/UI/" ) );
 
              return path_filter.Matches( path );
          },
@@ -18,7 +18,8 @@ UGBFValidatorTexturesBase::UGBFValidatorTexturesBase()
                 texture_settings.RequiredTextureGroup = TextureGroup::TEXTUREGROUP_UI;
                 texture_settings.RequiredCompressionSettings = { TextureCompressionSettings::TC_EditorIcon };
                 texture_settings.SetCheckSRGB( ECheckFlag::CheckItIsOn );
-                texture_settings.SetCheckNeverStream( ECheckFlag::CheckItIsOff );
+                texture_settings.SetCheckNeverStream( ECheckFlag::CheckItIsOn );
+                texture_settings.OptionalMipGenSettings = TextureMipGenSettings::TMGS_NoMipmaps;
             } } );
 
     RegisterTextureSettingsApplicator(
