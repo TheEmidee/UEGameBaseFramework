@@ -63,7 +63,7 @@ bool UGBFValidatorTexturesBase::CanValidateAsset_Implementation( UObject * in_as
 
 EDataValidationResult UGBFValidatorTexturesBase::ValidateLoadedAsset_Implementation( UObject * in_asset, TArray< FText > & validation_errors )
 {
-    auto * texture = Cast< UTexture >( in_asset );
+    const auto * texture = Cast< UTexture >( in_asset );
 
     FTextureSettings texture_settings;
 
