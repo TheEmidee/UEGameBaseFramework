@@ -35,6 +35,10 @@
     {
       "Name": "OnlineSubsystemUtils",
       "Enabled": true
+    },
+    {
+      "Name": "DataValidation",
+      "Enabled": true
     }
   ]
 }
