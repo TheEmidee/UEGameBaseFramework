@@ -1,7 +1,7 @@
 {
   "FileVersion": 3,
-  "Version": 1,
-  "VersionName": "0.1",
+  "Version": 4.26,
+  "VersionName": "4.26",
   "FriendlyName": "Game Base Framework",
   "Description" : "Helper classes",
   "Category" : "Game Franework",
