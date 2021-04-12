@@ -1,6 +1,9 @@
 #pragma once
 
 #include <CoreMinimal.h>
+
+#include <Engine/Texture.h>
+
 #include <EditorValidatorBase.h>
 
 #include "GBFValidatorTexturesBase.generated.h"
@@ -36,24 +39,20 @@ protected:
             return CheckNeverStream;
         }
 
-        TextureGroup RequiredTextureGroup = TextureGroup::TEXTUREGROUP_World;
-        TArray< TextureCompressionSettings > RequiredCompressionSettings = { TextureCompressionSettings::TC_Default };
+        TextureGroup RequiredTextureGroup = TEXTUREGROUP_World;
+        TArray< TextureCompressionSettings > RequiredCompressionSettings = { TC_Default };
         TOptional< TextureMipGenSettings > OptionalMipGenSettings;
 
         void SetCheckSRGB( const ECheckFlag new_value )
         {
             if ( ensureAlwaysMsgf( CheckSRGB == ECheckFlag::DontCheck, TEXT( "You're trying to set the value of CheckSRGB but it was already set" ) ) )
-            {
                 CheckSRGB = new_value;
-            }
         }
 
         void SetCheckNeverStream( const ECheckFlag new_value )
         {
             if ( ensureAlwaysMsgf( CheckNeverStream == ECheckFlag::DontCheck, TEXT( "You're trying to set the value of CheckNeverStream but it was already set" ) ) )
-            {
                 CheckNeverStream = new_value;
-            }
         }
 
     private:
@@ -65,13 +64,16 @@ protected:
     {
         FTextureSettingsApplicator( const TFunction< bool( const FString &, const FString & ) > & predicate, const TFunction< void( FTextureSettings & ) > & update_settings ) :
             FTextureSettingsApplicator( predicate, update_settings, 0, false )
-        {};
+        {
+        };
 
         FTextureSettingsApplicator( const TFunction< bool( const FString &, const FString & ) > & predicate, const TFunction< void( FTextureSettings & ) > & update_settings, const int priority, const bool is_exclusive ) :
             Predicate( predicate ),
             UpdateSettings( update_settings ),
             Priority( priority ),
-            IsExclusive( is_exclusive ) {};
+            IsExclusive( is_exclusive )
+        {
+        };
 
         TFunction< bool( const FString &, const FString & ) > Predicate;
         TFunction< void( FTextureSettings & ) > UpdateSettings;

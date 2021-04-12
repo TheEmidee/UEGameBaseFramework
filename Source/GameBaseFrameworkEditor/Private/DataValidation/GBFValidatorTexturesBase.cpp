@@ -3,6 +3,8 @@
 #include "DataValidation/GBFDataValidationMacros.h"
 #include "Path/GBFPathFilter.h"
 
+#include <Engine/Texture.h>
+
 UGBFValidatorTexturesBase::UGBFValidatorTexturesBase()
 {
     ItHasSortedApplicators = false;
