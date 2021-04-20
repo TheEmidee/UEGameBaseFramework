@@ -80,6 +80,15 @@
         }                                                                                                                                        \
     }
 
+#define DATA_VALIDATION_CONTAINER_NO_ISNULL_ITEM( ContainerName )                                                                                \
+    for ( const auto & item : ContainerName )                                                                                                    \
+    {                                                                                                                                            \
+        if ( item.IsNull() )                                                                                                                     \
+        {                                                                                                                                        \
+            validation_errors.Emplace( FText::FromString( FString::Printf( TEXT( "%s cannot contain null items" ), TEXT( #ContainerName ) ) ) ); \
+        }                                                                                                                                        \
+    }
+
 #define DATA_VALIDATION_ARE_EQUAL( FirstItemName, SecondItemName, ErrorMessageText ) \
     DATA_VALIDATION_INTERNAL_CONDITION( FirstItemName != SecondItemName, ErrorMessageText )
 
