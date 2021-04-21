@@ -1,8 +1,8 @@
 #pragma once
 
 #include <CoreMinimal.h>
-#include <Templates/SubclassOf.h>
 #include <Engine/DeveloperSettings.h>
+#include <Templates/SubclassOf.h>
 
 #include "GameBaseFrameworkSettings.generated.h"
 
@@ -61,7 +61,7 @@ public:
 
     DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
 
-    static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
+        static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = Input )
@@ -84,6 +84,12 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = UI )
     FGBFUIOptions UIOptions;
+
+    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
+    FString MainLevelName;
+    
+    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
+    TArray< FString > SubLevelNames;
 
 protected:
 #if WITH_EDITOR
