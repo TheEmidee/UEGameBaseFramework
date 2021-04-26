@@ -86,10 +86,13 @@ public:
     FGBFUIOptions UIOptions;
 
     UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
-    FString MainLevelName;
-    
+    FString LevelPath;
+
     UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
-    TArray< FString > SubLevelNames;
+    FString MainLevelSuffix;
+
+    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
+    TArray< FString > SubLevelSuffixes;
 
 protected:
 #if WITH_EDITOR
