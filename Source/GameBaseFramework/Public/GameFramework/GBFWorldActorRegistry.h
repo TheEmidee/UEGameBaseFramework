@@ -20,30 +20,20 @@ public:
     TArray< AActor * > GetActorsFromClass( UClass * actor_class ) const;
 
     UFUNCTION( BlueprintPure )
-    TArray< AActor * > GetActorsFromClassWithTag( UClass * actor_class, const FGameplayTag & gameplay_tag ) const;
-
-    UFUNCTION( BlueprintPure )
-    TArray< AActor * > GetActorsFromClassWithTagContainer( UClass * actor_class, const FGameplayTagContainer & tag_container ) const;
-
-    UFUNCTION( BlueprintPure )
     AActor * GetActorFromClass( UClass * actor_class ) const;
 
     UFUNCTION( BlueprintPure )
     AActor * GetActorFromClassWithTag( UClass * actor_class, const FGameplayTag & gameplay_tag ) const;
 
-    UFUNCTION( BlueprintPure )
-    AActor * GetActorFromClassWithTagContainer( UClass * actor_class, const FGameplayTagContainer & tag_container ) const;
+    UFUNCTION( BlueprintCallable )
+    bool AddActorToRegistry( AActor * actor, const FGameplayTag & tag );
 
     UFUNCTION( BlueprintCallable )
-    bool AddActorToRegistry( AActor * actor, const FGameplayTagContainer & tag_container );
-
-    UFUNCTION( BlueprintCallable )
-    bool RemoveActorFromRegistry( AActor * actor, const FGameplayTagContainer & tag_container );
+    bool RemoveActorFromRegistry( AActor * actor, const FGameplayTag & tag );
 
     UFUNCTION( BlueprintCallable )
     void Clear();
 
 private:
-    UPROPERTY()
-    TMap< UClass *, TMap< AActor *, FGameplayTagContainer > > Registry;
+    TMap< UClass *, TMap< FGameplayTag, AActor * > > Registry;
 };

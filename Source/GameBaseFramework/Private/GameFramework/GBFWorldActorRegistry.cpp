@@ -14,41 +14,7 @@ TArray< AActor * > UGBFWorldActorRegistry::GetActorsFromClass( UClass * actor_cl
 
     if ( const auto * existing_actors = Registry.Find( actor_class ) )
     {
-        ( *existing_actors ).GetKeys( result );
-    }
-
-    return result;
-}
-
-TArray< AActor * > UGBFWorldActorRegistry::GetActorsFromClassWithTag( UClass * actor_class, const FGameplayTag & gameplay_tag ) const
-{
-    TArray< AActor * > result;
-
-    const auto * existing_actors = Registry.Find( actor_class );
-
-    for ( auto & actor_map : *existing_actors )
-    {
-        if ( actor_map.Value.HasTag( gameplay_tag ) )
-        {
-            result.Add( actor_map.Key );
-        }
-    }
-
-    return result;
-}
-
-TArray< AActor * > UGBFWorldActorRegistry::GetActorsFromClassWithTagContainer( UClass * actor_class, const FGameplayTagContainer & tag_container ) const
-{
-    TArray< AActor * > result;
-
-    const auto * existing_actors = Registry.Find( actor_class );
-
-    for ( auto & actor_map : *existing_actors )
-    {
-        if ( actor_map.Value.HasAll( tag_container ) )
-        {
-            result.Add( actor_map.Key );
-        }
+        ( *existing_actors ).GenerateValueArray( result );
     }
 
     return result;
@@ -70,33 +36,15 @@ AActor * UGBFWorldActorRegistry::GetActorFromClassWithTag( UClass * actor_class,
 {
     const auto * existing_actors = Registry.Find( actor_class );
 
-    for ( auto & actor_map : *existing_actors )
+    if ( const auto * actor = existing_actors->Find( gameplay_tag ) )
     {
-        if ( actor_map.Value.HasTag( gameplay_tag ) )
-        {
-            return actor_map.Key;
-        }
+        return *actor;
     }
 
     return nullptr;
 }
 
-AActor * UGBFWorldActorRegistry::GetActorFromClassWithTagContainer( UClass * actor_class, const FGameplayTagContainer & tag_container ) const
-{
-    const auto * existing_actors = Registry.Find( actor_class );
-
-    for ( auto & actor_map : *existing_actors )
-    {
-        if ( actor_map.Value.HasAll( tag_container ) )
-        {
-            return actor_map.Key;
-        }
-    }
-
-    return nullptr;
-}
-
-bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplayTagContainer & tag_container )
+bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplayTag & tag )
 {
     if ( actor == nullptr )
     {
@@ -110,16 +58,16 @@ bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplay
 
     auto & existing_actors = Registry.FindOrAdd( actor->GetClass() );
 
-    if ( existing_actors.Contains( actor ) )
+    if ( existing_actors.Find( tag ) )
     {
         return false;
     }
 
-    existing_actors.Add( actor, tag_container );
+    existing_actors.Add( tag, actor );
     return true;
 }
 
-bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGameplayTagContainer & tag_container )
+bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGameplayTag & tag )
 {
     if ( actor == nullptr )
     {
@@ -134,13 +82,9 @@ bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGam
     auto * existing_actors = Registry.Find( actor->GetClass() );
     TArray< AActor * > actors_to_remove;
 
-    for ( auto actor_map : *existing_actors )
+    if ( existing_actors->Find( tag ) )
     {
-        if ( actor_map.Value.HasAll( tag_container ) )
-        {
-            existing_actors->Remove( actor_map.Key );
-            return true;
-        }
+        return existing_actors->Remove( tag ) > 0;
     }
 
     return false;
