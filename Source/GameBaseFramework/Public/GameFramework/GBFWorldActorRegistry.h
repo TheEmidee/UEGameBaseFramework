@@ -23,13 +23,13 @@ public:
     AActor * GetActorFromClass( UClass * actor_class ) const;
 
     UFUNCTION( BlueprintPure )
-    AActor * GetActorFromClassWithTag( UClass * actor_class, const FGameplayTag & gameplay_tag ) const;
+    AActor * GetActorFromClassWithTag( UClass * actor_class, const FGameplayTag gameplay_tag ) const;
 
     UFUNCTION( BlueprintCallable )
-    bool AddActorToRegistry( AActor * actor, const FGameplayTag & tag );
+    bool AddActorToRegistry( AActor * actor, const FGameplayTag tag );
 
     UFUNCTION( BlueprintCallable )
-    bool RemoveActorFromRegistry( AActor * actor, const FGameplayTag & tag );
+    bool RemoveActorFromRegistry( AActor * actor, const FGameplayTag tag );
 
     UFUNCTION( BlueprintCallable )
     void Clear();

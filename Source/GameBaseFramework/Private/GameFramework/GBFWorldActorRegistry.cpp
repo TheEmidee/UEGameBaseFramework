@@ -5,7 +5,7 @@
 bool UGBFWorldActorRegistry::ShouldCreateSubsystem( UObject * outer ) const
 {
     return Super::ShouldCreateSubsystem( outer ) &&
-           GetDefault< UGameBaseFrameworkSettings >()->ItEnablesWorldActorRegistry;
+           GetDefault< UGameBaseFrameworkSettings >()->EnableWorldActorRegistry;
 }
 
 TArray< AActor * > UGBFWorldActorRegistry::GetActorsFromClass( UClass * actor_class ) const
@@ -32,7 +32,7 @@ AActor * UGBFWorldActorRegistry::GetActorFromClass( UClass * actor_class ) const
     return nullptr;
 }
 
-AActor * UGBFWorldActorRegistry::GetActorFromClassWithTag( UClass * actor_class, const FGameplayTag & gameplay_tag ) const
+AActor * UGBFWorldActorRegistry::GetActorFromClassWithTag( UClass * actor_class, const FGameplayTag gameplay_tag ) const
 {
     const auto * existing_actors = Registry.Find( actor_class );
 
@@ -44,7 +44,7 @@ AActor * UGBFWorldActorRegistry::GetActorFromClassWithTag( UClass * actor_class,
     return nullptr;
 }
 
-bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplayTag & tag )
+bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplayTag tag )
 {
     if ( actor == nullptr )
     {
@@ -67,7 +67,7 @@ bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplay
     return true;
 }
 
-bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGameplayTag & tag )
+bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGameplayTag tag )
 {
     if ( actor == nullptr )
     {
