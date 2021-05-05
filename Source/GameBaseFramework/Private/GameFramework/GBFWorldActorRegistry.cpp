@@ -46,12 +46,9 @@ AActor * UGBFWorldActorRegistry::GetActorFromClassWithTag( UClass * actor_class,
 
 bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplayTag tag )
 {
-    if ( actor == nullptr )
-    {
-        return false;
-    }
-
-    if ( !actor->HasAuthority() )
+    if ( actor == nullptr ||
+         !actor->HasAuthority() ||
+         Registry.Num() == 0 )
     {
         return false;
     }
@@ -69,18 +66,14 @@ bool UGBFWorldActorRegistry::AddActorToRegistry( AActor * actor, const FGameplay
 
 bool UGBFWorldActorRegistry::RemoveActorFromRegistry( AActor * actor, const FGameplayTag tag )
 {
-    if ( actor == nullptr )
-    {
-        return false;
-    }
-
-    if ( !actor->HasAuthority() )
+    if ( actor == nullptr ||
+         !actor->HasAuthority() ||
+         Registry.Num() == 0 )
     {
         return false;
     }
 
     auto * existing_actors = Registry.Find( actor->GetClass() );
-    TArray< AActor * > actors_to_remove;
 
     if ( existing_actors->Find( tag ) )
     {

@@ -4,12 +4,12 @@
 #include "GameplayTagContainer.h"
 
 #include <CoreMinimal.h>
-#include <Subsystems/GameInstanceSubsystem.h>
+#include <Subsystems/WorldSubsystem.h>
 
 #include "GBFWorldActorRegistry.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFWorldActorRegistry : public UGameInstanceSubsystem
+class GAMEBASEFRAMEWORK_API UGBFWorldActorRegistry : public UWorldSubsystem
 {
     GENERATED_BODY()
 
