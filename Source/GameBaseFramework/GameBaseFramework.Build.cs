@@ -27,7 +27,8 @@ namespace UnrealBuildTool.Rules
                     "UMG",
                     "OnlineSubsystem",
                     "OnlineSubsystemUtils",
-                    "DeveloperSettings"
+                    "DeveloperSettings",
+                    "CoreExtensions"
                 }
             );
         }

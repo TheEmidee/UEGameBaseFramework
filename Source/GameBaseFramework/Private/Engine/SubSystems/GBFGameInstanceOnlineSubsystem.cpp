@@ -2,7 +2,7 @@
 
 #include "Engine/GBFGameInstance.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
 
 #include <OnlineSubsystem.h>
 

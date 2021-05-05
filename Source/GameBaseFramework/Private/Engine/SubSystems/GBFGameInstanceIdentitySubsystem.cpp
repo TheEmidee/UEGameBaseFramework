@@ -7,7 +7,7 @@
 #include "Engine/SubSystems/GBFGameInstanceOnlineSubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
 
 #include <Engine/GameInstance.h>
 #include <Engine/LocalPlayer.h>

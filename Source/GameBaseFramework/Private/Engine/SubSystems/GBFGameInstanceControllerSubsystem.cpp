@@ -5,7 +5,7 @@
 #include "Engine/GBFLocalPlayer.h"
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
 
 #include <Engine/LocalPlayer.h>
 #include <Misc/CoreDelegates.h>

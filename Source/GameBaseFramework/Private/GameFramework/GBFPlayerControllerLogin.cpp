@@ -3,7 +3,7 @@
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GameFramework/GBFGameModeLogin.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
 
 #include <Framework/Application/SlateApplication.h>
 #include <OnlineSubsystem.h>
