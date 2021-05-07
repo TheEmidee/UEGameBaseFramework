@@ -1,7 +1,8 @@
 #include "Engine/GBFLocalPlayer.h"
 
 #include "GameFramework/GBFSaveGame.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
+#include "Log/CoreExtLog.h"
 
 #include <Framework/Application/SlateApplication.h>
 #include <Interfaces/OnlineAchievementsInterface.h>

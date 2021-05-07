@@ -11,8 +11,8 @@
 #include "GameBaseFrameworkSettings.h"
 #include "GameFramework/GBFGameModeBase.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "Log/GBFLog.h"
 #include "Online/GBFOnlineSessionClient.h"
+#include "GBFLog.h"
 
 #include <Engine/AssetManager.h>
 #include <Kismet/GameplayStatics.h>

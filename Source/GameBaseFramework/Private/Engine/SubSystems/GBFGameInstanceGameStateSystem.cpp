@@ -1,8 +1,7 @@
 #include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 
-#include "BlueprintLibraries/GBFHelperBlueprintLibrary.h"
 #include "Engine/GBFGameState.h"
-#include "Log/GBFLog.h"
+#include "GBFLog.h"
 
 #include <Engine/AssetManager.h>
 #include <Engine/GameInstance.h>
