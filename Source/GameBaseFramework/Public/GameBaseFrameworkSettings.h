@@ -95,7 +95,7 @@ public:
     TArray< FString > SubLevelSuffixes;
 
     UPROPERTY( Config, EditDefaultsOnly, Category = "WorldActorRegistry" )
-    uint8 EnableWorldActorRegistry : 1;
+    uint8 bEnableWorldActorRegistry : 1;
 
 protected:
 #if WITH_EDITOR
