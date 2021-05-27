@@ -29,6 +29,7 @@ namespace UnrealBuildTool.Rules
                     "OnlineSubsystem",
                     "OnlineSubsystemUtils",
                     "DeveloperSettings",
+                    "GameplayTags",
                     "CoreExtensions"
                 }
             );

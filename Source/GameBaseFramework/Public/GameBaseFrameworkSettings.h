@@ -94,6 +94,9 @@ public:
     UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
     TArray< FString > SubLevelSuffixes;
 
+    UPROPERTY( Config, EditDefaultsOnly, Category = "WorldActorRegistry" )
+    uint8 bEnableWorldActorRegistry : 1;
+
 protected:
 #if WITH_EDITOR
     static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
