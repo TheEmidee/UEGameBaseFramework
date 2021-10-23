@@ -47,7 +47,7 @@ public:
     void ShowMessageThenGotoMainMenuState( const FText & title, const FText & content );
     void HandleSignInChangeMessaging();
     void RemoveSplitScreenPlayers();
-    void RemoveExistingLocalPlayer( ULocalPlayer * local_player );
+    void RemoveExistingLocalPlayer( const TObjectPtr<ULocalPlayer> & local_player );
 
     TSubclassOf< UOnlineSession > GetOnlineSessionClass() override;
 
