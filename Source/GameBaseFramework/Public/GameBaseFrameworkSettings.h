@@ -97,6 +97,9 @@ public:
     UPROPERTY( Config, EditDefaultsOnly, Category = "WorldActorRegistry" )
     uint8 bEnableWorldActorRegistry : 1;
 
+    UPROPERTY( Config, EditDefaultsOnly, Category = "GameState" )
+    FString PlayableMapsPath;
+
 protected:
 #if WITH_EDITOR
     static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
