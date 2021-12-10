@@ -37,14 +37,3 @@ void UGBFOnlineSessionClient::OnSessionUserInviteAccepted( const bool was_succes
         game_instance->GetSubsystem< UGBFGameInstanceSessionSubsystem >()->SetPendingInvite( pending_invite );
     }
 }
-
-void UGBFOnlineSessionClient::OnPlayTogetherEventReceived( const int32 user_index, const TArray< TSharedPtr< const FUniqueNetId > > user_id_list )
-{
-    if ( auto * game_instance = Cast< UGBFGameInstance >( GetGameInstance() ) )
-    {
-        if ( auto * sub_system = game_instance->GetSubsystem< UGBFGameInstanceSessionSubsystem >() )
-        {
-            sub_system->OnPlayTogetherEventReceived( user_index, user_id_list );
-        }
-    }
-}

@@ -61,7 +61,6 @@ public:
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnSessionPrivilegeTaskStartedDelegate, ULocalPlayer *, local_player );
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnSessionPrivilegeTaskEndedDelegate, ULocalPlayer *, local_player );
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnSessionPrivilegeTaskFailedDelegate, ULocalPlayer *, local_player, FText, error_text );
-    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnPlayTogetherEventReceivedDelegate );
 
     EGBFOnlineMode GetOnlineMode() const;
 
@@ -73,7 +72,6 @@ public:
     bool FindSessions( ULocalPlayer * player_owner, bool is_dedicated_server, bool is_lan_match );
     void HandlePendingSessionInvite();
     void TravelToSession( FName session_name );
-    void OnPlayTogetherEventReceived( int32 user_index, const TArray< TSharedPtr< const FUniqueNetId > > & user_id_list );
     bool HostQuickSession( ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings );
     bool HostGame( ULocalPlayer * local_player, const FString & game_type, const FString & travel_url );
 
@@ -121,9 +119,6 @@ private:
 
     UPROPERTY( BlueprintAssignable )
     FOnSessionPrivilegeTaskFailedDelegate OnSessionPrivilegeTaskFailedDelegate;
-
-    UPROPERTY( BlueprintAssignable )
-    FOnPlayTogetherEventReceivedDelegate OnPlayTogetherEventReceivedDelegate;
 
     FOnEndSessionCompleteDelegate OnEndSessionCompleteDelegate;
     EGBFOnlineMode OnlineMode;

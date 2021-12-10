@@ -173,40 +173,6 @@ void UGBFGameInstanceSessionSubsystem::TravelToSession( const FName session_name
     InternalTravelToSession( session_name );
 }
 
-void UGBFGameInstanceSessionSubsystem::OnPlayTogetherEventReceived( const int32 user_index, const TArray< TSharedPtr< const FUniqueNetId > > & user_id_list )
-{
-    PlayTogetherInfo = FGBFSessionPlayTogetherInfo( user_index, user_id_list );
-
-    const auto * const oss = Online::GetSubsystem( GetWorld() );
-    check( oss );
-
-    const auto session_interface_ptr = oss->GetSessionInterface();
-    check( session_interface_ptr.IsValid() );
-
-    // If we have available slots to accomodate the whole party in our current sessions, we should send invites to the existing one
-    // instead of a new one according to Sony's best practices.
-    const auto * session = session_interface_ptr->GetNamedSession( NAME_GameSession );
-    auto * game_state_system = GetSubsystem< UGBFGameInstanceGameStateSystem >();
-
-    if ( session != nullptr && session->NumOpenPrivateConnections + session->NumOpenPublicConnections >= user_id_list.Num() )
-    {
-        SendPlayTogetherInvites();
-    }
-    // Always handle Play Together in the main menu since the player has session customization options.
-    else if ( game_state_system->IsOnMainMenuState() )
-    {
-        OnPlayTogetherEventReceivedDelegate.Broadcast();
-    }
-    else if ( game_state_system->IsOnWelcomeScreenState() )
-    {
-        StartOnlinePrivilegeTask( IOnlineIdentity::FOnGetUserPrivilegeCompleteDelegate::CreateUObject( this, &UGBFGameInstanceSessionSubsystem::OnUserCanPlayTogether ), EUserPrivileges::CanPlayOnline, PendingInvite.UserId );
-    }
-    else
-    {
-        game_state_system->GoToMainMenuState();
-    }
-}
-
 bool UGBFGameInstanceSessionSubsystem::HostQuickSession( ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings )
 {
     // This function is different from BeginHostingQuickMatch in that it creates a session and then starts a quick match,
