@@ -2,8 +2,6 @@
 
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
-#include <GameFramework/GameModeBase.h>
-
 AGBFTriggerBox::AGBFTriggerBox()
 {
     TriggerManagerComponent = CreateDefaultSubobject< UGBFTriggerManagerComponent >( TEXT( "TriggerManagerComponent" ) );
