@@ -103,7 +103,10 @@ void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
         ActorsWhichActivatedTrigger.AddUnique( actor );
     }
 
-    TryExecuteDelegate( overlapped_actors[ 0 ] );
+    if ( overlapped_actors.Num() > 0 )
+    {
+        TryExecuteDelegate( overlapped_actors[ 0 ] );
+    }
 }
 
 void UGBFTriggerManagerComponent::Deactivate()
