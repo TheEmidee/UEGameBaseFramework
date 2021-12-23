@@ -2,8 +2,19 @@
 
 #include <Net/UnrealNetwork.h>
 
+AGBFActivatableActor::AGBFActivatableActor()
+{
+    bActivated = false;
+    bAllowActivationOnClients = false;
+}
+
 void AGBFActivatableActor::Activate()
 {
+    if ( !HasAuthority() )
+    {
+        return;
+    }
+
     if ( bActivated )
     {
         return;
@@ -16,6 +27,11 @@ void AGBFActivatableActor::Activate()
 
 void AGBFActivatableActor::Deactivate()
 {
+    if ( !HasAuthority() )
+    {
+        return;
+    }
+
     if ( !bActivated )
     {
         return;
@@ -35,6 +51,11 @@ void AGBFActivatableActor::GetLifetimeReplicatedProps( TArray< FLifetimeProperty
 
 void AGBFActivatableActor::OnRep_Activated()
 {
+    if ( !bAllowActivationOnClients )
+    {
+        return;
+    }
+
     if ( bActivated )
     {
         ReceiveActivate();

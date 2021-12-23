@@ -10,6 +10,8 @@ class GAMEBASEFRAMEWORK_API AGBFActivatableActor : public AActor
     GENERATED_BODY()
 
 public:
+    AGBFActivatableActor();
+
     UFUNCTION( BlueprintCallable )
     void Activate();
 
@@ -31,4 +33,7 @@ private:
 
     UPROPERTY( ReplicatedUsing = "OnRep_Activated" )
     uint8 bActivated : 1;
+
+    UPROPERTY( EditDefaultsOnly )
+    uint8 bAllowActivationOnClients : 1;
 };
