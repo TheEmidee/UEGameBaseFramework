@@ -22,7 +22,7 @@ void AGBFActivatableActor::Activate()
 
     bActivated = true;
 
-    ReceiveActivate();
+    OnRep_Activated();
 }
 
 void AGBFActivatableActor::Deactivate()
@@ -39,23 +39,25 @@ void AGBFActivatableActor::Deactivate()
 
     bActivated = false;
 
-    ReceiveDeactivate();
+    OnRep_Activated();
+}
+
+void AGBFActivatableActor::PreReplication( IRepChangedPropertyTracker & ChangedPropertyTracker )
+{
+    Super::PreReplication( ChangedPropertyTracker );
+
+    DOREPLIFETIME_ACTIVE_OVERRIDE( AGBFActivatableActor, bActivated, bAllowActivationOnClients );
 }
 
 void AGBFActivatableActor::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
 {
     Super::GetLifetimeReplicatedProps( OutLifetimeProps );
 
-    DOREPLIFETIME( AGBFActivatableActor, bActivated );
+    DOREPLIFETIME_CONDITION( AGBFActivatableActor, bActivated, COND_Custom );
 }
 
 void AGBFActivatableActor::OnRep_Activated()
 {
-    if ( !bAllowActivationOnClients )
-    {
-        return;
-    }
-
     if ( bActivated )
     {
         ReceiveActivate();

@@ -18,6 +18,8 @@ public:
     UFUNCTION( BlueprintCallable )
     void Deactivate();
 
+    void PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker) override;
+
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
 protected:
