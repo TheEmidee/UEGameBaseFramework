@@ -1,11 +1,14 @@
 #include "Gameplay/GBFTriggerBox.h"
 
+#include "Components/ShapeComponent.h"
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
 AGBFTriggerBox::AGBFTriggerBox()
 {
     TriggerManagerComponent = CreateDefaultSubobject< UGBFTriggerManagerComponent >( TEXT( "TriggerManagerComponent" ) );
     TriggerManagerComponent->SetObservedCollisionComponent( GetCollisionComponent() );
+
+    GetCollisionComponent()->bHiddenInGame = true;
 }
 
 void AGBFTriggerBox::PostInitializeComponents()
