@@ -1,7 +1,8 @@
 #include "Gameplay/GBFTriggerBox.h"
 
-#include "Components/ShapeComponent.h"
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
+
+#include <Components/ShapeComponent.h>
 
 AGBFTriggerBox::AGBFTriggerBox()
 {
