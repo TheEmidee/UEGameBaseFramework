@@ -30,7 +30,8 @@ namespace UnrealBuildTool.Rules
                     "OnlineSubsystemUtils",
                     "DeveloperSettings",
                     "GameplayTags",
-                    "CoreExtensions"
+                    "CoreExtensions",
+                    "AIModule"
                 }
             );
         }
