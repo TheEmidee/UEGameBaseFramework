@@ -19,7 +19,7 @@
     {
       "Name": "GameBaseFramework",
       "Type": "Runtime",
-      "LoadingPhase": "Default",
+      "LoadingPhase": "PreDefault",
       "WhitelistPlatforms": [ "Win64", "Win32", "PS4", "XboxOne", "Mac" ]
     },
     {
