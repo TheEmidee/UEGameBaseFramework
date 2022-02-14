@@ -18,7 +18,7 @@ public:
     UFUNCTION( BlueprintCallable )
     void Deactivate();
 
-    void PreReplication(IRepChangedPropertyTracker & ChangedPropertyTracker) override;
+    void PreReplication( IRepChangedPropertyTracker & ChangedPropertyTracker ) override;
 
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
@@ -33,7 +33,7 @@ private:
     UFUNCTION()
     void OnRep_Activated();
 
-    UPROPERTY( ReplicatedUsing = "OnRep_Activated" )
+    UPROPERTY( BlueprintReadOnly, ReplicatedUsing = "OnRep_Activated", meta = ( AllowPrivateAccess = true ) )
     uint8 bActivated : 1;
 
     UPROPERTY( EditDefaultsOnly )
