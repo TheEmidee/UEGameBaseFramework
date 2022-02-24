@@ -59,6 +59,14 @@ protected:
     int GetTriggerActorsCount( const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger ) const override;
 };
 
+UENUM()
+enum class EGBFTriggerManagerDeactivationType : uint8
+{
+    Never,
+    WhenTriggered,
+    WhenTriggeredAndNoActorsAreInTrigger
+};
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnTriggerActivatedDelegate, AActor *, Activator );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnActorInsideTriggerCountChangedDelegate, int, ActorCount );
 
@@ -132,6 +140,9 @@ private:
     // to be in the box before being able to trigger again
     UPROPERTY( EditAnywhere )
     uint8 bWaitNoOverlapToTriggerAgainWhenReset : 1;
+
+    UPROPERTY( EditAnywhere )
+    EGBFTriggerManagerDeactivationType DeactivationType;
 
     UPROPERTY( VisibleInstanceOnly )
     uint8 bTriggered : 1;
