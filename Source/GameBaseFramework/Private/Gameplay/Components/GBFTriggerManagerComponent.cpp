@@ -68,6 +68,7 @@ UGBFTriggerManagerComponent::UGBFTriggerManagerComponent()
     ActivationPolicyClass = UGBFTriggerManagerActivationPolicy_FirstActor::StaticClass();
     DetectedActorClass = ACharacter::StaticClass();
     bTriggered = false;
+    bWaitNoOverlapToTriggerAgainWhenReset = true;
     bTriggerOnce = true;
 }
 
@@ -87,25 +88,34 @@ void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
         return;
     }
 
+    auto can_check_overlaps = true;
+
     if ( reset )
     {
+        if ( bWaitNoOverlapToTriggerAgainWhenReset && bTriggered )
+        {
+            can_check_overlaps = false;
+        }
         bTriggered = false;
     }
 
     ToggleCollision( true );
 
-    TArray< AActor * > overlapped_actors;
-    ObservedCollisionComponent->GetOverlappingActors( overlapped_actors, DetectedActorClass );
-
-    for ( auto * actor : overlapped_actors )
+    if ( can_check_overlaps )
     {
-        ActorsInTrigger.AddUnique( actor );
-        ActorsWhichActivatedTrigger.AddUnique( actor );
-    }
+        TArray< AActor * > overlapped_actors;
+        ObservedCollisionComponent->GetOverlappingActors( overlapped_actors, DetectedActorClass );
 
-    if ( overlapped_actors.Num() > 0 )
-    {
-        TryExecuteDelegate( overlapped_actors[ 0 ] );
+        for ( auto * actor : overlapped_actors )
+        {
+            ActorsInTrigger.AddUnique( actor );
+            ActorsWhichActivatedTrigger.AddUnique( actor );
+        }
+
+        if ( overlapped_actors.Num() > 0 )
+        {
+            TryExecuteDelegate( overlapped_actors[ 0 ] );
+        }
     }
 }
 
