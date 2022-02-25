@@ -69,6 +69,7 @@ UGBFTriggerManagerComponent::UGBFTriggerManagerComponent()
     DetectedActorClass = ACharacter::StaticClass();
     bTriggered = false;
     bWaitNoOverlapToTriggerAgainWhenReset = true;
+    DeactivationType = EGBFTriggerManagerDeactivationType::Never;
     bTriggerOnce = true;
 }
 
@@ -205,6 +206,11 @@ void UGBFTriggerManagerComponent::TryExecuteDelegate( AActor * activator )
         {
             bTriggered = true;
             OnTriggerActivatedDelegate.Broadcast( activator );
+
+            if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggered )
+            {
+                Deactivate();
+            }
         }
     }
 }
@@ -232,7 +238,11 @@ void UGBFTriggerManagerComponent::OnObservedComponentEndOverlap( UPrimitiveCompo
     if ( other_actor->IsA( DetectedActorClass ) )
     {
         ActorsInTrigger.Remove( other_actor );
-
         OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
+
+        if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggeredAndNoActorsAreInTrigger && ActorsInTrigger.Num() == 0 )
+        {
+            Deactivate();
+        }
     }
 }
