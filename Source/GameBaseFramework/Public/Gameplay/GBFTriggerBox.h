@@ -17,6 +17,12 @@ public:
 
     void PostInitializeComponents() override;
 
+    UFUNCTION( NetMulticast, reliable, BlueprintCallable )
+    void Multicast_ActivateTrigger( bool reset );
+
+    UFUNCTION( NetMulticast, reliable, BlueprintCallable )
+    void Multicast_DeactivateTrigger();
+
 protected:
     UFUNCTION( BlueprintNativeEvent )
     void OnTriggerBoxActivated( AActor * activator );

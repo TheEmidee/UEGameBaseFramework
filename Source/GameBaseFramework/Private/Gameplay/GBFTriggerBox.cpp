@@ -30,6 +30,16 @@ void AGBFTriggerBox::PostInitializeComponents()
     TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &AGBFTriggerBox::OnTriggerBoxActivated );
 }
 
+void AGBFTriggerBox::Multicast_ActivateTrigger_Implementation( const bool reset )
+{
+    TriggerManagerComponent->Activate( reset );
+}
+
+void AGBFTriggerBox::Multicast_DeactivateTrigger_Implementation()
+{
+    TriggerManagerComponent->Deactivate();
+}
+
 void AGBFTriggerBox::OnTriggerBoxActivated_Implementation( AActor * /*activator*/ )
 {
 }
