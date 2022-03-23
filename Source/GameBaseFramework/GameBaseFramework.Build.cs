@@ -31,7 +31,8 @@ namespace UnrealBuildTool.Rules
                     "DeveloperSettings",
                     "GameplayTags",
                     "CoreExtensions",
-                    "AIModule"
+                    "AIModule",
+                    "ModularGameplayActors"
                 }
             );
         }
