@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameFramework/PlayerController.h"
 #include "Input/GBFInputTypes.h"
 #include "ModularPlayerController.h"
 
