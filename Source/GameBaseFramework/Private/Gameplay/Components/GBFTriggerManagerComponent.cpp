@@ -59,13 +59,24 @@ int UGBFTriggerManagerActivationPolicy_AllActorsInside::GetTriggerActorsCount( c
     return actors_in_trigger.Num();
 }
 
+int UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+{
+    const int all_actors = Super::GetExpectedActorsCount( world_context, detected_actor_class );
+    return all_actors * Percentage;
+}
+
+int UGBFTriggerManagerActivationPolicy_ExactActorCountInside::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+{
+    return ExactCount;
+}
+
 UGBFTriggerManagerComponent::UGBFTriggerManagerComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
 
     bAutoActivate = true;
 
-    ActivationPolicyClass = UGBFTriggerManagerActivationPolicy_FirstActor::StaticClass();
+    ActivationPolicyClass = UGBFTriggerManagerActivationPolicy_FirstActor::StaticClass()->GetDefaultObject< UGBFTriggerManagerActivationPolicy >();
     DetectedActorClass = ACharacter::StaticClass();
     bTriggered = false;
     bWaitNoOverlapToTriggerAgainWhenReset = true;
@@ -200,7 +211,7 @@ void UGBFTriggerManagerComponent::TryExecuteDelegate( AActor * activator )
 
     if ( ensure( ActivationPolicyClass != nullptr ) )
     {
-        const auto can_broadcast_trigger = Cast< UGBFTriggerManagerActivationPolicy >( ActivationPolicyClass->GetDefaultObject() )->CanActivateTrigger( this, ActorsInTrigger, ActorsWhichActivatedTrigger, DetectedActorClass );
+        const auto can_broadcast_trigger = ActivationPolicyClass->CanActivateTrigger( this, ActorsInTrigger, ActorsWhichActivatedTrigger, DetectedActorClass );
 
         if ( can_broadcast_trigger )
         {
