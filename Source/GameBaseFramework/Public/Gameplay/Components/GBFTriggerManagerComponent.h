@@ -101,6 +101,7 @@ public:
     UGBFTriggerManagerComponent();
 
     FSWOnTriggerActivatedDelegate & OnTriggerBoxActivated();
+    FSWOnActorInsideTriggerCountChangedDelegate & OnActorInsideTriggerCountChanged();
 
     UFUNCTION( BlueprintCallable )
     void SetObservedCollisionComponent( UShapeComponent * observed_component );
@@ -110,6 +111,8 @@ public:
 
     void Activate( bool reset = false ) override;
     void Deactivate() override;
+
+    const TArray< AActor * > & GetActorsInTrigger() const;
 
 private:
     bool CanObserveTriggerComponent() const;
@@ -170,9 +173,19 @@ private:
     uint8 bTriggered : 1;
 };
 
+FORCEINLINE const TArray< AActor * > & UGBFTriggerManagerComponent::GetActorsInTrigger() const
+{
+    return ActorsInTrigger;
+}
+
 FORCEINLINE FSWOnTriggerActivatedDelegate & UGBFTriggerManagerComponent::OnTriggerBoxActivated()
 {
     return OnTriggerActivatedDelegate;
+}
+
+FORCEINLINE FSWOnActorInsideTriggerCountChangedDelegate & UGBFTriggerManagerComponent::OnActorInsideTriggerCountChanged()
+{
+    return OnActorInsideTriggerCountChangedDelegate;
 }
 
 FORCEINLINE bool UGBFTriggerManagerComponent::DoesTriggerHaveActorsInside() const
