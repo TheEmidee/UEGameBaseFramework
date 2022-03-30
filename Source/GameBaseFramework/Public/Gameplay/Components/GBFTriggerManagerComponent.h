@@ -65,7 +65,7 @@ protected:
     int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
 
 private:
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
     float Percentage;
 };
 
@@ -77,7 +77,7 @@ protected:
     int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
 
 private:
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
     int ExactCount;
 };
 
@@ -127,7 +127,7 @@ private:
     UPROPERTY( EditAnywhere )
     TSubclassOf< AActor > DetectedActorClass;
 
-    UPROPERTY( EditAnywhere, Instanced )
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, Instanced, meta = ( AllowPrivateAccess ) )
     UGBFTriggerManagerActivationPolicy * ActivationPolicyClass;
 
     UPROPERTY()
