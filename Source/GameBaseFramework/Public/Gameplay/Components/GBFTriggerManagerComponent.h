@@ -8,7 +8,7 @@
 class UShapeComponent;
 class ASWCharacterPlayerBase;
 
-UCLASS( Blueprintable, HideDropdown )
+UCLASS( Blueprintable, HideDropdown, EditInlineNew )
 class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy : public UObject
 {
     GENERATED_BODY()
@@ -37,9 +37,7 @@ public:
 
 protected:
     virtual int GetTriggerActorsCount( const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger ) const PURE_VIRTUAL( UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetTriggerActorsCount, return 0; );
-
-private:
-    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const;
+    virtual int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const;
 };
 
 UCLASS( Blueprintable )
@@ -57,6 +55,30 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_AllActorsInside :
     GENERATED_BODY()
 protected:
     int GetTriggerActorsCount( const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger ) const override;
+};
+
+UCLASS( Blueprintable )
+class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside : public UGBFTriggerManagerActivationPolicy_AllActorsInside
+{
+    GENERATED_BODY()
+protected:
+    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
+
+private:
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
+    float Percentage;
+};
+
+UCLASS( Blueprintable )
+class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_ExactActorCountInside : public UGBFTriggerManagerActivationPolicy_AllActorsInside
+{
+    GENERATED_BODY()
+protected:
+    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
+
+private:
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
+    int ExactCount;
 };
 
 UENUM()
@@ -79,12 +101,16 @@ public:
     UGBFTriggerManagerComponent();
 
     FSWOnTriggerActivatedDelegate & OnTriggerBoxActivated();
+    FSWOnActorInsideTriggerCountChangedDelegate & OnActorInsideTriggerCountChanged();
 
     UFUNCTION( BlueprintCallable )
     void SetObservedCollisionComponent( UShapeComponent * observed_component );
 
     UFUNCTION( BlueprintPure )
     bool DoesTriggerHaveActorsInside() const;
+
+    UFUNCTION( BlueprintPure )
+    const TArray< AActor * > & GetActorsInTrigger() const;
 
     void Activate( bool reset = false ) override;
     void Deactivate() override;
@@ -105,8 +131,8 @@ private:
     UPROPERTY( EditAnywhere )
     TSubclassOf< AActor > DetectedActorClass;
 
-    UPROPERTY( EditAnywhere )
-    TSubclassOf< UGBFTriggerManagerActivationPolicy > ActivationPolicyClass;
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, Instanced, meta = ( AllowPrivateAccess ) )
+    UGBFTriggerManagerActivationPolicy * ActivationPolicyClass;
 
     UPROPERTY()
     TArray< AActor * > ActorsInTrigger;
@@ -153,7 +179,17 @@ FORCEINLINE FSWOnTriggerActivatedDelegate & UGBFTriggerManagerComponent::OnTrigg
     return OnTriggerActivatedDelegate;
 }
 
+FORCEINLINE FSWOnActorInsideTriggerCountChangedDelegate & UGBFTriggerManagerComponent::OnActorInsideTriggerCountChanged()
+{
+    return OnActorInsideTriggerCountChangedDelegate;
+}
+
 FORCEINLINE bool UGBFTriggerManagerComponent::DoesTriggerHaveActorsInside() const
 {
     return ActorsInTrigger.Num() > 0;
+}
+
+FORCEINLINE const TArray< AActor * > & UGBFTriggerManagerComponent::GetActorsInTrigger() const
+{
+    return ActorsInTrigger;
 }
