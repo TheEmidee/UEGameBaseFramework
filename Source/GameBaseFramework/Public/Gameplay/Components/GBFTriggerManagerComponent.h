@@ -16,6 +16,8 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy : public UObject
 public:
     UFUNCTION( BlueprintNativeEvent )
     bool CanActivateTrigger( UObject * world_context, const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger, TSubclassOf< AActor > detected_actor_class ) const;
+
+    virtual int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const;
 };
 
 UCLASS()
@@ -34,10 +36,10 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_MultiActorsBase :
 
 public:
     bool CanActivateTrigger_Implementation( UObject * world_context, const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger, TSubclassOf< AActor > detected_actor_class ) const override;
+    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
 
 protected:
     virtual int GetTriggerActorsCount( const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger ) const PURE_VIRTUAL( UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetTriggerActorsCount, return 0; );
-    virtual int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const;
 };
 
 UCLASS( Blueprintable )
@@ -61,7 +63,7 @@ UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside : public UGBFTriggerManagerActivationPolicy_AllActorsInside
 {
     GENERATED_BODY()
-protected:
+public:
     int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
 
 private:
@@ -73,7 +75,7 @@ UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_ExactActorCountInside : public UGBFTriggerManagerActivationPolicy_AllActorsInside
 {
     GENERATED_BODY()
-protected:
+public:
     int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
 
 private:
@@ -111,6 +113,9 @@ public:
 
     UFUNCTION( BlueprintPure )
     const TArray< AActor * > & GetActorsInTrigger() const;
+
+    UFUNCTION( BlueprintPure )
+    int GetExpectedActorCount() const;
 
     void Activate( bool reset = false ) override;
     void Deactivate() override;

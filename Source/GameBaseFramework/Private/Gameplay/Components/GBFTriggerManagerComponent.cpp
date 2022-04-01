@@ -11,6 +11,11 @@ bool UGBFTriggerManagerActivationPolicy::CanActivateTrigger_Implementation( UObj
     return false;
 }
 
+int UGBFTriggerManagerActivationPolicy::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+{
+    return 1;
+}
+
 bool UGBFTriggerManagerActivationPolicy_FirstActor::CanActivateTrigger_Implementation( UObject * /*world_context*/, const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & /*actors_which_activated_trigger*/, TSubclassOf< AActor > /*detected_actor_class*/ ) const
 {
     return actors_in_trigger.Num() > 0;
@@ -34,7 +39,13 @@ int UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetExpectedActorsCount( 
 {
     if ( detected_actor_class->IsChildOf( ACharacter::StaticClass() ) )
     {
-        return world_context->GetWorld()->GetAuthGameMode()->GetNumPlayers();
+        if ( const auto * world = world_context->GetWorld() )
+        {
+            if ( auto * gm = world->GetAuthGameMode() )
+            {
+                return gm->GetNumPlayers();
+            }
+        }
     }
 
     auto count = 0;
@@ -89,6 +100,16 @@ void UGBFTriggerManagerComponent::SetObservedCollisionComponent( UShapeComponent
     ObservedCollisionComponent = observed_component;
 
     RegisterToObservedCollisionComponentEvents();
+}
+
+int UGBFTriggerManagerComponent::GetExpectedActorCount() const
+{
+    if ( ActivationPolicyClass == nullptr )
+    {
+        return 0;
+    }
+
+    return ActivationPolicyClass->GetExpectedActorsCount( this, DetectedActorClass );
 }
 
 void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
