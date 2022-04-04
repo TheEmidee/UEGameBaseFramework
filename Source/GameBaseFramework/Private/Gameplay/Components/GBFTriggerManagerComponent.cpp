@@ -11,7 +11,7 @@ bool UGBFTriggerManagerActivationPolicy::CanActivateTrigger_Implementation( UObj
     return false;
 }
 
-int UGBFTriggerManagerActivationPolicy::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+int UGBFTriggerManagerActivationPolicy::GetExpectedActorsCount( const UObject * /*world_context*/, const TSubclassOf< AActor > & /*detected_actor_class*/ ) const
 {
     return 1;
 }
@@ -35,7 +35,7 @@ bool UGBFTriggerManagerActivationPolicy_MultiActorsBase::CanActivateTrigger_Impl
     return false;
 }
 
-int UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > detected_actor_class ) const
+int UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const
 {
     if ( detected_actor_class->IsChildOf( ACharacter::StaticClass() ) )
     {
@@ -70,13 +70,13 @@ int UGBFTriggerManagerActivationPolicy_AllActorsInside::GetTriggerActorsCount( c
     return actors_in_trigger.Num();
 }
 
-int UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+int UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside::GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const
 {
     const int all_actors = Super::GetExpectedActorsCount( world_context, detected_actor_class );
     return all_actors * Percentage;
 }
 
-int UGBFTriggerManagerActivationPolicy_ExactActorCountInside::GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const
+int UGBFTriggerManagerActivationPolicy_ExactActorCountInside::GetExpectedActorsCount( const UObject * /*world_context*/, const TSubclassOf< AActor > & /*detected_actor_class*/ ) const
 {
     return ExactCount;
 }

@@ -17,7 +17,7 @@ public:
     UFUNCTION( BlueprintNativeEvent )
     bool CanActivateTrigger( UObject * world_context, const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger, TSubclassOf< AActor > detected_actor_class ) const;
 
-    virtual int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const;
+    virtual int GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const;
 };
 
 UCLASS()
@@ -36,7 +36,7 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_MultiActorsBase :
 
 public:
     bool CanActivateTrigger_Implementation( UObject * world_context, const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger, TSubclassOf< AActor > detected_actor_class ) const override;
-    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
+    int GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const override;
 
 protected:
     virtual int GetTriggerActorsCount( const TArray< AActor * > & actors_in_trigger, const TArray< AActor * > & actors_which_activated_trigger ) const PURE_VIRTUAL( UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetTriggerActorsCount, return 0; );
@@ -64,7 +64,7 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_PercentageOfActor
 {
     GENERATED_BODY()
 public:
-    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
+    int GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const override;
 
 private:
     UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
@@ -76,7 +76,7 @@ class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActivationPolicy_ExactActorCountIn
 {
     GENERATED_BODY()
 public:
-    int GetExpectedActorsCount( const UObject * world_context, TSubclassOf< AActor > detected_actor_class ) const override;
+    int GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const override;
 
 private:
     UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
