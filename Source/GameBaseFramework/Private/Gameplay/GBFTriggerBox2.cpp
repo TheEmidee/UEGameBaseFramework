@@ -18,6 +18,7 @@ AGBFTriggerBox2::AGBFTriggerBox2()
 
     BoxComponent = CreateDefaultSubobject< UBoxComponent >( TEXT( "CollisionComp" ) );
     BoxComponent->SetupAttachment( RootSceneComponent );
+    BoxComponent->SetCollisionProfileName( "Trigger" );
     BoxComponent->bHiddenInGame = true;
 
     TriggerManagerComponent = CreateDefaultSubobject< UGBFTriggerManagerComponent >( TEXT( "TriggerManagerComponent" ) );
