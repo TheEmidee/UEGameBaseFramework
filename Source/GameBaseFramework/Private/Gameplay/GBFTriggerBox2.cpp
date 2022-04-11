@@ -17,14 +17,11 @@ AGBFTriggerBox2::AGBFTriggerBox2()
     RootComponent = RootSceneComponent;
 
     BoxComponent = CreateDefaultSubobject< UBoxComponent >( TEXT( "CollisionComp" ) );
-
     BoxComponent->SetupAttachment( RootSceneComponent );
-    BoxComponent->bHiddenInGame = false;
+    BoxComponent->bHiddenInGame = true;
 
     TriggerManagerComponent = CreateDefaultSubobject< UGBFTriggerManagerComponent >( TEXT( "TriggerManagerComponent" ) );
     TriggerManagerComponent->SetObservedCollisionComponent( BoxComponent );
-
-    BoxComponent->bHiddenInGame = true;
 
 #if WITH_EDITORONLY_DATA
     SpriteComponent = CreateEditorOnlyDefaultSubobject< UBillboardComponent >( TEXT( "Sprite" ) );
@@ -47,7 +44,7 @@ AGBFTriggerBox2::AGBFTriggerBox2()
 
         SpriteComponent->Sprite = ConstructorStatics.TriggerTextureObject.Get();
         SpriteComponent->SetRelativeScale3D( FVector( 0.5f, 0.5f, 0.5f ) );
-        SpriteComponent->bHiddenInGame = false;
+        SpriteComponent->bHiddenInGame = true;
         SpriteComponent->SpriteInfo.Category = ConstructorStatics.ID_Triggers;
         SpriteComponent->SpriteInfo.DisplayName = ConstructorStatics.NAME_Triggers;
         SpriteComponent->bIsScreenSizeScaled = true;
