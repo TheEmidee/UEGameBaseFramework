@@ -14,12 +14,14 @@ AGBFTriggerBox::AGBFTriggerBox()
     PrimaryActorTick.bCanEverTick = false;
 
     RootSceneComponent = CreateDefaultSubobject< USceneComponent >( TEXT( "RootComponent" ) );
+    RootSceneComponent->Mobility = EComponentMobility::Static;
     RootComponent = RootSceneComponent;
 
     BoxComponent = CreateDefaultSubobject< UBoxComponent >( TEXT( "CollisionComp" ) );
     BoxComponent->SetupAttachment( RootSceneComponent );
     BoxComponent->SetCollisionProfileName( "Trigger" );
     BoxComponent->bHiddenInGame = true;
+    BoxComponent->Mobility = EComponentMobility::Static;
 
     TriggerManagerComponent = CreateDefaultSubobject< UGBFTriggerManagerComponent >( TEXT( "TriggerManagerComponent" ) );
     TriggerManagerComponent->SetObservedCollisionComponent( BoxComponent );
