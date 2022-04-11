@@ -4,17 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "GBFTriggerBox2.generated.h"
+#include "GBFTriggerBox.generated.h"
 
 class UBoxComponent;
 class UGBFTriggerManagerComponent;
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFTriggerBox2 : public AActor
+class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	AGBFTriggerBox2();
+	AGBFTriggerBox();
 
 	void PostInitializeComponents() override;
 

@@ -1,4 +1,4 @@
-#include "Gameplay/GBFTriggerBox2.h"
+#include "Gameplay/GBFTriggerBox.h"
 
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
@@ -9,7 +9,7 @@
 #include <Components/BillboardComponent.h>
 #endif
 
-AGBFTriggerBox2::AGBFTriggerBox2()
+AGBFTriggerBox::AGBFTriggerBox()
 {
     PrimaryActorTick.bCanEverTick = false;
 
@@ -53,23 +53,23 @@ AGBFTriggerBox2::AGBFTriggerBox2()
 #endif
 }
 
-void AGBFTriggerBox2::PostInitializeComponents()
+void AGBFTriggerBox::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 
-    TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &AGBFTriggerBox2::OnTriggerBoxActivated );
+    TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &AGBFTriggerBox::OnTriggerBoxActivated );
 }
 
-void AGBFTriggerBox2::Multicast_ActivateTrigger_Implementation( const bool reset )
+void AGBFTriggerBox::Multicast_ActivateTrigger_Implementation( const bool reset )
 {
     TriggerManagerComponent->Activate( reset );
 }
 
-void AGBFTriggerBox2::Multicast_DeactivateTrigger_Implementation()
+void AGBFTriggerBox::Multicast_DeactivateTrigger_Implementation()
 {
     TriggerManagerComponent->Deactivate();
 }
 
-void AGBFTriggerBox2::OnTriggerBoxActivated_Implementation( AActor * /*activator*/ )
+void AGBFTriggerBox::OnTriggerBoxActivated_Implementation( AActor * /*activator*/ )
 {
 }
