@@ -161,6 +161,9 @@ void UGBFTriggerManagerComponent::Deactivate()
         return;
     }
 
+    ObservedCollisionComponent->OnComponentBeginOverlap.RemoveDynamic( this, &UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap );
+    ObservedCollisionComponent->OnComponentEndOverlap.RemoveDynamic( this, &UGBFTriggerManagerComponent::OnObservedComponentEndOverlap );
+
     bTriggered = false;
     ActorsInTrigger.Reset();
     ActorsWhichActivatedTrigger.Reset();
