@@ -67,7 +67,7 @@ public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
     AGBFGameSession * GetGameSession() const;
     void SetPendingInvite( const FGBFSessionPendingInvite & session_pending_invite );
-    bool JoinSession( ULocalPlayer * local_player, int32 session_index_in_search_results );
+    bool JoinSession( const ULocalPlayer * local_player, int32 session_index_in_search_results );
     bool JoinSession( const ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result );
     bool FindSessions( ULocalPlayer * player_owner, bool is_dedicated_server, bool is_lan_match );
     void HandlePendingSessionInvite();
