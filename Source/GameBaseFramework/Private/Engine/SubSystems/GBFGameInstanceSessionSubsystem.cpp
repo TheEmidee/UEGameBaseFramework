@@ -51,8 +51,10 @@ void UGBFGameInstanceSessionSubsystem::SetPendingInvite( const FGBFSessionPendin
     StartOnlinePrivilegeTask( delegate, EUserPrivileges::CanPlayOnline, PendingInvite.UserId );
 }
 
-bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player, const int32 session_index_in_search_results )
+bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_player, const int32 session_index_in_search_results )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+
     if ( auto * game_session = GetGameSession() )
     {
         AddNetworkFailureHandlers();
@@ -62,22 +64,26 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player,
         if ( game_session->JoinSession( local_player->GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, session_index_in_search_results ) )
         {
             // :TODO: Keep? If any error occured in the above, pending state would be set
-            //if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
+            // if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
             {
                 // Go ahead and go into loading state now
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
-                //ShowLoadingScreen();
+                // ShowLoadingScreen();
                 GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), true );
                 return true;
             }
         }
     }
 
+    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), false );
     return false;
 }
 
-bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result )
+bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+
     if ( auto * game_session = GetGameSession() )
     {
         AddNetworkFailureHandlers();
@@ -86,22 +92,26 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( ULocalPlayer * local_player,
         if ( game_session->JoinSession( local_player->GetPreferredUniqueNetId().GetUniqueNetId(), NAME_GameSession, search_result ) )
         {
             // :TODO: Keep? If any error occured in the above, pending state would be set
-            //if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
+            // if ( ( PendingState == CurrentState ) || ( PendingState == ShooterGameInstanceState::None ) )
             {
                 // Go ahead and go into loading state now
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
-                //ShowLoadingScreen();
+                // ShowLoadingScreen();
                 GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), true );
                 return true;
             }
         }
     }
 
+    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), false );
     return false;
 }
 
 bool UGBFGameInstanceSessionSubsystem::FindSessions( ULocalPlayer * player_owner, const bool is_dedicated_server, const bool is_lan_match )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+
     auto result = false;
 
     check( player_owner != nullptr );
@@ -173,7 +183,7 @@ void UGBFGameInstanceSessionSubsystem::TravelToSession( const FName session_name
     InternalTravelToSession( session_name );
 }
 
-bool UGBFGameInstanceSessionSubsystem::HostQuickSession( ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings )
+bool UGBFGameInstanceSessionSubsystem::HostQuickSession( const ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings )
 {
     // This function is different from BeginHostingQuickMatch in that it creates a session and then starts a quick match,
     // while BeginHostingQuickMatch assumes a session already exists
@@ -184,7 +194,7 @@ bool UGBFGameInstanceSessionSubsystem::HostQuickSession( ULocalPlayer & local_pl
         OnCreatePresenceSessionCompleteDelegateHandle = game_session->OnCreatePresenceSessionComplete().AddUObject( this, &UGBFGameInstanceSessionSubsystem::OnCreatePresenceSessionComplete );
 
         // :TODO:
-        TravelURL = ""; //GetQuickMatchUrl();
+        TravelURL = ""; // GetQuickMatchUrl();
 
         auto host_settings = session_settings;
 
@@ -212,8 +222,10 @@ bool UGBFGameInstanceSessionSubsystem::HostQuickSession( ULocalPlayer & local_pl
     return false;
 }
 
-bool UGBFGameInstanceSessionSubsystem::HostGame( ULocalPlayer * local_player, const FString & game_type, const FString & travel_url )
+bool UGBFGameInstanceSessionSubsystem::HostGame( const ULocalPlayer * local_player, const FString & game_type, const FString & travel_url )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) );
+
     auto * game_state_subsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
 
     if ( GetOnlineMode() == EGBFOnlineMode::Offline )
@@ -222,7 +234,7 @@ bool UGBFGameInstanceSessionSubsystem::HostGame( ULocalPlayer * local_player, co
         // Offline game, just go straight to map
         //
 
-        //ShowLoadingScreen();
+        // ShowLoadingScreen();
         game_state_subsystem->GoToInGameState();
 
         // Travel to the specified match URL
@@ -296,13 +308,13 @@ void UGBFGameInstanceSessionSubsystem::UpdateUsingMultiPlayerFeatures( const boo
 // ReSharper disable once CppMemberFunctionMayBeConst
 void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId & unique_net_id, const ESessionFailure::Type failure_type )
 {
-    UE_LOG( LogOnlineGame, Warning, TEXT( "UShooterGameInstance::HandleSessionFailure: %u" ), ( uint32 ) failure_type );
+    UE_LOG( LogOnlineGame, Warning, TEXT( "UGBFGameInstanceSessionSubsystem::HandleSessionFailure: %u" ), ( uint32 ) failure_type );
 
-#if 1 //GBF_CONSOLE_UI
+#if 1 // GBF_CONSOLE_UI
     // If we are not currently at (or heading to) the welcome screen then display a message on consoles
     if ( OnlineMode != EGBFOnlineMode::Offline && !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
-        UE_LOG( LogOnlineGame, Log, TEXT( "UShooterGameInstance::HandleSessionFailure: Going to main menu" ) );
+        UE_LOG( LogOnlineGame, Log, TEXT( "UGBFGameInstanceSessionSubsystem::HandleSessionFailure: Going to main menu" ) );
 
         // Display message on consoles
 #if PLATFORM_XBOXONE
@@ -330,7 +342,7 @@ void UGBFGameInstanceSessionSubsystem::CleanupSessionOnReturnToMenu()
 
     // end online game and then destroy it
     auto * online_sub = Online::GetSubsystem( GetWorld() );
-    auto sessions = ( online_sub != nullptr ) ? online_sub->GetSessionInterface() : nullptr;
+    const auto sessions = ( online_sub != nullptr ) ? online_sub->GetSessionInterface() : nullptr;
 
     if ( sessions.IsValid() )
     {
@@ -370,7 +382,7 @@ void UGBFGameInstanceSessionSubsystem::CleanupSessionOnReturnToMenu()
     if ( !pending_online_operation )
     {
         // :TODO:
-        //GEngine->HandleDisconnect( GetWorld(), GetWorld()->GetNetDriver() );
+        // GEngine->HandleDisconnect( GetWorld(), GetWorld()->GetNetDriver() );
     }
 }
 

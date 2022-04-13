@@ -68,12 +68,12 @@ public:
     AGBFGameSession * GetGameSession() const;
     void SetPendingInvite( const FGBFSessionPendingInvite & session_pending_invite );
     bool JoinSession( ULocalPlayer * local_player, int32 session_index_in_search_results );
-    bool JoinSession( ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result );
+    bool JoinSession( const ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result );
     bool FindSessions( ULocalPlayer * player_owner, bool is_dedicated_server, bool is_lan_match );
     void HandlePendingSessionInvite();
     void TravelToSession( FName session_name );
-    bool HostQuickSession( ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings );
-    bool HostGame( ULocalPlayer * local_player, const FString & game_type, const FString & travel_url );
+    bool HostQuickSession( const ULocalPlayer & local_player, const FOnlineSessionSettings & session_settings );
+    bool HostGame( const ULocalPlayer * local_player, const FString & game_type, const FString & travel_url );
 
 protected:
     FString GetMapNameFromTravelURL() const;

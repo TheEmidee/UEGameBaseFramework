@@ -24,7 +24,7 @@ void UGBFOnlineSessionClient::OnSessionUserInviteAccepted( const bool was_succes
         return;
     }
 
-    if ( auto * game_instance = Cast< UGBFGameInstance >( GetGameInstance() ) )
+    if ( const auto * game_instance = Cast< UGBFGameInstance >( GetGameInstance() ) )
     {
         FGBFSessionPendingInvite pending_invite;
 
