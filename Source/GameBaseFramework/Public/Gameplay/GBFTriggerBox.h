@@ -1,14 +1,14 @@
 #pragma once
 
 #include <CoreMinimal.h>
-#include <Engine/TriggerBox.h>
+#include <GameFramework/Actor.h>
 
 #include "GBFTriggerBox.generated.h"
 
+class UBoxComponent;
 class UGBFTriggerManagerComponent;
-
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public ATriggerBox
+class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
 {
     GENERATED_BODY()
 
@@ -28,6 +28,18 @@ protected:
     void OnTriggerBoxActivated( AActor * activator );
 
 private:
-    UPROPERTY( BlueprintReadOnly, VisibleAnywhere, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( BlueprintReadOnly, VisibleAnywhere, meta = ( AllowPrivateAccess = "true" ) )
     UGBFTriggerManagerComponent * TriggerManagerComponent;
+
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+    USceneComponent * RootSceneComponent;
+
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+    UBoxComponent * BoxComponent;
+
+#if WITH_EDITORONLY_DATA
+    /** Billboard used to see the trigger in the editor */
+    UPROPERTY()
+    UBillboardComponent * SpriteComponent;
+#endif
 };
