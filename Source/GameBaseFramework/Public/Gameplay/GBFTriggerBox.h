@@ -1,9 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
-#include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include <CoreMinimal.h>
+#include <GameFramework/Actor.h>
+
 #include "GBFTriggerBox.generated.h"
 
 class UBoxComponent;
@@ -11,12 +10,12 @@ class UGBFTriggerManagerComponent;
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
 {
-	GENERATED_BODY()
-	
-public:	
-	AGBFTriggerBox();
+    GENERATED_BODY()
 
-	void PostInitializeComponents() override;
+public:
+    AGBFTriggerBox();
+
+    void PostInitializeComponents() override;
 
     UFUNCTION( NetMulticast, reliable, BlueprintCallable )
     void Multicast_ActivateTrigger( bool reset );
