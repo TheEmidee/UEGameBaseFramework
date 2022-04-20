@@ -28,9 +28,11 @@ AGBFTriggerBox::AGBFTriggerBox()
 
 #if WITH_EDITORONLY_DATA
     SpriteComponent = CreateEditorOnlyDefaultSubobject< UBillboardComponent >( TEXT( "Sprite" ) );
-    SpriteComponent->SetupAttachment( RootSceneComponent );
+
     if ( SpriteComponent )
     {
+        SpriteComponent->SetupAttachment( RootSceneComponent );
+
         // Structure to hold one-time initialization
         struct FConstructorStatics
         {
