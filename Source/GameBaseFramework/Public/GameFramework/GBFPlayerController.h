@@ -1,8 +1,7 @@
 #pragma once
 
-#include "GameFramework/PlayerController.h"
-
 #include "Input/GBFInputTypes.h"
+#include "ModularPlayerController.h"
 
 #include "GBFPlayerController.generated.h"
 
@@ -11,12 +10,11 @@ class UGBFUIDialogManagerComponent;
 class UGBFLocalPlayer;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFPlayerController : public APlayerController
+class GAMEBASEFRAMEWORK_API AGBFPlayerController : public AModularPlayerController
 {
     GENERATED_BODY()
 
 public:
-
     AGBFPlayerController();
 
 #if PLATFORM_DESKTOP
@@ -40,7 +38,6 @@ public:
     void DisableInputForDuration( const float duration );
 
 private:
-
     UFUNCTION()
     void OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type );
 

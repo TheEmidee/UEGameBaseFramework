@@ -19,7 +19,7 @@
     {
       "Name": "GameBaseFramework",
       "Type": "Runtime",
-      "LoadingPhase": "Default",
+      "LoadingPhase": "PreDefault",
       "WhitelistPlatforms": [ "Win64", "Win32", "PS4", "XboxOne", "Mac" ]
     },
     {
@@ -43,6 +43,14 @@
     },
     {
       "Name": "CoreExtensions",
+      "Enabled": true
+    },
+    {
+      "Name": "ModularGameplayActors",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayAbilities",
       "Enabled": true
     }
   ]

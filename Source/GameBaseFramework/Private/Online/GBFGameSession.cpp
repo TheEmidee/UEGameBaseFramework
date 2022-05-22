@@ -3,6 +3,7 @@
 #include "GameFramework/GBFPlayerController.h"
 #include "Online/GBFOnlineSessionSettings.h"
 
+#include <Kismet/KismetStringLibrary.h>
 #include <OnlineSubsystemSessionSettings.h>
 #include <OnlineSubsystemUtils.h>
 
@@ -28,14 +29,16 @@ AGBFGameSession::AGBFGameSession( const FObjectInitializer & object_initializer 
 
 void AGBFGameSession::HandleMatchHasStarted()
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+
     // start online game locally and wait for completion
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
 
         if ( session_interface_ptr.IsValid() && session_interface_ptr->GetNamedSession( NAME_GameSession ) != nullptr )
         {
-            UE_LOG( LogOnlineGame, Log, TEXT( "Starting session %s on server" ), *FName( NAME_GameSession ).ToString() );
+            UE_LOG( LogOnlineGame, Display, TEXT( "Starting session %s on server" ), *FName( NAME_GameSession ).ToString() );
             OnStartSessionCompleteDelegateHandle = session_interface_ptr->AddOnStartSessionCompleteDelegate_Handle( OnStartSessionCompleteDelegate );
             session_interface_ptr->StartSession( NAME_GameSession );
         }
@@ -44,10 +47,12 @@ void AGBFGameSession::HandleMatchHasStarted()
 
 void AGBFGameSession::HandleMatchHasEnded()
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+
     // end online game locally
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         if ( session_interface_ptr.IsValid() && session_interface_ptr->GetNamedSession( NAME_GameSession ) != nullptr )
         {
             // tell the clients to end
@@ -58,13 +63,13 @@ void AGBFGameSession::HandleMatchHasEnded()
                     if ( pc && !pc->IsLocalPlayerController() )
                     {
                         // :TODO:
-                        //pc->ClientEndOnlineGame();
+                        // pc->ClientEndOnlineGame();
                     }
                 }
             }
 
             // server is handled here
-            UE_LOG( LogOnlineGame, Log, TEXT( "Ending session %s on server" ), *FName( NAME_GameSession ).ToString() );
+            UE_LOG( LogOnlineGame, Display, TEXT( "Ending session %s on server" ), *FName( NAME_GameSession ).ToString() );
             session_interface_ptr->EndSession( NAME_GameSession );
         }
     }
@@ -95,21 +100,31 @@ const TArray< FOnlineSessionSearchResult > & AGBFGameSession::GetSearchResults()
 
 bool AGBFGameSession::JoinSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const int32 session_index_in_search_results )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( "Join Session. Session Name : %s" ), *session_name.ToString() )
+
+    auto result = false;
+
     if ( session_index_in_search_results >= 0 && session_index_in_search_results < SearchSettings->SearchResults.Num() )
     {
-        return JoinSession( user_id, session_name, SearchSettings->SearchResults[ session_index_in_search_results ] );
+        result = JoinSession( user_id, session_name, SearchSettings->SearchResults[ session_index_in_search_results ] );
+
+        UE_LOG( LogOnlineGame, Display, TEXT( "Could join Session? %s" ), *UKismetStringLibrary::Conv_BoolToString( result ) )
+    }
+    else
+    {
+        UE_LOG( LogOnlineGame, Error, TEXT( "Can not join session because the search results don't allow to" ) )
     }
 
-    return false;
+    return result;
 }
 
 bool AGBFGameSession::JoinSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const FOnlineSessionSearchResult & search_result )
 {
     auto result = false;
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         if ( session_interface_ptr.IsValid() && user_id.IsValid() )
         {
             OnJoinSessionCompleteDelegateHandle = session_interface_ptr->AddOnJoinSessionCompleteDelegate_Handle( OnJoinSessionCompleteDelegate );
@@ -122,14 +137,16 @@ bool AGBFGameSession::JoinSession( const TSharedPtr< const FUniqueNetId > & user
 
 void AGBFGameSession::FindSessions( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const bool is_lan, const bool is_presence )
 {
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "FindSessions with name ? %s - Is Lan ? %s" ), *session_name.ToString(), *UKismetStringLibrary::Conv_BoolToString( is_lan ) )
+
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
         CurrentSessionParams.SessionName = session_name;
         CurrentSessionParams.IsLAN = is_lan;
         CurrentSessionParams.IsPresence = is_presence;
         CurrentSessionParams.UserId = user_id;
 
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         if ( session_interface_ptr.IsValid() && CurrentSessionParams.UserId.IsValid() )
         {
             SearchSettings = MakeShareable( new FGBFOnlineSearchSettings( is_lan, is_presence ) );
@@ -149,7 +166,9 @@ void AGBFGameSession::FindSessions( const TSharedPtr< const FUniqueNetId > & use
 
 bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const FString & /*game_type*/, const FString & /*map_name*/, const bool is_lan, const bool is_presence, const int32 max_num_players )
 {
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "HostSession with name ? %s - Is Lan ? %s" ), *session_name.ToString(), *UKismetStringLibrary::Conv_BoolToString( is_lan ) )
+
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
         CurrentSessionParams.SessionName = session_name;
         CurrentSessionParams.IsLAN = is_lan;
@@ -157,7 +176,7 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
         CurrentSessionParams.UserId = user_id;
         MaxPlayers = max_num_players;
 
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         if ( session_interface_ptr.IsValid() && CurrentSessionParams.UserId.IsValid() )
         {
             HostSettings = MakeShareable( new FGBFOnlineSessionSettings( is_lan, is_presence, MaxPlayers ) );
@@ -166,7 +185,7 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
             OnCreateSessionCompleteDelegateHandle = session_interface_ptr->AddOnCreateSessionCompleteDelegate_Handle( OnCreateSessionCompleteDelegate );
             return session_interface_ptr->CreateSession( *CurrentSessionParams.UserId, CurrentSessionParams.SessionName, *HostSettings );
         }
-        
+
         OnCreateSessionComplete( session_name, false );
     }
 #if !UE_BUILD_SHIPPING
@@ -183,9 +202,11 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
 
 bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user_id, const FName session_name, const FOnlineSessionSettings & session_settings )
 {
+    UE_LOG( LogOnlineGame, Display, TEXT( "HostSession with name ? %s" ), *session_name.ToString() )
+
     auto result = false;
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
         CurrentSessionParams.SessionName = session_name;
         CurrentSessionParams.IsLAN = session_settings.bIsLANMatch;
@@ -193,7 +214,7 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
         CurrentSessionParams.UserId = user_id;
         MaxPlayers = session_settings.NumPrivateConnections + session_settings.NumPublicConnections;
 
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         if ( session_interface_ptr.IsValid() && CurrentSessionParams.UserId.IsValid() )
         {
             OnCreateSessionCompleteDelegateHandle = session_interface_ptr->AddOnCreateSessionCompleteDelegate_Handle( OnCreateSessionCompleteDelegate );
@@ -210,22 +231,24 @@ bool AGBFGameSession::HostSession( const TSharedPtr< const FUniqueNetId > & user
 
 void AGBFGameSession::OnCreateSessionComplete( const FName session_name, const bool was_successful )
 {
-    UE_LOG( LogOnlineGame, Verbose, TEXT( "OnCreateSessionComplete %s bSuccess: %d" ), *session_name.ToString(), was_successful );
+    UE_LOG( LogOnlineGame, Display, TEXT( "OnCreateSessionComplete %s bSuccess: %d" ), *session_name.ToString(), was_successful );
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         session_interface_ptr->ClearOnCreateSessionCompleteDelegate_Handle( OnCreateSessionCompleteDelegateHandle );
     }
 
     OnCreatePresenceSessionCompleteEvent.Broadcast( session_name, was_successful );
 }
 
-void AGBFGameSession::OnStartOnlineGameComplete( FName /* session_name */, const bool was_successful )
+void AGBFGameSession::OnStartOnlineGameComplete( FName session_name, const bool was_successful )
 {
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "OnStartOnlineGameComplete %s bSuccess: %d" ), *session_name.ToString(), was_successful );
+
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
 
         if ( session_interface_ptr.IsValid() )
         {
@@ -243,7 +266,7 @@ void AGBFGameSession::OnStartOnlineGameComplete( FName /* session_name */, const
                 if ( pc && !pc->IsLocalPlayerController() )
                 {
                     // :TODO:
-                    //pc->ClientStartOnlineGame();
+                    // pc->ClientStartOnlineGame();
                 }
             }
         }
@@ -252,17 +275,17 @@ void AGBFGameSession::OnStartOnlineGameComplete( FName /* session_name */, const
 
 void AGBFGameSession::OnFindSessionsComplete( const bool was_successful )
 {
-    UE_LOG( LogOnlineGame, Verbose, TEXT( "OnFindSessionsComplete bSuccess: %d" ), was_successful );
+    UE_LOG( LogOnlineGame, Display, TEXT( "OnFindSessionsComplete bSuccess: %d" ), was_successful );
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
 
         if ( session_interface_ptr.IsValid() )
         {
             session_interface_ptr->ClearOnFindSessionsCompleteDelegate_Handle( OnFindSessionsCompleteDelegateHandle );
 
-            UE_LOG( LogOnlineGame, Verbose, TEXT( "Num Search Results: %d" ), SearchSettings->SearchResults.Num() );
+            UE_LOG( LogOnlineGame, Display, TEXT( "Num Search Results: %d" ), SearchSettings->SearchResults.Num() );
             for ( auto search_idx = 0; search_idx < SearchSettings->SearchResults.Num(); search_idx++ )
             {
                 const auto & search_result = SearchSettings->SearchResults[ search_idx ];
@@ -276,11 +299,11 @@ void AGBFGameSession::OnFindSessionsComplete( const bool was_successful )
 
 void AGBFGameSession::OnJoinSessionComplete( const FName session_name, const EOnJoinSessionCompleteResult::Type result )
 {
-    UE_LOG( LogOnlineGame, Verbose, TEXT( "OnJoinSessionComplete %s bSuccess: %d" ), *session_name.ToString(), static_cast< int32 >( result ) );
+    UE_LOG( LogOnlineGame, Display, TEXT( "OnJoinSessionComplete %s bSuccess: %d" ), *session_name.ToString(), static_cast< int32 >( result ) );
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
 
         if ( session_interface_ptr.IsValid() )
         {
@@ -293,11 +316,11 @@ void AGBFGameSession::OnJoinSessionComplete( const FName session_name, const EOn
 
 void AGBFGameSession::OnDestroySessionComplete( const FName session_name, const bool was_successful )
 {
-    UE_LOG( LogOnlineGame, Verbose, TEXT( "OnDestroySessionComplete %s bSuccess: %d" ), *session_name.ToString(), was_successful );
+    UE_LOG( LogOnlineGame, Display, TEXT( "OnDestroySessionComplete %s bSuccess: %d" ), *session_name.ToString(), was_successful );
 
-    if ( auto * oss = Online::GetSubsystem( GetWorld() ) )
+    if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
     {
-        auto session_interface_ptr = oss->GetSessionInterface();
+        const auto session_interface_ptr = oss->GetSessionInterface();
         session_interface_ptr->ClearOnDestroySessionCompleteDelegate_Handle( OnDestroySessionCompleteDelegateHandle );
         HostSettings = nullptr;
     }
