@@ -203,7 +203,7 @@ TSubclassOf< UOnlineSession > UGBFGameInstance::GetOnlineSessionClass()
 
 void UGBFGameInstance::OnStart()
 {
-    GameStateSubsystem->GoToWelcomeScreenState();
+    //GameStateSubsystem->GoToWelcomeScreenState();
 }
 
 void UGBFGameInstance::OnAppReactivateOrForeground()
