@@ -68,7 +68,7 @@ private:
     FOnExistingLocalPlayerRemovedDelegate OnExistingLocalPlayerRemovedDelegate;
 
     FTickerDelegate TickDelegate;
-    FDelegateHandle TickDelegateHandle;
+    FTSTicker::FDelegateHandle TickDelegateHandle;
 
     TWeakObjectPtr< UGBFGameInstanceGameStateSystem > GameStateSubsystem;
     TWeakObjectPtr< UGBFGameInstanceIdentitySubsystem > IdentitySubsystem;

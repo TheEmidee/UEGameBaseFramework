@@ -48,7 +48,7 @@ void UGBFGameInstance::Init()
     if ( !IsDedicatedServerInstance() )
     {
         TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
-        TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
+        TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker( TickDelegate );
     }
 
     GameStateSubsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
@@ -65,7 +65,7 @@ void UGBFGameInstance::Shutdown()
 {
     Super::Shutdown();
 
-    FTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
+    FTSTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
 }
 
 #if WITH_EDITOR

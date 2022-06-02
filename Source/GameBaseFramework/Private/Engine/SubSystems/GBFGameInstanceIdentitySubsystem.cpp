@@ -288,7 +288,7 @@ void UGBFGameInstanceIdentitySubsystem::OnGameStateChanged( FName /*state_name*/
     {
         if ( auto * local_player = GetOuterUGameInstance()->FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
         {
-            local_player->SetCachedUniqueNetId( nullptr );
+            local_player->SetCachedUniqueNetId( FUniqueNetIdRepl( nullptr ) );
         }
     }
 

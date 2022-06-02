@@ -98,7 +98,7 @@ FPlatformUserId UGBFLocalPlayer::GetPlatformUserId() const
         platform_user_id = identity_interface->GetPlatformUserIdFromUniqueNetId( *unique_id );
     }
 
-    return platform_user_id;
+    return FPlatformMisc::GetPlatformUserForUserIndex( platform_user_id );
 }
 
 ELoginStatus::Type UGBFLocalPlayer::GetLoginStatus() const
@@ -125,7 +125,8 @@ void UGBFLocalPlayer::InitializeAfterLogin( const int controller_index )
 {
     SetControllerId( controller_index );
 
-    SetCachedUniqueNetId( GetUniqueNetIdFromCachedControllerId().GetUniqueNetId() );
+    // :TODO: UE5
+    // SetCachedUniqueNetId( GetUniqueNetIdFromCachedControllerId().GetUniqueNetId() );
 
     QueryAchievements();
 
