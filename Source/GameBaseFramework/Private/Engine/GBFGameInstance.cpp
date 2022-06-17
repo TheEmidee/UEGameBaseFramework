@@ -1,15 +1,12 @@
 #include "Engine/GBFGameInstance.h"
 
 #include "Components/GBFUIDialogManagerComponent.h"
-#include "Engine/GBFGameState.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "Engine/SubSystems/GBFGameInstanceCoreDelegatesSubsystem.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 #include "GBFTypes.h"
 #include "GameBaseFrameworkSettings.h"
-#include "GameFramework/GBFGameModeBase.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "Online/GBFOnlineSessionClient.h"
 #include "GBFLog.h"
@@ -51,7 +48,6 @@ void UGBFGameInstance::Init()
         TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
     }
 
-    GameStateSubsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
     IdentitySubsystem = GetSubsystem< UGBFGameInstanceIdentitySubsystem >();
     SessionSubsystem = GetSubsystem< UGBFGameInstanceSessionSubsystem >();
 }
@@ -71,7 +67,7 @@ void UGBFGameInstance::Shutdown()
 #if WITH_EDITOR
 FGameInstancePIEResult UGBFGameInstance::StartPlayInEditorGameInstance( ULocalPlayer * local_player, const FGameInstancePIEParameters & params )
 {
-    GameStateSubsystem->UpdateCurrentGameStateFromCurrentWorld();
+    //GameStateSubsystem->UpdateCurrentGameStateFromCurrentWorld();
 
     return Super::StartPlayInEditorGameInstance( local_player, params );
 }
@@ -79,27 +75,27 @@ FGameInstancePIEResult UGBFGameInstance::StartPlayInEditorGameInstance( ULocalPl
 
 bool UGBFGameInstance::Tick( float /*delta_seconds*/ )
 {
-    if ( !GameStateSubsystem->IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
-    {
-        if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
-        {
-            if ( auto * player_controller = Cast< AGBFPlayerController >( local_player->PlayerController ) )
-            {
-                const auto is_displaying_dialog = player_controller->GetUIDialogManagerComponent()->IsDisplayingDialog();
+    //if ( !GameStateSubsystem->IsOnWelcomeScreenState() && LocalPlayers.Num() > 0 )
+    //{
+    //    if ( auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayers[ 0 ] ) )
+    //    {
+    //        if ( auto * player_controller = Cast< AGBFPlayerController >( local_player->PlayerController ) )
+    //        {
+    //            const auto is_displaying_dialog = player_controller->GetUIDialogManagerComponent()->IsDisplayingDialog();
 
-                // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
-                if ( !GetSubsystem< UGBFGameInstanceCoreDelegatesSubsystem >()->IsLicensed() && !is_displaying_dialog )
-                {
-                    ShowMessageThenGotoState(
-                        NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
-                        NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
-                        UGBFGameState::WelcomeScreenStateName );
+    //            // If at any point we aren't licensed (but we are after welcome screen) bounce them back to the welcome screen
+    //            if ( !GetSubsystem< UGBFGameInstanceCoreDelegatesSubsystem >()->IsLicensed() && !is_displaying_dialog )
+    //            {
+    //                ShowMessageThenGotoState(
+    //                    NSLOCTEXT( "GBF", "LocKey_NeedLicenseTitle", "Invalid license" ),
+    //                    NSLOCTEXT( "GBF", "LocKey_NeedLicenseContent", "The signed in users do not have a license for this game. Please purchase that game or sign in a user with a valid license." ),
+    //                    UGBFGameState::WelcomeScreenStateName );
 
-                    return true;
-                }
-            }
-        }
-    }
+    //                return true;
+    //            }
+    //        }
+    //    }
+    //}
 
     SessionSubsystem->HandlePendingSessionInvite();
 
@@ -137,7 +133,7 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
         {
             const auto on_ok_clicked = FGBFConfirmationPopupButtonClicked::CreateLambda(
                 [this, &next_state]() {
-                    GameStateSubsystem->GoToState( next_state );
+                    //GameStateSubsystem->GoToState( next_state );
                 } );
 
             dialog_manager_component->ShowConfirmationPopup( title, content, EGBFUIDialogType::AdditiveOnlyOneVisible, on_ok_clicked );
@@ -147,32 +143,32 @@ void UGBFGameInstance::ShowMessageThenGotoState( const FText & title, const FTex
 
 void UGBFGameInstance::ShowMessageThenGotoWelcomeScreenState( const FText & title, const FText & content )
 {
-    ShowMessageThenGotoState( title, content,  UGBFGameState::WelcomeScreenStateName );
+    //ShowMessageThenGotoState( title, content,  UGBFGameState::WelcomeScreenStateName );
 }
 
 void UGBFGameInstance::ShowMessageThenGotoMainMenuState( const FText & title, const FText & content )
 {
-    ShowMessageThenGotoState( title, content, UGBFGameState::MainMenuStateName );
+    //ShowMessageThenGotoState( title, content, UGBFGameState::MainMenuStateName );
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 void UGBFGameInstance::HandleSignInChangeMessaging()
 {
-    if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
-    {
-#if GBF_CONSOLE_UI
-        // Master user signed out, go to initial state (if we aren't there already)
-        if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
-        {
-            ShowMessageThenGotoState(
-                NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
-                NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
-                settings->WelcomeScreenGameState.Get() );
-        }
-#else
-        GameStateSubsystem->GoToWelcomeScreenState();
-#endif
-    }
+//    if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
+//    {
+//#if GBF_CONSOLE_UI
+//        // Master user signed out, go to initial state (if we aren't there already)
+//        if ( const auto * settings = GetDefault< UGameBaseFrameworkSettings >() )
+//        {
+//            ShowMessageThenGotoState(
+//                NSLOCTEXT( "GBF", "LocKey_SignInChangeTitle", "Sign in status change" ),
+//                NSLOCTEXT( "GBF", "LocKey_SignInChangeContent", "Sign in status change occurred." ),
+//                settings->WelcomeScreenGameState.Get() );
+//        }
+//#else
+//        GameStateSubsystem->GoToWelcomeScreenState();
+//#endif
+//    }
 }
 
 void UGBFGameInstance::RemoveSplitScreenPlayers()
@@ -203,12 +199,12 @@ TSubclassOf< UOnlineSession > UGBFGameInstance::GetOnlineSessionClass()
 
 void UGBFGameInstance::OnStart()
 {
-    GameStateSubsystem->GoToWelcomeScreenState();
+    //GameStateSubsystem->GoToWelcomeScreenState();
 }
 
 void UGBFGameInstance::OnAppReactivateOrForeground()
 {
-    if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
+    /*if ( !GameStateSubsystem->IsOnWelcomeScreenState() )
     {
         UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppReactivateOrForeground: Attempting to sign out players" ) );
 
@@ -225,5 +221,5 @@ void UGBFGameInstance::OnAppReactivateOrForeground()
                 }
             }
         }
-    }
+    }*/
 }

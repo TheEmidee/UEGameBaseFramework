@@ -1,6 +1,5 @@
 #include "Engine/SubSystems//GBFGameInstanceCoreDelegatesSubsystem.h"
 
-#include "GameFramework/GBFGameModeBase.h"
 #include "GBFLog.h"
 
 #include <Engine/Canvas.h>

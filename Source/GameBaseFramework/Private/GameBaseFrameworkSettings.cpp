@@ -1,12 +1,7 @@
 #include "GameBaseFrameworkSettings.h"
-#include "Engine/GBFGameState.h"
 
 UGameBaseFrameworkSettings::UGameBaseFrameworkSettings()
-{
-    GameStates.FindOrAdd( UGBFGameState::WelcomeScreenStateName );
-    GameStates.FindOrAdd( UGBFGameState::MainMenuStateName );
-    GameStates.FindOrAdd( UGBFGameState::InGameStateName );
-}
+{}
 
 FName UGameBaseFrameworkSettings::GetCategoryName() const
 {

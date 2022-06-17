@@ -70,18 +70,6 @@ public:
     UPROPERTY( config, EditAnywhere, Category = InputTextures )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
-    /*UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > MainMenuGameState;
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > InGameGameState;*/
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TMap< FName, TSoftObjectPtr< UGBFGameState > > GameStates;
-
     UPROPERTY( config, EditAnywhere, Category = UI )
     FGBFUIOptions UIOptions;
 
