@@ -42,7 +42,16 @@ public:
     void SetPlayer( UPlayer * player ) override;
     void PostProcessInput( const float DeltaTime, const bool bGamePaused ) override;
 
+    UFUNCTION( Reliable, Server, WithValidation )
+    void ServerCheat( const FString & message );
+
+    UFUNCTION( Reliable, Server, WithValidation )
+    void ServerCheatAll( const FString & message );
+
+    void AddCheats( bool force ) override;
+
 protected:
+    void OnPossess( APawn * pawn ) override;
     void OnUnPossess() override;
 
     // Called when the player state is set or cleared

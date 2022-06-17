@@ -3,10 +3,12 @@
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFSaveGame.h"
 
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
+#include <Engine/World.h>
 #include <TimerManager.h>
 
 AGBFPlayerController::AGBFPlayerController()
@@ -134,6 +136,71 @@ void AGBFPlayerController::PostProcessInput( const float DeltaTime, const bool b
     }*/
 
     Super::PostProcessInput( DeltaTime, bGamePaused );
+}
+
+void AGBFPlayerController::ServerCheat_Implementation( const FString & message )
+{
+#if USING_CHEAT_MANAGER
+    if ( CheatManager != nullptr )
+    {
+        UE_LOG( LogGBF, Warning, TEXT( "ServerCheat: %s" ), *message );
+        ClientMessage( ConsoleCommand( message ) );
+    }
+#endif
+}
+
+bool AGBFPlayerController::ServerCheat_Validate( const FString & /*message*/ )
+{
+    return true;
+}
+
+void AGBFPlayerController::ServerCheatAll_Implementation( const FString & message )
+{
+#if USING_CHEAT_MANAGER
+    if ( CheatManager )
+    {
+        UE_LOG( LogGBF, Warning, TEXT( "ServerCheatAll: %s" ), *message );
+        for ( auto iterator = GetWorld()->GetPlayerControllerIterator(); iterator; ++iterator )
+        {
+            if ( auto * pc = Cast< AGBFPlayerController >( *iterator ) )
+            {
+                pc->ClientMessage( pc->ConsoleCommand( message ) );
+            }
+        }
+    }
+#endif // #if USING_CHEAT_MANAGER
+}
+
+bool AGBFPlayerController::ServerCheatAll_Validate( const FString & /*message*/ )
+{
+    return true;
+}
+
+void AGBFPlayerController::AddCheats( bool force )
+{
+#if USING_CHEAT_MANAGER
+    Super::AddCheats( true );
+#else  //#if USING_CHEAT_MANAGER
+    Super::AddCheats( force );
+#endif //
+}
+
+void AGBFPlayerController::OnPossess( APawn * pawn )
+{
+    Super::OnPossess( pawn );
+
+#if WITH_SERVER_CODE && WITH_EDITOR
+    if ( GIsEditor && ( pawn != nullptr ) && ( GetPawn() == pawn ) )
+    {
+        for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkSettings >()->CheatsToRun )
+        {
+            if ( cheat_row.Phase == ECheatExecutionTime::OnPlayerPawnPossession )
+            {
+                ConsoleCommand( cheat_row.Cheat, /*bWriteToLog=*/true );
+            }
+        }
+    }
+#endif
 }
 
 void AGBFPlayerController::OnUnPossess()
