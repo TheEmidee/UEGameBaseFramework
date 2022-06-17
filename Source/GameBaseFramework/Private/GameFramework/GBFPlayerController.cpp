@@ -5,6 +5,8 @@
 #include "Engine/GBFLocalPlayer.h"
 #include "GameFramework/GBFSaveGame.h"
 
+#include <AbilitySystemComponent.h>
+#include <AbilitySystemGlobals.h>
 #include <TimerManager.h>
 
 AGBFPlayerController::AGBFPlayerController()
@@ -18,8 +20,7 @@ AGBFPlayerController::AGBFPlayerController()
 
 void AGBFPlayerController::BeginPlay()
 {
-    if ( !IsLocalPlayerController()
-        || Player == nullptr )
+    if ( !IsLocalPlayerController() || Player == nullptr )
     {
         PlatformInputSwitcherComponent->UnregisterComponent();
         UIDialogManagerComponent->UnregisterComponent();
@@ -83,13 +84,77 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
 
     if ( !ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration )
     {
-        auto enable_input = [this]() {
+        auto enable_input = [ this ]() {
             GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
             EnableInput( nullptr );
         };
 
         GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, new_duration, false );
     }
+}
+
+void AGBFPlayerController::OnRep_PlayerState()
+{
+    Super::OnRep_PlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::InitPlayerState()
+{
+    Super::InitPlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::CleanupPlayerState()
+{
+    Super::CleanupPlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::SetPlayer( UPlayer * player )
+{
+    Super::SetPlayer( player );
+
+    if ( const UGBFLocalPlayer * local_player = Cast< UGBFLocalPlayer >( player ) )
+    {
+        /* :TODO: Settings
+        UGBFSettingsShared * UserSettings = local_player->GetSharedSettings();
+        UserSettings->OnSettingChanged.AddUObject( this, &ThisClass::OnSettingsChanged );
+
+        OnSettingsChanged( UserSettings );*/
+    }
+}
+
+void AGBFPlayerController::PostProcessInput( const float DeltaTime, const bool bGamePaused )
+{
+    // :TODO: ASC Inputs
+    /*if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        asc->ProcessAbilityInput( DeltaTime, bGamePaused );
+    }*/
+
+    Super::PostProcessInput( DeltaTime, bGamePaused );
+}
+
+void AGBFPlayerController::OnUnPossess()
+{
+    // Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
+    if ( auto * pawn_being_unpossessed = GetPawn() )
+    {
+        if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( PlayerState ) )
+        {
+            if ( asc->GetAvatarActor() == pawn_being_unpossessed )
+            {
+                asc->SetAvatarActor( nullptr );
+            }
+        }
+    }
+
+    Super::OnUnPossess();
+}
+
+void AGBFPlayerController::OnPlayerStateChanged()
+{
 }
 
 // -- PRIVATE
@@ -119,4 +184,9 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
 
     // :TODO: It's not a good idea to always show the cursor. This breaks FPS camera because the player must always click on the game viewport to turn the camera
     //bShowMouseCursor = !is_using_game_pad;
+}
+
+void AGBFPlayerController::BroadcastOnPlayerStateChanged()
+{
+    OnPlayerStateChanged();
 }
