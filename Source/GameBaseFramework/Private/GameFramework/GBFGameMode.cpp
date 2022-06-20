@@ -1,4 +1,6 @@
 #include "GameFramework/GBFGameMode.h"
+
+#include "Engine/GBFAssetManager.h"
 #include "GameFramework/GBFPlayerState.h"
 
 const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController * controller ) const
@@ -34,8 +36,5 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
     //}
 
     // Experience not loaded yet, so there is no pawn data to be had
-    return nullptr;
-
-    // :TODO:
-    // return USWAssetManager::Get().GetDefaultPawnData();
+    return UGBFAssetManager::Get().GetDefaultPawnData();
 }
