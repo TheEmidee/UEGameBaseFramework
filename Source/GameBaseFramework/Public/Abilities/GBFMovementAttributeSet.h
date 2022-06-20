@@ -7,7 +7,7 @@
 #include "GBFMovementAttributeSet.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFMovementAttributeSet final : public UGBFAttributeSet
+class GAMEBASEFRAMEWORK_API UGBFMovementAttributeSet : public UGBFAttributeSet
 {
     GENERATED_BODY()
 

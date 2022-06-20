@@ -7,7 +7,7 @@
 #include "GBFCombatAttributeSet.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFCombatAttributeSet final : public UGBFAttributeSet
+class GAMEBASEFRAMEWORK_API UGBFCombatAttributeSet : public UGBFAttributeSet
 {
     GENERATED_BODY()
 
