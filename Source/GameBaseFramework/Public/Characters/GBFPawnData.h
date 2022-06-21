@@ -19,22 +19,22 @@ public:
 #endif
 
     // Class to instantiate for this pawn (should usually derive from ASWCharacterBase).
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Swarms|Pawn" )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Pawn" )
     TSubclassOf< APawn > PawnClass;
 
     // Ability sets to grant to this pawn's ability system.
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Swarms|Abilities" )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
     TArray< UGASExtAbilitySet * > AbilitySets;
 
     // What mapping of ability tags to use for actions taking by this pawn
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Swarms|Abilities" )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
     UGASExtAbilityTagRelationshipMapping * TagRelationshipMapping;
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
-    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Swarms|Input" )
+    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
     // ULyraInputConfig * InputConfig;
 
     //// Default camera mode used by player controlled pawns.
-    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Swarms|Camera" )
+    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
     // TSubclassOf< ULyraCameraMode > DefaultCameraMode;
 };
