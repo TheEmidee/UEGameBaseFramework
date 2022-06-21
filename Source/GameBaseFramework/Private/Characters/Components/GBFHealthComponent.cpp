@@ -74,6 +74,19 @@ void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemCompo
     Revive();
 }
 
+void UGBFHealthComponent::UninitializeFromAbilitySystem()
+{
+    ClearGameplayTags();
+
+    if ( HealthAttributeSet != nullptr )
+    {
+        HealthAttributeSet->OnOutOfHealth().RemoveAll( this );
+    }
+
+    HealthAttributeSet = nullptr;
+    AbilitySystemComponent = nullptr;
+}
+
 float UGBFHealthComponent::GetHealth() const
 {
     return HealthAttributeSet ? HealthAttributeSet->GetHealth() : 0.0f;
@@ -225,19 +238,6 @@ void UGBFHealthComponent::HandleOnDamaged( AActor * damage_instigator, AActor * 
         AbilitySystemComponent->ExecuteGameplayCue( OnDamagedGameplayCueTag.GameplayCueTag, parameters );
     }
 #endif
-}
-
-void UGBFHealthComponent::UninitializeFromAbilitySystem()
-{
-    ClearGameplayTags();
-
-    if ( HealthAttributeSet != nullptr )
-    {
-        HealthAttributeSet->OnOutOfHealth().RemoveAll( this );
-    }
-
-    HealthAttributeSet = nullptr;
-    AbilitySystemComponent = nullptr;
 }
 
 void UGBFHealthComponent::OnRep_DeathState( EGBFDeathState old_death_state )

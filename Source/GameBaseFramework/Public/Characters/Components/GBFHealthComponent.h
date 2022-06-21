@@ -43,6 +43,7 @@ public:
 #endif
 
     void InitializeWithAbilitySystem( UGASExtAbilitySystemComponent * asc );
+    void UninitializeFromAbilitySystem();
     float GetHealth() const;
     float GetMaxHealth() const;
     float GetHealthNormalized() const;
@@ -74,7 +75,6 @@ private:
     void HandleMaxHealthChanged( const FOnAttributeChangeData & change_data );
     void HandleShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
     void HandleOnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
-    void UninitializeFromAbilitySystem();
 
     UFUNCTION()
     virtual void OnRep_DeathState( EGBFDeathState old_death_state );
