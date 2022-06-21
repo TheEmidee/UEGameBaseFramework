@@ -149,7 +149,10 @@ UGBFHealthComponent * UGBFHealthComponent::FindHealthComponent( const AActor * a
 
 void UGBFHealthComponent::Revive()
 {
-    check( AbilitySystemComponent );
+    if ( AbilitySystemComponent == nullptr )
+    {
+        return;
+    }
 
     ClearGameplayTags();
     DeathState = EGBFDeathState::NotDead;
