@@ -21,13 +21,16 @@ class GAMEBASEFRAMEWORK_API AGBFCharacter : public AModularCharacter, public IAb
 
 public:
     
-    AGBFCharacter();
+    explicit AGBFCharacter( const FObjectInitializer & object_initializer );
 
-    UFUNCTION( BlueprintCallable, Category = "Character" )
+    UFUNCTION( BlueprintPure, Category = "Character" )
     AGBFPlayerState * GetGBFPlayerState() const;
 
-    UFUNCTION( BlueprintCallable, Category = "Character" )
+    UFUNCTION( BlueprintPure, Category = "Character" )
     UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+
+    UFUNCTION( BlueprintPure, Category = "Character" )
+    UGBFHealthComponent * GetHealthComponent() const;
 
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
@@ -62,9 +65,18 @@ protected:
     void OnRep_Controller() override;
     void OnRep_PlayerState() override;
 
+    // :TODO: ASC on PS - Remove
+    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
+    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFPawnExtensionComponent * PawnExtComponent;
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFHealthComponent * HealthComponent;
 };
+
+FORCEINLINE UGBFHealthComponent * AGBFCharacter::GetHealthComponent() const
+{
+    return HealthComponent;
+}

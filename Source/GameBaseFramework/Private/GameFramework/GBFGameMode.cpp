@@ -25,7 +25,7 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
 
     // If not, fall back to the the default for the current experience
     check( GameState );
-    // :TODO:
+    // :TODO: Experiences
     // ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
     // check( ExperienceComponent );
 

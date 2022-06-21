@@ -55,7 +55,7 @@ void AGBFPlayerState::SetPawnData( const UGBFPawnData * new_pawn_data )
     // MARK_PROPERTY_DIRTY_FROM_NAME( ThisClass, PawnData, this );
     PawnData = new_pawn_data;
 
-    // :TODO:
+    // :TODO: ASC on PS
     /*for ( const auto * ability_set : PawnData->AbilitySets )
     {
         if ( ability_set != nullptr )
@@ -73,12 +73,13 @@ void AGBFPlayerState::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 
-    // :TODO:
+    // :TODO: ASC on PS
     /*check( AbilitySystemComponent );
     AbilitySystemComponent->InitAbilityActorInfo( this, GetPawn() );
 
     if ( GetNetMode() != NM_Client )
     {
+        // :TODO: Experiences
         AGameStateBase * GameState = GetWorld()->GetGameState();
         check( GameState );
         ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
@@ -86,7 +87,7 @@ void AGBFPlayerState::PostInitializeComponents()
         ExperienceComponent->CallOrRegister_OnExperienceLoaded( FOnLyraExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
     }*/
 
-    // :TODO: Remove when the above is uncommented
+    // :TODO: Experiences - Remove when the above is uncommented
     if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
     {
         if ( const auto * new_pawn_data = game_mode->GetPawnDataForController( Cast< AController >( GetOwner() ) ) )
