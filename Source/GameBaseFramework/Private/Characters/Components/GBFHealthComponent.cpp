@@ -40,7 +40,7 @@ UGBFHealthComponent::UGBFHealthComponent()
 
 void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemComponent * asc )
 {
-    auto * owner = GetOwner();
+    const auto * owner = GetOwner();
     check( owner );
 
     if ( AbilitySystemComponent != nullptr && AbilitySystemComponent != asc )
