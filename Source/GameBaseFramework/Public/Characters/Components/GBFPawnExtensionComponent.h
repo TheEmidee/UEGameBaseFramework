@@ -25,7 +25,7 @@ public:
     void SetPawnData( const UGBFPawnData * pawn_data );
 
     UFUNCTION( BlueprintPure, Category = "Lyra|Pawn" )
-    UGASExtAbilitySystemComponent * GetLyraAbilitySystemComponent() const;
+    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
 
     // Should be called by the owning pawn to become the avatar of the ability system.
     void InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor );
@@ -95,7 +95,7 @@ const T * UGBFPawnExtensionComponent::GetPawnData() const
     return Cast< T >( PawnData );
 }
 
-FORCEINLINE UGASExtAbilitySystemComponent * UGBFPawnExtensionComponent::GetLyraAbilitySystemComponent() const
+FORCEINLINE UGASExtAbilitySystemComponent * UGBFPawnExtensionComponent::GetGASExtAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
 }
