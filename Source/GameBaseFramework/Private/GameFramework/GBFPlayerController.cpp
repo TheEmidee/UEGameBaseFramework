@@ -3,8 +3,12 @@
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFSaveGame.h"
 
+#include <AbilitySystemComponent.h>
+#include <AbilitySystemGlobals.h>
+#include <Engine/World.h>
 #include <TimerManager.h>
 
 AGBFPlayerController::AGBFPlayerController()
@@ -18,8 +22,7 @@ AGBFPlayerController::AGBFPlayerController()
 
 void AGBFPlayerController::BeginPlay()
 {
-    if ( !IsLocalPlayerController()
-        || Player == nullptr )
+    if ( !IsLocalPlayerController() || Player == nullptr )
     {
         PlatformInputSwitcherComponent->UnregisterComponent();
         UIDialogManagerComponent->UnregisterComponent();
@@ -83,13 +86,142 @@ void AGBFPlayerController::DisableInputForDuration( const float duration )
 
     if ( !ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration )
     {
-        auto enable_input = [this]() {
+        auto enable_input = [ this ]() {
             GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
             EnableInput( nullptr );
         };
 
         GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, new_duration, false );
     }
+}
+
+void AGBFPlayerController::OnRep_PlayerState()
+{
+    Super::OnRep_PlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::InitPlayerState()
+{
+    Super::InitPlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::CleanupPlayerState()
+{
+    Super::CleanupPlayerState();
+    BroadcastOnPlayerStateChanged();
+}
+
+void AGBFPlayerController::SetPlayer( UPlayer * player )
+{
+    Super::SetPlayer( player );
+
+    if ( const UGBFLocalPlayer * local_player = Cast< UGBFLocalPlayer >( player ) )
+    {
+        /* :TODO: Settings
+        UGBFSettingsShared * UserSettings = local_player->GetSharedSettings();
+        UserSettings->OnSettingChanged.AddUObject( this, &ThisClass::OnSettingsChanged );
+
+        OnSettingsChanged( UserSettings );*/
+    }
+}
+
+void AGBFPlayerController::PostProcessInput( const float DeltaTime, const bool bGamePaused )
+{
+    // :TODO: ASC Inputs
+    /*if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        asc->ProcessAbilityInput( DeltaTime, bGamePaused );
+    }*/
+
+    Super::PostProcessInput( DeltaTime, bGamePaused );
+}
+
+void AGBFPlayerController::ServerCheat_Implementation( const FString & message )
+{
+#if USING_CHEAT_MANAGER
+    if ( CheatManager != nullptr )
+    {
+        UE_LOG( LogGBF, Warning, TEXT( "ServerCheat: %s" ), *message );
+        ClientMessage( ConsoleCommand( message ) );
+    }
+#endif
+}
+
+bool AGBFPlayerController::ServerCheat_Validate( const FString & /*message*/ )
+{
+    return true;
+}
+
+void AGBFPlayerController::ServerCheatAll_Implementation( const FString & message )
+{
+#if USING_CHEAT_MANAGER
+    if ( CheatManager )
+    {
+        UE_LOG( LogGBF, Warning, TEXT( "ServerCheatAll: %s" ), *message );
+        for ( auto iterator = GetWorld()->GetPlayerControllerIterator(); iterator; ++iterator )
+        {
+            if ( auto * pc = Cast< AGBFPlayerController >( *iterator ) )
+            {
+                pc->ClientMessage( pc->ConsoleCommand( message ) );
+            }
+        }
+    }
+#endif // #if USING_CHEAT_MANAGER
+}
+
+bool AGBFPlayerController::ServerCheatAll_Validate( const FString & /*message*/ )
+{
+    return true;
+}
+
+void AGBFPlayerController::AddCheats( bool force )
+{
+#if USING_CHEAT_MANAGER
+    Super::AddCheats( true );
+#else  //#if USING_CHEAT_MANAGER
+    Super::AddCheats( force );
+#endif //
+}
+
+void AGBFPlayerController::OnPossess( APawn * pawn )
+{
+    Super::OnPossess( pawn );
+
+#if WITH_SERVER_CODE && WITH_EDITOR
+    if ( GIsEditor && ( pawn != nullptr ) && ( GetPawn() == pawn ) )
+    {
+        for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkSettings >()->CheatsToRun )
+        {
+            if ( cheat_row.Phase == ECheatExecutionTime::OnPlayerPawnPossession )
+            {
+                ConsoleCommand( cheat_row.Cheat, /*bWriteToLog=*/true );
+            }
+        }
+    }
+#endif
+}
+
+void AGBFPlayerController::OnUnPossess()
+{
+    // Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
+    if ( auto * pawn_being_unpossessed = GetPawn() )
+    {
+        if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( PlayerState ) )
+        {
+            if ( asc->GetAvatarActor() == pawn_being_unpossessed )
+            {
+                asc->SetAvatarActor( nullptr );
+            }
+        }
+    }
+
+    Super::OnUnPossess();
+}
+
+void AGBFPlayerController::OnPlayerStateChanged()
+{
 }
 
 // -- PRIVATE
@@ -119,4 +251,9 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
 
     // :TODO: It's not a good idea to always show the cursor. This breaks FPS camera because the player must always click on the game viewport to turn the camera
     //bShowMouseCursor = !is_using_game_pad;
+}
+
+void AGBFPlayerController::BroadcastOnPlayerStateChanged()
+{
+    OnPlayerStateChanged();
 }

@@ -22,6 +22,6 @@ public:
 
 private:
 
-    UFUNCTION()
-    void OnGameStateChanged( FName state_name, const UGBFGameState * new_state );
+    /*UFUNCTION()
+    void OnGameStateChanged( FName state_name, const UGBFGameState * new_state );*/
 };

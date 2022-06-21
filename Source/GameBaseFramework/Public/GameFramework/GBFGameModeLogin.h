@@ -1,10 +1,10 @@
 #pragma once
 
-#include "GameFramework/GBFGameModeBase.h"
+#include "GBFGameMode.h"
 #include "GBFGameModeLogin.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFGameModeLogin : public AGBFGameModeBase
+class GAMEBASEFRAMEWORK_API AGBFGameModeLogin : public AGBFGameMode
 {
     GENERATED_BODY()
 

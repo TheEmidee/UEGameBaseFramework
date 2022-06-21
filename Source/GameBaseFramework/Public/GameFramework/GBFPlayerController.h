@@ -36,18 +36,42 @@ public:
     void ForceEnableInput( class APlayerController * player_controller );
 
     void DisableInputForDuration( const float duration );
+    void OnRep_PlayerState() override;
+    void InitPlayerState() override;
+    void CleanupPlayerState() override;
+    void SetPlayer( UPlayer * player ) override;
+    void PostProcessInput( const float DeltaTime, const bool bGamePaused ) override;
+
+    UFUNCTION( Reliable, Server, WithValidation )
+    void ServerCheat( const FString & message );
+
+    UFUNCTION( Reliable, Server, WithValidation )
+    void ServerCheatAll( const FString & message );
+
+    void AddCheats( bool force ) override;
+
+protected:
+    void OnPossess( APawn * pawn ) override;
+    void OnUnPossess() override;
+
+    // Called when the player state is set or cleared
+    virtual void OnPlayerStateChanged();
 
 private:
     UFUNCTION()
     void OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type );
 
     void UpdateInputRelatedFlags();
+    void BroadcastOnPlayerStateChanged();
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     UGBFUIDialogManagerComponent * UIDialogManagerComponent;
+
+    UPROPERTY()
+    APlayerState * LastSeenPlayerState;
 
     FTimerHandle ReEnableInputTimerHandle;
 };

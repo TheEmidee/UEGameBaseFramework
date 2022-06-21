@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Player/GBFCheatManager.h"
+
 #include <CoreMinimal.h>
 #include <Engine/DeveloperSettings.h>
 #include <Templates/SubclassOf.h>
@@ -70,18 +72,6 @@ public:
     UPROPERTY( config, EditAnywhere, Category = InputTextures )
     TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
 
-    /*UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > WelcomeScreenGameState;
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > MainMenuGameState;
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TSoftObjectPtr< UGBFGameState > InGameGameState;*/
-
-    UPROPERTY( config, EditAnywhere, Category = GameStates )
-    TMap< FName, TSoftObjectPtr< UGBFGameState > > GameStates;
-
     UPROPERTY( config, EditAnywhere, Category = UI )
     FGBFUIOptions UIOptions;
 
@@ -93,6 +83,9 @@ public:
 
     UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
     TArray< FString > SubLevelSuffixes;
+
+    UPROPERTY( config, EditAnywhere, Category = "Cheats" )
+    TArray< FGBFCheatToRun > CheatsToRun;
 
 protected:
 #if WITH_EDITOR
