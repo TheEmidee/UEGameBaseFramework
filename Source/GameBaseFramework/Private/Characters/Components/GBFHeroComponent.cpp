@@ -124,7 +124,7 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
 
         // :TODO: ASC on PS
         auto * asc = Cast< UGASExtAbilitySystemComponent >( UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( pawn ) );
-        pawn_ext_comp->InitializeAbilitySystem( asc, player_state );
+        pawn_ext_comp->InitializeAbilitySystem( asc, pawn );
     }
 
     if ( auto * pc = GetController< AGBFPlayerController >() )
