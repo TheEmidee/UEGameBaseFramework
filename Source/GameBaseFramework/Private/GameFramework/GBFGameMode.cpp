@@ -3,6 +3,7 @@
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Engine/GBFAssetManager.h"
 #include "GBFLog.h"
+#include "AI/GBFAIController.h"
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "GameFramework/GBFPlayerState.h"
 
@@ -138,11 +139,10 @@ void AGBFGameMode::RequestPlayerRestartNextFrame( AController * controller, bool
     {
         GetWorldTimerManager().SetTimerForNextTick( player_controller, &APlayerController::ServerRestartPlayer_Implementation );
     }
-    /* :TODO: GBF AI
-     *else if ( auto * BotController = Cast< ALyraPlayerBotController >( controller ) )
+    else if ( auto * BotController = Cast< AGBFAIController >( controller ) )
     {
-        GetWorldTimerManager().SetTimerForNextTick( BotController, &ALyraPlayerBotController::ServerRestartController );
-    }*/
+        GetWorldTimerManager().SetTimerForNextTick( BotController, &AGBFAIController::ServerRestartController );
+    }
 }
 
 AActor * AGBFGameMode::ChoosePlayerStart_Implementation( AController * player )
