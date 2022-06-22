@@ -20,7 +20,7 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState, public
     GENERATED_BODY()
 
 public:
-    AGBFPlayerState();
+    explicit AGBFPlayerState( const FObjectInitializer & object_initializer );
 
     UFUNCTION( BlueprintPure, Category = "PlayerState" )
     AGBFPlayerController * GetGBFPlayerController() const;

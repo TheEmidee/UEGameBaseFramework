@@ -1,9 +1,9 @@
 #include "GameFramework/GBFPlayerState.h"
 
+#include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
-#include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFPlayerController.h"
@@ -12,7 +12,8 @@
 #include <Engine/World.h>
 #include <Net/UnrealNetwork.h>
 
-AGBFPlayerState::AGBFPlayerState()
+AGBFPlayerState::AGBFPlayerState( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer )
 {
     AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
@@ -90,27 +91,25 @@ void AGBFPlayerState::PostInitializeComponents()
     check( AbilitySystemComponent );
     AbilitySystemComponent->InitAbilityActorInfo( this, GetPawn() );
 
-    /*
     if ( GetNetMode() != NM_Client )
     {
-        // :TODO: Experiences
-        AGameStateBase * GameState = GetWorld()->GetGameState();
-        check( GameState );
-        ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
-        check( ExperienceComponent );
-        ExperienceComponent->CallOrRegister_OnExperienceLoaded( FOnLyraExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
-    }*/
-
-    // :TODO: Experiences - Remove when the above is uncommented
-    if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
-    {
-        if ( const auto * new_pawn_data = game_mode->GetPawnDataForController( Cast< AController >( GetOwner() ) ) )
+        if ( auto * pc = GetGBFPlayerController() )
         {
-            SetPawnData( new_pawn_data );
-        }
-        else
-        {
-            UE_LOG( LogGBF, Error, TEXT( "ASWPlayerState::PostInitializeComponents(): Unable to find PawnData to initialize player state [%s]!" ), *GetNameSafe( this ) );
+            // :TODO:
+            // In games like Lyra or UT we want bots to have their pawn data the same way as human players
+            // There are games where each enemy has its own pawn data and we can't get it from the experience and let
+            // them call SetPawnData manually
+            // Could be nice to add a config flag to let each game decide what to do
+            if ( !IsABot() )
+            {
+                // :TODO: Experiences
+                /* AGameStateBase * GameState = GetWorld()->GetGameState();
+                check( GameState );
+                ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
+                check( ExperienceComponent );
+                ExperienceComponent->CallOrRegister_OnExperienceLoaded( FOnLyraExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
+                */
+            }
         }
     }
 }
