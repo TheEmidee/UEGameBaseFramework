@@ -38,7 +38,7 @@ void UGBFPawnExtensionComponent::SetPawnData( const UGBFPawnData * pawn_data )
         return;
     }
 
-    if ( PawnData )
+    if ( PawnData != nullptr )
     {
         UE_LOG( LogGBF, Error, TEXT( "Trying to set PawnData [%s] on pawn [%s] that already has valid PawnData [%s]." ), *GetNameSafe( pawn_data ), *GetNameSafe( Pawn ), *GetNameSafe( PawnData ) );
         return;
@@ -90,7 +90,7 @@ void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGASExtAbilitySystemCo
     AbilitySystemComponent = asc;
     AbilitySystemComponent->InitAbilityActorInfo( owner_actor, pawn );
 
-    if ( ensure( PawnData ) )
+    if ( ensure( PawnData != nullptr ) )
     {
         asc->SetTagRelationshipMapping( PawnData->TagRelationshipMapping );
     }
