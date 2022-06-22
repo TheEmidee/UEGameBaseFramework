@@ -117,14 +117,9 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
 
     if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
     {
-        const UGBFPawnData * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >();
-
         // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
         // The ability system component and attribute sets live on the player state.
-
-        // :TODO: ASC on PS
-        auto * asc = Cast< UGASExtAbilitySystemComponent >( UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( pawn ) );
-        pawn_ext_comp->InitializeAbilitySystem( asc, pawn );
+        pawn_ext_comp->InitializeAbilitySystem( player_state->GetGASExtAbilitySystemComponent(), player_state );
     }
 
     if ( auto * pc = GetController< AGBFPlayerController >() )
