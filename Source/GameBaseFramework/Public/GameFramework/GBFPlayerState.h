@@ -8,6 +8,7 @@
 
 #include "GBFPlayerState.generated.h"
 
+class UGASExtAbilitySystemComponent;
 class UGBFPawnData;
 
 UCLASS()
@@ -43,12 +44,16 @@ public:
     void SetPawnData( const UGBFPawnData * new_pawn_data );
 
     void PostInitializeComponents() override;
+    void ClientInitialize( AController * controller ) override;
 
 protected:
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
     UFUNCTION()
     void OnRep_PawnData();
+
+    UPROPERTY( VisibleAnywhere, Category = "PlayerState" )
+    UGASExtAbilitySystemComponent * AbilitySystemComponent;
 
     UPROPERTY( Replicated )
     FGASExtGameplayTagStackContainer StatTags;
