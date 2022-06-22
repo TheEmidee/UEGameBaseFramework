@@ -3,21 +3,32 @@
 #include "ModularPlayerState.h"
 #include "Tags/GASExtGameplayTagStack.h"
 
+#include <AbilitySystemInterface.h>
 #include <CoreMinimal.h>
 #include <GameplayTagContainer.h>
 
 #include "GBFPlayerState.generated.h"
 
+class UAbilitySystemComponent;
+class AGBFPlayerController;
 class UGASExtAbilitySystemComponent;
 class UGBFPawnData;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState
+class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState, public IAbilitySystemInterface
 {
     GENERATED_BODY()
 
 public:
     AGBFPlayerState();
+
+    UFUNCTION( BlueprintPure, Category = "PlayerState" )
+    AGBFPlayerController * GetGBFPlayerController() const;
+
+    UFUNCTION( BlueprintCallable, Category = "PlayerState" )
+    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+
+    UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
     // Adds a specified number of stacks to the tag (does nothing if StackCount is below 1)
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
@@ -61,3 +72,8 @@ protected:
     UPROPERTY( ReplicatedUsing = OnRep_PawnData )
     const UGBFPawnData * PawnData;
 };
+
+FORCEINLINE UGASExtAbilitySystemComponent * AGBFPlayerState::GetGASExtAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
+}

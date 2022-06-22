@@ -6,6 +6,7 @@
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
 #include "GameFramework/GBFGameMode.h"
+#include "GameFramework/GBFPlayerController.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/World.h>
@@ -19,6 +20,16 @@ AGBFPlayerState::AGBFPlayerState()
 
     // AbilitySystemComponent needs to be updated at a high frequency.
     NetUpdateFrequency = 100.0f;
+}
+
+AGBFPlayerController * AGBFPlayerState::GetGBFPlayerController() const
+{
+    return Cast< AGBFPlayerController >( GetOwner() );
+}
+
+UAbilitySystemComponent * AGBFPlayerState::GetAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
 }
 
 void AGBFPlayerState::AddStatTagStack( const FGameplayTag tag, const int32 stack_count )
