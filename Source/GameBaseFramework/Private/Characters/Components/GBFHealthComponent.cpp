@@ -40,7 +40,7 @@ UGBFHealthComponent::UGBFHealthComponent()
 
 void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemComponent * asc )
 {
-    auto * owner = GetOwner();
+    const auto * owner = GetOwner();
     check( owner );
 
     if ( AbilitySystemComponent != nullptr && AbilitySystemComponent != asc )
@@ -72,6 +72,19 @@ void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemCompo
     HealthAttributeSet->OnDamaged().AddUObject( this, &ThisClass::HandleOnDamaged );
 
     Revive();
+}
+
+void UGBFHealthComponent::UninitializeFromAbilitySystem()
+{
+    ClearGameplayTags();
+
+    if ( HealthAttributeSet != nullptr )
+    {
+        HealthAttributeSet->OnOutOfHealth().RemoveAll( this );
+    }
+
+    HealthAttributeSet = nullptr;
+    AbilitySystemComponent = nullptr;
 }
 
 float UGBFHealthComponent::GetHealth() const
@@ -225,19 +238,6 @@ void UGBFHealthComponent::HandleOnDamaged( AActor * damage_instigator, AActor * 
         AbilitySystemComponent->ExecuteGameplayCue( OnDamagedGameplayCueTag.GameplayCueTag, parameters );
     }
 #endif
-}
-
-void UGBFHealthComponent::UninitializeFromAbilitySystem()
-{
-    ClearGameplayTags();
-
-    if ( HealthAttributeSet != nullptr )
-    {
-        HealthAttributeSet->OnOutOfHealth().RemoveAll( this );
-    }
-
-    HealthAttributeSet = nullptr;
-    AbilitySystemComponent = nullptr;
 }
 
 void UGBFHealthComponent::OnRep_DeathState( EGBFDeathState old_death_state )
