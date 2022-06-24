@@ -3,20 +3,32 @@
 #include "ModularPlayerState.h"
 #include "Tags/GASExtGameplayTagStack.h"
 
+#include <AbilitySystemInterface.h>
 #include <CoreMinimal.h>
 #include <GameplayTagContainer.h>
 
 #include "GBFPlayerState.generated.h"
 
+class UAbilitySystemComponent;
+class AGBFPlayerController;
+class UGASExtAbilitySystemComponent;
 class UGBFPawnData;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState
+class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState, public IAbilitySystemInterface
 {
     GENERATED_BODY()
 
 public:
-    AGBFPlayerState();
+    explicit AGBFPlayerState( const FObjectInitializer & object_initializer );
+
+    UFUNCTION( BlueprintPure, Category = "PlayerState" )
+    AGBFPlayerController * GetGBFPlayerController() const;
+
+    UFUNCTION( BlueprintCallable, Category = "PlayerState" )
+    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+
+    UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
     // Adds a specified number of stacks to the tag (does nothing if StackCount is below 1)
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
@@ -43,6 +55,7 @@ public:
     void SetPawnData( const UGBFPawnData * new_pawn_data );
 
     void PostInitializeComponents() override;
+    void ClientInitialize( AController * controller ) override;
 
 protected:
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
@@ -50,9 +63,17 @@ protected:
     UFUNCTION()
     void OnRep_PawnData();
 
+    UPROPERTY( VisibleAnywhere, Category = "PlayerState" )
+    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+
     UPROPERTY( Replicated )
     FGASExtGameplayTagStackContainer StatTags;
 
     UPROPERTY( ReplicatedUsing = OnRep_PawnData )
     const UGBFPawnData * PawnData;
 };
+
+FORCEINLINE UGASExtAbilitySystemComponent * AGBFPlayerState::GetGASExtAbilitySystemComponent() const
+{
+    return AbilitySystemComponent;
+}

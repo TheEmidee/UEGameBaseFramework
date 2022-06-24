@@ -17,6 +17,9 @@ public:
     void OnRep_PlayerState() override;
     void CleanupPlayerState() override;
     void InitPlayerState() override;
+
+    void ServerRestartController();
+
 protected:
     void OnUnPossess() override;
     virtual void OnPlayerStateChanged();

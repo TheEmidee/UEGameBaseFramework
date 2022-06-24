@@ -22,9 +22,10 @@ public:
     template < class T >
     const T * GetPawnData() const;
 
+    UFUNCTION( BlueprintCallable, Category = "GameBaseFramework|Pawn" )
     void SetPawnData( const UGBFPawnData * pawn_data );
 
-    UFUNCTION( BlueprintPure, Category = "Lyra|Pawn" )
+    UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
     UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
 
     // Should be called by the owning pawn to become the avatar of the ability system.

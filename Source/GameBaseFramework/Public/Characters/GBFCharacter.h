@@ -65,10 +65,6 @@ protected:
     void OnRep_Controller() override;
     void OnRep_PlayerState() override;
 
-    // :TODO: ASC on PS - Remove
-    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGASExtAbilitySystemComponent * AbilitySystemComponent;
-
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFPawnExtensionComponent * PawnExtComponent;
 

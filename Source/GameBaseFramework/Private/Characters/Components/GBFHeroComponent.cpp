@@ -2,6 +2,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
+#include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerController.h"
@@ -104,7 +105,7 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
         return;
     }
 
-    auto * pawn = GetPawn< APawn >();
+    const auto * pawn = GetPawn< APawn >();
     if ( !pawn )
     {
         return;
@@ -115,16 +116,20 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
     auto * player_state = GetPlayerState< AGBFPlayerState >();
     check( player_state );
 
+    const UGBFPawnData * pawn_data = nullptr;
+
     if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
     {
-        const UGBFPawnData * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >();
+        pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >();
 
         // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
         // The ability system component and attribute sets live on the player state.
+        pawn_ext_comp->InitializeAbilitySystem( player_state->GetGASExtAbilitySystemComponent(), player_state );
+    }
 
-        // :TODO: ASC on PS
-        auto * asc = Cast< UGASExtAbilitySystemComponent >( UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( pawn ) );
-        pawn_ext_comp->InitializeAbilitySystem( asc, pawn );
+    if ( pawn_data != nullptr )
+    {
+        player_state->SetPawnData( pawn_data );
     }
 
     if ( auto * pc = GetController< AGBFPlayerController >() )

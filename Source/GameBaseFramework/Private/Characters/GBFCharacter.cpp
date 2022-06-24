@@ -24,13 +24,6 @@ AGBFCharacter::AGBFCharacter( const FObjectInitializer & object_initializer ) :
     PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnAbilitySystemInitialized ) );
     PawnExtComponent->OnAbilitySystemUninitialized_Register( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnAbilitySystemUninitialized ) );
 
-    AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
-    AbilitySystemComponent->SetIsReplicated( true );
-
-    // Mixed mode means we only are replicating the GEs to our-self, not the GEs to simulated proxies. If another SWEnemyBase receives a GE,
-    // we won't be told about it by the Server. Attributes, GameplayTags, and GameplayCues will still replicate to us.
-    AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
-
     HealthComponent = CreateDefaultSubobject< UGBFHealthComponent >( TEXT( "HealthComponent" ) );
     HealthComponent->OnDeathStarted().AddDynamic( this, &ThisClass::OnDeathStarted );
     HealthComponent->OnDeathFinished().AddDynamic( this, &ThisClass::OnDeathFinished );
@@ -48,9 +41,7 @@ UGASExtAbilitySystemComponent * AGBFCharacter::GetGASExtAbilitySystemComponent()
 
 UAbilitySystemComponent * AGBFCharacter::GetAbilitySystemComponent() const
 {
-    return AbilitySystemComponent;
-    // :TODO: ASC on PS
-    // return PawnExtComponent->GetGASExtAbilitySystemComponent();
+    return PawnExtComponent->GetGASExtAbilitySystemComponent();
 }
 
 void AGBFCharacter::GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const
