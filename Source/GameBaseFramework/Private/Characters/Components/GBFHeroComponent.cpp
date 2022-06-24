@@ -1,6 +1,5 @@
 #include "Characters/Components/GBFHeroComponent.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
@@ -8,6 +7,7 @@
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 
+#include <AbilitySystemBlueprintLibrary.h>
 #include <GameFramework/Controller.h>
 #include <Logging/MessageLog.h>
 #include <Misc/UObjectToken.h>

@@ -139,9 +139,9 @@ void AGBFGameMode::RequestPlayerRestartNextFrame( AController * controller, bool
     {
         GetWorldTimerManager().SetTimerForNextTick( player_controller, &APlayerController::ServerRestartPlayer_Implementation );
     }
-    else if ( auto * BotController = Cast< AGBFAIController >( controller ) )
+    else if ( auto * bot_controller = Cast< AGBFAIController >( controller ) )
     {
-        GetWorldTimerManager().SetTimerForNextTick( BotController, &AGBFAIController::ServerRestartController );
+        GetWorldTimerManager().SetTimerForNextTick( bot_controller, &AGBFAIController::ServerRestartController );
     }
 }
 

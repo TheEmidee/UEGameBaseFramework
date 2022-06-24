@@ -144,7 +144,7 @@ void AGBFCharacter::DisableMovementAndCollision()
         Controller->SetIgnoreMoveInput( true );
     }
 
-    UCapsuleComponent * capsule_component = GetCapsuleComponent();
+    auto * capsule_component = GetCapsuleComponent();
     check( capsule_component != nullptr );
     capsule_component->SetCollisionEnabled( ECollisionEnabled::NoCollision );
     capsule_component->SetCollisionResponseToAllChannels( ECR_Ignore );
