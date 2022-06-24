@@ -132,6 +132,7 @@ void AGBFPlayerState::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & 
     params.bIsPushBased = true;
 
     DOREPLIFETIME_WITH_PARAMS_FAST( ThisClass, PawnData, params );
+    DOREPLIFETIME_WITH_PARAMS_FAST( ThisClass, StatTags, params );
 }
 
 void AGBFPlayerState::OnRep_PawnData()

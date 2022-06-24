@@ -22,7 +22,7 @@ public:
 
     static const FName NAME_BindInputsNow;
 
-    UFUNCTION( BlueprintPure, Category = "Lyra|Hero" )
+    UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Hero" )
     static UGBFHeroComponent * FindHeroComponent( const AActor * actor );
 
 protected:

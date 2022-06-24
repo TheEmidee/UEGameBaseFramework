@@ -114,7 +114,7 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
     const auto is_locally_controlled = pawn->IsLocallyControlled();
 
     auto * player_state = GetPlayerState< AGBFPlayerState >();
-    check( player_state );
+    check( player_state != nullptr );
 
     const UGBFPawnData * pawn_data = nullptr;
 
