@@ -1,7 +1,10 @@
 #include "Gameplay/ConditionalEvents/GBFConditionalEventSubsystem.h"
 
-#include "AbilitySystemComponent.h"
 #include "GameFramework/GBFGameState.h"
+#include "Gameplay/ConditionalEvents/GBFConditionalEvent.h"
+#include "Gameplay/ConditionalEvents/GBFConditionalEventGroupData.h"
+
+#include <AbilitySystemComponent.h>
 
 bool UGBFConditionalEventSubsystem::ShouldCreateSubsystem( UObject * outer ) const
 {

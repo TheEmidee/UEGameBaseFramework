@@ -1,11 +1,11 @@
 #pragma once
 
-#include "GBFConditionalTrigger.h"
-
 #include <Abilities/GameplayAbility.h>
 #include <CoreMinimal.h>
 
 #include "GBFConditionalEvent.generated.h"
+
+class UGBFConditionalTrigger;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConditionalEvent : public UGameplayAbility
@@ -34,7 +34,7 @@ private:
     void OnTriggerTriggered();
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    TArray< UGBFConditionalTrigger > Triggers;
+    TArray< UGBFConditionalTrigger * > Triggers;
 
     int TriggerCount;
 };

@@ -1,12 +1,14 @@
 #pragma once
 
-#include "GBFConditionalEvent.h"
-#include "GBFConditionalEventGroupData.h"
-
 #include <CoreMinimal.h>
+#include <GameplayAbilitySpec.h>
 #include <Subsystems/WorldSubsystem.h>
 
 #include "GBFConditionalEventSubsystem.generated.h"
+
+class UGBFConditionalEvent;
+class UGBFConditionalEventGroupData;
+class UAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsystem
