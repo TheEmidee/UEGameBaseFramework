@@ -14,13 +14,19 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsyst
     GENERATED_BODY()
 
 public:
-    void Activate( const UGBFConditionalEvent & conditional_event );
-    void Activate( const UGBFConditionalEventGroupData & conditional_event_group_data );
-    void Deactivate( const UGBFConditionalEvent & conditional_event );
-    void Deactivate( const UGBFConditionalEventGroupData & conditional_event_group_data );
+    bool ShouldCreateSubsystem( UObject * outer ) const override;
+    void Initialize( FSubsystemCollectionBase & collection ) override;
+
+    void Activate( UGBFConditionalEvent * conditional_event );
+    void Activate( const UGBFConditionalEventGroupData * conditional_event_group_data );
+    void Deactivate( UGBFConditionalEvent * conditional_event ) const;
+    void Deactivate( const UGBFConditionalEventGroupData * conditional_event_group_data ) const;
     void DeactivateAll();
 
 private:
     UPROPERTY()
     TArray< FGameplayAbilitySpecHandle > ActivatedEventHandles;
+
+    UPROPERTY()
+    UAbilitySystemComponent * GameStateASC;
 };

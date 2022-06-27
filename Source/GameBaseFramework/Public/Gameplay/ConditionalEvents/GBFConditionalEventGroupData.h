@@ -13,10 +13,14 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventGroupData : public UDataAsset
     GENERATED_BODY()
 
 public:
-    void Activate();
-    void Deactivate();
+    const TArray< UGBFConditionalEvent * > & GetEvents() const;
 
 private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    TArray< UGBFConditionalEvent > Events;
+    TArray< UGBFConditionalEvent * > Events;
 };
+
+FORCEINLINE const TArray< UGBFConditionalEvent * > & UGBFConditionalEventGroupData::GetEvents() const
+{
+    return Events;
+}
