@@ -1,14 +1,15 @@
 #pragma once
 
-#include <Abilities/GameplayAbility.h>
+#include "Abilities/GASExtGameplayAbility.h"
+
 #include <CoreMinimal.h>
 
 #include "GBFConditionalEvent.generated.h"
 
 class UGBFConditionalTrigger;
 
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFConditionalEvent : public UGameplayAbility
+UCLASS( HideDropdown )
+class GAMEBASEFRAMEWORK_API UGBFConditionalEvent : public UGASExtGameplayAbility
 {
     GENERATED_BODY()
 
@@ -34,7 +35,7 @@ private:
     UFUNCTION()
     void OnTriggerTriggered();
 
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;
 
     int TriggerCount;
