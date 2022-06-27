@@ -46,7 +46,7 @@ void UGBFConditionalEventSubsystem::Initialize( FSubsystemCollectionBase & colle
     }
 }
 
-void UGBFConditionalEventSubsystem::Activate( UGBFConditionalEvent * conditional_event )
+void UGBFConditionalEventSubsystem::Activate( TSubclassOf< UGBFConditionalEvent > conditional_event )
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -76,13 +76,13 @@ void UGBFConditionalEventSubsystem::Activate( const UGBFConditionalEventGroupDat
         return;
     }
 
-    for ( auto * event : conditional_event_group_data->GetEvents() )
+    for ( auto & event : conditional_event_group_data->GetEvents() )
     {
         Activate( event );
     }
 }
 
-void UGBFConditionalEventSubsystem::Deactivate( UGBFConditionalEvent * conditional_event ) const
+void UGBFConditionalEventSubsystem::Deactivate( TSubclassOf< UGBFConditionalEvent > conditional_event ) const
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -94,7 +94,10 @@ void UGBFConditionalEventSubsystem::Deactivate( UGBFConditionalEvent * condition
         return;
     }
 
-    GameStateASC->CancelAbility( conditional_event );
+    if ( const auto * spec = GameStateASC->FindAbilitySpecFromClass( conditional_event ) )
+    {
+        GameStateASC->CancelAbilityHandle( spec->Handle );
+    }
 }
 
 void UGBFConditionalEventSubsystem::Deactivate( const UGBFConditionalEventGroupData * conditional_event_group_data ) const
@@ -109,7 +112,7 @@ void UGBFConditionalEventSubsystem::Deactivate( const UGBFConditionalEventGroupD
         return;
     }
 
-    for ( auto * event : conditional_event_group_data->GetEvents() )
+    for ( auto & event : conditional_event_group_data->GetEvents() )
     {
         Deactivate( event );
     }
