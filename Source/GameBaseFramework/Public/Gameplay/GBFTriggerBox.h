@@ -23,6 +23,8 @@ public:
     UFUNCTION( NetMulticast, reliable, BlueprintCallable )
     void Multicast_DeactivateTrigger();
 
+    UGBFTriggerManagerComponent * GetTriggerManagerComponent() const;
+
 protected:
     UFUNCTION( BlueprintNativeEvent )
     void OnTriggerBoxActivated( AActor * activator );
@@ -43,3 +45,8 @@ private:
     UBillboardComponent * SpriteComponent;
 #endif
 };
+
+FORCEINLINE UGBFTriggerManagerComponent * AGBFTriggerBox::GetTriggerManagerComponent() const
+{
+    return TriggerManagerComponent;
+}
