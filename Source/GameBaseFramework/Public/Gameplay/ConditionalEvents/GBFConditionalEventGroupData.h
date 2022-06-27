@@ -16,7 +16,7 @@ public:
     const TArray< UGBFConditionalEvent * > & GetEvents() const;
 
 private:
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalEvent * > Events;
 };
 

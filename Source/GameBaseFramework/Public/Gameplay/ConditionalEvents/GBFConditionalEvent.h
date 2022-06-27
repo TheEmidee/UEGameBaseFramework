@@ -26,14 +26,15 @@ public:
         bool replicate_end_ability,
         bool was_cancelled ) override;
 
-private:
+protected:
     UFUNCTION( BlueprintImplementableEvent )
     void ApplyOutcomes();
 
+private:
     UFUNCTION()
     void OnTriggerTriggered();
 
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;
 
     int TriggerCount;
