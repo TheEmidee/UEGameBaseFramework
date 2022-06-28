@@ -17,32 +17,27 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsyst
     GENERATED_BODY()
 
 public:
-    bool ShouldCreateSubsystem( UObject * outer ) const override;
     void Initialize( FSubsystemCollectionBase & collection ) override;
     bool DoesSupportWorldType( EWorldType::Type world_type ) const override;
 
-    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void ActivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event );
 
-    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data );
 
-    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void DeactivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event ) const;
 
-    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const;
 
-    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void DeactivateAll();
 
 private:
-    UFUNCTION()
-    void OnGameStateSet( AGameStateBase * game_state_base );
+    UAbilitySystemComponent * GetGameStateASC() const;
 
     UPROPERTY()
     TArray< FGameplayAbilitySpecHandle > ActivatedEventHandles;
-
-    UPROPERTY()
-    UAbilitySystemComponent * GameStateASC;
 };
