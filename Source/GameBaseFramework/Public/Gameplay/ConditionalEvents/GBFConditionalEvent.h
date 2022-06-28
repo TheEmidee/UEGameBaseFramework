@@ -28,14 +28,14 @@ public:
         bool was_cancelled ) override;
 
 protected:
-    UFUNCTION( BlueprintImplementableEvent )
+    UFUNCTION( BlueprintImplementableEvent, Category = "Conditional Events" )
     void ApplyOutcomes();
 
 private:
     UFUNCTION()
     void OnTriggerTriggered();
 
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;
 
     int TriggerCount;

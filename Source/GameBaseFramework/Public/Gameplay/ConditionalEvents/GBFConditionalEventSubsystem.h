@@ -20,19 +20,19 @@ public:
     bool ShouldCreateSubsystem( UObject * outer ) const override;
     void Initialize( FSubsystemCollectionBase & collection ) override;
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void ActivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event );
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data );
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void DeactivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event ) const;
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const;
 
-    UFUNCTION( BlueprintCallable )
+    UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void DeactivateAll();
 
 private:

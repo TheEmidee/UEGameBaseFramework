@@ -16,7 +16,7 @@ public:
     const TArray< TSubclassOf< UGBFConditionalEvent > > & GetEvents() const;
 
 private:
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< TSubclassOf< UGBFConditionalEvent > > Events;
 };
 
