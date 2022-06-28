@@ -28,20 +28,3 @@ FORCEINLINE FGBFOnTriggeredDelegate & UGBFConditionalTrigger::GetOnTriggeredDele
 {
     return OnTriggeredDelegate;
 }
-
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFTriggerBoxTrigger final : public UGBFConditionalTrigger
-{
-    GENERATED_BODY()
-
-public:
-    void Activate() override;
-    void Deactivate() override;
-
-private:
-    UFUNCTION()
-    void OnTriggerBoxActivated( AActor * activator );
-
-    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess = true ) )
-    TSoftObjectPtr< AGBFTriggerBox > TriggerBoxSoftObject;
-};
