@@ -9,7 +9,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFOnTriggeredDelegate );
 
-UCLASS( Blueprintable, EditInlineNew, HideDropdown )
+UCLASS( NotBlueprintable, EditInlineNew, HideDropdown )
 class GAMEBASEFRAMEWORK_API UGBFConditionalTrigger : public UObject
 {
     GENERATED_BODY()
