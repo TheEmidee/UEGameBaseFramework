@@ -6,7 +6,7 @@
 
 #include "GBFConditionalEventSubsystem.generated.h"
 
-class UGBFConditionalEvent;
+class UGBFConditionalEventAbility;
 class UGBFConditionalEventGroupData;
 class UAbilitySystemComponent;
 class AGameStateBase;
@@ -19,15 +19,16 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsyst
 public:
     bool ShouldCreateSubsystem( UObject * outer ) const override;
     void Initialize( FSubsystemCollectionBase & collection ) override;
+    bool DoesSupportWorldType( EWorldType::Type world_type ) const override;
 
     UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
-    void ActivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event );
+    void ActivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event );
 
     UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data );
 
     UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
-    void DeactivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event ) const;
+    void DeactivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event ) const;
 
     UFUNCTION( BlueprintCallable, Category = "Conditional Events" )
     void DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const;

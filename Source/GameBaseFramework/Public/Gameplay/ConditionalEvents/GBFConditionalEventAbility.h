@@ -4,17 +4,17 @@
 
 #include <CoreMinimal.h>
 
-#include "GBFConditionalEvent.generated.h"
+#include "GBFConditionalEventAbility.generated.h"
 
 class UGBFConditionalTrigger;
 
 UCLASS( HideDropdown )
-class GAMEBASEFRAMEWORK_API UGBFConditionalEvent : public UGASExtGameplayAbility
+class GAMEBASEFRAMEWORK_API UGBFConditionalEventAbility : public UGASExtGameplayAbility
 {
     GENERATED_BODY()
 
 public:
-    UGBFConditionalEvent();
+    UGBFConditionalEventAbility();
 
     void ActivateAbility( const FGameplayAbilitySpecHandle handle,
         const FGameplayAbilityActorInfo * actor_info,
@@ -29,11 +29,11 @@ public:
 
 protected:
     UFUNCTION( BlueprintImplementableEvent, Category = "Conditional Events" )
-    void ApplyOutcomes();
+    void ExecuteOutcomes();
 
 private:
     UFUNCTION()
-    void OnTriggerTriggered();
+    void OnTriggersTriggered();
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;

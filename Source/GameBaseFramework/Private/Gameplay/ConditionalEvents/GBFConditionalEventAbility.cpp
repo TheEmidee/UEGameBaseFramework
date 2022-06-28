@@ -1,8 +1,8 @@
-#include "Gameplay/ConditionalEvents/GBFConditionalEvent.h"
+#include "Gameplay/ConditionalEvents/GBFConditionalEventAbility.h"
 
 #include "Gameplay/ConditionalEvents/GBFConditionalTrigger.h"
 
-UGBFConditionalEvent::UGBFConditionalEvent()
+UGBFConditionalEventAbility::UGBFConditionalEventAbility()
 {
     ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
@@ -14,18 +14,18 @@ UGBFConditionalEvent::UGBFConditionalEvent()
     TriggerCount = 0;
 }
 
-void UGBFConditionalEvent::ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data )
+void UGBFConditionalEventAbility::ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data )
 {
     Super::ActivateAbility( handle, actor_info, activation_info, trigger_event_data );
 
     for ( auto * trigger : Triggers )
     {
         trigger->Activate();
-        trigger->GetOnTriggeredDelegate().AddDynamic( this, &ThisClass::OnTriggerTriggered );
+        trigger->GetOnTriggeredDelegate().AddDynamic( this, &ThisClass::OnTriggersTriggered );
     }
 }
 
-void UGBFConditionalEvent::EndAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, bool replicate_end_ability, bool was_cancelled )
+void UGBFConditionalEventAbility::EndAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, bool replicate_end_ability, bool was_cancelled )
 {
     for ( auto * trigger : Triggers )
     {
@@ -36,11 +36,11 @@ void UGBFConditionalEvent::EndAbility( const FGameplayAbilitySpecHandle handle, 
     Super::EndAbility( handle, actor_info, activation_info, replicate_end_ability, was_cancelled );
 }
 
-void UGBFConditionalEvent::OnTriggerTriggered()
+void UGBFConditionalEventAbility::OnTriggersTriggered()
 {
     ++TriggerCount;
     if ( TriggerCount >= Triggers.Num() )
     {
-        ApplyOutcomes();
+        ExecuteOutcomes();
     }
 }

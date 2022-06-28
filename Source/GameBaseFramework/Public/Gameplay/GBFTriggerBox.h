@@ -13,6 +13,8 @@ class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
     GENERATED_BODY()
 
 public:
+    UGBFTriggerManagerComponent * GetTriggerManagerComponent() const;
+
     AGBFTriggerBox();
 
     void PostInitializeComponents() override;
@@ -22,8 +24,6 @@ public:
 
     UFUNCTION( NetMulticast, reliable, BlueprintCallable )
     void Multicast_DeactivateTrigger();
-
-    UGBFTriggerManagerComponent * GetTriggerManagerComponent() const;
 
 protected:
     UFUNCTION( BlueprintNativeEvent )

@@ -5,7 +5,7 @@
 
 #include "GBFConditionalEventGroupData.generated.h"
 
-class UGBFConditionalEvent;
+class UGBFConditionalEventAbility;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConditionalEventGroupData : public UDataAsset
@@ -13,14 +13,14 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventGroupData : public UDataAsset
     GENERATED_BODY()
 
 public:
-    const TArray< TSubclassOf< UGBFConditionalEvent > > & GetEvents() const;
+    const TArray< TSubclassOf< UGBFConditionalEventAbility > > & GetEvents() const;
 
 private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
-    TArray< TSubclassOf< UGBFConditionalEvent > > Events;
+    TArray< TSubclassOf< UGBFConditionalEventAbility > > Events;
 };
 
-FORCEINLINE const TArray< TSubclassOf< UGBFConditionalEvent > > & UGBFConditionalEventGroupData::GetEvents() const
+FORCEINLINE const TArray< TSubclassOf< UGBFConditionalEventAbility > > & UGBFConditionalEventGroupData::GetEvents() const
 {
     return Events;
 }

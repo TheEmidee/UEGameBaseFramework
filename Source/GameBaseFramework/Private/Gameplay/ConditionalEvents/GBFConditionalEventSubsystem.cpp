@@ -1,7 +1,7 @@
 #include "Gameplay/ConditionalEvents/GBFConditionalEventSubsystem.h"
 
 #include "GameFramework/GBFGameState.h"
-#include "Gameplay/ConditionalEvents/GBFConditionalEvent.h"
+#include "Gameplay/ConditionalEvents/GBFConditionalEventAbility.h"
 #include "Gameplay/ConditionalEvents/GBFConditionalEventGroupData.h"
 
 #include <AbilitySystemComponent.h>
@@ -43,7 +43,12 @@ void UGBFConditionalEventSubsystem::Initialize( FSubsystemCollectionBase & colle
     }
 }
 
-void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event )
+bool UGBFConditionalEventSubsystem::DoesSupportWorldType( EWorldType::Type world_type ) const
+{
+    return world_type == EWorldType::Game || world_type == EWorldType::PIE;
+}
+
+void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event )
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -79,7 +84,7 @@ void UGBFConditionalEventSubsystem::ActivateEventGroup( const UGBFConditionalEve
     }
 }
 
-void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event ) const
+void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event ) const
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {

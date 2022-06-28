@@ -9,14 +9,14 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFOnTriggeredDelegate );
 
-UCLASS( NotBlueprintable, EditInlineNew, HideDropdown )
+UCLASS( Abstract, NotBlueprintable, EditInlineNew, HideDropdown )
 class GAMEBASEFRAMEWORK_API UGBFConditionalTrigger : public UObject
 {
     GENERATED_BODY()
 
 public:
-    virtual void Activate();
-    virtual void Deactivate();
+    virtual void Activate() PURE_VIRTUAL( UGBFConditionalTrigger::Activate );
+    virtual void Deactivate() PURE_VIRTUAL( UGBFConditionalTrigger::Deactivate );
 
     FGBFOnTriggeredDelegate & GetOnTriggeredDelegate();
 
@@ -30,7 +30,7 @@ FORCEINLINE FGBFOnTriggeredDelegate & UGBFConditionalTrigger::GetOnTriggeredDele
 }
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFTriggerBoxTrigger : public UGBFConditionalTrigger
+class GAMEBASEFRAMEWORK_API UGBFTriggerBoxTrigger final : public UGBFConditionalTrigger
 {
     GENERATED_BODY()
 
