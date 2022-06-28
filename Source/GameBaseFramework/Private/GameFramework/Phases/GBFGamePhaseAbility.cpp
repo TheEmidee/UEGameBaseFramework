@@ -1,7 +1,8 @@
 #include "GameFramework/Phases/GBFGamePhaseAbility.h"
 
-#include "AbilitySystemComponent.h"
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
+
+#include <AbilitySystemComponent.h>
 
 UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 {
@@ -14,7 +15,7 @@ UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 #if WITH_EDITOR
 EDataValidationResult UGBFGamePhaseAbility::IsDataValid( TArray< FText > & validation_errors )
 {
-    EDataValidationResult result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
+    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
 
     if ( !GamePhaseTag.IsValid() )
     {
