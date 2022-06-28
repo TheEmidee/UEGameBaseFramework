@@ -73,7 +73,7 @@ void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditiona
     }
 }
 
-void UGBFConditionalEventSubsystem::DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const
+void UGBFConditionalEventSubsystem::DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
     const auto * game_state_asc = GetGameStateASC();
 

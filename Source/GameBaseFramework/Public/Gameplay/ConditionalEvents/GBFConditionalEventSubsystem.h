@@ -17,7 +17,6 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsyst
     GENERATED_BODY()
 
 public:
-    void Initialize( FSubsystemCollectionBase & collection ) override;
     bool DoesSupportWorldType( EWorldType::Type world_type ) const override;
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
@@ -27,10 +26,10 @@ public:
     void ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
-    void DeactivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event ) const;
+    void DeactivateEvent( TSubclassOf< UGBFConditionalEventAbility > conditional_event );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
-    void DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const;
+    void DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Conditional Events" )
     void DeactivateAll();
