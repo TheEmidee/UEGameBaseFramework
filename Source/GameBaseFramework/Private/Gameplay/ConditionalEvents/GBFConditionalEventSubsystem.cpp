@@ -37,16 +37,13 @@ void UGBFConditionalEventSubsystem::Initialize( FSubsystemCollectionBase & colle
 {
     Super::Initialize( collection );
 
-    if ( const auto * world = GetWorld() )
+    if ( auto * world = GetWorld() )
     {
-        if ( const auto * game_state = world->GetGameState< AGBFGameState >() )
-        {
-            GameStateASC = game_state->GetAbilitySystemComponent();
-        }
+        world->GameStateSetEvent.AddUObject( this, &ThisClass::OnGameStateSet );
     }
 }
 
-void UGBFConditionalEventSubsystem::Activate( TSubclassOf< UGBFConditionalEvent > conditional_event )
+void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event )
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -64,7 +61,7 @@ void UGBFConditionalEventSubsystem::Activate( TSubclassOf< UGBFConditionalEvent 
     ActivatedEventHandles.Emplace( handle );
 }
 
-void UGBFConditionalEventSubsystem::Activate( const UGBFConditionalEventGroupData * conditional_event_group_data )
+void UGBFConditionalEventSubsystem::ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -78,11 +75,11 @@ void UGBFConditionalEventSubsystem::Activate( const UGBFConditionalEventGroupDat
 
     for ( auto & event : conditional_event_group_data->GetEvents() )
     {
-        Activate( event );
+        ActivateEvent( event );
     }
 }
 
-void UGBFConditionalEventSubsystem::Deactivate( TSubclassOf< UGBFConditionalEvent > conditional_event ) const
+void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditionalEvent > conditional_event ) const
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -100,7 +97,7 @@ void UGBFConditionalEventSubsystem::Deactivate( TSubclassOf< UGBFConditionalEven
     }
 }
 
-void UGBFConditionalEventSubsystem::Deactivate( const UGBFConditionalEventGroupData * conditional_event_group_data ) const
+void UGBFConditionalEventSubsystem::DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data ) const
 {
     if ( !ensureMsgf( GameStateASC != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
@@ -114,7 +111,7 @@ void UGBFConditionalEventSubsystem::Deactivate( const UGBFConditionalEventGroupD
 
     for ( auto & event : conditional_event_group_data->GetEvents() )
     {
-        Deactivate( event );
+        DeactivateEvent( event );
     }
 }
 
@@ -128,5 +125,13 @@ void UGBFConditionalEventSubsystem::DeactivateAll()
     for ( auto & event_handle : ActivatedEventHandles )
     {
         GameStateASC->CancelAbilityHandle( event_handle );
+    }
+}
+
+void UGBFConditionalEventSubsystem::OnGameStateSet( AGameStateBase * game_state_base )
+{
+    if ( const auto * game_state = Cast< AGBFGameState >( game_state_base ) )
+    {
+        GameStateASC = game_state->GetAbilitySystemComponent();
     }
 }
