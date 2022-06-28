@@ -2,14 +2,6 @@
 
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
-void UGBFConditionalTrigger::Activate()
-{
-}
-
-void UGBFConditionalTrigger::Deactivate()
-{
-}
-
 void UGBFTriggerBoxTrigger::Activate()
 {
     if ( !ensureMsgf( !TriggerBoxSoftObject.IsNull(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
@@ -17,8 +9,7 @@ void UGBFTriggerBoxTrigger::Activate()
         return;
     }
 
-    auto * trigger_box = TriggerBoxSoftObject.Get();
-    trigger_box->Multicast_ActivateTrigger( true );
+    const auto * trigger_box = TriggerBoxSoftObject.Get();
     trigger_box->GetTriggerManagerComponent()->OnTriggerBoxActivated().AddDynamic( this, &ThisClass::OnTriggerBoxActivated );
 }
 
@@ -29,9 +20,8 @@ void UGBFTriggerBoxTrigger::Deactivate()
         return;
     }
 
-    auto * trigger_box = TriggerBoxSoftObject.Get();
+    const auto * trigger_box = TriggerBoxSoftObject.Get();
     trigger_box->GetTriggerManagerComponent()->OnTriggerBoxActivated().RemoveDynamic( this, &ThisClass::OnTriggerBoxActivated );
-    trigger_box->Multicast_DeactivateTrigger();
 }
 
 void UGBFTriggerBoxTrigger::OnTriggerBoxActivated( AActor * /*activator*/ )
