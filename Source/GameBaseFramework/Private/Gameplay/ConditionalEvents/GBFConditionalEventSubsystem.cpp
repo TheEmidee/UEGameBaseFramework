@@ -33,13 +33,6 @@ void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalE
 
 void UGBFConditionalEventSubsystem::ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
-    const auto * game_state_asc = GetGameStateASC();
-
-    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
-    {
-        return;
-    }
-
     if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
         return;
@@ -75,13 +68,6 @@ void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditiona
 
 void UGBFConditionalEventSubsystem::DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
-    const auto * game_state_asc = GetGameStateASC();
-
-    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
-    {
-        return;
-    }
-
     if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
         return;
