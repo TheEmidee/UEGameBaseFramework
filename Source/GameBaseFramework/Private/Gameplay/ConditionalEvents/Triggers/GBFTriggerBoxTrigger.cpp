@@ -4,7 +4,7 @@
 
 void UGBFTriggerBoxTrigger::Activate()
 {
-    if ( !ensureMsgf( !TriggerBoxSoftObject.IsNull(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( TriggerBoxSoftObject.IsValid(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
         return;
     }
@@ -15,7 +15,7 @@ void UGBFTriggerBoxTrigger::Activate()
 
 void UGBFTriggerBoxTrigger::Deactivate()
 {
-    if ( !ensureMsgf( !TriggerBoxSoftObject.IsNull(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( TriggerBoxSoftObject.IsValid(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
     {
         return;
     }
