@@ -9,6 +9,7 @@ EDataValidationResult UGBFConditionalEventGroupData::IsDataValid( TArray< FText 
 
     return FDVEDataValidator( validation_errors )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Events ) )
+        .NotEmpty( VALIDATOR_GET_PROPERTY( Events ) )
         .Result();
 }
 #endif

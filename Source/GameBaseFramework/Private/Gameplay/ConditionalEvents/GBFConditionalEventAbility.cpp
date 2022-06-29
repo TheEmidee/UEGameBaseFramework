@@ -44,6 +44,7 @@ EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > 
 
     return FDVEDataValidator( validation_errors )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Triggers ) )
+        .NotEmpty( VALIDATOR_GET_PROPERTY( Triggers ) )
         .Result();
 }
 #endif
