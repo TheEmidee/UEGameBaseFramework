@@ -17,10 +17,6 @@ public:
     void Activate() override;
     void Deactivate() override;
 
-#if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
-#endif
-
 private:
     UFUNCTION()
     void OnTriggerBoxActivated( AActor * activator );
