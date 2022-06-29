@@ -15,6 +15,10 @@ class GAMEBASEFRAMEWORK_API UGBFConditionalEventGroupData : public UDataAsset
 public:
     const TArray< TSubclassOf< UGBFConditionalEventAbility > > & GetEvents() const;
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+#endif
+
 private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< TSubclassOf< UGBFConditionalEventAbility > > Events;

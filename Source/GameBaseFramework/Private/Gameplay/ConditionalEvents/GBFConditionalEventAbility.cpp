@@ -1,5 +1,6 @@
 #include "Gameplay/ConditionalEvents/GBFConditionalEventAbility.h"
 
+#include "DVEDataValidator.h"
 #include "Gameplay/ConditionalEvents/GBFConditionalTrigger.h"
 
 UGBFConditionalEventAbility::UGBFConditionalEventAbility()
@@ -35,6 +36,17 @@ void UGBFConditionalEventAbility::EndAbility( const FGameplayAbilitySpecHandle h
 
     Super::EndAbility( handle, actor_info, activation_info, replicate_end_ability, was_cancelled );
 }
+
+#if WITH_EDITOR
+EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > & validation_errors )
+{
+    Super::IsDataValid( validation_errors );
+
+    return FDVEDataValidator( validation_errors )
+        .NoNullItem( VALIDATOR_GET_PROPERTY( Triggers ) )
+        .Result();
+}
+#endif
 
 void UGBFConditionalEventAbility::OnTriggersTriggered()
 {

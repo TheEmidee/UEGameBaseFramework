@@ -27,6 +27,10 @@ public:
         bool replicate_end_ability,
         bool was_cancelled ) override;
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+#endif
+
 protected:
     UFUNCTION( BlueprintImplementableEvent, Category = "Conditional Events" )
     void ExecuteOutcomes();
