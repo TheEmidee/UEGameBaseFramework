@@ -97,8 +97,8 @@ void UGBFGlobalAbilitySystem::RemoveAbilityFromAll( const TSubclassOf< UGameplay
 {
     if ( ( ability.Get() != nullptr ) && AppliedAbilities.Contains( ability ) )
     {
-        FGlobalAppliedAbilityList & Entry = AppliedAbilities[ ability ];
-        Entry.RemoveFromAll();
+        auto & entry = AppliedAbilities[ ability ];
+        entry.RemoveFromAll();
         AppliedAbilities.Remove( ability );
     }
 }
