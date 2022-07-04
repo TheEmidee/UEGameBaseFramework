@@ -15,7 +15,7 @@ void UGBFTriggerBoxTrigger::Activate()
 
 void UGBFTriggerBoxTrigger::Deactivate()
 {
-    if ( !ensureMsgf( TriggerBoxSoftObject.IsValid(), TEXT( "%s: TriggerBox reference is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !TriggerBoxSoftObject.IsValid() )
     {
         return;
     }
