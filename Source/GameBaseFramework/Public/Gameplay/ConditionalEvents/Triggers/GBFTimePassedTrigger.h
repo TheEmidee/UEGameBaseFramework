@@ -4,12 +4,10 @@
 
 #include <CoreMinimal.h>
 
-#include "GBFTriggerBoxTrigger.generated.h"
-
-class AGBFTriggerBox;
+#include "GBFTimePassedTrigger.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFTriggerBoxTrigger final : public UGBFConditionalTrigger
+class GAMEBASEFRAMEWORK_API UGBFTimePassedTrigger : public UGBFConditionalTrigger
 {
     GENERATED_BODY()
 
@@ -23,9 +21,12 @@ public:
 
 private:
     UFUNCTION()
-    void OnTriggerBoxActivated( AActor * activator );
+    void OnTimerElapsed();
 
-    // Defines the TriggerBox to observe
+    // Defines after how much time the event should fire
     UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess = true ) )
-    TSoftObjectPtr< AGBFTriggerBox > TriggerBoxSoftObject;
+    float Time;
+
+    UPROPERTY()
+    FTimerHandle TimerHandle;
 };

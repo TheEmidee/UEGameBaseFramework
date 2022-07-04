@@ -42,6 +42,15 @@ EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > 
 {
     Super::IsDataValid( validation_errors );
 
+    // Call IsDataValid on all triggers since they are created inline
+    for ( auto * trigger : Triggers )
+    {
+        if ( trigger != nullptr )
+        {
+            trigger->IsDataValid( validation_errors );
+        }
+    }
+
     return FDVEDataValidator( validation_errors )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Triggers ) )
         .NotEmpty( VALIDATOR_GET_PROPERTY( Triggers ) )
