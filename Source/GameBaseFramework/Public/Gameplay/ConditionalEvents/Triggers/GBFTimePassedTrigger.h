@@ -19,6 +19,7 @@ private:
     UFUNCTION()
     void OnTimerElapsed();
 
+    // Defines after how much time the event should fire
     UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess = true ) )
     float Time;
 

@@ -21,6 +21,7 @@ private:
     UFUNCTION()
     void OnTriggerBoxActivated( AActor * activator );
 
+    // Defines the TriggerBox to observe
     UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess = true ) )
     TSoftObjectPtr< AGBFTriggerBox > TriggerBoxSoftObject;
 };
