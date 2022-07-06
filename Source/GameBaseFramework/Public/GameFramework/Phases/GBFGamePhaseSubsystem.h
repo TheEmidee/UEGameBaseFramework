@@ -46,19 +46,19 @@ public:
     void WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active );
     void WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false, meta = ( AutoCreateRefTerm = "PhaseTag" ) )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false, meta = ( AutoCreateRefTerm = "phase_tag" ) )
     bool IsPhaseActive( const FGameplayTag & phase_tag ) const;
 
 protected:
     bool DoesSupportWorldType( const EWorldType::Type world_type ) const override;
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "Start Phase", AutoCreateRefTerm = "PhaseEnded" ) )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "Start Phase", AutoCreateRefTerm = "phase_ended_delegate" ) )
     void K2_StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDynamicDelegate & phase_ended_delegate );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Starts or Is Active", AutoCreateRefTerm = "WhenPhaseActive" ) )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Starts or Is Active", AutoCreateRefTerm = "when_phase_active" ) )
     void K2_WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Ends", AutoCreateRefTerm = "WhenPhaseEnd" ) )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Ends", AutoCreateRefTerm = "when_phase_end" ) )
     void K2_WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_end );
 
     void OnBeginPhase( const UGBFGamePhaseAbility * phase_ability, const FGameplayAbilitySpecHandle phase_ability_handle );
