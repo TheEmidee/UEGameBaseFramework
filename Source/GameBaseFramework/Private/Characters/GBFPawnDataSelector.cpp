@@ -7,5 +7,11 @@ UGBFPawnDataSelector::UGBFPawnDataSelector()
 
 FPrimaryAssetId UGBFPawnDataSelector::GetPrimaryAssetId() const
 {
-    return FPrimaryAssetId( TEXT( "PawnDataSelector" ), GetPackage()->GetFName() );
+    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
+}
+
+FPrimaryAssetType UGBFPawnDataSelector::GetPrimaryAssetType()
+{
+    static const FPrimaryAssetType PrimaryAssetType( TEXT( "PawnDataSelector" ) );
+    return PrimaryAssetType;
 }

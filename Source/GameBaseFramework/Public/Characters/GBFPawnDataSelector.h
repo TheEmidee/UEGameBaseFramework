@@ -21,6 +21,8 @@ public:
     UFUNCTION( BlueprintImplementableEvent )
     bool CanUsePawnDataForController( const AController * controller ) const;
 
+    static FPrimaryAssetType GetPrimaryAssetType();
+
     UPROPERTY( EditAnywhere )
     const UGBFPawnData * PawnData;
 
