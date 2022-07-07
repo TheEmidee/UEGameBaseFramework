@@ -7,6 +7,7 @@
 
 class UGASExtAbilityTagRelationshipMapping;
 class UGASExtAbilitySet;
+class UCameraModifier;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
@@ -37,4 +38,8 @@ public:
     //// Default camera mode used by player controlled pawns.
     // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
     // TSubclassOf< ULyraCameraMode > DefaultCameraMode;
+
+    // Camera modifiers to add to the player camera manager
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
+    TArray< TSubclassOf< UCameraModifier > > CameraModifiers;
 };
