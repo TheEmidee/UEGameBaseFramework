@@ -1,7 +1,6 @@
 #include "Engine/SubSystems/GBFGameInstanceOnlineSubsystem.h"
 
 #include "Engine/GBFGameInstance.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "GBFLog.h"
 
 #include <OnlineSubsystem.h>
@@ -20,7 +19,7 @@ void UGBFGameInstanceOnlineSubsystem::HandleNetworkConnectionStatusChanged( cons
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: %s" ), EOnlineServerConnectionStatus::ToString( connection_status ) );
 
-    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() && connection_status != EOnlineServerConnectionStatus::Connected )
+    /*if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() && connection_status != EOnlineServerConnectionStatus::Connected )
     {
         UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleNetworkConnectionStatusChanged: Going to main menu" ) );
 
@@ -37,7 +36,7 @@ void UGBFGameInstanceOnlineSubsystem::HandleNetworkConnectionStatusChanged( cons
         }
 
         GetGBFGameInstance()->ShowMessageThenGotoWelcomeScreenState( NSLOCTEXT( "GBF", "LocKey_ServiceUnAvailableTitle", "Service Unavailable" ), return_reason );
-    }
+    }*/
 
     CurrentConnectionStatus = connection_status;
 }

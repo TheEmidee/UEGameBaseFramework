@@ -1,8 +1,6 @@
 #include "Engine/GBFLocalPlayerPresenceSystem.h"
 
 #include "Engine/GBFGameInstance.h"
-#include "Engine/GBFGameState.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 
 #include <Engine/LocalPlayer.h>
 #include <Online.h>
@@ -15,10 +13,10 @@ void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & colle
     {
         if ( auto * gi = lp->GetGameInstance() )
         {
-            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
-            {
-                game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
-            }
+            //if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            //{
+            //    //game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            //}
         }
     }
 }
@@ -31,10 +29,10 @@ void UGBFLocalPlayerPresenceSystem::Deinitialize()
     {
         if ( auto * gi = lp->GetGameInstance() )
         {
-            if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
-            {
-                game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
-            }
+            //if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            //{
+            //    //game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            //}
         }
     }
 }
@@ -63,10 +61,10 @@ void UGBFLocalPlayerPresenceSystem::SetPresenceForLocalPlayer( const FText & sta
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
-{
-    if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
-    {
-        SetPresenceForLocalPlayer( new_state->OnlinePresenceText );
-    }
-}
+//void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
+//{
+//    if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
+//    {
+//        SetPresenceForLocalPlayer( new_state->OnlinePresenceText );
+//    }
+//}

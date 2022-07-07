@@ -1,8 +1,6 @@
 #include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 
 #include "Engine/GBFGameInstance.h"
-#include "Engine/GBFGameState.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceIdentitySubsystem.h"
 #include "GameBaseFrameworkSettings.h"
 
@@ -45,7 +43,7 @@ void UGBFGameInstanceSessionSubsystem::SetPendingInvite( const FGBFSessionPendin
 {
     PendingInvite = session_pending_invite;
 
-    GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToMainMenuState();
+    //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToMainMenuState();
 
     const auto delegate = IOnlineIdentity::FOnGetUserPrivilegeCompleteDelegate::CreateUObject( this, &UGBFGameInstanceSessionSubsystem::OnUserCanPlayInvite );
     StartOnlinePrivilegeTask( delegate, EUserPrivileges::CanPlayOnline, PendingInvite.UserId );
@@ -69,7 +67,7 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_p
                 // Go ahead and go into loading state now
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
                 // ShowLoadingScreen();
-                GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+                //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
                 UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), true );
                 return true;
             }
@@ -97,7 +95,7 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_p
                 // Go ahead and go into loading state now
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
                 // ShowLoadingScreen();
-                GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+                //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
                 UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), true );
                 return true;
             }
@@ -179,7 +177,7 @@ void UGBFGameInstanceSessionSubsystem::HandlePendingSessionInvite()
 void UGBFGameInstanceSessionSubsystem::TravelToSession( const FName session_name )
 {
     AddNetworkFailureHandlers();
-    GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+    //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
     InternalTravelToSession( session_name );
 }
 
@@ -213,7 +211,7 @@ bool UGBFGameInstanceSessionSubsystem::HostQuickSession( const ULocalPlayer & lo
             //     // Go ahead and go into loading state now
             //     // If we fail, the delegate will handle showing the proper messaging and move to the correct state
             //     ShowLoadingScreen();
-            GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
+            //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
             return true;
             //}
         }
@@ -226,7 +224,7 @@ bool UGBFGameInstanceSessionSubsystem::HostGame( const ULocalPlayer * local_play
 {
     UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() );
 
-    auto * game_state_subsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
+    //auto * game_state_subsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
 
     if ( GetOnlineMode() == EGBFOnlineMode::Offline )
     {
@@ -235,7 +233,7 @@ bool UGBFGameInstanceSessionSubsystem::HostGame( const ULocalPlayer * local_play
         //
 
         // ShowLoadingScreen();
-        game_state_subsystem->GoToInGameState();
+        //game_state_subsystem->GoToInGameState();
 
         // Travel to the specified match URL
         TravelURL = travel_url;
@@ -265,7 +263,7 @@ bool UGBFGameInstanceSessionSubsystem::HostGame( const ULocalPlayer * local_play
             //     // Go ahead and go into loading state now
             //     // If we fail, the delegate will handle showing the proper messaging and move to the correct state
             //     ShowLoadingScreen();
-            game_state_subsystem->GoToInGameState();
+            //game_state_subsystem->GoToInGameState();
             return true;
             //}
         }
@@ -312,7 +310,7 @@ void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId 
 
 #if 1 // GBF_CONSOLE_UI
     // If we are not currently at (or heading to) the welcome screen then display a message on consoles
-    if ( OnlineMode != EGBFOnlineMode::Offline && !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
+    if ( OnlineMode != EGBFOnlineMode::Offline /*&& !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState()*/ )
     {
         UE_LOG( LogOnlineGame, Log, TEXT( "UGBFGameInstanceSessionSubsystem::HandleSessionFailure: Going to main menu" ) );
 
@@ -328,10 +326,10 @@ void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId 
 
         auto * settings = GetDefault< UGameBaseFrameworkSettings >();
 
-        GetGBFGameInstance()->ShowMessageThenGotoState(
+        /*GetGBFGameInstance()->ShowMessageThenGotoState(
             NSLOCTEXT( "GBF", "LocKey_NetworkFailure", "NetworkFailures" ),
             return_reason,
-            UGBFGameState::MainMenuStateName );
+            UGBFGameState::MainMenuStateName );*/
     }
 #endif
 }
@@ -477,7 +475,7 @@ void UGBFGameInstanceSessionSubsystem::OnUserCanPlayInvite( const FUniqueNetId &
     else
     {
         BroadcastOnSessionPrivilegeTaskFailed( user_id, privilege, privilege_results );
-        GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
+        //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
     }
 }
 
@@ -485,29 +483,29 @@ void UGBFGameInstanceSessionSubsystem::OnUserCanPlayTogether( const FUniqueNetId
 {
     BroadcastOnSessionPrivilegeTaskEnded( user_id );
 
-    auto * game_state_system = GetSubsystem< UGBFGameInstanceGameStateSystem >();
+    //auto * game_state_system = GetSubsystem< UGBFGameInstanceGameStateSystem >();
 
     if ( privilege_results == static_cast< uint32 >( IOnlineIdentity::EPrivilegeResults::NoFailures ) )
     {
-        if ( game_state_system->IsOnWelcomeScreenState() )
-        {
-            // :NOTE: needs testing
-            if ( auto * new_player_owner = GetOuterUGameInstance()->GetFirstGamePlayer() )
-            {
-                if ( PlayTogetherInfo.UserIndex != -1 )
-                {
-                    new_player_owner->SetControllerId( PlayTogetherInfo.UserIndex );
-                    new_player_owner->SetCachedUniqueNetId( FUniqueNetIdRepl( new_player_owner->GetUniqueNetIdFromCachedControllerId().GetUniqueNetId() ) );
+        //if ( game_state_system->IsOnWelcomeScreenState() )
+        //{
+        //    // :NOTE: needs testing
+        //    if ( auto * new_player_owner = GetOuterUGameInstance()->GetFirstGamePlayer() )
+        //    {
+        //        if ( PlayTogetherInfo.UserIndex != -1 )
+        //        {
+        //            new_player_owner->SetControllerId( PlayTogetherInfo.UserIndex );
+        //            new_player_owner->SetCachedUniqueNetId( new_player_owner->GetUniqueNetIdFromCachedControllerId().GetUniqueNetId() );
 
-                    game_state_system->GoToMainMenuState();
-                }
-            }
-        }
+        //            game_state_system->GoToMainMenuState();
+        //        }
+        //    }
+        //}
     }
     else
     {
         BroadcastOnSessionPrivilegeTaskFailed( user_id, privilege, privilege_results );
-        game_state_system->GoToWelcomeScreenState();
+        //game_state_system->GoToWelcomeScreenState();
     }
 }
 

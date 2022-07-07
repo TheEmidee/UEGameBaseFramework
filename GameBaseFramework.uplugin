@@ -51,6 +51,10 @@
     {
       "Name": "GameplayAbilities",
       "Enabled": true
+    },
+    {
+      "Name": "GASExtensions",
+      "Enabled": true
     }
   ]
 }

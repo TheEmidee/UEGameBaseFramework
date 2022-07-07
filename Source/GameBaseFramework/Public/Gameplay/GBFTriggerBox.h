@@ -13,6 +13,8 @@ class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
     GENERATED_BODY()
 
 public:
+    UGBFTriggerManagerComponent * GetTriggerManagerComponent() const;
+
     AGBFTriggerBox();
 
     void PostInitializeComponents() override;
@@ -43,3 +45,8 @@ private:
     UBillboardComponent * SpriteComponent;
 #endif
 };
+
+FORCEINLINE UGBFTriggerManagerComponent * AGBFTriggerBox::GetTriggerManagerComponent() const
+{
+    return TriggerManagerComponent;
+}

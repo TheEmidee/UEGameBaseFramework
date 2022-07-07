@@ -3,7 +3,6 @@
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFGameInstance.h"
 #include "Engine/SubSystems/GBFGameInstanceControllerSubsystem.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "Engine/SubSystems/GBFGameInstanceOnlineSubsystem.h"
 #include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 #include "GameFramework/GBFPlayerController.h"
@@ -31,8 +30,6 @@ void UGBFGameInstanceIdentitySubsystem::Initialize( FSubsystemCollectionBase & c
     {
         identity_interface->AddOnLoginStatusChangedDelegate_Handle( i, FOnLoginStatusChangedDelegate::CreateUObject( this, &UGBFGameInstanceIdentitySubsystem::HandleUserLoginChanged ) );
     }
-
-    GetSubsystem< UGBFGameInstanceGameStateSystem >()->OnStateChanged().AddDynamic( this, &UGBFGameInstanceIdentitySubsystem::OnGameStateChanged );
 }
 
 bool UGBFGameInstanceIdentitySubsystem::ProfileUISwap( const int controller_index )
@@ -40,7 +37,7 @@ bool UGBFGameInstanceIdentitySubsystem::ProfileUISwap( const int controller_inde
     return ShowLoginUI( controller_index, FOnLoginUIClosedDelegate::CreateLambda( [this]( const TSharedPtr< const FUniqueNetId > unique_net_id, const int, const FOnlineError & ) {
         if ( unique_net_id->IsValid() )
         {
-            GetOuterUGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
+            //GetOuterUGameInstance()->GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToWelcomeScreenState();
         }
     } ) );
 }
@@ -275,22 +272,4 @@ void UGBFGameInstanceIdentitySubsystem::OnLoginUIClosed( const TSharedPtr< const
     {
         CurrentUniqueNetId = unique_id;
     }
-}
-
-void UGBFGameInstanceIdentitySubsystem::OnGameStateChanged( FName /*state_name*/, const UGBFGameState * /*new_state*/ )
-{
-    if ( !GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
-    {
-        return;
-    }
-
-    if ( CurrentUniqueNetId.IsValid() )
-    {
-        if ( auto * local_player = GetOuterUGameInstance()->FindLocalPlayerFromUniqueNetId( *CurrentUniqueNetId ) )
-        {
-            local_player->SetCachedUniqueNetId( FUniqueNetIdRepl( nullptr ) );
-        }
-    }
-
-    CurrentUniqueNetId = nullptr;
 }

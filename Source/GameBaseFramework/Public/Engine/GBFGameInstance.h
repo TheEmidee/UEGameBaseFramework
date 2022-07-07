@@ -8,7 +8,6 @@
 #include "GBFGameInstance.generated.h"
 
 class UGBFGameInstanceIdentitySubsystem;
-class UGBFGameInstanceGameStateSystem;
 class UGBFGameInstanceSessionSubsystem;
 class UGBFGameState;
 class UGameBaseFrameworkSettings;
@@ -70,7 +69,6 @@ private:
     FTickerDelegate TickDelegate;
     FTSTicker::FDelegateHandle TickDelegateHandle;
 
-    TWeakObjectPtr< UGBFGameInstanceGameStateSystem > GameStateSubsystem;
     TWeakObjectPtr< UGBFGameInstanceIdentitySubsystem > IdentitySubsystem;
     TWeakObjectPtr< UGBFGameInstanceSessionSubsystem > SessionSubsystem;
 };

@@ -3,7 +3,6 @@
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFGameInstance.h"
 #include "Engine/GBFLocalPlayer.h"
-#include "Engine/SubSystems/GBFGameInstanceGameStateSystem.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerController.h"
 
@@ -67,10 +66,10 @@ void UGBFGameInstanceControllerSubsystem::HandleControllerPairingChanged( const 
 
     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerPairingChanged GameUserIndex %d PreviousUser '%s' NewUser '%s'" ), game_user_index, *previous_user.User.ToString(), *new_user.User.ToString() );
 
-    if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
+    /*if ( GetSubsystem< UGBFGameInstanceGameStateSystem >()->IsOnWelcomeScreenState() )
     {
         return;
-    }
+    }*/
 
 #if PLATFORM_XBOXONE
     if ( IgnorePairingChangeForControllerId != -1 && game_user_index == IgnorePairingChangeForControllerId )
