@@ -155,6 +155,27 @@ AActor * AGBFGameMode::ChoosePlayerStart_Implementation( AController * player )
     return Super::ChoosePlayerStart_Implementation( player );
 }
 
+FString AGBFGameMode::InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal )
+{
+    const auto error_message = Super::InitNewPlayer( new_player_controller, unique_id, options, portal );
+
+    if ( !error_message.IsEmpty() )
+    {
+        return error_message;
+    }
+
+    if ( auto * player_state = new_player_controller->GetPlayerState< AGBFPlayerState >() )
+    {
+        player_state->SetConnectionOptions( options );
+    }
+    else
+    {
+        return TEXT( "The player state must inherit from AGBFPlayerState" );
+    }
+
+    return FString();
+}
+
 void AGBFGameMode::FinishRestartPlayer( AController * new_player, const FRotator & start_rotation )
 {
     if ( auto * player_spawning_component = GameState->FindComponentByClass< UGBFPlayerSpawningManagerComponent >() )
