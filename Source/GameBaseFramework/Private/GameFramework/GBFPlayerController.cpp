@@ -180,7 +180,7 @@ void AGBFPlayerController::AddCheats( bool force )
 {
 #if USING_CHEAT_MANAGER
     Super::AddCheats( true );
-#else  //#if USING_CHEAT_MANAGER
+#else //#if USING_CHEAT_MANAGER
     Super::AddCheats( force );
 #endif //
 }
@@ -256,4 +256,6 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
 void AGBFPlayerController::BroadcastOnPlayerStateChanged()
 {
     OnPlayerStateChanged();
+
+    LastSeenPlayerState = PlayerState;
 }
