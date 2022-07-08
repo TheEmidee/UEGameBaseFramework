@@ -138,6 +138,17 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
         {
             InitializePlayerInput( pawn->InputComponent );
         }
+
+        if ( is_locally_controlled && pawn_data != nullptr )
+        {
+            if ( auto * player_camera_manager = pc->PlayerCameraManager )
+            {
+                for ( const auto & modifier : pawn_data->CameraModifiers )
+                {
+                    player_camera_manager->AddNewCameraModifier( modifier );
+                }
+            }
+        }
     }
 
     bPawnHasInitialized = true;

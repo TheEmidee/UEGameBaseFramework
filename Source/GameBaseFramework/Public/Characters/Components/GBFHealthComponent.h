@@ -29,10 +29,10 @@ class GAMEBASEFRAMEWORK_API UGBFHealthComponent : public UActorComponent
 public:
     UGBFHealthComponent();
 
-    UFUNCTION( BlueprintPure, Category = "Swarms|Health" )
+    UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Health" )
     bool IsAlive() const;
 
-    UFUNCTION( BlueprintPure, Category = "Swarms|Health" )
+    UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Health" )
     EGBFDeathState GetDeathState() const;
 
     FGBFOnDeathDelegate & OnDeathStarted();
@@ -51,10 +51,10 @@ public:
     void StartDeath();
     void FinishDeath();
 
-    UFUNCTION( BlueprintPure, Category = "Swarms|Health" )
+    UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Health" )
     static UGBFHealthComponent * FindHealthComponent( const AActor * actor );
 
-    UFUNCTION( BlueprintCallable, Category = "Swarms|Health" )
+    UFUNCTION( BlueprintCallable, Category = "GameBaseFramework|Health" )
     void Revive();
 
 protected:
