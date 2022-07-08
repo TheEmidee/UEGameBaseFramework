@@ -133,7 +133,7 @@ private:
     UFUNCTION()
     void OnObservedComponentEndOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 other_body_index );
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, meta = ( AllowAbstract = true ) )
     TSubclassOf< AActor > DetectedActorClass;
 
     UPROPERTY( BlueprintReadOnly, EditAnywhere, Instanced, meta = ( AllowPrivateAccess ) )
