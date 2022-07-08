@@ -14,6 +14,8 @@ class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
+    FPrimaryAssetId GetPrimaryAssetId() const override;
+
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
 #endif

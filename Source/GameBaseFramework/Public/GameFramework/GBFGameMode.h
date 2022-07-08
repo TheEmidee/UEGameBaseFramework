@@ -25,7 +25,9 @@ public:
     void RequestPlayerRestartNextFrame( AController * controller, bool force_reset = false );
 
     AActor * ChoosePlayerStart_Implementation( AController * player ) override;
+
 protected:
+    FString InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal ) override;
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
 
     // :TODO: UE5
