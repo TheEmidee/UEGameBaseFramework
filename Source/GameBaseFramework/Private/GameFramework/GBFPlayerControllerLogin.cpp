@@ -190,12 +190,12 @@ void AGBFPlayerControllerLogin::TryToConnectToOnlineInterface()
                 if ( !identity_interface->Login( PendingControllerIndex, FOnlineAccountCredentials() ) )
                 {
                     // Login task was not started. Just skip and move to OnLoginSucceeded.
-                    OnLoginSucceeded( PendingControllerIndex, true, FUniqueNetIdString( "" ), "" );
+                    OnLoginSucceeded( PendingControllerIndex, true, FUniqueNetIdString::Create( "", NAME_None ).Get(), "" );
                 }
             }
             else
             {
-                OnLoginSucceeded( PendingControllerIndex, true, FUniqueNetIdString( "" ), "" );
+                OnLoginSucceeded( PendingControllerIndex, true, FUniqueNetIdString::Create( "", NAME_None ).Get(), "" );
             }
         }
     }

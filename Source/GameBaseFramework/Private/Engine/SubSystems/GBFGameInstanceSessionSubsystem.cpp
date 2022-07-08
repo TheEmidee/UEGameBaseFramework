@@ -157,7 +157,7 @@ void UGBFGameInstanceSessionSubsystem::HandlePendingSessionInvite()
     if ( new_player_owner != nullptr )
     {
         new_player_owner->SetControllerId( PendingInvite.ControllerId );
-        new_player_owner->SetCachedUniqueNetId( PendingInvite.UserId );
+        new_player_owner->SetCachedUniqueNetId( FUniqueNetIdRepl( PendingInvite.UserId ) );
         SetOnlineMode( EGBFOnlineMode::Online );
 
         const auto is_local_player_host = PendingInvite.UserId.IsValid() && PendingInvite.InviteResult.Session.OwningUserId.IsValid() && *PendingInvite.UserId == *PendingInvite.InviteResult.Session.OwningUserId;
