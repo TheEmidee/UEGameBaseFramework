@@ -1,17 +1,29 @@
 #include "GameFramework/GBFGameMode.h"
 
+#include "AI/GBFAIController.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
+#include "Characters/GBFPawnDataSelector.h"
 #include "Engine/GBFAssetManager.h"
 #include "GBFLog.h"
-#include "AI/GBFAIController.h"
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Engine/World.h>
+#include <Kismet/GameplayStatics.h>
 #include <TimerManager.h>
 
 const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController * controller ) const
 {
+    const auto get_pawn_data_selector = []( const FSoftObjectPath & asset_path ) {
+        const TSubclassOf< UGBFPawnDataSelector > asset_class = Cast< UClass >( asset_path.TryLoad() );
+        check( asset_class != nullptr );
+
+        const auto * pawn_data_selector = GetDefault< UGBFPawnDataSelector >( asset_class );
+        check( pawn_data_selector != nullptr );
+
+        return pawn_data_selector;
+    };
+
     // See if pawn data is already set on the player state
     if ( controller != nullptr )
     {
@@ -21,11 +33,52 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
             {
                 return pawn_data;
             }
+
+            static const FString PawnDataSelector( TEXT( "PawnDataSelector" ) );
+
+            const auto & controller_connection_options = player_state->GetConnectionOptions();
+
+            if ( UGameplayStatics::HasOption( controller_connection_options, PawnDataSelector ) )
+            {
+                const auto pawn_data_selector_from_options = UGameplayStatics::ParseOption( controller_connection_options, PawnDataSelector );
+                const auto pawn_data_selector_primary_id = FPrimaryAssetId( FPrimaryAssetType( UGBFPawnDataSelector::GetPrimaryAssetType() ), FName( *pawn_data_selector_from_options ) );
+
+                const auto asset_path = UGBFAssetManager::Get().GetPrimaryAssetPath( pawn_data_selector_primary_id );
+                const auto * pawn_data_selector = get_pawn_data_selector( asset_path );
+
+                return pawn_data_selector->PawnData;
+            }
+        }
+    }
+
+    TArray< FSoftObjectPath > object_paths;
+    if ( UGBFAssetManager::Get().GetPrimaryAssetPathList( UGBFPawnDataSelector::GetPrimaryAssetType(), object_paths ) )
+    {
+        TArray< const UGBFPawnDataSelector * > pawn_data_selectors;
+        pawn_data_selectors.Reserve( object_paths.Num() );
+
+        for ( const auto & object_path : object_paths )
+        {
+            const auto * pawn_data_selector = get_pawn_data_selector( object_path );
+            pawn_data_selectors.Add( pawn_data_selector );
+        }
+
+        pawn_data_selectors.Sort( []( auto & left, auto & right ) {
+            return left.Priority > right.Priority;
+        } );
+
+        for ( const auto * pawn_data_selector : pawn_data_selectors )
+        {
+            if ( pawn_data_selector->CanUsePawnDataForController( controller ) )
+            {
+                return pawn_data_selector->PawnData;
+            }
         }
     }
 
     // If not, fall back to the the default for the current experience
-    check( GameState );
+    check( GameState != nullptr );
+
     // :TODO: Experiences
     // ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
     // check( ExperienceComponent );
@@ -153,6 +206,27 @@ AActor * AGBFGameMode::ChoosePlayerStart_Implementation( AController * player )
     }
 
     return Super::ChoosePlayerStart_Implementation( player );
+}
+
+FString AGBFGameMode::InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal )
+{
+    const auto error_message = Super::InitNewPlayer( new_player_controller, unique_id, options, portal );
+
+    if ( !error_message.IsEmpty() )
+    {
+        return error_message;
+    }
+
+    if ( auto * player_state = new_player_controller->GetPlayerState< AGBFPlayerState >() )
+    {
+        player_state->SetConnectionOptions( options );
+    }
+    else
+    {
+        return TEXT( "The player state must inherit from AGBFPlayerState" );
+    }
+
+    return FString();
 }
 
 void AGBFGameMode::FinishRestartPlayer( AController * new_player, const FRotator & start_rotation )

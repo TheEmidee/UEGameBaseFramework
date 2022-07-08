@@ -2,6 +2,11 @@
 
 #include "DVEDataValidator.h"
 
+FPrimaryAssetId UGBFPawnData::GetPrimaryAssetId() const
+{
+    return FPrimaryAssetId( TEXT( "PawnData" ), GetPackage()->GetFName() );
+}
+
 #if WITH_EDITOR
 EDataValidationResult UGBFPawnData::IsDataValid( TArray< FText > & validation_errors )
 {

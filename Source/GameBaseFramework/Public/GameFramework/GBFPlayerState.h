@@ -56,6 +56,8 @@ public:
 
     void PostInitializeComponents() override;
     void ClientInitialize( AController * controller ) override;
+    void SetConnectionOptions( const FString & connection_options );
+    const FString & GetConnectionOptions() const;
 
 protected:
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
@@ -71,9 +73,21 @@ protected:
 
     UPROPERTY( ReplicatedUsing = OnRep_PawnData )
     const UGBFPawnData * PawnData;
+
+    FString ConnectionOptions;
 };
 
 FORCEINLINE UGASExtAbilitySystemComponent * AGBFPlayerState::GetGASExtAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
+}
+
+FORCEINLINE void AGBFPlayerState::SetConnectionOptions( const FString & connection_options )
+{
+    ConnectionOptions = connection_options;
+}
+
+FORCEINLINE const FString & AGBFPlayerState::GetConnectionOptions() const
+{
+    return ConnectionOptions;
 }
