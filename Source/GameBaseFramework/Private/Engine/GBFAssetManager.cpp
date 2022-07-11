@@ -2,6 +2,7 @@
 
 #include "Characters/GBFPawnData.h"
 #include "GBFLog.h"
+#include "Characters/GBFPawnDataSelector.h"
 #include "GameplayCues/GASExtGameplayCueManager.h"
 
 #include <AbilitySystemGlobals.h>
@@ -79,6 +80,13 @@ void UGBFAssetManager::StartInitialLoading()
         "InitializeGameplayCueManager",
         [ this ]() {
             InitializeGameplayCueManager();
+        },
+        1.0f );
+
+    AddStartupJob(
+        "Load PawnData Selectors",
+        [ this ]() {
+            LoadPrimaryAssetsWithType( UGBFPawnDataSelector::GetPrimaryAssetType() );
         },
         1.0f );
 
