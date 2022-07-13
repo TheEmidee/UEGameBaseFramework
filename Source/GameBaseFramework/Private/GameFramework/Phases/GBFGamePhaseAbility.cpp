@@ -17,10 +17,13 @@ EDataValidationResult UGBFGamePhaseAbility::IsDataValid( TArray< FText > & valid
 {
     auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
 
-    if ( !GamePhaseTag.IsValid() )
+    if ( !GetClass()->HasAnyClassFlags( CLASS_Abstract ) )
     {
-        result = EDataValidationResult::Invalid;
-        validation_errors.Add( FText::FromString( "GamePhaseTag must be set to a tag representing the current phase." ) );
+        if ( !GamePhaseTag.IsValid() )
+        {
+            result = EDataValidationResult::Invalid;
+            validation_errors.Add( FText::FromString( "GamePhaseTag must be set to a tag representing the current phase." ) );
+        }
     }
 
     return result;
