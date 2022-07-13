@@ -6,6 +6,17 @@
 
 #include "GBFGamePhaseAbility.generated.h"
 
+UENUM()
+enum class EGBFGamePhaseAbilityExactTagCancellationPolicy : uint8
+{
+    // Do nothing. Allow multiple abilities with the exact same tag to run at the same time
+    NoCancellation,
+    // Cancel the already existing phase
+    CancelExistingPhase,
+    // Cancel the new phase. It won't be activated at all
+    CancelNewPhase
+};
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGamePhaseAbility final : public UGASExtGameplayAbility
 {
@@ -15,6 +26,7 @@ public:
     UGBFGamePhaseAbility();
 
     const FGameplayTag & GetGamePhaseTag() const;
+    EGBFGamePhaseAbilityExactTagCancellationPolicy GetExactTagCancellationPolicy() const;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
@@ -34,9 +46,18 @@ protected:
     // tied to the GamePhase.Playing phase.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
     FGameplayTag GamePhaseTag;
+
+    // Defines what happens if a phase starts when an existing phase has exactly the same tag
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
+    EGBFGamePhaseAbilityExactTagCancellationPolicy ExactTagCancellationPolicy;
 };
 
 FORCEINLINE const FGameplayTag & UGBFGamePhaseAbility::GetGamePhaseTag() const
 {
     return GamePhaseTag;
+}
+
+FORCEINLINE EGBFGamePhaseAbilityExactTagCancellationPolicy UGBFGamePhaseAbility::GetExactTagCancellationPolicy() const
+{
+    return ExactTagCancellationPolicy;
 }
