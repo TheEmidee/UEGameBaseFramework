@@ -10,6 +10,8 @@ UGBFGamePhaseAbility::UGBFGamePhaseAbility()
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
     NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnly;
+
+    ExactTagCancellationPolicy = EGBFGamePhaseAbilityExactTagCancellationPolicy::NoCancellation;
 }
 
 #if WITH_EDITOR
