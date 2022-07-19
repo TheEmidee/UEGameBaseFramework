@@ -4,6 +4,8 @@
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 #include "GameFramework/Experiences/GBFExperienceSubsystem.h"
+#include "GameFramework/Phases/GBFGamePhaseAbility.h"
+#include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
 #include "Net/UnrealNetwork.h"
 
 #include <Engine/AssetManager.h>
@@ -65,7 +67,7 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
 
         // Deactivate and unload the actions
         // :TODO: UE5
-        //FGameFeatureDeactivatingContext context( FSimpleDelegate::CreateUObject( this, &ThisClass::OnActionDeactivationCompleted ) );
+        // FGameFeatureDeactivatingContext context( FSimpleDelegate::CreateUObject( this, &ThisClass::OnActionDeactivationCompleted ) );
         /*const FWorldContext * ExistingWorldContext = GEngine->GetWorldContextFromWorld( GetWorld() );
         if ( ExistingWorldContext )
         {
@@ -73,7 +75,7 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
         }*/
 
         auto DeactivateListOfActions = [ /*&context*/ ]( const TArray< UGameFeatureAction * > & ActionList ) {
-            for (const UGameFeatureAction * action : ActionList )
+            for ( const UGameFeatureAction * action : ActionList )
             {
                 if ( action != nullptr )
                 {
@@ -370,7 +372,7 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         Context.SetRequiredWorldContextHandle( ExistingWorldContext->ContextHandle );
     }*/
 
-    auto ActivateListOfActions = [ /*&Context*/ ]( const TArray< UGameFeatureAction * > & action_list ) {
+    auto activate_list_of_actions = [ /*&Context*/ ]( const TArray< UGameFeatureAction * > & action_list ) {
         for ( UGameFeatureAction * action : action_list )
         {
             if ( action != nullptr )
@@ -385,16 +387,24 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         }
     };
 
-    ActivateListOfActions( CurrentExperience->Actions );
+    activate_list_of_actions( CurrentExperience->Actions );
     for ( const auto * action_set : CurrentExperience->ActionSets )
     {
         if ( action_set != nullptr )
         {
-            ActivateListOfActions( action_set->Actions );
+            activate_list_of_actions( action_set->Actions );
         }
     }
 
     LoadState = EGBFExperienceLoadState::Loaded;
+
+    if ( CurrentExperience->InitialPhase != nullptr )
+    {
+        if ( auto * subsystem = GetWorld()->GetSubsystem< UGBFGamePhaseSubsystem >() )
+        {
+            subsystem->StartPhase( CurrentExperience->InitialPhase );
+        }
+    }
 
     OnExperienceLoaded_HighPriority.Broadcast( CurrentExperience );
     OnExperienceLoaded_HighPriority.Clear();

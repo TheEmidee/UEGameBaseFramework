@@ -5,6 +5,7 @@
 
 #include "GBFExperienceDefinition.generated.h"
 
+class UGBFGamePhaseAbility;
 class UGBFPawnData;
 class UGBFExperienceActionSet;
 class UGameFeatureAction;
@@ -15,6 +16,8 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryData
     GENERATED_BODY()
 
 public:
+    FPrimaryAssetId GetPrimaryAssetId() const override;
+
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
 #endif
@@ -39,4 +42,7 @@ public:
     // List of additional action sets to compose into this experience
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     TArray< UGBFExperienceActionSet * > ActionSets;
+
+    UPROPERTY( EditDefaultsOnly, Category = Gameplay )
+    TSubclassOf< UGBFGamePhaseAbility > InitialPhase;
 };

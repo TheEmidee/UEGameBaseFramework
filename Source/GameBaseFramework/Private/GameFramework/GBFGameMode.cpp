@@ -6,6 +6,9 @@
 #include "Engine/GBFAssetManager.h"
 #include "GBFLog.h"
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
+#include "GameFramework/Experiences/GBFExperienceDefinition.h"
+#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Engine/World.h>
@@ -76,27 +79,28 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
         }
     }
 
+    const auto * gbf_game_state = GetGameState< AGBFGameState >();
+
     // If not, fall back to the the default for the current experience
-    check( GameState != nullptr );
+    check( gbf_game_state != nullptr );
 
-    // :TODO: Experiences
-    // ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
-    // check( ExperienceComponent );
+    const auto * experience_component = gbf_game_state->GetExperienceManagerComponent();
+    check( experience_component != nullptr );
 
-    // if ( ExperienceComponent->IsExperienceLoaded() )
-    //{
-    //     const ULyraExperienceDefinition * Experience = ExperienceComponent->GetCurrentExperienceChecked();
-    //     if ( Experience->DefaultPawnData != nullptr )
-    //     {
-    //         return Experience->DefaultPawnData;
-    //     }
+    if ( experience_component->IsExperienceLoaded() )
+    {
+        const auto * experience = experience_component->GetCurrentExperienceChecked();
+        if ( experience->DefaultPawnData != nullptr )
+        {
+            return experience->DefaultPawnData;
+        }
 
-    //    // Experience is loaded and there's still no pawn data, fall back to the default for now
-    //    return ULyraAssetManager::Get().GetDefaultPawnData();
-    //}
+        // Experience is loaded and there's still no pawn data, fall back to the default for now
+        return UGBFAssetManager::Get().GetDefaultPawnData();
+    }
 
     // Experience not loaded yet, so there is no pawn data to be had
-    return UGBFAssetManager::Get().GetDefaultPawnData();
+    return nullptr;
 }
 
 APawn * AGBFGameMode::SpawnDefaultPawnAtTransform_Implementation( AController * new_player, const FTransform & spawn_transform )
