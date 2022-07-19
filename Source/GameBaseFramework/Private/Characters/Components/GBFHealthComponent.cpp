@@ -246,6 +246,12 @@ void UGBFHealthComponent::OnRep_DeathState( EGBFDeathState old_death_state )
 
     if ( old_death_state > new_death_state )
     {
+        // Clear gameplay tags on clients too when we are revived
+        if ( new_death_state == EGBFDeathState::NotDead )
+        {
+            ClearGameplayTags();
+        }
+
         // :TODO: Commented for now because a revive can trigger this. which should not give a warning
         // The server is trying to set us back but we've already predicted past the server state.
         // UE_LOG( LogGBF, Warning, TEXT( "HealthComponent: Predicted past server death state [%d] -> [%d] for owner [%s]." ), static_cast< uint8 >( old_death_state ), static_cast< uint8 >( new_death_state ), *GetNameSafe( GetOwner() ) );

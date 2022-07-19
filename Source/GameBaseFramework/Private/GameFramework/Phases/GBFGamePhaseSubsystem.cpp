@@ -112,18 +112,19 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
     auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
     if ( ensure( game_state_asc != nullptr ) )
     {
-        TArray< FGameplayAbilitySpec * > ActivePhases;
+        TArray< FGameplayAbilitySpec * > active_phases;
 
         for ( const auto & kvp : ActivePhaseMap )
         {
             const auto active_ability_handle = kvp.Key;
             if ( auto * gameplay_ability_spec = game_state_asc->FindAbilitySpecFromHandle( active_ability_handle ) )
             {
-                ActivePhases.Add( gameplay_ability_spec );
+                active_phases.Add( gameplay_ability_spec );
             }
         }
 
-        for ( const auto * active_phase : ActivePhases )
+        bool can_start_new_phase = true;
+        for ( const auto * active_phase : active_phases )
         {
             const auto * active_phase_ability = CastChecked< UGBFGamePhaseAbility >( active_phase->Ability );
             const auto active_phase_tag = active_phase_ability->GetGamePhaseTag();
@@ -135,7 +136,39 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
             // Game.Playing phase will still be active, and if someone were to push another one, like,
             // Game.Playing.ActualSuddenDeath, it would end Game.Playing.SuddenDeath phase, but Game.Playing would
             // continue.  Similarly if we activated Game.GameOver, all the Game.Playing* phases would end.
-            if ( !active_phase_tag.MatchesTag( incoming_phase_tag ) && active_phase_tag.MatchesTag( incoming_phase_parent_tag ) )
+
+            bool cancel_active_phases = false;
+            if ( active_phase_tag.MatchesTagExact( incoming_phase_tag ) )
+            {
+                switch ( phase_ability->GetExactTagCancellationPolicy() )
+                {
+                    case EGBFGamePhaseAbilityExactTagCancellationPolicy::NoCancellation:
+                    {
+                    }
+                    break;
+                    case EGBFGamePhaseAbilityExactTagCancellationPolicy::CancelExistingPhase:
+                    {
+                        cancel_active_phases = true;
+                    }
+                    break;
+                    case EGBFGamePhaseAbilityExactTagCancellationPolicy::CancelNewPhase:
+                    {
+                        can_start_new_phase = false;
+                    }
+                    break;
+                    default:
+                    {
+                        checkNoEntry();
+                    }
+                    break;
+                }
+            }
+
+            if ( !cancel_active_phases )
+            {
+                cancel_active_phases = !active_phase_tag.MatchesTag( incoming_phase_tag ) && active_phase_tag.MatchesTag( incoming_phase_parent_tag );
+            }
+            if ( cancel_active_phases )
             {
                 UE_LOG( LogGBFGamePhase, Log, TEXT( "\tEnding Phase '%s' (%s)" ), *active_phase_tag.ToString(), *GetNameSafe( active_phase_ability ) );
 
@@ -145,6 +178,12 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
                 },
                     true );
             }
+        }
+
+        if ( !can_start_new_phase )
+        {
+            UE_LOG( LogGBFGamePhase, Log, TEXT( "\tNot Starting Phase '%s' (%s)" ), *incoming_phase_tag.ToString(), *GetNameSafe( phase_ability ) );
+            return;
         }
 
         auto & entry = ActivePhaseMap.FindOrAdd( phase_ability_handle );
