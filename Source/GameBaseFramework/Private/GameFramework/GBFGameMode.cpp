@@ -10,6 +10,7 @@
 #include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerState.h"
+#include "GameFramework/GBFWorldSettings.h"
 
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>
@@ -185,6 +186,24 @@ bool AGBFGameMode::ControllerCanRestart( AController * controller )
     return true;
 }
 
+void AGBFGameMode::InitGame( const FString & map_name, const FString & options, FString & error_message )
+{
+    Super::InitGame( map_name, options, error_message );
+
+    //@TODO: Eventually only do this for PIE/auto
+    GetWorld()->GetTimerManager().SetTimerForNextTick( this, &ThisClass::HandleMatchAssignmentIfNotExpectingOne );
+}
+
+void AGBFGameMode::InitGameState()
+{
+    Super::InitGameState();
+
+    // Listen for the experience load to complete
+    auto * experience_component = GetGameState< AGBFGameState >()->GetExperienceManagerComponent();
+    check( experience_component != nullptr );
+    experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
+}
+
 void AGBFGameMode::RequestPlayerRestartNextFrame( AController * controller, bool force_reset )
 {
     if ( force_reset && controller != nullptr )
@@ -210,6 +229,16 @@ AActor * AGBFGameMode::ChoosePlayerStart_Implementation( AController * player )
     }
 
     return Super::ChoosePlayerStart_Implementation( player );
+}
+
+void AGBFGameMode::HandleStartingNewPlayer_Implementation( APlayerController * new_player )
+{
+    // Delay starting new players until the experience has been loaded
+    // (players who log in prior to that will be started by OnExperienceLoaded)
+    if ( IsExperienceLoaded() )
+    {
+        Super::HandleStartingNewPlayer_Implementation( new_player );
+    }
 }
 
 FString AGBFGameMode::InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal )
@@ -241,6 +270,122 @@ void AGBFGameMode::FinishRestartPlayer( AController * new_player, const FRotator
     }
 
     Super::FinishRestartPlayer( new_player, start_rotation );
+}
+
+void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
+{
+    FPrimaryAssetId experience_id;
+    FString experience_id_source;
+
+    // Precedence order (highest wins)
+    //  - Matchmaking assignment (if present)
+    //  - URL Options override
+    //  - Developer Settings (PIE only)
+    //  - Command Line override
+    //  - World Settings
+    //  - Default experience
+
+    UWorld * world = GetWorld();
+
+    if ( !experience_id.IsValid() && UGameplayStatics::HasOption( OptionsString, TEXT( "Experience" ) ) )
+    {
+        const FString experience_from_options = UGameplayStatics::ParseOption( OptionsString, TEXT( "Experience" ) );
+        experience_id = FPrimaryAssetId( FPrimaryAssetType( UGBFExperienceDefinition::StaticClass()->GetFName() ), FName( *experience_from_options ) );
+        experience_id_source = TEXT( "OptionsString" );
+    }
+
+    /*if ( !experience_id.IsValid() && world->IsPlayInEditor() )
+    {
+        experience_id = GetDefault< ULyraDeveloperSettings >()->ExperienceOverride;
+        experience_id_source = TEXT( "DeveloperSettings" );
+    }*/
+
+    // see if the command line wants to set the experience
+    if ( !experience_id.IsValid() )
+    {
+        FString experience_from_command_line;
+        if ( FParse::Value( FCommandLine::Get(), TEXT( "Experience=" ), experience_from_command_line ) )
+        {
+            experience_id = FPrimaryAssetId::ParseTypeAndName( experience_from_command_line );
+            experience_id_source = TEXT( "CommandLine" );
+        }
+    }
+
+    // see if the world settings has a default experience
+    if ( !experience_id.IsValid() )
+    {
+        if ( const auto * typed_world_settings = Cast< AGBFWorldSettings >( GetWorldSettings() ) )
+        {
+            experience_id = typed_world_settings->GetDefaultGameplayExperience();
+            experience_id_source = TEXT( "WorldSettings" );
+        }
+    }
+
+    const auto & asset_manager = UGBFAssetManager::Get();
+
+    FAssetData dummy;
+    if ( experience_id.IsValid() && !asset_manager.GetPrimaryAssetData( experience_id, /*out*/ dummy ) )
+    {
+        UE_LOG( LogGBF_Experience, Error, TEXT( "EXPERIENCE: Wanted to use %s but couldn't find it, falling back to the default)" ), *experience_id.ToString() );
+        experience_id = FPrimaryAssetId();
+    }
+
+    // Final fallback to the default experience
+    if ( !experience_id.IsValid() )
+    {
+        //@TODO: Pull this from a config setting or something
+        experience_id = FPrimaryAssetId( FPrimaryAssetType( "LyraExperienceDefinition" ), FName( "B_LyraDefaultExperience" ) );
+        experience_id_source = TEXT( "Default" );
+    }
+
+    OnMatchAssignmentGiven( experience_id, experience_id_source );
+}
+
+void AGBFGameMode::OnMatchAssignmentGiven( FPrimaryAssetId experience_id, const FString & experience_id_source )
+{
+#if WITH_SERVER_CODE
+    if ( experience_id.IsValid() )
+    {
+        UE_LOG( LogGBF_Experience, Log, TEXT( "Identified experience %s (Source: %s)" ), *experience_id.ToString(), *experience_id_source );
+
+        auto * experience_component = GetGameState< AGBFGameState >()->GetExperienceManagerComponent();
+        check( experience_component != nullptr );
+        experience_component->ServerSetCurrentExperience( experience_id );
+    }
+    else
+    {
+        UE_LOG( LogGBF_Experience, Error, TEXT( "Failed to identify experience, loading screen will stay up forever" ) );
+    }
+#endif
+}
+
+void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
+{
+    // Spawn any players that are already attached
+    //@TODO: Here we're handling only *player* controllers, but in GetDefaultPawnClassForController_Implementation we skipped all controllers
+    // GetDefaultPawnClassForController_Implementation might only be getting called for players anyways
+    for ( FConstPlayerControllerIterator iterator = GetWorld()->GetPlayerControllerIterator(); iterator; ++iterator )
+    {
+        if ( APlayerController * pc = Cast< APlayerController >( *iterator ) )
+        {
+            if ( pc->GetPawn() == nullptr )
+            {
+                if ( PlayerCanRestart( pc ) )
+                {
+                    RestartPlayer( pc );
+                }
+            }
+        }
+    }
+}
+
+bool AGBFGameMode::IsExperienceLoaded() const
+{
+    check( GameState != nullptr );
+    const auto * experience_component = GetGameState< AGBFGameState >()->GetExperienceManagerComponent();
+    check( experience_component );
+
+    return experience_component->IsExperienceLoaded();
 }
 
 // bool AGBFGameMode::UpdatePlayerStartSpot( AController * /*player*/, const FString & /*portal*/, FString & /*out_error_message*/ )
