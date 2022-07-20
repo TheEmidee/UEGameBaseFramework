@@ -1,5 +1,10 @@
 #include "GameBaseFrameworkSettings.h"
 
+#include "Framework/Notifications/NotificationManager.h"
+#include "Widgets/Notifications/SNotificationList.h"
+
+#define LOCTEXT_NAMESPACE "GameBaseFrameworkCheats"
+
 UGameBaseFrameworkSettings::UGameBaseFrameworkSettings()
 {}
 
@@ -23,6 +28,19 @@ void UGameBaseFrameworkSettings::PostEditChangeProperty( FPropertyChangedEvent &
     }
 }
 
+void UGameBaseFrameworkSettings::OnPlayInEditorStarted() const
+{
+    // Show a notification toast to remind the user that there's an experience override set
+    if ( ExperienceOverride.IsValid() )
+    {
+        FNotificationInfo info( FText::Format(
+            LOCTEXT( "ExperienceOverrideActive", "Developer Settings Override\nExperience {0}" ),
+            FText::FromName( ExperienceOverride.PrimaryAssetName ) ) );
+        info.ExpireDuration = 2.0f;
+        FSlateNotificationManager::Get().AddNotification( info );
+    }
+}
+
 UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged & UGameBaseFrameworkSettings::OnSettingsChanged()
 {
     return SettingsChangedDelegate;
@@ -30,3 +48,5 @@ UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged & UGameBaseFramew
 
 UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged UGameBaseFrameworkSettings::SettingsChangedDelegate;
 #endif
+
+#undef LOCTEXT_NAMESPACE
