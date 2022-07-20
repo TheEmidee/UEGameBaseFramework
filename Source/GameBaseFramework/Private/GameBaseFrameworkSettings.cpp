@@ -1,5 +1,6 @@
 #include "GameBaseFrameworkSettings.h"
 
+#include "DVEDataValidator.h"
 #include "Framework/Notifications/NotificationManager.h"
 #include "Widgets/Notifications/SNotificationList.h"
 
@@ -44,6 +45,13 @@ void UGameBaseFrameworkSettings::OnPlayInEditorStarted() const
 UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged & UGameBaseFrameworkSettings::OnSettingsChanged()
 {
     return SettingsChangedDelegate;
+}
+
+EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray<FText> & validation_errors )
+{
+    return FDVEDataValidator( validation_errors )
+        .IsValid( VALIDATOR_GET_PROPERTY( DefaultExperience) )
+        .Result();
 }
 
 UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged UGameBaseFrameworkSettings::SettingsChangedDelegate;

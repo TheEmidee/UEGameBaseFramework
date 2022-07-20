@@ -347,8 +347,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     // Final fallback to the default experience
     if ( !experience_id.IsValid() )
     {
-        //@TODO: Pull this from a config setting or something
-        experience_id = FPrimaryAssetId( FPrimaryAssetType( "LyraExperienceDefinition" ), FName( "B_LyraDefaultExperience" ) );
+        experience_id = GetDefault< UGameBaseFrameworkSettings >()->DefaultExperience;
         experience_id_source = TEXT( "Default" );
     }
 

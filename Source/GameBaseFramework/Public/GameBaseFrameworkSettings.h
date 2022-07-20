@@ -66,6 +66,8 @@ public:
     DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
 
     GAMEBASEFRAMEWORK_API static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
+
+    EDataValidationResult IsDataValid( TArray<FText> & validation_errors ) override;
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = Input )
@@ -89,8 +91,11 @@ public:
     UPROPERTY( config, EditAnywhere, Category = "Cheats" )
     TArray< FGBFCheatToRun > CheatsToRun;
 
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "ExperienceDefinition" ) )
+    FPrimaryAssetId DefaultExperience;
+
     // The experience override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "GBFExperienceDefinition" ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "ExperienceDefinition" ) )
     FPrimaryAssetId ExperienceOverride;
 
 protected:
