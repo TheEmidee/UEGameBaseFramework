@@ -408,13 +408,6 @@ bool AGBFGameMode::IsExperienceLoaded() const
 //     return true;
 // }
 
-// void AGBFGameMode::OnPostLogin( AController * new_player )
-//{
-//     Super::OnPostLogin( new_player );
-//
-//     OnGameModeCombinedPostLoginDelegate.Broadcast( this, new_player );
-// }
-
 // void AGBFGameMode::FailedToRestartPlayer( AController * new_player )
 //{
 //     Super::FailedToRestartPlayer( new_player );
@@ -445,3 +438,10 @@ bool AGBFGameMode::IsExperienceLoaded() const
 //         UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) but there's no pawn class so giving up." ), *GetPathNameSafe( new_player ) );
 //     }
 // }
+
+void AGBFGameMode::PostLogin( APlayerController * new_player )
+{
+    Super::PostLogin( new_player );
+
+    OnGameModeCombinedPostLoginDelegate.Broadcast( this, new_player );
+}

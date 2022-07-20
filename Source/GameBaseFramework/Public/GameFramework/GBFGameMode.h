@@ -35,9 +35,10 @@ protected:
     FString InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal ) override;
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
     // :TODO: UE5
-    /*bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
-    void OnPostLogin( AController * new_player ) override;
-    void FailedToRestartPlayer( AController * new_player ) override;*/
+    //bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
+    // void FailedToRestartPlayer( AController * new_player ) override;
+    // :TODO: UE5 - Rename to OnPostLogin
+    void PostLogin( APlayerController * new_player ) override;
 
 private:
     void HandleMatchAssignmentIfNotExpectingOne();
