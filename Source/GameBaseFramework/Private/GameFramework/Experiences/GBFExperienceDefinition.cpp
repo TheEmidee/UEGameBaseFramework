@@ -4,12 +4,12 @@
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
 
-#if WITH_EDITOR
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( TEXT( "ExperienceDefinition" ), GetPackage()->GetFName() );
 }
 
+#if WITH_EDITOR
 EDataValidationResult UGBFExperienceDefinition::IsDataValid( TArray< FText > & validation_errors )
 {
     auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
