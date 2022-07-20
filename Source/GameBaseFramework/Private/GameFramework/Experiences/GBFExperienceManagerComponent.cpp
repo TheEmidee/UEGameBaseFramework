@@ -278,7 +278,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();
 
-    auto collect_game_feature_plugin_ur_ls = [ This = this ]( const UPrimaryDataAsset * context, const TArray< FString > & feature_plugin_list ) {
+    auto collect_game_feature_plugin_urls = [ This = this ]( const UPrimaryDataAsset * context, const TArray< FString > & feature_plugin_list ) {
         for ( const FString & plugin_name : feature_plugin_list )
         {
             FString plugin_url;
@@ -303,12 +303,12 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
         // 		}
     };
 
-    collect_game_feature_plugin_ur_ls( CurrentExperience, CurrentExperience->GameFeaturesToEnable );
+    collect_game_feature_plugin_urls( CurrentExperience, CurrentExperience->GameFeaturesToEnable );
     for ( const auto * action_set : CurrentExperience->ActionSets )
     {
         if ( action_set != nullptr )
         {
-            collect_game_feature_plugin_ur_ls( action_set, action_set->GameFeaturesToEnable );
+            collect_game_feature_plugin_urls( action_set, action_set->GameFeaturesToEnable );
         }
     }
 
