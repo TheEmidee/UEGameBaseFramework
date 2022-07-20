@@ -299,6 +299,8 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     //  - World Settings
     //  - Default experience
 
+    auto * world = GetWorld();
+
     if ( !experience_id.IsValid() && UGameplayStatics::HasOption( OptionsString, TEXT( "Experience" ) ) )
     {
         const FString experience_from_options = UGameplayStatics::ParseOption( OptionsString, TEXT( "Experience" ) );
@@ -306,11 +308,11 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
         experience_id_source = TEXT( "OptionsString" );
     }
 
-    /*if ( !experience_id.IsValid() && world->IsPlayInEditor() )
+    if ( !experience_id.IsValid() && world->IsPlayInEditor() )
     {
-        experience_id = GetDefault< ULyraDeveloperSettings >()->ExperienceOverride;
+        experience_id = GetDefault< UGameBaseFrameworkSettings >()->ExperienceOverride;
         experience_id_source = TEXT( "DeveloperSettings" );
-    }*/
+    }
 
     // see if the command line wants to set the experience
     if ( !experience_id.IsValid() )
