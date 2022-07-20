@@ -141,7 +141,7 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
 
         if ( is_locally_controlled && pawn_data != nullptr )
         {
-            if ( auto * player_camera_manager = pc->PlayerCameraManager )
+            if ( auto * player_camera_manager = pc->PlayerCameraManager.Get() )
             {
                 for ( const auto & modifier : pawn_data->CameraModifiers )
                 {
