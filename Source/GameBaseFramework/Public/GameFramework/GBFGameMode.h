@@ -31,6 +31,7 @@ public:
     void HandleStartingNewPlayer_Implementation( APlayerController * new_player ) override;
 
 protected:
+    void HandleMatchHasStarted() override;
     FString InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal ) override;
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
     // :TODO: UE5

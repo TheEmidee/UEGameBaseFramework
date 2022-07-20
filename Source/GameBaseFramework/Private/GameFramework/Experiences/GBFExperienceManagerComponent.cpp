@@ -398,14 +398,6 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
 
     LoadState = EGBFExperienceLoadState::Loaded;
 
-    if ( CurrentExperience->InitialPhase != nullptr )
-    {
-        if ( auto * subsystem = GetWorld()->GetSubsystem< UGBFGamePhaseSubsystem >() )
-        {
-            subsystem->StartPhase( CurrentExperience->InitialPhase );
-        }
-    }
-
     OnExperienceLoaded_HighPriority.Broadcast( CurrentExperience );
     OnExperienceLoaded_HighPriority.Clear();
 

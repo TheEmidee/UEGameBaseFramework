@@ -11,6 +11,7 @@
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFWorldSettings.h"
+#include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
 
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>
@@ -238,6 +239,19 @@ void AGBFGameMode::HandleStartingNewPlayer_Implementation( APlayerController * n
     if ( IsExperienceLoaded() )
     {
         Super::HandleStartingNewPlayer_Implementation( new_player );
+    }
+}
+
+void AGBFGameMode::HandleMatchHasStarted()
+{
+    Super::HandleMatchHasStarted();
+
+    if ( const auto * world_settings = Cast< AGBFWorldSettings >( GetWorldSettings() ) )
+    {
+        for ( const auto & phase_ability : world_settings->GetDefaultGamePhases() )
+        {
+            GetWorld()->GetSubsystem< UGBFGamePhaseSubsystem >()->StartPhase( phase_ability );
+        }
     }
 }
 

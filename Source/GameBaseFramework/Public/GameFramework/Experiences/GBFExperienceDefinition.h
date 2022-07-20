@@ -42,7 +42,4 @@ public:
     // List of additional action sets to compose into this experience
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     TArray< UGBFExperienceActionSet * > ActionSets;
-
-    UPROPERTY( EditDefaultsOnly, Category = Gameplay )
-    TSubclassOf< UGBFGamePhaseAbility > InitialPhase;
 };
