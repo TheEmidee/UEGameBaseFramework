@@ -41,7 +41,7 @@ protected:
 
 private:
     void HandleMatchAssignmentIfNotExpectingOne();
-    void OnMatchAssignmentGiven( FPrimaryAssetId experience_id, const FString & experience_id_source );
+    void OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source );
     void OnExperienceLoaded( const UGBFExperienceDefinition * current_experience );
     bool IsExperienceLoaded() const;
 

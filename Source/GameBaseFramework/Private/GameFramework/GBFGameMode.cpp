@@ -299,8 +299,6 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     //  - World Settings
     //  - Default experience
 
-    UWorld * world = GetWorld();
-
     if ( !experience_id.IsValid() && UGameplayStatics::HasOption( OptionsString, TEXT( "Experience" ) ) )
     {
         const FString experience_from_options = UGameplayStatics::ParseOption( OptionsString, TEXT( "Experience" ) );
@@ -352,10 +350,10 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
         experience_id_source = TEXT( "Default" );
     }
 
-    OnMatchAssignmentGiven( experience_id, experience_id_source );
+    OnExperienceDefined( experience_id, experience_id_source );
 }
 
-void AGBFGameMode::OnMatchAssignmentGiven( FPrimaryAssetId experience_id, const FString & experience_id_source )
+void AGBFGameMode::OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source )
 {
 #if WITH_SERVER_CODE
     if ( experience_id.IsValid() )
