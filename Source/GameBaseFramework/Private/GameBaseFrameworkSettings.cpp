@@ -1,8 +1,9 @@
 #include "GameBaseFrameworkSettings.h"
 
 #include "DVEDataValidator.h"
-#include "Framework/Notifications/NotificationManager.h"
-#include "Widgets/Notifications/SNotificationList.h"
+
+#include <Framework/Notifications/NotificationManager.h>
+#include <Widgets/Notifications/SNotificationList.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkCheats"
 
@@ -47,10 +48,10 @@ UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged & UGameBaseFramew
     return SettingsChangedDelegate;
 }
 
-EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray<FText> & validation_errors )
+EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray< FText > & validation_errors )
 {
     return FDVEDataValidator( validation_errors )
-        .IsValid( VALIDATOR_GET_PROPERTY( DefaultExperience) )
+        .IsValid( VALIDATOR_GET_PROPERTY( DefaultExperience ) )
         .Result();
 }
 
