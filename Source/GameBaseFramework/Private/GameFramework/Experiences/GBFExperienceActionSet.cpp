@@ -1,7 +1,8 @@
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 
 #include "DVEDataValidator.h"
-#include "GameFeatureAction.h"
+
+#include <GameFeatureAction.h>
 
 #if WITH_EDITOR
 EDataValidationResult UGBFExperienceActionSet::IsDataValid( TArray< FText > & validation_errors )
