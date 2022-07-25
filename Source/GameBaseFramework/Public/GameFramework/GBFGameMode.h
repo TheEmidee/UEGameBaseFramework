@@ -33,6 +33,7 @@ public:
 protected:
     void HandleMatchHasStarted() override;
     FString InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal ) override;
+    bool ShouldSpawnAtStartSpot( AController * player ) override;
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
     // :TODO: UE5
     //bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;

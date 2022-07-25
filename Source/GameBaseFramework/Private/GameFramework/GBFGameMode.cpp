@@ -276,6 +276,12 @@ FString AGBFGameMode::InitNewPlayer( APlayerController * new_player_controller, 
     return FString();
 }
 
+bool AGBFGameMode::ShouldSpawnAtStartSpot( AController * /*player*/ )
+{
+    // We never want to use the start spot, always use the spawn management component.
+    return false;
+}
+
 void AGBFGameMode::FinishRestartPlayer( AController * new_player, const FRotator & start_rotation )
 {
     if ( auto * player_spawning_component = GameState->FindComponentByClass< UGBFPlayerSpawningManagerComponent >() )
