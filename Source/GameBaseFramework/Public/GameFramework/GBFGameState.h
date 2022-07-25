@@ -7,6 +7,7 @@
 
 #include "GBFGameState.generated.h"
 
+class UGBFExperienceManagerComponent;
 class UGASExtAbilitySystemComponent;
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameState : public AModularGameState, public IAbilitySystemInterface
@@ -17,11 +18,15 @@ public:
 
     AGBFGameState();
 
+    UGBFExperienceManagerComponent * GetExperienceManagerComponent() const;
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
     void PostInitializeComponents() override;
-    void Tick( float DeltaSeconds ) override;
+    void Tick( float delta_seconds ) override;
 
 private:
+
+    UPROPERTY()
+    UGBFExperienceManagerComponent * ExperienceManagerComponent;
 
     UPROPERTY( VisibleAnywhere )
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
@@ -29,3 +34,8 @@ private:
     UPROPERTY( Replicated )
     float ServerFPS;
 };
+
+FORCEINLINE UGBFExperienceManagerComponent * AGBFGameState::GetExperienceManagerComponent() const
+{
+    return ExperienceManagerComponent;
+}

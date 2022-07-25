@@ -12,6 +12,8 @@ AGBFGameState::AGBFGameState()
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
 
+    ExperienceManagerComponent = CreateDefaultSubobject< UGBFExperienceManagerComponent >( TEXT( "ExperienceManagerComponent" ) );
+
     AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
@@ -30,9 +32,9 @@ void AGBFGameState::PostInitializeComponents()
     AbilitySystemComponent->InitAbilityActorInfo( this, this );
 }
 
-void AGBFGameState::Tick( float DeltaSeconds )
+void AGBFGameState::Tick( float delta_seconds )
 {
-    Super::Tick( DeltaSeconds );
+    Super::Tick( delta_seconds );
 
     if ( GetLocalRole() == ROLE_Authority )
     {

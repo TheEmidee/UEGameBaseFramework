@@ -39,6 +39,7 @@ namespace UnrealBuildTool.Rules
                     "UnrealEd",
                     "Slate",
                     "SlateCore",
+                    "InputCore",
                     "GameBaseFramework",
                     "DataValidation"
                 }
