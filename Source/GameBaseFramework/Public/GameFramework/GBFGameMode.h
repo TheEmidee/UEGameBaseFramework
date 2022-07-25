@@ -7,7 +7,7 @@
 #include "GBFGameMode.generated.h"
 
 class UGBFExperienceDefinition;
-DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeCombinedPostLogin, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
+DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
 
 class UGBFPawnData;
 UCLASS()
@@ -29,6 +29,8 @@ public:
 
     AActor * ChoosePlayerStart_Implementation( AController * player ) override;
     void HandleStartingNewPlayer_Implementation( APlayerController * new_player ) override;
+    // :TODO: UE5 Check If PostLogout exists
+    void Logout( AController * exiting_controller ) override;
 
 protected:
     void HandleMatchHasStarted() override;
@@ -40,12 +42,12 @@ protected:
     // void FailedToRestartPlayer( AController * new_player ) override;
     // :TODO: UE5 - Rename to OnPostLogin
     void PostLogin( APlayerController * new_player ) override;
-
 private:
     void HandleMatchAssignmentIfNotExpectingOne();
     void OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source );
     void OnExperienceLoaded( const UGBFExperienceDefinition * current_experience );
     bool IsExperienceLoaded() const;
 
-    FOnGameModeCombinedPostLogin OnGameModeCombinedPostLoginDelegate;
+    FOnGameModeLogEventDelegate OnPostLoginDelegate;
+    FOnGameModeLogEventDelegate OnLogoutDelegate;
 };
