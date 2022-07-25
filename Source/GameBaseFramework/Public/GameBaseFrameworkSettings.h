@@ -47,8 +47,8 @@ struct FGBFInputSwitchOptions
     float MouseMoveMinDelta;
 };
 
-UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "GameBaseFramework" ) )
-class GAMEBASEFRAMEWORK_API UGameBaseFrameworkSettings : public UDeveloperSettings
+UCLASS( config = Game, defaultconfig, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
+class UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
 
@@ -61,9 +61,13 @@ public:
     FText GetSectionText() const override;
     void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
+    GAMEBASEFRAMEWORK_API void OnPlayInEditorStarted() const;
+
     DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
 
-        static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
+    GAMEBASEFRAMEWORK_API static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
+
+    EDataValidationResult IsDataValid( TArray<FText> & validation_errors ) override;
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = Input )
@@ -86,6 +90,13 @@ public:
 
     UPROPERTY( config, EditAnywhere, Category = "Cheats" )
     TArray< FGBFCheatToRun > CheatsToRun;
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "ExperienceDefinition" ) )
+    FPrimaryAssetId DefaultExperience;
+
+    // The experience override to use for Play in Editor (if not set, the default for the world settings of the open map will be used)
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "ExperienceDefinition" ) )
+    FPrimaryAssetId ExperienceOverride;
 
 protected:
 #if WITH_EDITOR

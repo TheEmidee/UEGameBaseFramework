@@ -6,7 +6,9 @@
 #include "GBFLog.h"
 #include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
 #include "GameFramework/GBFGameMode.h"
+#include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
+#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/World.h>
@@ -102,13 +104,12 @@ void AGBFPlayerState::PostInitializeComponents()
             // Could be nice to add a config flag to let each game decide what to do
             if ( !IsABot() )
             {
-                // :TODO: Experiences
-                /* AGameStateBase * GameState = GetWorld()->GetGameState();
-                check( GameState );
-                ULyraExperienceManagerComponent * ExperienceComponent = GameState->FindComponentByClass< ULyraExperienceManagerComponent >();
-                check( ExperienceComponent );
-                ExperienceComponent->CallOrRegister_OnExperienceLoaded( FOnLyraExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
-                */
+                const auto * game_state = GetWorld()->GetGameState< AGBFGameState >();
+                check( game_state );
+                auto * experience_component = game_state->GetExperienceManagerComponent();
+                check( experience_component );
+                experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
+                
             }
         }
     }
@@ -121,6 +122,21 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
     if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( GetPawn() ) )
     {
         pawn_ext_comp->CheckPawnReadyToInitialize();
+    }
+}
+
+void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
+{
+    if (const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
+    {
+        if ( const auto * new_pawn_data = game_mode->GetPawnDataForController( GetGBFPlayerController() ) )
+        {
+            SetPawnData( new_pawn_data );
+        }
+        else
+        {
+            UE_LOG( LogGBF, Error, TEXT( "AGBFPlayerState::OnExperienceLoaded(): Unable to find PawnData to initialize player state [%s]!" ), *GetNameSafe( this ) );
+        }
     }
 }
 

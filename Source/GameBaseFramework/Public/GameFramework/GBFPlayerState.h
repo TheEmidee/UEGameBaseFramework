@@ -9,6 +9,7 @@
 
 #include "GBFPlayerState.generated.h"
 
+class UGBFExperienceDefinition;
 class UAbilitySystemComponent;
 class AGBFPlayerController;
 class UGASExtAbilitySystemComponent;
@@ -60,6 +61,7 @@ public:
     const FString & GetConnectionOptions() const;
 
 protected:
+    void OnExperienceLoaded( const UGBFExperienceDefinition * current_experience );
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
     UFUNCTION()
