@@ -4,16 +4,6 @@
 
 #include <GameFramework/PlayerController.h>
 
-namespace Private
-{
-    static bool bStartInGodMode = false;
-    static FAutoConsoleVariableRef CVarStartInGodMode(
-        TEXT( "Cheat.StartInGodMode" ),
-        bStartInGodMode,
-        TEXT( "If true then the God cheat will be applied on begin play" ),
-        ECVF_Cheat );
-}
-
 void UGBFCheatManager::InitCheatManager()
 {
     Super::InitCheatManager();
@@ -31,11 +21,6 @@ void UGBFCheatManager::InitCheatManager()
         }
     }
 #endif
-
-    if ( Private::bStartInGodMode )
-    {
-        God();
-    }
 }
 
 void UGBFCheatManager::Cheat( const FString & message )
