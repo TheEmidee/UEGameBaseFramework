@@ -7,15 +7,19 @@
 #include "GBFGameMode.generated.h"
 
 class UGBFExperienceDefinition;
+class UGBFPawnData;
+
 DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
 
-class UGBFPawnData;
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameMode : public AModularGameMode
 {
     GENERATED_BODY()
 
 public:
+    FOnGameModeLogEventDelegate & OnPostLogin();
+    FOnGameModeLogEventDelegate & OnLogout();
+
     const UGBFPawnData * GetPawnDataForController( const AController * controller ) const;
     APawn * SpawnDefaultPawnAtTransform_Implementation( AController * new_player, const FTransform & spawn_transform ) override;
     UClass * GetDefaultPawnClassForController_Implementation( AController * controller ) override;
@@ -51,3 +55,13 @@ private:
     FOnGameModeLogEventDelegate OnPostLoginDelegate;
     FOnGameModeLogEventDelegate OnLogoutDelegate;
 };
+
+FORCEINLINE FOnGameModeLogEventDelegate & AGBFGameMode::OnPostLogin()
+{
+    return OnPostLoginDelegate;
+}
+
+FORCEINLINE FOnGameModeLogEventDelegate & AGBFGameMode::OnLogout()
+{
+    return OnLogoutDelegate;
+}
