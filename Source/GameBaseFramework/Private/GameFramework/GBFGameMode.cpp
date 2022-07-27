@@ -242,6 +242,13 @@ void AGBFGameMode::HandleStartingNewPlayer_Implementation( APlayerController * n
     }
 }
 
+void AGBFGameMode::Logout( AController * exiting_controller )
+{
+    Super::Logout( exiting_controller );
+
+    OnLogoutDelegate.Broadcast( this, exiting_controller );
+}
+
 void AGBFGameMode::HandleMatchHasStarted()
 {
     Super::HandleMatchHasStarted();
@@ -449,5 +456,5 @@ void AGBFGameMode::PostLogin( APlayerController * new_player )
 {
     Super::PostLogin( new_player );
 
-    OnGameModeCombinedPostLoginDelegate.Broadcast( this, new_player );
+    OnPostLoginDelegate.Broadcast( this, new_player );
 }
