@@ -9,7 +9,7 @@
 class UGBFExperienceDefinition;
 class UGBFPawnData;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
+DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeControllerLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameMode : public AModularGameMode
@@ -17,8 +17,8 @@ class GAMEBASEFRAMEWORK_API AGBFGameMode : public AModularGameMode
     GENERATED_BODY()
 
 public:
-    FOnGameModeLogEventDelegate & OnPostLogin();
-    FOnGameModeLogEventDelegate & OnLogout();
+    FOnGameModeControllerLogEventDelegate & OnControllerPostLogin();
+    FOnGameModeControllerLogEventDelegate & OnControllerLogout();
 
     const UGBFPawnData * GetPawnDataForController( const AController * controller ) const;
     APawn * SpawnDefaultPawnAtTransform_Implementation( AController * new_player, const FTransform & spawn_transform ) override;
@@ -41,27 +41,25 @@ protected:
     FString InitNewPlayer( APlayerController * new_player_controller, const FUniqueNetIdRepl & unique_id, const FString & options, const FString & portal ) override;
     bool ShouldSpawnAtStartSpot( AController * player ) override;
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
-    // :TODO: UE5
-    //bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
-    // void FailedToRestartPlayer( AController * new_player ) override;
-    // :TODO: UE5 - Rename to OnPostLogin
-    void PostLogin( APlayerController * new_player ) override;
+    bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
+    void FailedToRestartPlayer( AController * new_player ) override;
+    void OnPostLogin( AController * new_player ) override;
 private:
     void HandleMatchAssignmentIfNotExpectingOne();
     void OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source );
     void OnExperienceLoaded( const UGBFExperienceDefinition * current_experience );
     bool IsExperienceLoaded() const;
 
-    FOnGameModeLogEventDelegate OnPostLoginDelegate;
-    FOnGameModeLogEventDelegate OnLogoutDelegate;
+    FOnGameModeControllerLogEventDelegate OnControllerPostLoginDelegate;
+    FOnGameModeControllerLogEventDelegate OnControllerLogoutDelegate;
 };
 
-FORCEINLINE FOnGameModeLogEventDelegate & AGBFGameMode::OnPostLogin()
+FORCEINLINE FOnGameModeControllerLogEventDelegate & AGBFGameMode::OnControllerPostLogin()
 {
-    return OnPostLoginDelegate;
+    return OnControllerPostLoginDelegate;
 }
 
-FORCEINLINE FOnGameModeLogEventDelegate & AGBFGameMode::OnLogout()
+FORCEINLINE FOnGameModeControllerLogEventDelegate & AGBFGameMode::OnControllerLogout()
 {
-    return OnLogoutDelegate;
+    return OnControllerLogoutDelegate;
 }

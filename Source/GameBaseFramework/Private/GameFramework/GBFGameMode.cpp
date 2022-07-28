@@ -246,7 +246,7 @@ void AGBFGameMode::Logout( AController * exiting_controller )
 {
     Super::Logout( exiting_controller );
 
-    OnLogoutDelegate.Broadcast( this, exiting_controller );
+    OnControllerLogoutDelegate.Broadcast( this, exiting_controller );
 }
 
 void AGBFGameMode::HandleMatchHasStarted()
@@ -297,6 +297,51 @@ void AGBFGameMode::FinishRestartPlayer( AController * new_player, const FRotator
     }
 
     Super::FinishRestartPlayer( new_player, start_rotation );
+}
+
+bool AGBFGameMode::UpdatePlayerStartSpot( AController * /*player*/, const FString & /*portal*/, FString & /*out_error_message*/ )
+{
+    // Do nothing, we'll wait until PostLogin when we try to spawn the player for real.
+    // Doing anything right now is no good, systems like team assignment haven't even occurred yet.
+    return true;
+}
+
+void AGBFGameMode::FailedToRestartPlayer( AController * new_player )
+{
+    Super::FailedToRestartPlayer( new_player );
+
+    // If we tried to spawn a pawn and it failed, lets try again *note* check if there's actually a pawn class
+    // before we try this forever.
+    if ( auto * pawn_class = GetDefaultPawnClassForController( new_player ) )
+    {
+        if ( auto * new_pc = Cast< APlayerController >( new_player ) )
+        {
+            // If it's a player don't loop forever, maybe something changed and they can no longer restart if so stop trying.
+            if ( PlayerCanRestart( new_pc ) )
+            {
+                RequestPlayerRestartNextFrame( new_player, false );
+            }
+            else
+            {
+                UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) and PlayerCanRestart returned false, so we're not going to try again." ), *GetPathNameSafe( new_player ) );
+            }
+        }
+        else
+        {
+            RequestPlayerRestartNextFrame( new_player, false );
+        }
+    }
+    else
+    {
+        UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) but there's no pawn class so giving up." ), *GetPathNameSafe( new_player ) );
+    }
+}
+
+void AGBFGameMode::OnPostLogin( AController * new_player )
+{
+    Super::OnPostLogin( new_player );
+
+    OnControllerPostLoginDelegate.Broadcast( this, new_player );
 }
 
 void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
@@ -412,49 +457,4 @@ bool AGBFGameMode::IsExperienceLoaded() const
     check( experience_component );
 
     return experience_component->IsExperienceLoaded();
-}
-
-// bool AGBFGameMode::UpdatePlayerStartSpot( AController * /*player*/, const FString & /*portal*/, FString & /*out_error_message*/ )
-//{
-//     // Do nothing, we'll wait until PostLogin when we try to spawn the player for real.
-//     // Doing anything right now is no good, systems like team assignment haven't even occurred yet.
-//     return true;
-// }
-
-// void AGBFGameMode::FailedToRestartPlayer( AController * new_player )
-//{
-//     Super::FailedToRestartPlayer( new_player );
-//
-//     // If we tried to spawn a pawn and it failed, lets try again *note* check if there's actually a pawn class
-//     // before we try this forever.
-//     if ( auto * pawn_class = GetDefaultPawnClassForController( new_player ) )
-//     {
-//         if ( auto * new_pc = Cast< APlayerController >( new_player ) )
-//         {
-//             // If it's a player don't loop forever, maybe something changed and they can no longer restart if so stop trying.
-//             if ( PlayerCanRestart( new_pc ) )
-//             {
-//                 RequestPlayerRestartNextFrame( new_player, false );
-//             }
-//             else
-//             {
-//                 UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) and PlayerCanRestart returned false, so we're not going to try again." ), *GetPathNameSafe( new_player ) );
-//             }
-//         }
-//         else
-//         {
-//             RequestPlayerRestartNextFrame( new_player, false );
-//         }
-//     }
-//     else
-//     {
-//         UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) but there's no pawn class so giving up." ), *GetPathNameSafe( new_player ) );
-//     }
-// }
-
-void AGBFGameMode::PostLogin( APlayerController * new_player )
-{
-    Super::PostLogin( new_player );
-
-    OnPostLoginDelegate.Broadcast( this, new_player );
 }
