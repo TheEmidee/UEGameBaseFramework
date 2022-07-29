@@ -362,17 +362,15 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
     LoadState = EGBFExperienceLoadState::ExecutingActions;
 
     // Execute the actions
-    // :TODO: UE5
-    // FGameFeatureActivatingContext Context;
+    FGameFeatureActivatingContext context;
 
     // Only apply to our specific world context if set
-    /*const FWorldContext * ExistingWorldContext = GEngine->GetWorldContextFromWorld( GetWorld() );
-    if ( ExistingWorldContext )
+    if ( const FWorldContext * existing_world_context = GEngine->GetWorldContextFromWorld( GetWorld() ) )
     {
-        Context.SetRequiredWorldContextHandle( ExistingWorldContext->ContextHandle );
-    }*/
+        context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
+    }
 
-    auto activate_list_of_actions = [ /*&Context*/ ]( const TArray< UGameFeatureAction * > & action_list ) {
+    auto activate_list_of_actions = [ &context ]( const TArray< UGameFeatureAction * > & action_list ) {
         for ( UGameFeatureAction * action : action_list )
         {
             if ( action != nullptr )
@@ -382,7 +380,7 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
                 // but actually applying the results to actors is restricted to a specific world
                 action->OnGameFeatureRegistering();
                 action->OnGameFeatureLoading();
-                action->OnGameFeatureActivating( /*Context*/ );
+                action->OnGameFeatureActivating( context );
             }
         }
     };
