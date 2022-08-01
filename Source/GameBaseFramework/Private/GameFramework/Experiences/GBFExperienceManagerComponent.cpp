@@ -73,7 +73,7 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
         }
 
         auto deactivate_list_of_actions = [ &context ]( const TArray< UGameFeatureAction * > & ActionList ) {
-            for ( const UGameFeatureAction * action : ActionList )
+            for ( auto * action : ActionList )
             {
                 if ( action != nullptr )
                 {
