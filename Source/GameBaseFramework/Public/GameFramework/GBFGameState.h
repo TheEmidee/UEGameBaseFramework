@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Experiences/GBFExperienceManagerComponent.h"
 #include "ModularGameState.h"
 
 #include <AbilitySystemInterface.h>
@@ -7,15 +8,14 @@
 
 #include "GBFGameState.generated.h"
 
-class UGBFExperienceManagerComponent;
 class UGASExtAbilitySystemComponent;
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameState : public AModularGameState, public IAbilitySystemInterface
 {
     GENERATED_BODY()
 
 public:
-
     AGBFGameState();
 
     UGBFExperienceManagerComponent * GetExperienceManagerComponent() const;
@@ -24,7 +24,6 @@ public:
     void Tick( float delta_seconds ) override;
 
 private:
-
     UPROPERTY()
     UGBFExperienceManagerComponent * ExperienceManagerComponent;
 

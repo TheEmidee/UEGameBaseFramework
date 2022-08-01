@@ -4,6 +4,7 @@
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 
+#include <GameFramework/Controller.h>
 #include <Net/UnrealNetwork.h>
 
 UGBFPawnExtensionComponent::UGBFPawnExtensionComponent()

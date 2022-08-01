@@ -3,12 +3,14 @@
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GBFLog.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFSaveGame.h"
 
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
 #include <Engine/World.h>
+#include <GameFramework/PlayerState.h>
 #include <TimerManager.h>
 
 AGBFPlayerController::AGBFPlayerController()
