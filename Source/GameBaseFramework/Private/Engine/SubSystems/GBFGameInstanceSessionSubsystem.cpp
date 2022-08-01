@@ -51,7 +51,7 @@ void UGBFGameInstanceSessionSubsystem::SetPendingInvite( const FGBFSessionPendin
 
 bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_player, const int32 session_index_in_search_results )
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() )
 
     if ( auto * game_session = GetGameSession() )
     {
@@ -68,19 +68,19 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_p
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
                 // ShowLoadingScreen();
                 //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
-                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), true );
+                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), true );
                 return true;
             }
         }
     }
 
-    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), false );
+    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), false );
     return false;
 }
 
 bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_player, const FOnlineSessionSearchResult & search_result )
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() )
 
     if ( auto * game_session = GetGameSession() )
     {
@@ -96,19 +96,19 @@ bool UGBFGameInstanceSessionSubsystem::JoinSession( const ULocalPlayer * local_p
                 // If we fail, the delegate will handle showing the proper messaging and move to the correct state
                 // ShowLoadingScreen();
                 //GetSubsystem< UGBFGameInstanceGameStateSystem >()->GoToInGameState();
-                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), true );
+                UE_LOG( LogOnlineGame, Display, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), true );
                 return true;
             }
         }
     }
 
-    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), TEXT( __FUNCTION__ ), false );
+    UE_LOG( LogOnlineGame, Warning, TEXT( "%s - Result %d" ), StringCast< TCHAR >( __FUNCTION__ ).Get(), false );
     return false;
 }
 
 bool UGBFGameInstanceSessionSubsystem::FindSessions( ULocalPlayer * player_owner, const bool is_dedicated_server, const bool is_lan_match )
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() )
 
     auto result = false;
 
@@ -157,7 +157,7 @@ void UGBFGameInstanceSessionSubsystem::HandlePendingSessionInvite()
     if ( new_player_owner != nullptr )
     {
         new_player_owner->SetControllerId( PendingInvite.ControllerId );
-        new_player_owner->SetCachedUniqueNetId( PendingInvite.UserId );
+        new_player_owner->SetCachedUniqueNetId( FUniqueNetIdRepl( PendingInvite.UserId ) );
         SetOnlineMode( EGBFOnlineMode::Online );
 
         const auto is_local_player_host = PendingInvite.UserId.IsValid() && PendingInvite.InviteResult.Session.OwningUserId.IsValid() && *PendingInvite.UserId == *PendingInvite.InviteResult.Session.OwningUserId;
@@ -222,7 +222,7 @@ bool UGBFGameInstanceSessionSubsystem::HostQuickSession( const ULocalPlayer & lo
 
 bool UGBFGameInstanceSessionSubsystem::HostGame( const ULocalPlayer * local_player, const FString & game_type, const FString & travel_url )
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) );
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() );
 
     //auto * game_state_subsystem = GetSubsystem< UGBFGameInstanceGameStateSystem >();
 

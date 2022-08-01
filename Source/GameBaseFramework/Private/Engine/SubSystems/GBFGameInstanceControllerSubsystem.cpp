@@ -3,8 +3,8 @@
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFGameInstance.h"
 #include "Engine/GBFLocalPlayer.h"
-#include "GameFramework/GBFPlayerController.h"
 #include "GBFLog.h"
+#include "GameFramework/GBFPlayerController.h"
 
 #include <Engine/LocalPlayer.h>
 #include <Misc/CoreDelegates.h>
@@ -109,15 +109,15 @@ void UGBFGameInstanceControllerSubsystem::HandleControllerPairingChanged( const 
 #endif
 }
 
-void UGBFGameInstanceControllerSubsystem::HandleControllerConnectionChange( const bool is_connection, const int32 /* unused */, const int32 game_user_index )
+void UGBFGameInstanceControllerSubsystem::HandleControllerConnectionChange( const bool is_connection, FPlatformUserId /*new_uer_id*/, int32 old_user_id )
 {
 #if PLATFORM_XBOXONE
     // update game_user_index based on previous controller index from stable index
 #endif
 
-    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerConnectionChange bIsConnection %d GameUserIndex %d" ), is_connection, game_user_index );
+    UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstance::HandleControllerConnectionChange bIsConnection %d GameUserIndex %d" ), is_connection, old_user_id );
 
-    if ( auto * local_player = Cast< UGBFLocalPlayer >( GetOuterUGameInstance()->FindLocalPlayerFromControllerId( game_user_index ) ) )
+    if ( const auto * local_player = Cast< UGBFLocalPlayer >( GetOuterUGameInstance()->FindLocalPlayerFromControllerId( old_user_id ) ) )
     {
         if ( !is_connection )
         {
@@ -133,7 +133,7 @@ void UGBFGameInstanceControllerSubsystem::HandleControllerConnectionChange( cons
                     NSLOCTEXT( "GBF", "LocKey_SignInChange", "Gamepad disconnected" ),
                     NSLOCTEXT( "GBF", "LocKey_PlayerReconnectControllerFmt", "Please reconnect your controller." ),
                     EGBFUIDialogType::AdditiveOnlyOneVisible,
-                    FGBFConfirmationPopupButtonClicked::CreateLambda( [this
+                    FGBFConfirmationPopupButtonClicked::CreateLambda( [ this
 #if PLATFORM_XBOXONE
                                                                           ,
                                                                           &slate_app,

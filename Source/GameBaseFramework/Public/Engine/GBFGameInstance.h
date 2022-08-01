@@ -46,7 +46,7 @@ public:
     void ShowMessageThenGotoMainMenuState( const FText & title, const FText & content );
     void HandleSignInChangeMessaging();
     void RemoveSplitScreenPlayers();
-    void RemoveExistingLocalPlayer( ULocalPlayer * local_player );
+    void RemoveExistingLocalPlayer( const TObjectPtr<ULocalPlayer> & local_player );
 
     TSubclassOf< UOnlineSession > GetOnlineSessionClass() override;
 
@@ -67,7 +67,7 @@ private:
     FOnExistingLocalPlayerRemovedDelegate OnExistingLocalPlayerRemovedDelegate;
 
     FTickerDelegate TickDelegate;
-    FDelegateHandle TickDelegateHandle;
+    FTSTicker::FDelegateHandle TickDelegateHandle;
 
     TWeakObjectPtr< UGBFGameInstanceIdentitySubsystem > IdentitySubsystem;
     TWeakObjectPtr< UGBFGameInstanceSessionSubsystem > SessionSubsystem;

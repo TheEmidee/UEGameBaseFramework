@@ -29,7 +29,7 @@ AGBFGameSession::AGBFGameSession( const FObjectInitializer & object_initializer 
 
 void AGBFGameSession::HandleMatchHasStarted()
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() )
 
     // start online game locally and wait for completion
     if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )
@@ -47,7 +47,7 @@ void AGBFGameSession::HandleMatchHasStarted()
 
 void AGBFGameSession::HandleMatchHasEnded()
 {
-    UE_LOG( LogOnlineGame, Display, TEXT( __FUNCTION__ ) )
+    UE_LOG( LogOnlineGame, Display, TEXT( "%s" ), StringCast< TCHAR >( __FUNCTION__ ).Get() )
 
     // end online game locally
     if ( const auto * oss = Online::GetSubsystem( GetWorld() ) )

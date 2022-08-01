@@ -15,12 +15,12 @@ void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalE
 {
     auto * game_state_asc = GetGameStateASC();
 
-    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
 
-    if ( !ensureMsgf( conditional_event != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( conditional_event != nullptr, TEXT( "%s: Conditional event is not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
@@ -33,7 +33,7 @@ void UGBFConditionalEventSubsystem::ActivateEvent( TSubclassOf< UGBFConditionalE
 
 void UGBFConditionalEventSubsystem::ActivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
-    if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
@@ -48,12 +48,12 @@ void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditiona
 {
     auto * game_state_asc = GetGameStateASC();
 
-    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
 
-    if ( !ensureMsgf( conditional_event != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( conditional_event != nullptr, TEXT( "%s: Conditional event is not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
@@ -68,7 +68,7 @@ void UGBFConditionalEventSubsystem::DeactivateEvent( TSubclassOf< UGBFConditiona
 
 void UGBFConditionalEventSubsystem::DeactivateEventGroup( const UGBFConditionalEventGroupData * conditional_event_group_data )
 {
-    if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( conditional_event_group_data != nullptr, TEXT( "%s: Conditional event is not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }
@@ -83,7 +83,7 @@ void UGBFConditionalEventSubsystem::DeactivateAll()
 {
     auto * game_state_asc = GetGameStateASC();
 
-    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), TEXT( __FUNCTION__ ) ) )
+    if ( !ensureMsgf( game_state_asc != nullptr, TEXT( "%s: Game State ASC not valid!" ), StringCast< TCHAR >( __FUNCTION__ ).Get() ) )
     {
         return;
     }

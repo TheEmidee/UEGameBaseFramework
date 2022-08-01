@@ -45,7 +45,7 @@ void UGBFGameInstance::Init()
     if ( !IsDedicatedServerInstance() )
     {
         TickDelegate = FTickerDelegate::CreateUObject( this, &UGBFGameInstance::Tick );
-        TickDelegateHandle = FTicker::GetCoreTicker().AddTicker( TickDelegate );
+        TickDelegateHandle = FTSTicker::GetCoreTicker().AddTicker( TickDelegate );
     }
 
     IdentitySubsystem = GetSubsystem< UGBFGameInstanceIdentitySubsystem >();
@@ -61,7 +61,7 @@ void UGBFGameInstance::Shutdown()
 {
     Super::Shutdown();
 
-    FTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
+    FTSTicker::GetCoreTicker().RemoveTicker( TickDelegateHandle );
 }
 
 #if WITH_EDITOR
@@ -175,12 +175,12 @@ void UGBFGameInstance::RemoveSplitScreenPlayers()
 {
     while ( LocalPlayers.Num() > 1 )
     {
-        auto * player_to_remove = LocalPlayers.Last();
+        const auto & player_to_remove = LocalPlayers.Last();
         RemoveExistingLocalPlayer( player_to_remove );
     }
 }
 
-void UGBFGameInstance::RemoveExistingLocalPlayer( ULocalPlayer * local_player )
+void UGBFGameInstance::RemoveExistingLocalPlayer( const TObjectPtr<ULocalPlayer> & local_player )
 {
     check( local_player );
     if ( local_player->PlayerController != nullptr )
