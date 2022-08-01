@@ -1,11 +1,11 @@
 #pragma once
 
+#include "GBFConditionalEventAbility.h"
+
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 
 #include "GBFConditionalEventGroupData.generated.h"
-
-class UGBFConditionalEventAbility;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFConditionalEventGroupData : public UDataAsset
