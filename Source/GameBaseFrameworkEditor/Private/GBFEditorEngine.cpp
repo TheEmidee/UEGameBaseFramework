@@ -1,18 +1,13 @@
 #include "GBFEditorEngine.h"
 
 #include "GameBaseFrameworkSettings.h"
+#include "GameFramework/GBFWorldSettings.h"
 
+#include <Framework/Notifications/NotificationManager.h>
 #include <Settings/ContentBrowserSettings.h>
+#include <Widgets/Notifications/SNotificationList.h>
 
-void UGBFEditorEngine::Init( IEngineLoop * in_engine_loop )
-{
-    Super::Init( in_engine_loop );
-}
-
-void UGBFEditorEngine::Start()
-{
-    Super::Start();
-}
+#define LOCTEXT_NAMESPACE "GameBaseFrameworkEditor"
 
 void UGBFEditorEngine::Tick( float delta_seconds, bool idle_mode )
 {
@@ -21,37 +16,34 @@ void UGBFEditorEngine::Tick( float delta_seconds, bool idle_mode )
     FirstTickSetup();
 }
 
-// :TODO: UE5
-// FGameInstancePIEResult UGBFEditorEngine::PreCreatePIEInstances( const bool bAnyBlueprintErrors, const bool bStartInSpectatorMode, const float PIEStartTime, const bool bSupportsOnlinePIE, int32 & InNumOnlinePIEInstances )
-//{
-//    if ( const ALyraWorldSettings * LyraWorldSettings = Cast< ALyraWorldSettings >( EditorWorld->GetWorldSettings() ) )
-//    {
-//        if ( LyraWorldSettings->ForceStandaloneNetMode )
-//        {
-//            EPlayNetMode OutPlayNetMode;
-//            PlaySessionRequest->EditorPlaySettings->GetPlayNetMode( OutPlayNetMode );
-//            if ( OutPlayNetMode != PIE_Standalone )
-//            {
-//                PlaySessionRequest->EditorPlaySettings->SetPlayNetMode( PIE_Standalone );
-//
-//                FNotificationInfo Info( LOCTEXT( "ForcingStandaloneForFrontend", "Forcing NetMode: Standalone for the Frontend" ) );
-//                Info.ExpireDuration = 2.0f;
-//                FSlateNotificationManager::Get().AddNotification( Info );
-//            }
-//        }
-//    }
-//
-//    //@TODO: Should add delegates that a *non-editor* module could bind to for PIE start/stop instead of poking directly
-//    GetDefault< UGameBaseFrameworkSettings >()->OnPlayInEditorStarted();
+FGameInstancePIEResult UGBFEditorEngine::PreCreatePIEInstances( const bool any_blueprint_errors, const bool start_in_spectator_mode, const float pie_start_time, const bool supports_online_pie, int32 & num_online_pie_instances )
+{
+    if ( const auto * world_settings = Cast< AGBFWorldSettings >( EditorWorld->GetWorldSettings() ) )
+    {
+        if ( world_settings->ForceStandaloneNetMode() )
+        {
+            EPlayNetMode play_net_mode;
+            PlaySessionRequest->EditorPlaySettings->GetPlayNetMode( play_net_mode );
 
-// :TODO: PlatformEmulationSettings
-//    GetDefault< ULyraPlatformEmulationSettings >()->OnPlayInEditorStarted();
-//
-//    //
-//    FGameInstancePIEResult Result = Super::PreCreatePIEServerInstance( bAnyBlueprintErrors, bStartInSpectatorMode, PIEStartTime, bSupportsOnlinePIE, InNumOnlinePIEInstances );
-//
-//    return Result;
-//}
+            if ( play_net_mode != PIE_Standalone )
+            {
+                PlaySessionRequest->EditorPlaySettings->SetPlayNetMode( PIE_Standalone );
+
+                FNotificationInfo info( LOCTEXT( "ForcingStandaloneForFrontend", "Forcing NetMode: Standalone for the Frontend" ) );
+                info.ExpireDuration = 2.0f;
+                FSlateNotificationManager::Get().AddNotification( info );
+            }
+        }
+    }
+
+    //@TODO: Should add delegates that a *non-editor* module could bind to for PIE start/stop instead of poking directly
+    GetDefault< UGameBaseFrameworkSettings >()->OnPlayInEditorStarted();
+
+    //: TODO: PlatformEmulationSettings
+    // GetDefault< ULyraPlatformEmulationSettings >()->OnPlayInEditorStarted();
+
+    return Super::PreCreatePIEServerInstance( any_blueprint_errors, start_in_spectator_mode, pie_start_time, supports_online_pie, num_online_pie_instances );
+}
 
 void UGBFEditorEngine::StartPlayInEditorSession( FRequestPlaySessionParams & in_request_params )
 {
@@ -91,3 +83,5 @@ void UGBFEditorEngine::FirstTickSetup()
         }
     }
 }
+
+#undef LOCTEXT_NAMESPACE

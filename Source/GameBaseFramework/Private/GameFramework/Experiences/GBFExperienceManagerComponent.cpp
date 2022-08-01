@@ -66,35 +66,33 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
         NumObservedPausers = 0;
 
         // Deactivate and unload the actions
-        // :TODO: UE5
-        // FGameFeatureDeactivatingContext context( FSimpleDelegate::CreateUObject( this, &ThisClass::OnActionDeactivationCompleted ) );
-        /*const FWorldContext * ExistingWorldContext = GEngine->GetWorldContextFromWorld( GetWorld() );
-        if ( ExistingWorldContext )
+        FGameFeatureDeactivatingContext context( FSimpleDelegate::CreateUObject( this, &ThisClass::OnActionDeactivationCompleted ) );
+        if ( const FWorldContext * existing_world_context = GEngine->GetWorldContextFromWorld( GetWorld() ) )
         {
-            context.SetRequiredWorldContextHandle( ExistingWorldContext->ContextHandle );
-        }*/
+            context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
+        }
 
-        auto DeactivateListOfActions = [ /*&context*/ ]( const TArray< UGameFeatureAction * > & ActionList ) {
-            for ( const UGameFeatureAction * action : ActionList )
+        auto deactivate_list_of_actions = [ &context ]( const TArray< UGameFeatureAction * > & ActionList ) {
+            for ( auto * action : ActionList )
             {
                 if ( action != nullptr )
                 {
-                    // Action->OnGameFeatureDeactivating( context );
-                    // Action->OnGameFeatureUnregistering();
+                    action->OnGameFeatureDeactivating( context );
+                    action->OnGameFeatureUnregistering();
                 }
             }
         };
 
-        DeactivateListOfActions( CurrentExperience->Actions );
+        deactivate_list_of_actions( CurrentExperience->Actions );
         for ( const auto * action_set : CurrentExperience->ActionSets )
         {
             if ( action_set != nullptr )
             {
-                DeactivateListOfActions( action_set->Actions );
+                deactivate_list_of_actions( action_set->Actions );
             }
         }
 
-        // NumExpectedPausers = Context.GetNumPausers();
+        NumExpectedPausers = context.GetNumPausers();
 
         if ( NumExpectedPausers > 0 )
         {
@@ -406,7 +404,7 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
     OnExperienceLoaded_LowPriority.Clear();
 
     // Apply any necessary scalability settings
-    // :TODO: UE5
+    // :TODO: UE5 Settings
 #if !UE_SERVER
     // ULyraSettingsLocal::Get()->OnExperienceLoaded();
 #endif

@@ -33,7 +33,6 @@ public:
 
     AActor * ChoosePlayerStart_Implementation( AController * player ) override;
     void HandleStartingNewPlayer_Implementation( APlayerController * new_player ) override;
-    // :TODO: UE5 Check If PostLogout exists
     void Logout( AController * exiting_controller ) override;
 
 protected:
