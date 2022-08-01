@@ -2,6 +2,7 @@
 
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
+#include <GameFramework/Pawn.h>
 
 #include "GBFPawnData.generated.h"
 
