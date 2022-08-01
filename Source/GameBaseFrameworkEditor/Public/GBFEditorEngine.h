@@ -11,12 +11,9 @@ class GAMEBASEFRAMEWORKEDITOR_API UGBFEditorEngine : public UUnrealEdEngine
     GENERATED_BODY()
 
 public:
-    void Init( IEngineLoop * in_engine_loop ) override;
-    void Start() override;
     void Tick( float delta_seconds, bool idle_mode ) override;
 
-    // :TODO: UE5
-    // FGameInstancePIEResult PreCreatePIEInstances( const bool bAnyBlueprintErrors, const bool bStartInSpectatorMode, const float PIEStartTime, const bool bSupportsOnlinePIE, int32 & InNumOnlinePIEInstances ) override;
+    FGameInstancePIEResult PreCreatePIEInstances( const bool any_blueprint_errors, const bool start_in_spectator_mode, const float pie_start_time, const bool supports_online_pie, int32 & num_online_pie_instances ) override;
 
 protected:
     void StartPlayInEditorSession( FRequestPlaySessionParams & in_request_params ) override;
