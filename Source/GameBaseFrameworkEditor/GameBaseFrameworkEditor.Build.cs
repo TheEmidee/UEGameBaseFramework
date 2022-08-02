@@ -25,8 +25,7 @@ namespace UnrealBuildTool.Rules
 
             PublicIncludePaths.AddRange(
                 new string[]
-                { 
-                    //"GameBaseFrameworkEditor",
+                {
                 }
             );
 
@@ -41,7 +40,9 @@ namespace UnrealBuildTool.Rules
                     "SlateCore",
                     "InputCore",
                     "GameBaseFramework",
-                    "DataValidation"
+                    "MapCheckValidation",
+                    "DataValidation",
+                    "DataValidationExtensions"
                 }
             );
         }

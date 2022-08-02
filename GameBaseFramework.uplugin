@@ -59,6 +59,10 @@
     {
       "Name": "GameFeatures",
       "Enabled": true
+    },
+    {
+      "Name": "MapCheckValidation",
+      "Enabled": true
     }
   ]
 }
