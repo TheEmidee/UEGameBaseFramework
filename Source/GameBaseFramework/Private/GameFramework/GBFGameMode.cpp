@@ -46,7 +46,7 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
             if ( UGameplayStatics::HasOption( controller_connection_options, PawnDataSelector ) )
             {
                 const auto pawn_data_selector_from_options = UGameplayStatics::ParseOption( controller_connection_options, PawnDataSelector );
-                const auto pawn_data_selector_primary_id = FPrimaryAssetId( FPrimaryAssetType( UGBFPawnDataSelector::GetPrimaryAssetType() ), FName( *pawn_data_selector_from_options ) );
+                const auto pawn_data_selector_primary_id = FPrimaryAssetId( UGBFPawnDataSelector::GetPrimaryAssetType(), FName( *pawn_data_selector_from_options ) );
 
                 const auto asset_path = UGBFAssetManager::Get().GetPrimaryAssetPath( pawn_data_selector_primary_id );
                 const auto * pawn_data_selector = get_pawn_data_selector( asset_path );
@@ -362,7 +362,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     if ( !experience_id.IsValid() && UGameplayStatics::HasOption( OptionsString, TEXT( "Experience" ) ) )
     {
         const FString experience_from_options = UGameplayStatics::ParseOption( OptionsString, TEXT( "Experience" ) );
-        experience_id = FPrimaryAssetId( FPrimaryAssetType( UGBFExperienceDefinition::StaticClass()->GetFName() ), FName( *experience_from_options ) );
+        experience_id = FPrimaryAssetId( UGBFExperienceDefinition::GetPrimaryAssetType(), FName( *experience_from_options ) );
         experience_id_source = TEXT( "OptionsString" );
     }
 
@@ -378,7 +378,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
         FString experience_from_command_line;
         if ( FParse::Value( FCommandLine::Get(), TEXT( "Experience=" ), experience_from_command_line ) )
         {
-            experience_id = FPrimaryAssetId::ParseTypeAndName( experience_from_command_line );
+            experience_id = FPrimaryAssetId( UGBFExperienceDefinition::GetPrimaryAssetType(), FName( *experience_from_command_line ) );
             experience_id_source = TEXT( "CommandLine" );
         }
     }

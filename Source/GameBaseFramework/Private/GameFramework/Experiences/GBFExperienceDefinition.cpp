@@ -6,7 +6,13 @@
 
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
-    return FPrimaryAssetId( TEXT( "ExperienceDefinition" ), GetPackage()->GetFName() );
+    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
+}
+
+FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
+{
+    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
+    return PrimaryAssetType;
 }
 
 #if WITH_EDITOR
