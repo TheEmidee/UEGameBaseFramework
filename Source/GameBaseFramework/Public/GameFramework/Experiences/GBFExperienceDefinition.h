@@ -18,6 +18,8 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryData
 public:
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
+    static FPrimaryAssetType GetPrimaryAssetType();
+
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
 #endif
