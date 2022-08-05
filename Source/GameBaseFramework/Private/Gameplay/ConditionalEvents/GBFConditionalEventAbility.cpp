@@ -12,6 +12,7 @@ UGBFConditionalEventAbility::UGBFConditionalEventAbility()
     NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
     NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnly;
 
+    bEndAbilityAfterOutcomes = true;
     TriggerCount = 0;
 }
 
@@ -64,5 +65,10 @@ void UGBFConditionalEventAbility::OnTriggersTriggered()
     if ( TriggerCount >= Triggers.Num() )
     {
         ExecuteOutcomes();
+
+        if ( bEndAbilityAfterOutcomes )
+        {
+            K2_EndAbility();
+        }
     }
 }

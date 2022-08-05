@@ -42,5 +42,8 @@ private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;
 
+    UPROPERTY( EditDefaultsOnly, Category = "Conditional Events" )
+    uint8 bEndAbilityAfterOutcomes : 1;
+
     int TriggerCount;
 };
