@@ -27,6 +27,7 @@ public:
 
     const FGameplayTag & GetGamePhaseTag() const;
     EGBFGamePhaseAbilityExactTagCancellationPolicy GetExactTagCancellationPolicy() const;
+    FGameplayTag GetActivePhaseCancellationTag() const;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
@@ -50,6 +51,9 @@ protected:
     // Defines what happens if a phase starts when an existing phase has exactly the same tag
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
     EGBFGamePhaseAbilityExactTagCancellationPolicy ExactTagCancellationPolicy;
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
+    FGameplayTag ActivePhaseCancellationTag;
 };
 
 FORCEINLINE const FGameplayTag & UGBFGamePhaseAbility::GetGamePhaseTag() const
@@ -60,4 +64,9 @@ FORCEINLINE const FGameplayTag & UGBFGamePhaseAbility::GetGamePhaseTag() const
 FORCEINLINE EGBFGamePhaseAbilityExactTagCancellationPolicy UGBFGamePhaseAbility::GetExactTagCancellationPolicy() const
 {
     return ExactTagCancellationPolicy;
+}
+
+FORCEINLINE FGameplayTag UGBFGamePhaseAbility::GetActivePhaseCancellationTag() const
+{
+    return ActivePhaseCancellationTag;
 }
