@@ -167,7 +167,15 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
             if ( !cancel_active_phases )
             {
                 cancel_active_phases = !active_phase_tag.MatchesTag( incoming_phase_tag ) && active_phase_tag.MatchesTag( incoming_phase_parent_tag );
+
+                auto active_phase_cancellation_tag = phase_ability->GetActivePhaseCancellationTag();
+
+                if ( active_phase_cancellation_tag.IsValid() )
+                {
+                    cancel_active_phases = active_phase_tag.MatchesTag( active_phase_cancellation_tag );
+                }
             }
+
             if ( cancel_active_phases )
             {
                 UE_LOG( LogGBFGamePhase, Log, TEXT( "\tEnding Phase '%s' (%s)" ), *active_phase_tag.ToString(), *GetNameSafe( active_phase_ability ) );
