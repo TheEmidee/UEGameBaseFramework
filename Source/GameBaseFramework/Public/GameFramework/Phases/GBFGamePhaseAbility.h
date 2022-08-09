@@ -52,6 +52,10 @@ protected:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
     EGBFGamePhaseAbilityExactTagCancellationPolicy ExactTagCancellationPolicy;
 
+    // Defines which active phases will get cancelled when this phase is started based on the tag
+    // If the active phase has tag A.B and the cancellation tag is set to A, then it will cancel the active phase
+    // If the active phase has tag A and the cancellation tag is set to A.B, then it will not cancel the active phase
+    // Useful to define some phases with the same parent tag but different child tags, of which only one can be active at a time
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "GameBaseFramework|Game Phase" )
     FGameplayTag ActivePhaseCancellationTag;
 };
