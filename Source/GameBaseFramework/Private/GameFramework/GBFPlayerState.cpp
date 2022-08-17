@@ -5,14 +5,15 @@
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
+#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/World.h>
 #include <Net/UnrealNetwork.h>
+#include <TimerManager.h>
 
 AGBFPlayerState::AGBFPlayerState( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
@@ -93,26 +94,30 @@ void AGBFPlayerState::PostInitializeComponents()
     check( AbilitySystemComponent );
     AbilitySystemComponent->InitAbilityActorInfo( this, GetPawn() );
 
-    if ( GetNetMode() != NM_Client )
-    {
-        if ( auto * pc = GetGBFPlayerController() )
+    // Wait for next tick to make sure the PlayerState is set in the PlayerController
+    // If we don't wait, when AGBFGameMode::GetPawnDataForController gets called, the PlayerState will be invalid
+    // Which will result in never checking for options in the connection options that the PlayerState holds
+    GetWorldTimerManager().SetTimerForNextTick( [ ps = this ]() {
+        if ( ps->GetNetMode() != NM_Client )
         {
-            // :TODO:
-            // In games like Lyra or UT we want bots to have their pawn data the same way as human players
-            // There are games where each enemy has its own pawn data and we can't get it from the experience and let
-            // them call SetPawnData manually
-            // Could be nice to add a config flag to let each game decide what to do
-            if ( !IsABot() )
+            if ( auto * pc = ps->GetGBFPlayerController() )
             {
-                const auto * game_state = GetWorld()->GetGameState< AGBFGameState >();
-                check( game_state );
-                auto * experience_component = game_state->GetExperienceManagerComponent();
-                check( experience_component );
-                experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
-                
+                // :TODO:
+                // In games like Lyra or UT we want bots to have their pawn data the same way as human players
+                // There are games where each enemy has its own pawn data and we can't get it from the experience and let
+                // them call SetPawnData manually
+                // Could be nice to add a config flag to let each game decide what to do
+                if ( !ps->IsABot() )
+                {
+                    const auto * game_state = ps->GetWorld()->GetGameState< AGBFGameState >();
+                    check( game_state );
+                    auto * experience_component = game_state->GetExperienceManagerComponent();
+                    check( experience_component );
+                    experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( ps, &ThisClass::OnExperienceLoaded ) );
+                }
             }
         }
-    }
+    } );
 }
 
 void AGBFPlayerState::ClientInitialize( AController * controller )
@@ -127,7 +132,7 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
 
 void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
 {
-    if (const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
+    if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
     {
         if ( const auto * new_pawn_data = game_mode->GetPawnDataForController( GetGBFPlayerController() ) )
         {
