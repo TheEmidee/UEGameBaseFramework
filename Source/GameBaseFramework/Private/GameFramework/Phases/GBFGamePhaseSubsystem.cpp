@@ -166,7 +166,23 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
 
             if ( !cancel_active_phases )
             {
-                cancel_active_phases = !active_phase_tag.MatchesTag( incoming_phase_tag ) && active_phase_tag.MatchesTag( incoming_phase_parent_tag );
+                const auto incoming_phase_parent_tags = UGameplayTagsManager::Get().RequestGameplayTagParents( incoming_phase_parent_tag );
+
+                auto iterator = incoming_phase_parent_tags.CreateConstIterator();
+
+                // Deliberately skip the last tag of the array (which is in fact the root parent tag) as it's generally the same tag for all phases
+                // For example we may have an active phase for the current state of the game (Ex: GamePhase.Playing)
+                // And an active phase for the current mood of the game, that would start with GamePhase.Mood.Exploration.
+                // We don't want to cancel the GamePhase.Playing phases when we change the mood
+                for ( ; iterator.GetIndex() < incoming_phase_parent_tags.Num() - 1; ++iterator )
+                {
+                    cancel_active_phases = !active_phase_tag.MatchesTag( incoming_phase_tag ) && active_phase_tag.MatchesTag( *iterator );
+
+                    if ( cancel_active_phases )
+                    {
+                        break;
+                    }
+                }
             }
             if ( cancel_active_phases )
             {
