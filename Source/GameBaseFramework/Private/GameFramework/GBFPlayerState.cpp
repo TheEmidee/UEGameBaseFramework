@@ -90,13 +90,19 @@ void AGBFPlayerState::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
 
-    check( AbilitySystemComponent );
+    check( AbilitySystemComponent != nullptr );
     AbilitySystemComponent->InitAbilityActorInfo( this, GetPawn() );
+}
 
+void AGBFPlayerState::OnPlayerInitialized()
+{
     if ( GetNetMode() != NM_Client )
     {
-        if ( auto * pc = GetGBFPlayerController() )
+        if ( const auto * player_controller = GetGBFPlayerController() )
         {
+            // Player state is needed in OnExperienceLoaded to get the connection string
+            check( player_controller->GetPlayerState< AGBFPlayerState >() != nullptr );
+        
             // :TODO:
             // In games like Lyra or UT we want bots to have their pawn data the same way as human players
             // There are games where each enemy has its own pawn data and we can't get it from the experience and let
@@ -109,7 +115,6 @@ void AGBFPlayerState::PostInitializeComponents()
                 auto * experience_component = game_state->GetExperienceManagerComponent();
                 check( experience_component );
                 experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
-                
             }
         }
     }

@@ -274,6 +274,7 @@ FString AGBFGameMode::InitNewPlayer( APlayerController * new_player_controller, 
     if ( auto * player_state = new_player_controller->GetPlayerState< AGBFPlayerState >() )
     {
         player_state->SetConnectionOptions( options );
+        player_state->OnPlayerInitialized();
     }
     else
     {

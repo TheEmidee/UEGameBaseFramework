@@ -56,6 +56,7 @@ public:
     void SetPawnData( const UGBFPawnData * new_pawn_data );
 
     void PostInitializeComponents() override;
+    void OnPlayerInitialized();
     void ClientInitialize( AController * controller ) override;
     void SetConnectionOptions( const FString & connection_options );
     const FString & GetConnectionOptions() const;
