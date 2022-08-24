@@ -72,7 +72,7 @@ void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGASExtAbilitySystemCo
     auto * pawn = GetPawnChecked< APawn >();
     const auto * existing_avatar = asc->GetAvatarActor();
 
-    UE_LOG( LogGBF, Verbose, TEXT( "Setting up ASC [%s] on pawn [%s] owner [%s], existing [%s] " ), *GetNameSafe( asc ), *GetNameSafe( pawn ), *GetNameSafe( owner_actor ), *GetNameSafe( existing_avatar ) );
+    UE_LOG( LogGBF, VeryVerbose, TEXT( "Setting up ASC [%s] on pawn [%s] owner [%s], existing [%s] " ), *GetNameSafe( asc ), *GetNameSafe( pawn ), *GetNameSafe( owner_actor ), *GetNameSafe( existing_avatar ) );
 
     if ( existing_avatar != nullptr && existing_avatar != pawn )
     {
