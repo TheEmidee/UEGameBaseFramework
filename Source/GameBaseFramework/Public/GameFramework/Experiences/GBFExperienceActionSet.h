@@ -12,6 +12,10 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceActionSet final : public UPrimaryDataA
     GENERATED_BODY()
 
 public:
+    FPrimaryAssetId GetPrimaryAssetId() const override;
+
+    static FPrimaryAssetType GetPrimaryAssetType();
+
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
 #endif
