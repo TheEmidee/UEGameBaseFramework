@@ -49,6 +49,10 @@ public:
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false, meta = ( AutoCreateRefTerm = "phase_tag" ) )
     bool IsPhaseActive( const FGameplayTag & phase_tag ) const;
 
+#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+    void DumpActivePhases( FOutputDevice & output_device );
+#endif
+
 protected:
     bool DoesSupportWorldType( const EWorldType::Type world_type ) const override;
 

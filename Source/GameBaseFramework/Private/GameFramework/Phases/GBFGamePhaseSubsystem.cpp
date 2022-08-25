@@ -9,6 +9,18 @@
 
 DEFINE_LOG_CATEGORY( LogGBFGamePhase );
 
+#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+static FAutoConsoleCommand ListActiveMissionsCommand(
+    TEXT( "PhaseSystem.ListActivePhases" ),
+    TEXT( "Prints the active phases in the log." ),
+    FConsoleCommandWithWorldArgsAndOutputDeviceDelegate::CreateLambda( []( const TArray< FString > & /*args*/, const UWorld * world, FOutputDevice & output_device ) {
+        if ( auto * mission_system = world->GetSubsystem< UGBFGamePhaseSubsystem >() )
+        {
+            mission_system->DumpActivePhases( output_device );
+        }
+    } ) );
+#endif
+
 void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDelegate phase_ended_callback )
 {
     const auto * world = GetWorld();
@@ -68,6 +80,17 @@ bool UGBFGamePhaseSubsystem::IsPhaseActive( const FGameplayTag & phase_tag ) con
 
     return false;
 }
+
+#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+void UGBFGamePhaseSubsystem::DumpActivePhases( FOutputDevice & output_device )
+{
+    output_device.Logf( ELogVerbosity::Verbose, TEXT( "Phase System - Active Phases :" ) );
+    for ( const auto & key_pair : ActivePhaseMap )
+    {
+        output_device.Logf( ELogVerbosity::Verbose, TEXT( " * Phase : %s" ), *key_pair.Value.PhaseTag.ToString() );
+    }
+}
+#endif
 
 bool UGBFGamePhaseSubsystem::DoesSupportWorldType( const EWorldType::Type world_type ) const
 {
