@@ -4,6 +4,17 @@
 
 #include <GameFeatureAction.h>
 
+FPrimaryAssetId UGBFExperienceActionSet::GetPrimaryAssetId() const
+{
+    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
+}
+
+FPrimaryAssetType UGBFExperienceActionSet::GetPrimaryAssetType()
+{
+    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceActionSet" ) );
+    return PrimaryAssetType;
+}
+
 #if WITH_EDITOR
 EDataValidationResult UGBFExperienceActionSet::IsDataValid( TArray< FText > & validation_errors )
 {
