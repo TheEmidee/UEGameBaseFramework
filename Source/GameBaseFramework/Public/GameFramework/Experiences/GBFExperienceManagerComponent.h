@@ -56,6 +56,8 @@ public:
     // Returns true if the experience is fully loaded
     bool IsExperienceLoaded() const;
 
+    static UGBFExperienceManagerComponent * GetExperienceManagerComponent( const UObject * world_context );
+
 private:
     UFUNCTION()
     void OnRep_CurrentExperience();

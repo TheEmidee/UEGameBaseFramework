@@ -172,6 +172,19 @@ bool UGBFExperienceManagerComponent::IsExperienceLoaded() const
     return ( LoadState == EGBFExperienceLoadState::Loaded ) && ( CurrentExperience != nullptr );
 }
 
+UGBFExperienceManagerComponent * UGBFExperienceManagerComponent::GetExperienceManagerComponent( const UObject * world_context )
+{
+    if ( const auto * world = world_context->GetWorld() )
+    {
+        if ( const auto * gs = world->GetGameState() )
+        {
+            return gs->FindComponentByClass< UGBFExperienceManagerComponent >();
+        }
+    }
+
+    return nullptr;
+}
+
 void UGBFExperienceManagerComponent::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
 {
     Super::GetLifetimeReplicatedProps( OutLifetimeProps );
