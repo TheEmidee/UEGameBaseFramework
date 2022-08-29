@@ -10,7 +10,7 @@
 DEFINE_LOG_CATEGORY( LogGBFGamePhase );
 
 #if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
-static FAutoConsoleCommand ListActiveMissionsCommand(
+static FAutoConsoleCommand ListActivePhasesCommand(
     TEXT( "PhaseSystem.ListActivePhases" ),
     TEXT( "Prints the active phases in the log." ),
     FConsoleCommandWithWorldArgsAndOutputDeviceDelegate::CreateLambda( []( const TArray< FString > & /*args*/, const UWorld * world, FOutputDevice & output_device ) {
