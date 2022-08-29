@@ -14,9 +14,9 @@ static FAutoConsoleCommand ListActiveMissionsCommand(
     TEXT( "PhaseSystem.ListActivePhases" ),
     TEXT( "Prints the active phases in the log." ),
     FConsoleCommandWithWorldArgsAndOutputDeviceDelegate::CreateLambda( []( const TArray< FString > & /*args*/, const UWorld * world, FOutputDevice & output_device ) {
-        if ( auto * mission_system = world->GetSubsystem< UGBFGamePhaseSubsystem >() )
+        if ( auto * game_phase_subsystem = world->GetSubsystem< UGBFGamePhaseSubsystem >() )
         {
-            mission_system->DumpActivePhases( output_device );
+            game_phase_subsystem->DumpActivePhases( output_device );
         }
     } ) );
 #endif
