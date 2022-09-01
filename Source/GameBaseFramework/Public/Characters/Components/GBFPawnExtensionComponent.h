@@ -59,6 +59,12 @@ public:
     // Register with the OnAbilitySystemUninitialized delegate.
     void OnAbilitySystemUninitialized_Register( FSimpleMulticastDelegate::FDelegate delegate );
 
+    // UnRegister with the OnPawnReadyToInitialize delegate.
+    void OnPawnReadyToInitialize_UnRegister( FSimpleMulticastDelegate::FDelegate delegate );
+
+    // UnRegister with the OnAbilitySystemInitialized delegate.
+    void OnAbilitySystemInitialized_UnRegister( FSimpleMulticastDelegate::FDelegate delegate );
+
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
     static UGBFPawnExtensionComponent * FindPawnExtensionComponent( const AActor * actor );
 
@@ -90,7 +96,7 @@ protected:
     int32 bPawnReadyToInitialize : 1;
 };
 
-template <class T>
+template < class T >
 const T * UGBFPawnExtensionComponent::GetPawnData() const
 {
     return Cast< T >( PawnData );

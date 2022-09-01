@@ -237,6 +237,16 @@ void UGBFPawnExtensionComponent::OnAbilitySystemUninitialized_Register( FSimpleM
     }
 }
 
+void UGBFPawnExtensionComponent::OnPawnReadyToInitialize_UnRegister( FSimpleMulticastDelegate::FDelegate delegate )
+{
+    OnPawnReadyToInitialize.Remove( delegate.GetHandle() );
+}
+
+void UGBFPawnExtensionComponent::OnAbilitySystemInitialized_UnRegister( FSimpleMulticastDelegate::FDelegate delegate )
+{
+    OnAbilitySystemInitialized.Remove( delegate.GetHandle() );
+}
+
 UGBFPawnExtensionComponent * UGBFPawnExtensionComponent::FindPawnExtensionComponent( const AActor * actor )
 {
     return actor
