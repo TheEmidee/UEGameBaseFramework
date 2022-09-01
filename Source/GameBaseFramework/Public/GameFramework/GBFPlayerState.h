@@ -59,6 +59,8 @@ public:
     void OnPlayerInitialized();
     void ClientInitialize( AController * controller ) override;
     void SetConnectionOptions( const FString & connection_options );
+
+    UFUNCTION( BlueprintPure )
     const FString & GetConnectionOptions() const;
 
 protected:
