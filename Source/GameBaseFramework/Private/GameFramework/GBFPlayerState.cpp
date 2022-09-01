@@ -5,10 +5,10 @@
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
+#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/World.h>
@@ -102,7 +102,7 @@ void AGBFPlayerState::OnPlayerInitialized()
         {
             // Player state is needed in OnExperienceLoaded to get the connection string
             check( player_controller->GetPlayerState< AGBFPlayerState >() != nullptr );
-        
+
             // :TODO:
             // In games like Lyra or UT we want bots to have their pawn data the same way as human players
             // There are games where each enemy has its own pawn data and we can't get it from the experience and let
@@ -132,7 +132,7 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
 
 void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
 {
-    if (const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
+    if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
     {
         if ( const auto * new_pawn_data = game_mode->GetPawnDataForController( GetGBFPlayerController() ) )
         {
@@ -158,4 +158,14 @@ void AGBFPlayerState::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & 
 
 void AGBFPlayerState::OnRep_PawnData()
 {
+}
+
+void AGBFPlayerState::CopyProperties( APlayerState * player_state )
+{
+    Super::CopyProperties( player_state );
+
+    if ( auto * gbf_player_state = Cast< AGBFPlayerState >( player_state ) )
+    {
+        gbf_player_state->SetConnectionOptions( ConnectionOptions );
+    }
 }

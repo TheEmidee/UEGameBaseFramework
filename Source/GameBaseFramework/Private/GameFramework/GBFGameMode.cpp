@@ -249,6 +249,16 @@ void AGBFGameMode::Logout( AController * exiting_controller )
     OnControllerLogoutDelegate.Broadcast( this, exiting_controller );
 }
 
+bool AGBFGameMode::ReadyToStartMatch_Implementation()
+{
+    if ( !IsExperienceLoaded() )
+    {
+        return false;
+    }
+
+    return Super::ReadyToStartMatch_Implementation();
+}
+
 void AGBFGameMode::HandleMatchHasStarted()
 {
     Super::HandleMatchHasStarted();
