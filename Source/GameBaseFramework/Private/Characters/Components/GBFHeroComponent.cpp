@@ -31,7 +31,8 @@ void UGBFHeroComponent::OnRegister()
     {
         if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
         {
-            pawn_ext_comp->OnPawnReadyToInitialize_RegisterAndCall( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnPawnReadyToInitialize ) );
+            OnPawnReadyToInitializeDelegate = FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnPawnReadyToInitialize );
+            pawn_ext_comp->OnPawnReadyToInitialize_RegisterAndCall( OnPawnReadyToInitializeDelegate );
         }
     }
     else
@@ -42,13 +43,29 @@ void UGBFHeroComponent::OnRegister()
         if ( GIsEditor )
         {
             static const FText Message = NSLOCTEXT( "UGBFHeroComponent", "NotOnPawnError", "has been added to a blueprint whose base class is not a Pawn. To use this component, it MUST be placed on a Pawn Blueprint. This will cause a crash if you PIE!" );
-            static const FName HeroMessageLogName = TEXT( "LyraHeroComponent" );
+            static const FName HeroMessageLogName = TEXT( "UGBFHeroComponent" );
 
             FMessageLog( HeroMessageLogName ).Error()->AddToken( FUObjectToken::Create( this, FText::FromString( GetNameSafe( this ) ) ) )->AddToken( FTextToken::Create( Message ) );
             FMessageLog( HeroMessageLogName ).Open();
         }
 #endif
     }
+}
+
+void UGBFHeroComponent::OnUnregister()
+{
+    if ( const auto * pawn = GetPawn< APawn >() )
+    {
+        if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+        {
+            pawn_ext_comp->UninitializeAbilitySystem();
+            pawn_ext_comp->OnPawnReadyToInitialize_UnRegister( OnPawnReadyToInitializeDelegate );
+        }
+    }
+
+    bPawnHasInitialized = false;
+
+    Super::OnUnregister();
 }
 
 bool UGBFHeroComponent::IsPawnComponentReadyToInitialize() const
@@ -152,19 +169,6 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
     }
 
     bPawnHasInitialized = true;
-}
-
-void UGBFHeroComponent::EndPlay( const EEndPlayReason::Type end_play_reason )
-{
-    if ( const auto * pawn = GetPawn< APawn >() )
-    {
-        if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
-        {
-            pawn_ext_comp->UninitializeAbilitySystem();
-        }
-    }
-
-    Super::EndPlay( end_play_reason );
 }
 
 void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_component )

@@ -12,7 +12,6 @@ class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
     GENERATED_BODY()
 
 public:
-
     UGBFHeroComponent();
 
     bool HasPawnInitialized() const;
@@ -26,14 +25,14 @@ public:
     static UGBFHeroComponent * FindHeroComponent( const AActor * actor );
 
 protected:
-
     void OnRegister() override;
+    void OnUnregister() override;
     bool IsPawnComponentReadyToInitialize() const override;
     void OnPawnReadyToInitialize();
-    void EndPlay( const EEndPlayReason::Type end_play_reason ) override;
     virtual void InitializePlayerInput( UInputComponent * player_input_component );
 
 private:
+    FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;
 
     // True when the pawn has fully finished initialization
     bool bPawnHasInitialized;
