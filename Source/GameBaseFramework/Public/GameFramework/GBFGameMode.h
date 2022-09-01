@@ -34,6 +34,7 @@ public:
     AActor * ChoosePlayerStart_Implementation( AController * player ) override;
     void HandleStartingNewPlayer_Implementation( APlayerController * new_player ) override;
     void Logout( AController * exiting_controller ) override;
+    bool ReadyToStartMatch_Implementation() override;
 
 protected:
     void HandleMatchHasStarted() override;
