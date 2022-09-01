@@ -68,6 +68,8 @@ protected:
     UFUNCTION()
     void OnRep_PawnData();
 
+    void CopyProperties( APlayerState * PlayerState ) override;
+
     UPROPERTY( VisibleAnywhere, Category = "PlayerState" )
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
 
