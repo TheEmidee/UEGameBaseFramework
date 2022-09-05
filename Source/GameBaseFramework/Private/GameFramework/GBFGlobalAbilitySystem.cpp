@@ -113,7 +113,7 @@ void UGBFGlobalAbilitySystem::RemoveEffectFromAll( const TSubclassOf< UGameplayE
     }
 }
 
-void UGBFGlobalAbilitySystem::CancelAbilitiesByTagFromAll( const FGameplayTag & tag )
+void UGBFGlobalAbilitySystem::CancelAbilitiesByTagFromAll( const FGameplayTag tag )
 {
     if ( !tag.IsValid() )
     {

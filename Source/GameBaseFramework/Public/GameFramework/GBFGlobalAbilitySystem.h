@@ -60,7 +60,7 @@ public:
     void RemoveEffectFromAll( TSubclassOf< UGameplayEffect > effect );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
-    void CancelAbilitiesByTagFromAll( const FGameplayTag & tag );
+    void CancelAbilitiesByTagFromAll( FGameplayTag tag );
 
     /** Register an ASC with global system and apply any active global effects/abilities. */
     void RegisterASC( UGASExtAbilitySystemComponent * asc );
