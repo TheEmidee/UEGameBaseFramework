@@ -113,6 +113,19 @@ void UGBFGlobalAbilitySystem::RemoveEffectFromAll( const TSubclassOf< UGameplayE
     }
 }
 
+void UGBFGlobalAbilitySystem::CancelAbilitiesByTagFromAll( const FGameplayTag & tag )
+{
+    if ( !tag.IsValid() )
+    {
+        return;
+    }
+
+    for ( auto * asc : RegisteredASCs )
+    {
+        asc->CancelAbilitiesByTag( tag, true );
+    }
+}
+
 void UGBFGlobalAbilitySystem::RegisterASC( UGASExtAbilitySystemComponent * asc )
 {
     check( asc != nullptr );
