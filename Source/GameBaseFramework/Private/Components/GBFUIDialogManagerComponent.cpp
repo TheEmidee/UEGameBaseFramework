@@ -41,7 +41,7 @@ void UGBFUIDialogManagerComponent::BeginPlay()
 
     if ( MainUIClass != nullptr && InitializeMainUIOnBeginPlay )
     {
-        InitializeMainUIWithClass( MainUIClass );
+        InitializeMainUIWithClass( MainUIClass, false );
     }
 
     TArray< FSoftObjectPath > paths;
@@ -66,11 +66,17 @@ bool UGBFUIDialogManagerComponent::IsDisplayingDialog() const
     return DialogStack.Num() > 0;
 }
 
-void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class )
+void UGBFUIDialogManagerComponent::InitializeMainUIWithClass( const TSubclassOf< UUserWidget > & main_ui_class, bool force )
 {
-    if ( MainUIWidget != nullptr && MainUIWidget->StaticClass() == main_ui_class )
+    if ( MainUIWidget != nullptr && MainUIWidget->IsA( main_ui_class ) )
     {
-        return;
+        if ( !force )
+        {
+            return;
+        }
+
+        HideMainUI();
+        MainUIWidget = nullptr;
     }
 
     if ( ensure( main_ui_class != nullptr ) )
@@ -88,7 +94,7 @@ void UGBFUIDialogManagerComponent::InitializeMainUI()
 {
     if ( MainUIClass != nullptr )
     {
-        InitializeMainUIWithClass( MainUIClass );
+        InitializeMainUIWithClass( MainUIClass, false );
     }
 }
 
