@@ -25,9 +25,33 @@ void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility
 {
     const auto * world = GetWorld();
     auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
+    const auto incoming_phase_tag = phase_ability.GetDefaultObject()->GetGamePhaseTag();
 
     if ( ensure( game_state_asc != nullptr ) )
     {
+        TArray< FGameplayAbilitySpec * > active_phases;
+        GetActivePhases( active_phases, game_state_asc );
+
+        for ( const auto * active_phase : active_phases )
+        {
+            const auto * active_phase_ability = CastChecked< UGBFGamePhaseAbility >( active_phase->Ability );
+            const auto active_phase_tag = active_phase_ability->GetGamePhaseTag();
+
+            if ( active_phase_tag.MatchesTagExact( incoming_phase_tag ) )
+            {
+                switch ( phase_ability.GetDefaultObject()->GetExactTagCancellationPolicy() )
+                {
+                    case EGBFGamePhaseAbilityExactTagCancellationPolicy::CancelNewPhase:
+                    {
+                        return;
+                    }
+                    default:
+                    {
+                    };
+                }
+            }
+        }
+
         FGameplayAbilitySpec phase_spec( phase_ability, 1, 0, this );
         const auto spec_handle = game_state_asc->GiveAbilityAndActivateOnce( phase_spec );
         const auto * found_spec = game_state_asc->FindAbilitySpecFromHandle( spec_handle );
@@ -137,17 +161,8 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
     if ( ensure( game_state_asc != nullptr ) )
     {
         TArray< FGameplayAbilitySpec * > active_phases;
+        GetActivePhases( active_phases, game_state_asc );        
 
-        for ( const auto & kvp : ActivePhaseMap )
-        {
-            const auto active_ability_handle = kvp.Key;
-            if ( auto * gameplay_ability_spec = game_state_asc->FindAbilitySpecFromHandle( active_ability_handle ) )
-            {
-                active_phases.Add( gameplay_ability_spec );
-            }
-        }
-
-        bool can_start_new_phase = true;
         for ( const auto * active_phase : active_phases )
         {
             const auto * active_phase_ability = CastChecked< UGBFGamePhaseAbility >( active_phase->Ability );
@@ -177,7 +192,8 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
                     break;
                     case EGBFGamePhaseAbilityExactTagCancellationPolicy::CancelNewPhase:
                     {
-                        can_start_new_phase = false;
+                        // This should have been handled in StartPhase
+                        check( false );
                     }
                     break;
                     default:
@@ -219,12 +235,6 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
             }
         }
 
-        if ( !can_start_new_phase )
-        {
-            UE_LOG( LogGBFGamePhase, Log, TEXT( "\tNot Starting Phase '%s' (%s)" ), *incoming_phase_tag.ToString(), *GetNameSafe( phase_ability ) );
-            return;
-        }
-
         auto & entry = ActivePhaseMap.FindOrAdd( phase_ability_handle );
         entry.PhaseTag = incoming_phase_tag;
 
@@ -255,6 +265,18 @@ void UGBFGamePhaseSubsystem::OnEndPhase( const UGBFGamePhaseAbility * phase_abil
         if ( observer.IsMatch( ended_phase_tag ) )
         {
             observer.PhaseCallback.ExecuteIfBound( ended_phase_tag );
+        }
+    }
+}
+
+void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGASExtAbilitySystemComponent * asc ) const
+{
+    for ( const auto & kvp : ActivePhaseMap )
+    {
+        const auto active_ability_handle = kvp.Key;
+        if ( auto * gameplay_ability_spec = asc->FindAbilitySpecFromHandle( active_ability_handle ) )
+        {
+            active_phases.Add( gameplay_ability_spec );
         }
     }
 }
