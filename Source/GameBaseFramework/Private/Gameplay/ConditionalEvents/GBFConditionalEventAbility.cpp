@@ -41,7 +41,12 @@ void UGBFConditionalEventAbility::EndAbility( const FGameplayAbilitySpecHandle h
 #if WITH_EDITOR
 EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > & validation_errors )
 {
-    Super::IsDataValid( validation_errors );
+    const auto result = Super::IsDataValid( validation_errors );
+
+    if ( GetClass()->HasAllClassFlags( CLASS_Abstract ) )
+    {
+        return result;
+    }
 
     // Call IsDataValid on all triggers since they are created inline
     for ( auto * trigger : Triggers )
