@@ -83,7 +83,10 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
             }
         };
 
-        deactivate_list_of_actions( CurrentExperience->Actions );
+        TArray< UGameFeatureAction * > actions;
+        CurrentExperience->GetAllActions( actions );
+
+        deactivate_list_of_actions( actions );
         for ( const auto * action_set : CurrentExperience->ActionSets )
         {
             if ( action_set != nullptr )
@@ -314,7 +317,10 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
         // 		}
     };
 
-    collect_game_feature_plugin_urls( CurrentExperience, CurrentExperience->GameFeaturesToEnable );
+    TArray< FString > game_features;
+    CurrentExperience->GetAllGameFeatures( game_features );
+
+    collect_game_feature_plugin_urls( CurrentExperience, game_features );
     for ( const auto * action_set : CurrentExperience->ActionSets )
     {
         if ( action_set != nullptr )
@@ -396,7 +402,10 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         }
     };
 
-    activate_list_of_actions( CurrentExperience->Actions );
+    TArray< UGameFeatureAction * > actions;
+    CurrentExperience->GetAllActions( actions );
+
+    activate_list_of_actions( actions );
     for ( const auto * action_set : CurrentExperience->ActionSets )
     {
         if ( action_set != nullptr )

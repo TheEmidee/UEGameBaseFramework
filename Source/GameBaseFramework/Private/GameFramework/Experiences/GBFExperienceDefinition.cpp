@@ -1,5 +1,7 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#include "Kismet/GameplayStatics.h"
+
 #include <GameFeatureAction.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
@@ -13,6 +15,42 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 {
     static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
     return PrimaryAssetType;
+}
+
+void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & out_game_features ) const
+{
+    out_game_features = GameFeaturesToEnable;
+
+    const auto command_line = FCommandLine::Get();
+
+    TArray< FString > options;
+    OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
+
+    for ( auto option : options )
+    {
+        if ( UGameplayStatics::HasOption( command_line, option ) )
+        {
+            out_game_features.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].GameFeatures );
+        }
+    }
+}
+
+void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & out_actions ) const
+{
+    out_actions = Actions;
+
+    const auto command_line = FCommandLine::Get();
+
+    TArray< FString > options;
+    OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
+
+    for ( auto option : options )
+    {
+        if ( UGameplayStatics::HasOption( command_line, option ) )
+        {
+            out_actions.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].Actions );
+        }
+    }
 }
 
 #if WITH_EDITOR
