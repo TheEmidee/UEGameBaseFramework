@@ -15,10 +15,10 @@ struct FGBFExperienceAdditionalFeaturesAndActions
 {
     GENERATED_BODY()
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     TArray< FString > GameFeatures;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere, Instanced )
     TArray< UGameFeatureAction * > Actions;
 };
 
