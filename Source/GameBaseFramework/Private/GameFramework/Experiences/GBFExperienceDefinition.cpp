@@ -1,7 +1,5 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
-#include "Kismet/GameplayStatics.h"
-
 #include <GameFeatureAction.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
@@ -21,14 +19,14 @@ void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & out_game_
 {
     out_game_features = GameFeaturesToEnable;
 
-    const auto command_line = FCommandLine::Get();
+    const FString command_line = FCommandLine::Get();
 
     TArray< FString > options;
     OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
 
     for ( auto option : options )
     {
-        if ( UGameplayStatics::HasOption( command_line, option ) )
+        if ( command_line.Contains( option ) )
         {
             out_game_features.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].GameFeatures );
         }
@@ -39,14 +37,14 @@ void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & o
 {
     out_actions = Actions;
 
-    const auto command_line = FCommandLine::Get();
+    const FString command_line = FCommandLine::Get();
 
     TArray< FString > options;
     OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
 
     for ( auto option : options )
     {
-        if ( UGameplayStatics::HasOption( command_line, option ) )
+        if ( command_line.Contains( option ) )
         {
             out_actions.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].Actions );
         }
