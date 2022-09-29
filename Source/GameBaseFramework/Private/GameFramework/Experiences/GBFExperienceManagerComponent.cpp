@@ -84,7 +84,7 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
         };
 
         TArray< UGameFeatureAction * > actions;
-        CurrentExperience->GetAllActions( actions );
+        CurrentExperience->GetAllActions( actions, GEngine->LastURLFromWorld( GetWorld() ).ToString() );
 
         deactivate_list_of_actions( actions );
         for ( const auto * action_set : CurrentExperience->ActionSets )
@@ -318,7 +318,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     };
 
     TArray< FString > game_features;
-    CurrentExperience->GetAllGameFeatures( game_features );
+    CurrentExperience->GetAllGameFeatures( game_features, GetWorld()->GetLocalURL() );
 
     collect_game_feature_plugin_urls( CurrentExperience, game_features );
     for ( const auto * action_set : CurrentExperience->ActionSets )
@@ -403,7 +403,7 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
     };
 
     TArray< UGameFeatureAction * > actions;
-    CurrentExperience->GetAllActions( actions );
+    CurrentExperience->GetAllActions( actions, GetWorld()->GetLocalURL() );
 
     activate_list_of_actions( actions );
     for ( const auto * action_set : CurrentExperience->ActionSets )
