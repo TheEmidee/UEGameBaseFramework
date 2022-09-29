@@ -1,5 +1,6 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#include <Engine/World.h>
 #include <GameFeatureAction.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
@@ -15,36 +16,32 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
     return PrimaryAssetType;
 }
 
-void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & out_game_features ) const
+void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & out_game_features, const FString & url ) const
 {
     out_game_features = GameFeaturesToEnable;
-
-    const FString command_line = FCommandLine::Get();
 
     TArray< FString > options;
     OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
 
     for ( auto option : options )
     {
-        if ( command_line.Contains( option ) )
+        if ( url.Contains( option ) )
         {
             out_game_features.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].GameFeatures );
         }
     }
 }
 
-void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & out_actions ) const
+void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & out_actions, const FString & url ) const
 {
     out_actions = Actions;
-
-    const FString command_line = FCommandLine::Get();
 
     TArray< FString > options;
     OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
 
     for ( auto option : options )
     {
-        if ( command_line.Contains( option ) )
+        if ( url.Contains( option ) )
         {
             out_actions.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].Actions );
         }
