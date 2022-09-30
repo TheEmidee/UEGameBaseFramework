@@ -16,36 +16,46 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
     return PrimaryAssetType;
 }
 
-void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & out_game_features, const FString & url ) const
+const TArray< FString > & UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * world ) const
 {
-    out_game_features = GameFeaturesToEnable;
-
-    TArray< FString > options;
-    OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
-
-    for ( auto option : options )
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
     {
-        if ( url.Contains( option ) )
+        return GameFeaturesToEnable;
+    }
+
+    auto result = GameFeaturesToEnable;
+    const auto url = world->GetLocalURL();
+
+    for ( auto option_pair : OptionToAdditionalFeaturesAndActionsMap )
+    {
+        if ( url.Contains( option_pair.Key ) )
         {
-            out_game_features.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].GameFeatures );
+            result.Append( option_pair.Value.GameFeatures );
         }
     }
+
+    return result;
 }
 
-void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & out_actions, const FString & url ) const
+const TArray< UGameFeatureAction * > & UGBFExperienceDefinition::GetAllActions( const UWorld * world ) const
 {
-    out_actions = Actions;
-
-    TArray< FString > options;
-    OptionToAdditionalFeaturesAndActionsMap.GenerateKeyArray( options );
-
-    for ( auto option : options )
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
     {
-        if ( url.Contains( option ) )
+        return Actions;
+    }
+
+    auto result = Actions;
+    const auto url = world->GetLocalURL();
+
+    for ( auto option_pair : OptionToAdditionalFeaturesAndActionsMap )
+    {
+        if ( url.Contains( option_pair.Key ) )
         {
-            out_actions.Append( OptionToAdditionalFeaturesAndActionsMap[ option ].Actions );
+            result.Append( option_pair.Value.Actions );
         }
     }
+
+    return result;
 }
 
 #if WITH_EDITOR

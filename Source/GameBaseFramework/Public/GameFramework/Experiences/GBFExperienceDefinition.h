@@ -32,8 +32,8 @@ public:
 
     static FPrimaryAssetType GetPrimaryAssetType();
 
-    void GetAllGameFeatures( TArray< FString > & out_game_features, const FString & url ) const;
-    void GetAllActions( TArray< UGameFeatureAction * > & out_actions, const FString & url ) const;
+    const TArray< FString > & GetAllGameFeatures( const UWorld * world ) const;
+    const TArray< UGameFeatureAction * > & GetAllActions( const UWorld * world ) const;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
