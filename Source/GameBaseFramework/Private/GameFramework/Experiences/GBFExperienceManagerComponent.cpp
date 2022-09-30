@@ -81,8 +81,9 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
             }
         };
 
-        for ( auto * action : LoadedGameFeatureActions )
+        for ( auto index = LoadedGameFeatureActions.Num() - 1; index >= 0; --index )
         {
+            auto * action = LoadedGameFeatureActions[ index ];
             if ( action != nullptr )
             {
                 action->OnGameFeatureDeactivating( context );
