@@ -37,7 +37,7 @@ TArray< FString > UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * w
 
     const auto url = world->GetLocalURL();
 
-    for ( auto [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
+    for ( const auto & [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
     {
         if ( url.Contains( option ) )
         {
@@ -73,7 +73,7 @@ TArray< UGameFeatureAction * > UGBFExperienceDefinition::GetAllActions( const UW
 
     const auto url = world->GetLocalURL();
 
-    for ( auto [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
+    for ( const auto & [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
     {
         if ( url.Contains( option ) )
         {
