@@ -18,7 +18,7 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
     return PrimaryAssetType;
 }
 
-const TArray< FString > & UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * world ) const
+TArray< FString > UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * world ) const
 {
     auto result = GameFeaturesToEnable;
 
@@ -54,7 +54,7 @@ const TArray< FString > & UGBFExperienceDefinition::GetAllGameFeatures( const UW
     return result;
 }
 
-const TArray< UGameFeatureAction * > & UGBFExperienceDefinition::GetAllActions( const UWorld * world ) const
+TArray< UGameFeatureAction * > UGBFExperienceDefinition::GetAllActions( const UWorld * world ) const
 {
     auto result = Actions;
 
