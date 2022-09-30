@@ -32,7 +32,7 @@ TArray< FString > UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * w
 
     if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
-        return GameFeaturesToEnable;
+        return result;
     }
 
     const auto url = world->GetLocalURL();
@@ -68,7 +68,7 @@ TArray< UGameFeatureAction * > UGBFExperienceDefinition::GetAllActions( const UW
 
     if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
-        return Actions;
+        return result;
     }
 
     const auto url = world->GetLocalURL();
