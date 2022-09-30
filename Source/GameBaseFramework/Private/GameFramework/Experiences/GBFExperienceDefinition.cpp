@@ -1,5 +1,7 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#include "GameFramework/Experiences/GBFExperienceActionSet.h"
+
 #include <Engine/World.h>
 #include <GameFeatureAction.h>
 
@@ -18,19 +20,34 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 
 const TArray< FString > & UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * world ) const
 {
-    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
+    auto result = GameFeaturesToEnable;
+
+    for ( const auto * action_set : ActionSets )
+    {
+        if ( action_set != nullptr )
+        {
+            result.Append( action_set->GameFeaturesToEnable );
+        }
+    }
+
+    if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
         return GameFeaturesToEnable;
     }
 
-    auto result = GameFeaturesToEnable;
     const auto url = world->GetLocalURL();
 
-    for ( auto option_pair : OptionToAdditionalFeaturesAndActionsMap )
+    for ( auto option_pair : OptionToAdditionalActionSetsMap )
     {
         if ( url.Contains( option_pair.Key ) )
         {
-            result.Append( option_pair.Value.GameFeatures );
+            for ( const auto * action_set : option_pair.Value.ActionSets )
+            {
+                if ( action_set != nullptr )
+                {
+                    result.Append( action_set->GameFeaturesToEnable );
+                }
+            }
         }
     }
 
@@ -39,19 +56,34 @@ const TArray< FString > & UGBFExperienceDefinition::GetAllGameFeatures( const UW
 
 const TArray< UGameFeatureAction * > & UGBFExperienceDefinition::GetAllActions( const UWorld * world ) const
 {
-    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
+    auto result = Actions;
+
+    for ( const auto * action_set : ActionSets )
+    {
+        if ( action_set != nullptr )
+        {
+            result.Append( action_set->Actions );
+        }
+    }
+
+    if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
         return Actions;
     }
 
-    auto result = Actions;
     const auto url = world->GetLocalURL();
 
-    for ( auto option_pair : OptionToAdditionalFeaturesAndActionsMap )
+    for ( auto option_pair : OptionToAdditionalActionSetsMap )
     {
         if ( url.Contains( option_pair.Key ) )
         {
-            result.Append( option_pair.Value.Actions );
+            for ( const auto * action_set : option_pair.Value.ActionSets )
+            {
+                if ( action_set != nullptr )
+                {
+                    result.Append( action_set->Actions );
+                }
+            }
         }
     }
 

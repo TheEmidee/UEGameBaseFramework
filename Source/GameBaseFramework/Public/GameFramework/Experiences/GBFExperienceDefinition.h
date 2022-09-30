@@ -11,15 +11,12 @@ class UGBFExperienceActionSet;
 class UGameFeatureAction;
 
 USTRUCT()
-struct FGBFExperienceAdditionalFeaturesAndActions
+struct FGBFExperienceAdditionalActionSets
 {
     GENERATED_BODY()
 
-    UPROPERTY( EditAnywhere )
-    TArray< FString > GameFeatures;
-
     UPROPERTY( EditAnywhere, Instanced )
-    TArray< UGameFeatureAction * > Actions;
+    TArray< UGBFExperienceActionSet * > ActionSets;
 };
 
 UCLASS( BlueprintType, Const )
@@ -61,5 +58,5 @@ public:
     TArray< UGBFExperienceActionSet * > ActionSets;
 
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
-    TMap< FString, FGBFExperienceAdditionalFeaturesAndActions > OptionToAdditionalFeaturesAndActionsMap;
+    TMap< FString, FGBFExperienceAdditionalActionSets > OptionToAdditionalActionSetsMap;
 };
