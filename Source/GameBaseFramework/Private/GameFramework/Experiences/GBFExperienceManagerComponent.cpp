@@ -83,17 +83,15 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
             }
         };
 
-        TArray< UGameFeatureAction * > actions;
-        CurrentExperience->GetAllActions( actions, GEngine->LastURLFromWorld( GetWorld() ).ToString() );
-
-        deactivate_list_of_actions( actions );
-        for ( const auto * action_set : CurrentExperience->ActionSets )
+        for ( auto * action : LoadedGameFeatureActions )
         {
-            if ( action_set != nullptr )
+            if ( action != nullptr )
             {
-                deactivate_list_of_actions( action_set->Actions );
+                action->OnGameFeatureDeactivating( context );
+                action->OnGameFeatureUnregistering();
             }
         }
+        LoadedGameFeatureActions.Empty();
 
         NumExpectedPausers = context.GetNumPausers();
 
@@ -292,42 +290,30 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();
 
-    auto collect_game_feature_plugin_urls = [ This = this ]( const UPrimaryDataAsset * context, const TArray< FString > & feature_plugin_list ) {
-        for ( const FString & plugin_name : feature_plugin_list )
-        {
-            FString plugin_url;
-            if ( UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName( plugin_name, /*out*/ plugin_url ) )
-            {
-                This->GameFeaturePluginURLs.AddUnique( plugin_url );
-            }
-            else
-            {
-                ensureMsgf( false, TEXT( "OnExperienceLoadComplete failed to find plugin URL from PluginName %s for experience %s - fix data, ignoring for this run" ), *plugin_name, *context->GetPrimaryAssetId().ToString() );
-            }
-        }
+    const TArray< FString > game_features = CurrentExperience->GetAllGameFeatures( GetWorld() );
 
-        // 		// Add in our extra plugin
-        // 		if (!CurrentPlaylistData->GameFeaturePluginToActivateUntilDownloadedContentIsPresent.IsEmpty())
-        // 		{
-        // 			FString PluginURL;
-        // 			if (UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName(CurrentPlaylistData->GameFeaturePluginToActivateUntilDownloadedContentIsPresent, PluginURL))
-        // 			{
-        // 				GameFeaturePluginURLs.AddUnique(PluginURL);
-        // 			}
-        // 		}
-    };
-
-    TArray< FString > game_features;
-    CurrentExperience->GetAllGameFeatures( game_features, GetWorld()->GetLocalURL() );
-
-    collect_game_feature_plugin_urls( CurrentExperience, game_features );
-    for ( const auto * action_set : CurrentExperience->ActionSets )
+    for ( const auto & plugin_name : game_features )
     {
-        if ( action_set != nullptr )
+        FString plugin_url;
+        if ( UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName( plugin_name, /*out*/ plugin_url ) )
         {
-            collect_game_feature_plugin_urls( action_set, action_set->GameFeaturesToEnable );
+            GameFeaturePluginURLs.AddUnique( plugin_url );
+        }
+        else
+        {
+            ensureMsgf( false, TEXT( "OnExperienceLoadComplete failed to find plugin URL from PluginName %s for experience %s - fix data, ignoring for this run" ), *plugin_name, *GetPrimaryAssetId().ToString() );
         }
     }
+
+    // 		// Add in our extra plugin
+    // 		if (!CurrentPlaylistData->GameFeaturePluginToActivateUntilDownloadedContentIsPresent.IsEmpty())
+    // 		{
+    // 			FString PluginURL;
+    // 			if (UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName(CurrentPlaylistData->GameFeaturePluginToActivateUntilDownloadedContentIsPresent, PluginURL))
+    // 			{
+    // 				GameFeaturePluginURLs.AddUnique(PluginURL);
+    // 			}
+    // 		}
 
     // Load and activate the features
     NumGameFeaturePluginsLoading = GameFeaturePluginURLs.Num();
@@ -387,30 +373,19 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
     }
 
-    auto activate_list_of_actions = [ &context ]( const TArray< UGameFeatureAction * > & action_list ) {
-        for ( UGameFeatureAction * action : action_list )
-        {
-            if ( action != nullptr )
-            {
-                //@TODO: The fact that these don't take a world are potentially problematic in client-server PIE
-                // The current behavior matches systems like gameplay tags where loading and registering apply to the entire process,
-                // but actually applying the results to actors is restricted to a specific world
-                action->OnGameFeatureRegistering();
-                action->OnGameFeatureLoading();
-                action->OnGameFeatureActivating( context );
-            }
-        }
-    };
+    const auto actions = CurrentExperience->GetAllActions( GetWorld() );
 
-    TArray< UGameFeatureAction * > actions;
-    CurrentExperience->GetAllActions( actions, GetWorld()->GetLocalURL() );
-
-    activate_list_of_actions( actions );
-    for ( const auto * action_set : CurrentExperience->ActionSets )
+    for ( auto * action : actions )
     {
-        if ( action_set != nullptr )
+        if ( action != nullptr )
         {
-            activate_list_of_actions( action_set->Actions );
+            //@TODO: The fact that these don't take a world are potentially problematic in client-server PIE
+            // The current behavior matches systems like gameplay tags where loading and registering apply to the entire process,
+            // but actually applying the results to actors is restricted to a specific world
+            action->OnGameFeatureRegistering();
+            action->OnGameFeatureLoading();
+            action->OnGameFeatureActivating( context );
+            LoadedGameFeatureActions.Emplace( action );
         }
     }
 
