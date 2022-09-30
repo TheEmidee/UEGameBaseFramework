@@ -45,9 +45,9 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
     Super::EndPlay( EndPlayReason );
 
     // deactivate any features this experience loaded
-    //@TODO: This should be handled FILO as well
-    for ( const auto & plugin_url : GameFeaturePluginURLs )
+    for ( auto index = GameFeaturePluginURLs.Num() - 1; index >= 0; --index )
     {
+        auto plugin_url = GameFeaturePluginURLs[ index ];
         if ( UGBFExperienceSubsystem::RequestToDeactivatePlugin( plugin_url ) )
         {
             UGameFeaturesSubsystem::Get().DeactivateGameFeaturePlugin( plugin_url );
