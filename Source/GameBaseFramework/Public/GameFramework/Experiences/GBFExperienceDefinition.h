@@ -15,7 +15,7 @@ struct FGBFExperienceAdditionalActionSets
 {
     GENERATED_BODY()
 
-    UPROPERTY( EditAnywhere, Instanced )
+    UPROPERTY( EditDefaultsOnly )
     TArray< UGBFExperienceActionSet * > ActionSets;
 };
 
