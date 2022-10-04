@@ -38,6 +38,8 @@ private:
     TMap< UGASExtAbilitySystemComponent *, FActiveGameplayEffectHandle > Handles;
 };
 
+DECLARE_DELEGATE_OneParam( FGBFGlobalAbilitySystemOnASCUpdateDelegate, UGASExtAbilitySystemComponent * ASC );
+
 /**
  * Imported from Lyra
  */
@@ -47,6 +49,9 @@ class GAMEBASEFRAMEWORK_API UGBFGlobalAbilitySystem final : public UWorldSubsyst
     GENERATED_BODY()
 
 public:
+    FGBFGlobalAbilitySystemOnASCUpdateDelegate & OnASCRegistered();
+    FGBFGlobalAbilitySystemOnASCUpdateDelegate & OnASCUnregistered();
+
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Lyra" )
     void ApplyAbilityToAll( TSubclassOf< UGameplayAbility > ability );
 
@@ -80,4 +85,17 @@ private:
 
     UPROPERTY()
     TArray< UGASExtAbilitySystemComponent * > RegisteredASCs;
+
+    FGBFGlobalAbilitySystemOnASCUpdateDelegate OnASCRegisteredDelegate;
+    FGBFGlobalAbilitySystemOnASCUpdateDelegate OnASCUnregisteredDelegate;
 };
+
+FORCEINLINE FGBFGlobalAbilitySystemOnASCUpdateDelegate & UGBFGlobalAbilitySystem::OnASCRegistered()
+{
+    return OnASCRegisteredDelegate;
+}
+
+FORCEINLINE FGBFGlobalAbilitySystemOnASCUpdateDelegate & UGBFGlobalAbilitySystem::OnASCUnregistered()
+{
+    return OnASCUnregisteredDelegate;
+}
