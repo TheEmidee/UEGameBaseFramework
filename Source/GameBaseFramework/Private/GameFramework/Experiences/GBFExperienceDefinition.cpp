@@ -31,24 +31,18 @@ void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & features,
         }
     }
 
-    if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
     {
         return;
     }
 
     const auto url = world->GetLocalURL();
 
-    for ( const auto & [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
+    for ( const auto & [ option, features_and_actions ] : OptionToAdditionalFeaturesAndActionsMap )
     {
         if ( url.Contains( option ) )
         {
-            for ( const auto * action_set : additional_action_set.ActionSets )
-            {
-                if ( action_set != nullptr )
-                {
-                    features.Append( action_set->GameFeaturesToEnable );
-                }
-            }
+            features.Append( features_and_actions.GameFeaturesToEnable );
         }
     }
 }
@@ -66,24 +60,18 @@ void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & a
         }
     }
 
-    if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
     {
         return;
     }
 
     const auto url = world->GetLocalURL();
 
-    for ( const auto & [ option, additional_action_set ] : OptionToAdditionalActionSetsMap )
+    for ( const auto & [ option, features_and_actions ] : OptionToAdditionalFeaturesAndActionsMap )
     {
         if ( url.Contains( option ) )
         {
-            for ( const auto * action_set : additional_action_set.ActionSets )
-            {
-                if ( action_set != nullptr )
-                {
-                    actions.Append( action_set->Actions );
-                }
-            }
+            actions.Append( features_and_actions.Actions );
         }
     }
 }
