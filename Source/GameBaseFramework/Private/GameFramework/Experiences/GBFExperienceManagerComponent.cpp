@@ -70,21 +70,9 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
             context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
         }
 
-        auto deactivate_list_of_actions = [ &context ]( const TArray< UGameFeatureAction * > & ActionList ) {
-            for ( auto * action : ActionList )
-            {
-                if ( action != nullptr )
-                {
-                    action->OnGameFeatureDeactivating( context );
-                    action->OnGameFeatureUnregistering();
-                }
-            }
-        };
-
         for ( auto index = LoadedGameFeatureActions.Num() - 1; index >= 0; --index )
         {
-            auto * action = LoadedGameFeatureActions[ index ];
-            if ( action != nullptr )
+            if ( auto * action = LoadedGameFeatureActions[ index ] )
             {
                 action->OnGameFeatureDeactivating( context );
                 action->OnGameFeatureUnregistering();
@@ -289,7 +277,8 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();
 
-    const TArray< FString > game_features = CurrentExperience->GetAllGameFeatures( GetWorld() );
+    TArray< FString > game_features;
+    CurrentExperience->GetAllGameFeatures( game_features, GetWorld() );
 
     for ( const auto & plugin_name : game_features )
     {
@@ -372,7 +361,8 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
     }
 
-    const auto actions = CurrentExperience->GetAllActions( GetWorld() );
+    TArray< UGameFeatureAction * > actions;
+    CurrentExperience->GetAllActions( actions, GetWorld() );
 
     for ( auto * action : actions )
     {

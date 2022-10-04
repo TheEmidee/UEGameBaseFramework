@@ -18,21 +18,22 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
     return PrimaryAssetType;
 }
 
-TArray< FString > UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * world ) const
+void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & features, const UWorld * world ) const
 {
-    auto result = GameFeaturesToEnable;
+    features.Reserve( GameFeaturesToEnable.Num() * 2 );
+    features.Append( GameFeaturesToEnable );
 
     for ( const auto * action_set : ActionSets )
     {
         if ( action_set != nullptr )
         {
-            result.Append( action_set->GameFeaturesToEnable );
+            features.Append( action_set->GameFeaturesToEnable );
         }
     }
 
     if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
-        return result;
+        return;
     }
 
     const auto url = world->GetLocalURL();
@@ -45,30 +46,29 @@ TArray< FString > UGBFExperienceDefinition::GetAllGameFeatures( const UWorld * w
             {
                 if ( action_set != nullptr )
                 {
-                    result.Append( action_set->GameFeaturesToEnable );
+                    features.Append( action_set->GameFeaturesToEnable );
                 }
             }
         }
     }
-
-    return result;
 }
 
-TArray< UGameFeatureAction * > UGBFExperienceDefinition::GetAllActions( const UWorld * world ) const
+void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & actions, const UWorld * world ) const
 {
-    auto result = Actions;
+    actions.Reserve( Actions.Num() * 2 );
+    actions.Append( Actions );
 
     for ( const auto * action_set : ActionSets )
     {
         if ( action_set != nullptr )
         {
-            result.Append( action_set->Actions );
+            actions.Append( action_set->Actions );
         }
     }
 
     if ( OptionToAdditionalActionSetsMap.IsEmpty() || !IsValid( world ) )
     {
-        return result;
+        return;
     }
 
     const auto url = world->GetLocalURL();
@@ -81,13 +81,11 @@ TArray< UGameFeatureAction * > UGBFExperienceDefinition::GetAllActions( const UW
             {
                 if ( action_set != nullptr )
                 {
-                    result.Append( action_set->Actions );
+                    actions.Append( action_set->Actions );
                 }
             }
         }
     }
-
-    return result;
 }
 
 #if WITH_EDITOR
