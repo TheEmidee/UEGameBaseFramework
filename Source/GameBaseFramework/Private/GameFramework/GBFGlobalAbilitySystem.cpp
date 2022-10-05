@@ -146,7 +146,7 @@ void UGBFGlobalAbilitySystem::RegisterASC( UGASExtAbilitySystemComponent * asc )
 
     RegisteredASCs.Add( asc );
 
-    OnASCRegisteredDelegate.Execute( asc );
+    OnASCRegisteredDelegate.ExecuteIfBound( asc );
 }
 
 void UGBFGlobalAbilitySystem::UnregisterASC( UGASExtAbilitySystemComponent * asc )
@@ -163,7 +163,7 @@ void UGBFGlobalAbilitySystem::UnregisterASC( UGASExtAbilitySystemComponent * asc
 
     RegisteredASCs.Remove( asc );
 
-    OnASCUnregisteredDelegate.Execute( asc );
+    OnASCUnregisteredDelegate.ExecuteIfBound( asc );
 }
 
 bool UGBFGlobalAbilitySystem::DoesSupportWorldType( const EWorldType::Type world_type ) const
