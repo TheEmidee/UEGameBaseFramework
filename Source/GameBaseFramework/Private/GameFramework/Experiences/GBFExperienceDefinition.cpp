@@ -1,5 +1,8 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#include "GameFramework/Experiences/GBFExperienceActionSet.h"
+
+#include <Engine/World.h>
 #include <GameFeatureAction.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
@@ -13,6 +16,64 @@ FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 {
     static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
     return PrimaryAssetType;
+}
+
+void UGBFExperienceDefinition::GetAllGameFeatures( TArray< FString > & features, const UWorld * world ) const
+{
+    features.Reserve( GameFeaturesToEnable.Num() * 2 );
+    features.Append( GameFeaturesToEnable );
+
+    for ( const auto * action_set : ActionSets )
+    {
+        if ( action_set != nullptr )
+        {
+            features.Append( action_set->GameFeaturesToEnable );
+        }
+    }
+
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
+    {
+        return;
+    }
+
+    const auto url = world->GetLocalURL();
+
+    for ( const auto & [ option, features_and_actions ] : OptionToAdditionalFeaturesAndActionsMap )
+    {
+        if ( url.Contains( option ) )
+        {
+            features.Append( features_and_actions.GameFeaturesToEnable );
+        }
+    }
+}
+
+void UGBFExperienceDefinition::GetAllActions( TArray< UGameFeatureAction * > & actions, const UWorld * world ) const
+{
+    actions.Reserve( Actions.Num() * 2 );
+    actions.Append( Actions );
+
+    for ( const auto * action_set : ActionSets )
+    {
+        if ( action_set != nullptr )
+        {
+            actions.Append( action_set->Actions );
+        }
+    }
+
+    if ( OptionToAdditionalFeaturesAndActionsMap.IsEmpty() || !IsValid( world ) )
+    {
+        return;
+    }
+
+    const auto url = world->GetLocalURL();
+
+    for ( const auto & [ option, features_and_actions ] : OptionToAdditionalFeaturesAndActionsMap )
+    {
+        if ( url.Contains( option ) )
+        {
+            actions.Append( features_and_actions.Actions );
+        }
+    }
 }
 
 #if WITH_EDITOR

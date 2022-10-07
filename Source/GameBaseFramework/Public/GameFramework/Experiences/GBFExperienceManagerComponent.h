@@ -8,6 +8,7 @@
 #include "GBFExperienceManagerComponent.generated.h"
 
 class UGBFExperienceDefinition;
+class UGameFeatureAction;
 
 enum class EGBFExperienceLoadState
 {
@@ -77,6 +78,7 @@ private:
 
     int32 NumGameFeaturePluginsLoading = 0;
     TArray< FString > GameFeaturePluginURLs;
+    TArray< UGameFeatureAction * > LoadedGameFeatureActions;
 
     int32 NumObservedPausers = 0;
     int32 NumExpectedPausers = 0;

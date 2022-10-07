@@ -10,6 +10,18 @@ class UGBFPawnData;
 class UGBFExperienceActionSet;
 class UGameFeatureAction;
 
+USTRUCT()
+struct FGBFExperienceAdditionalFeaturesAndActions
+{
+    GENERATED_BODY()
+
+    UPROPERTY( EditDefaultsOnly )
+    TArray< FString > GameFeaturesToEnable;
+
+    UPROPERTY( EditDefaultsOnly, Instanced )
+    TArray< UGameFeatureAction * > Actions;
+};
+
 UCLASS( BlueprintType, Const )
 class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryDataAsset
 {
@@ -19,6 +31,9 @@ public:
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
     static FPrimaryAssetType GetPrimaryAssetType();
+
+    void GetAllGameFeatures( TArray< FString > & features, const UWorld * world ) const;
+    void GetAllActions( TArray< UGameFeatureAction * > & actions, const UWorld * world ) const;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
@@ -44,4 +59,7 @@ public:
     // List of additional action sets to compose into this experience
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     TArray< UGBFExperienceActionSet * > ActionSets;
+
+    UPROPERTY( EditDefaultsOnly, Category = Gameplay )
+    TMap< FString, FGBFExperienceAdditionalFeaturesAndActions > OptionToAdditionalFeaturesAndActionsMap;
 };
