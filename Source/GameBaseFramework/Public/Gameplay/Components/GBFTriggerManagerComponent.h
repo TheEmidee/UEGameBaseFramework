@@ -67,7 +67,8 @@ public:
     int GetExpectedActorsCount( const UObject * world_context, const TSubclassOf< AActor > & detected_actor_class ) const override;
 
 private:
-    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess ) )
+    // Defines a decimal percentage from 0 to 1
+    UPROPERTY( BlueprintReadOnly, EditAnywhere, meta = ( AllowPrivateAccess, UIMin = "0", UIMax = "1", ClampMin = "0", ClampMax = "1" ) )
     float Percentage;
 };
 
