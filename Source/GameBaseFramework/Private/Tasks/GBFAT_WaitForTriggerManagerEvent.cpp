@@ -2,10 +2,13 @@
 
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
-UGBFAT_WaitForTriggerManagerEvent * UGBFAT_WaitForTriggerManagerEvent::WaitForTriggerManagerEvent( UGameplayAbility * owning_ability, UGBFTriggerManagerComponent * trigger_manager_component )
+UGBFAT_WaitForTriggerManagerEvent * UGBFAT_WaitForTriggerManagerEvent::WaitForTriggerManagerEvent( UGameplayAbility * owning_ability,
+    UGBFTriggerManagerComponent * trigger_manager_component,
+    bool broadcast_trigger_count_on_activate )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitForTriggerManagerEvent >( owning_ability );
     my_obj->TriggerManagerComponent = trigger_manager_component;
+    my_obj->bBroadcastTriggerCountOnActivate = broadcast_trigger_count_on_activate;
     return my_obj;
 }
 
@@ -19,6 +22,15 @@ void UGBFAT_WaitForTriggerManagerEvent::Activate()
     {
         TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &UGBFAT_WaitForTriggerManagerEvent::OnTriggerActivated );
         TriggerManagerComponent->OnActorInsideTriggerCountChanged().AddDynamic( this, &UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged );
+
+        if ( bBroadcastTriggerCountOnActivate )
+        {
+            const auto & actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
+            const auto actor_count = actors_in_trigger.Num();
+            auto * last_actor = actor_count > 0 ? actors_in_trigger.Last() : nullptr;
+
+            OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
+        }
     }
 }
 
@@ -45,8 +57,8 @@ void UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged( int ac
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
-        const auto actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
-        const auto last_actor = actors_in_trigger.Num() > 0 ? actors_in_trigger.Last() : nullptr;
+        const auto & actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
+        auto * last_actor = actors_in_trigger.Num() > 0 ? actors_in_trigger.Last() : nullptr;
 
         OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
     }

@@ -15,7 +15,9 @@ class GAMEBASEFRAMEWORK_API UGBFAT_WaitForTriggerManagerEvent : public UAbilityT
 
 public:
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
-    static UGBFAT_WaitForTriggerManagerEvent * WaitForTriggerManagerEvent( UGameplayAbility * owning_ability, UGBFTriggerManagerComponent * trigger_manager_component );
+    static UGBFAT_WaitForTriggerManagerEvent * WaitForTriggerManagerEvent( UGameplayAbility * owning_ability,
+        UGBFTriggerManagerComponent * trigger_manager_component,
+        bool broadcast_trigger_count_on_activate );
 
     void Activate() override;
     void OnDestroy( bool bInOwnerFinished ) override;
@@ -36,4 +38,7 @@ private:
 
     UPROPERTY()
     UGBFTriggerManagerComponent * TriggerManagerComponent;
+
+    UPROPERTY()
+    uint8 bBroadcastTriggerCountOnActivate : 1;
 };
