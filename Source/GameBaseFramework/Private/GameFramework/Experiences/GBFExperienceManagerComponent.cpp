@@ -277,10 +277,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();
 
-    TArray< FString > game_features;
-    CurrentExperience->GetAllGameFeatures( game_features, GetWorld() );
-
-    for ( const auto & plugin_name : game_features )
+    for ( const auto & plugin_name : CurrentExperience->GameFeaturesToEnable )
     {
         FString plugin_url;
         if ( UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName( plugin_name, /*out*/ plugin_url ) )
@@ -361,10 +358,7 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );
     }
 
-    TArray< UGameFeatureAction * > actions;
-    CurrentExperience->GetAllActions( actions, GetWorld() );
-
-    for ( auto * action : actions )
+    for ( auto * action : CurrentExperience->Actions )
     {
         if ( action != nullptr )
         {
