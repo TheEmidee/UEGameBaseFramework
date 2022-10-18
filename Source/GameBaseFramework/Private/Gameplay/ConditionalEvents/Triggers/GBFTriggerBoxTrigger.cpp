@@ -10,8 +10,13 @@ void UGBFTriggerBoxTrigger::Activate()
         return;
     }
 
-    const auto * trigger_box = TriggerBoxSoftObject.Get();
-    trigger_box->GetTriggerManagerComponent()->OnTriggerBoxActivated().AddDynamic( this, &ThisClass::OnTriggerBoxActivated );
+    if ( const auto * trigger_box = TriggerBoxSoftObject.Get() )
+    {
+        if ( auto * trigger_manager = trigger_box->GetTriggerManagerComponent() )
+        {
+            trigger_manager->OnActorInsideTriggerCountChanged().AddDynamic( this, &ThisClass::OnActorsInsideTriggerCountChanged );
+        }
+    }
 }
 
 void UGBFTriggerBoxTrigger::Deactivate()
@@ -21,8 +26,13 @@ void UGBFTriggerBoxTrigger::Deactivate()
         return;
     }
 
-    const auto * trigger_box = TriggerBoxSoftObject.Get();
-    trigger_box->GetTriggerManagerComponent()->OnTriggerBoxActivated().RemoveDynamic( this, &ThisClass::OnTriggerBoxActivated );
+    if ( const auto * trigger_box = TriggerBoxSoftObject.Get() )
+    {
+        if ( auto * trigger_manager = trigger_box->GetTriggerManagerComponent() )
+        {
+            trigger_manager->OnActorInsideTriggerCountChanged().RemoveDynamic( this, &ThisClass::OnActorsInsideTriggerCountChanged );
+        }
+    }
 }
 
 #if WITH_EDITOR
@@ -36,7 +46,13 @@ EDataValidationResult UGBFTriggerBoxTrigger::IsDataValid( TArray< FText > & vali
 }
 #endif
 
-void UGBFTriggerBoxTrigger::OnTriggerBoxActivated( AActor * /*activator*/ )
+void UGBFTriggerBoxTrigger::OnActorsInsideTriggerCountChanged( int count )
 {
-    OnTriggeredDelegate.Broadcast();
+    if ( const auto * trigger_box = TriggerBoxSoftObject.Get() )
+    {
+        if ( const auto * trigger_manager = trigger_box->GetTriggerManagerComponent() )
+        {
+            OnTriggeredDelegate.Broadcast( this, count >= trigger_manager->GetExpectedActorCount() );
+        }
+    }
 }
