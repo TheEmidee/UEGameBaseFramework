@@ -13,7 +13,6 @@ UGBFConditionalEventAbility::UGBFConditionalEventAbility()
     NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnly;
 
     bEndAbilityAfterOutcomes = true;
-    TriggerCount = 0;
 }
 
 void UGBFConditionalEventAbility::ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data )
@@ -64,16 +63,24 @@ EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > 
 }
 #endif
 
-void UGBFConditionalEventAbility::OnTriggersTriggered()
+void UGBFConditionalEventAbility::OnTriggersTriggered( UGBFConditionalTrigger * trigger, bool triggered )
 {
-    ++TriggerCount;
-    if ( TriggerCount >= Triggers.Num() )
+    if ( triggered )
     {
-        ExecuteOutcomes();
+        TriggeredTriggers.AddUnique( trigger );
 
-        if ( bEndAbilityAfterOutcomes )
+        if ( TriggeredTriggers.Num() >= Triggers.Num() )
         {
-            K2_EndAbility();
+            ExecuteOutcomes();
+
+            if ( bEndAbilityAfterOutcomes )
+            {
+                K2_EndAbility();
+            }
         }
+
+        return;
     }
+
+    TriggeredTriggers.Remove( trigger );
 }
