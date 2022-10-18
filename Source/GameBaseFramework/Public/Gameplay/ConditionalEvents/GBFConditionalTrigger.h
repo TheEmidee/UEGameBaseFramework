@@ -7,7 +7,7 @@
 
 #include "GBFConditionalTrigger.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFOnTriggeredDelegate );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnTriggeredDelegate, class UGBFConditionalTrigger *, trigger, bool, triggered );
 
 UCLASS( Abstract, NotBlueprintable, EditInlineNew, HideDropdown )
 class GAMEBASEFRAMEWORK_API UGBFConditionalTrigger : public UObject

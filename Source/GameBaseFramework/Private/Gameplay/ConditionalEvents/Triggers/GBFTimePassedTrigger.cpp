@@ -34,5 +34,5 @@ EDataValidationResult UGBFTimePassedTrigger::IsDataValid( TArray< FText > & vali
 
 void UGBFTimePassedTrigger::OnTimerElapsed()
 {
-    OnTriggeredDelegate.Broadcast();
+    OnTriggeredDelegate.Broadcast( this, true );
 }
