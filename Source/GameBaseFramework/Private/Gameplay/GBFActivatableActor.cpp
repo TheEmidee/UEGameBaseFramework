@@ -5,7 +5,18 @@
 AGBFActivatableActor::AGBFActivatableActor()
 {
     bActivated = false;
+    bStartsActivated = false;
     bAllowActivationOnClients = false;
+}
+
+void AGBFActivatableActor::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if ( bStartsActivated )
+    {
+        Activate();
+    }
 }
 
 void AGBFActivatableActor::Activate()

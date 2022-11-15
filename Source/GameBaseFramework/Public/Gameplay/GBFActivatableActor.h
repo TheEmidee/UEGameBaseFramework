@@ -13,6 +13,8 @@ class GAMEBASEFRAMEWORK_API AGBFActivatableActor : public AActor
 public:
     AGBFActivatableActor();
 
+    void BeginPlay() override;
+
     UFUNCTION( BlueprintCallable )
     void Activate();
 
@@ -36,6 +38,9 @@ private:
 
     UPROPERTY( BlueprintReadOnly, ReplicatedUsing = "OnRep_Activated", meta = ( AllowPrivateAccess = true ) )
     uint8 bActivated : 1;
+
+    UPROPERTY( EditDefaultsOnly )
+    uint8 bStartsActivated : 1;
 
     UPROPERTY( EditDefaultsOnly )
     uint8 bAllowActivationOnClients : 1;
