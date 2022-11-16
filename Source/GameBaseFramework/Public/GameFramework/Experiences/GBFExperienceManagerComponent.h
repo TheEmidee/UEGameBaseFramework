@@ -59,6 +59,9 @@ public:
 
     static UGBFExperienceManagerComponent * GetExperienceManagerComponent( const UObject * world_context );
 
+    UFUNCTION( BlueprintPure, meta = ( WorldContext = "world_context" ) )
+    static const UGBFExperienceDefinition * GetCurrentExperience( const UObject * world_context );
+
 private:
     UFUNCTION()
     void OnRep_CurrentExperience();
