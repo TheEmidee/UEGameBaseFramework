@@ -174,6 +174,11 @@ UGBFExperienceManagerComponent * UGBFExperienceManagerComponent::GetExperienceMa
     return nullptr;
 }
 
+const UGBFExperienceDefinition * UGBFExperienceManagerComponent::GetCurrentExperience( const UObject * world_context )
+{
+    return GetExperienceManagerComponent( world_context )->GetCurrentExperienceChecked();
+}
+
 void UGBFExperienceManagerComponent::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
 {
     Super::GetLifetimeReplicatedProps( OutLifetimeProps );
