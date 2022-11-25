@@ -12,7 +12,7 @@ class UAbilitySystemComponent;
 class AGameStateBase;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem : public UWorldSubsystem
+class GAMEBASEFRAMEWORK_API UGBFConditionalEventSubsystem final : public UWorldSubsystem
 {
     GENERATED_BODY()
 
