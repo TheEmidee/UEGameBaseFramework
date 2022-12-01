@@ -137,6 +137,7 @@ private:
     UPROPERTY( EditAnywhere, meta = ( AllowAbstract = true ) )
     TSubclassOf< AActor > DetectedActorClass;
 
+    // If None, will broadcast the event for every actor
     UPROPERTY( BlueprintReadOnly, EditAnywhere, Instanced, meta = ( AllowPrivateAccess ) )
     UGBFTriggerManagerActivationPolicy * ActivationPolicyClass;
 
