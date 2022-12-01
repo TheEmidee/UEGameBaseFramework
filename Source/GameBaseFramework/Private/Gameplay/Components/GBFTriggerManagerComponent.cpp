@@ -233,19 +233,21 @@ void UGBFTriggerManagerComponent::TryExecuteDelegate( AActor * activator )
         return;
     }
 
-    if ( ensure( ActivationPolicyClass != nullptr ) )
+    auto can_broadcast_trigger = true;
+
+    if ( IsValid( ActivationPolicyClass ) )
     {
-        const auto can_broadcast_trigger = ActivationPolicyClass->CanActivateTrigger( this, ActorsInTrigger, ActorsWhichActivatedTrigger, DetectedActorClass );
+        can_broadcast_trigger = ActivationPolicyClass->CanActivateTrigger( this, ActorsInTrigger, ActorsWhichActivatedTrigger, DetectedActorClass );
+    }
 
-        if ( can_broadcast_trigger )
+    if ( can_broadcast_trigger )
+    {
+        bTriggered = true;
+        OnTriggerActivatedDelegate.Broadcast( activator );
+
+        if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggered )
         {
-            bTriggered = true;
-            OnTriggerActivatedDelegate.Broadcast( activator );
-
-            if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggered )
-            {
-                Deactivate();
-            }
+            Deactivate();
         }
     }
 }
