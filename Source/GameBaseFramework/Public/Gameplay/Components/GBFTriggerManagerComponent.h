@@ -84,6 +84,14 @@ private:
     int ExactCount;
 };
 
+UCLASS( Blueprintable, HideDropdown, EditInlineNew )
+class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActorObserver : public UObject
+{
+    GENERATED_BODY()
+
+public:
+};
+
 UENUM()
 enum class EGBFTriggerManagerDeactivationType : uint8
 {
@@ -179,6 +187,16 @@ private:
 
     UPROPERTY( VisibleInstanceOnly )
     uint8 bTriggered : 1;
+
+    // When the manager stays activated when matching actors are inside the collision volume, these observers
+    // allow to "monitor" the state of the overlapping actors, allowing to remove them from the list based on some
+    // custom conditions, and to call the event OnActorInsideTriggerCountChanged to let calling code know
+    // For example, an observer could check if an actor is given (or removed) a specific gameplay tag, that would
+    // eject it from the list. Or we could remove an actor from the list if it's still in the collision volume,
+    // but too far away from the center...
+    UPROPERTY( EditAnywhere, Instanced )
+    TArray< UGBFTriggerManagerActorObserver * > OverlappingActorsObservers;
+
 };
 
 FORCEINLINE FSWOnTriggerActivatedDelegate & UGBFTriggerManagerComponent::OnTriggerBoxActivated()
