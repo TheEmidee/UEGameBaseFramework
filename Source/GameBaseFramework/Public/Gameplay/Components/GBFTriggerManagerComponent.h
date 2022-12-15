@@ -179,7 +179,7 @@ private:
 
     // If this is true, and TriggerOnce is true, when you call Activate to reset the trigger, it will wait for no actor
     // to be in the box before being able to trigger again
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bWaitNoOverlapToTriggerAgainWhenReset" ) )
     uint8 bWaitNoOverlapToTriggerAgainWhenReset : 1;
 
     UPROPERTY( EditAnywhere )
