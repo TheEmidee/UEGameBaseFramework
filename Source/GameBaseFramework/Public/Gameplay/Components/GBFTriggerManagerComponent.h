@@ -84,6 +84,49 @@ private:
     int ExactCount;
 };
 
+DECLARE_DELEGATE_TwoParams( FGBFTriggerManagerActorObserverStatusChangedDelegate, AActor * actor, bool is_valid );
+
+UCLASS( Blueprintable, HideDropdown, EditInlineNew )
+class GAMEBASEFRAMEWORK_API UGBFTriggerManagerActorObserver : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    void RegisterActor( AActor * actor, FGBFTriggerManagerActorObserverStatusChangedDelegate on_actor_changed );
+    void UnRegisterActor();
+
+    // This function is always called on the CDO
+    UFUNCTION( BlueprintNativeEvent )
+    bool IsActorAllowed( AActor * actor ) const;
+
+protected:
+    // This functions can subscribe to delegates or use async actions to monitor the state of an actor
+    // It's guaranteed to be executed AFTER IsActorAllowed returns true and only ONCE for each different actor
+    UFUNCTION( BlueprintImplementableEvent )
+    void ReceiveRegisterActor( AActor * actor );
+
+    UFUNCTION( BlueprintImplementableEvent )
+    void ReceiveUnRegisterActor( AActor * actor );
+
+    UFUNCTION( BlueprintCallable )
+    void UpdateActorStatus( bool is_valid );
+
+private:
+    UPROPERTY()
+    AActor * ObservedActor;
+
+    FGBFTriggerManagerActorObserverStatusChangedDelegate OnActorChanged;
+};
+
+USTRUCT()
+struct FGBFTriggerManagerActorObservers
+{
+    GENERATED_BODY();
+
+    UPROPERTY()
+    TArray< UGBFTriggerManagerActorObserver * > Observers;
+};
+
 UENUM()
 enum class EGBFTriggerManagerDeactivationType : uint8
 {
@@ -127,6 +170,10 @@ private:
     bool RegisterToObservedCollisionComponentEvents();
     void TryExecuteDelegate( AActor * activator );
     void ToggleCollision( bool enable ) const;
+    bool IsActorAllowedByObservers( AActor * actor ) const;
+    void RegisterActorForObservers( AActor * actor );
+    void UnRegisterActorFromObservers( const AActor * actor );
+    void UpdateActorOverlapStatus( AActor * actor, bool is_valid );
 
     UFUNCTION()
     void OnObservedComponentBeginOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 other_body_index, bool from_sweep, const FHitResult & sweep_hit_result );
@@ -171,7 +218,7 @@ private:
 
     // If this is true, and TriggerOnce is true, when you call Activate to reset the trigger, it will wait for no actor
     // to be in the box before being able to trigger again
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bWaitNoOverlapToTriggerAgainWhenReset" ) )
     uint8 bWaitNoOverlapToTriggerAgainWhenReset : 1;
 
     UPROPERTY( EditAnywhere )
@@ -179,6 +226,18 @@ private:
 
     UPROPERTY( VisibleInstanceOnly )
     uint8 bTriggered : 1;
+
+    // When the manager stays activated when matching actors are inside the collision volume, these observers
+    // allow to "monitor" the state of the overlapping actors, allowing to remove them from the list based on some
+    // custom conditions, and to call the event OnActorInsideTriggerCountChanged to let calling code know
+    // For example, an observer could check if an actor is given (or removed) a specific gameplay tag, that would
+    // eject it from the list. Or we could remove an actor from the list if it's still in the collision volume,
+    // but too far away from the center...
+    UPROPERTY( EditAnywhere )
+    TArray< TSubclassOf< UGBFTriggerManagerActorObserver > > OverlappingActorsObservers;
+
+    UPROPERTY()
+    TMap< AActor *, FGBFTriggerManagerActorObservers > ObserversByActorMap;
 };
 
 FORCEINLINE FSWOnTriggerActivatedDelegate & UGBFTriggerManagerComponent::OnTriggerBoxActivated()

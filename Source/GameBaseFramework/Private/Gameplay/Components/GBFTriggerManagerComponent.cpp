@@ -49,7 +49,7 @@ int UGBFTriggerManagerActivationPolicy_MultiActorsBase::GetExpectedActorsCount( 
     }
 
     auto count = 0;
-    if ( auto * world = GEngine->GetWorldFromContextObject( world_context, EGetWorldErrorMode::LogAndReturnNull ) )
+    if ( const auto * world = GEngine->GetWorldFromContextObject( world_context, EGetWorldErrorMode::LogAndReturnNull ) )
     {
         for ( TActorIterator< AActor > It( world, detected_actor_class ); It; ++It )
         {
@@ -79,6 +79,35 @@ int UGBFTriggerManagerActivationPolicy_PercentageOfActorsInside::GetExpectedActo
 int UGBFTriggerManagerActivationPolicy_ExactActorCountInside::GetExpectedActorsCount( const UObject * /*world_context*/, const TSubclassOf< AActor > & /*detected_actor_class*/ ) const
 {
     return ExactCount;
+}
+
+void UGBFTriggerManagerActorObserver::RegisterActor( AActor * actor, FGBFTriggerManagerActorObserverStatusChangedDelegate on_actor_changed )
+{
+    ensureAlways( on_actor_changed.IsBound() );
+
+    ObservedActor = actor;
+    OnActorChanged = on_actor_changed;
+    ReceiveRegisterActor( actor );
+}
+
+void UGBFTriggerManagerActorObserver::UnRegisterActor()
+{
+    ensureAlways( ObservedActor != nullptr );
+
+    ReceiveUnRegisterActor( ObservedActor );
+    ObservedActor = nullptr;
+    OnActorChanged.Unbind();
+}
+
+void UGBFTriggerManagerActorObserver::UpdateActorStatus( bool is_valid )
+{
+    ensureAlways( OnActorChanged.IsBound() );
+    OnActorChanged.Execute( ObservedActor, is_valid );
+}
+
+bool UGBFTriggerManagerActorObserver::IsActorAllowed_Implementation( AActor * /*actor*/ ) const
+{
+    return true;
 }
 
 UGBFTriggerManagerComponent::UGBFTriggerManagerComponent()
@@ -141,8 +170,15 @@ void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
 
         for ( auto * actor : overlapped_actors )
         {
+            if ( !IsActorAllowedByObservers( actor ) )
+            {
+                continue;
+            }
+
             ActorsInTrigger.AddUnique( actor );
             ActorsWhichActivatedTrigger.AddUnique( actor );
+
+            RegisterActorForObservers( actor );
         }
 
         if ( overlapped_actors.Num() > 0 )
@@ -169,6 +205,16 @@ void UGBFTriggerManagerComponent::Deactivate()
     ActorsWhichActivatedTrigger.Reset();
 
     ToggleCollision( false );
+
+    for ( auto & [ actor, observers ] : ObserversByActorMap )
+    {
+        for ( auto * observer : observers.Observers )
+        {
+            observer->UnRegisterActor();
+        }
+    }
+
+    ObserversByActorMap.Empty();
 }
 
 bool UGBFTriggerManagerComponent::CanObserveTriggerComponent() const
@@ -257,15 +303,77 @@ void UGBFTriggerManagerComponent::ToggleCollision( const bool enable ) const
     ObservedCollisionComponent->SetCollisionEnabled( enable ? ECollisionEnabled::QueryOnly : ECollisionEnabled::NoCollision );
 }
 
+bool UGBFTriggerManagerComponent::IsActorAllowedByObservers( AActor * actor ) const
+{
+    return !OverlappingActorsObservers.ContainsByPredicate( [ actor ]( TSubclassOf< UGBFTriggerManagerActorObserver > observer_class ) {
+        return !observer_class.GetDefaultObject()->IsActorAllowed( actor );
+    } );
+}
+
+void UGBFTriggerManagerComponent::RegisterActorForObservers( AActor * actor )
+{
+    ensureAlways( !ObserversByActorMap.Contains( actor ) );
+    auto & observers = ObserversByActorMap.Add( actor );
+
+    for ( auto observer_class : OverlappingActorsObservers )
+    {
+        auto * observer = NewObject< UGBFTriggerManagerActorObserver >( this, observer_class );
+        observer->RegisterActor( actor, FGBFTriggerManagerActorObserverStatusChangedDelegate::CreateUObject( this, &ThisClass::UpdateActorOverlapStatus ) );
+        observers.Observers.Add( observer );
+    }
+}
+
+void UGBFTriggerManagerComponent::UnRegisterActorFromObservers( const AActor * actor )
+{
+    ensureAlways( ObserversByActorMap.Contains( actor ) );
+
+    if ( auto * observers = ObserversByActorMap.Find( actor ) )
+    {
+        for ( auto * observer : ( *observers ).Observers )
+        {
+            observer->UnRegisterActor();
+            observer = nullptr;
+        }
+
+        observers->Observers.Empty();
+    }
+
+    ObserversByActorMap.Remove( actor );
+}
+
+void UGBFTriggerManagerComponent::UpdateActorOverlapStatus( AActor * actor, const bool is_valid )
+{
+    if ( !ensureAlways( actor != nullptr ) )
+    {
+        return;
+    }
+
+    if ( is_valid )
+    {
+        ActorsInTrigger.AddUnique( actor );
+    }
+    else
+    {
+        ActorsInTrigger.Remove( actor );
+    }
+
+    TryExecuteDelegate( actor );
+    OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
+}
+
 void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * /*other_component*/, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*sweep_hit_result*/ )
 {
     if ( other_actor->IsA( DetectedActorClass ) )
     {
-        ActorsInTrigger.AddUnique( other_actor );
+        if ( !IsActorAllowedByObservers( other_actor ) )
+        {
+            return;
+        }
+
+        UpdateActorOverlapStatus( other_actor, true );
         ActorsWhichActivatedTrigger.AddUnique( other_actor );
 
-        OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
-
+        RegisterActorForObservers( other_actor );
         TryExecuteDelegate( other_actor );
     }
 }
@@ -274,8 +382,8 @@ void UGBFTriggerManagerComponent::OnObservedComponentEndOverlap( UPrimitiveCompo
 {
     if ( other_actor->IsA( DetectedActorClass ) )
     {
-        ActorsInTrigger.Remove( other_actor );
-        OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
+        UpdateActorOverlapStatus( other_actor, false );
+        UnRegisterActorFromObservers( other_actor );
 
         if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggeredAndNoActorsAreInTrigger && ActorsInTrigger.Num() == 0 )
         {
