@@ -20,7 +20,6 @@ class GAMEBASEFRAMEWORK_API AGBFCharacter : public AModularCharacter, public IAb
     GENERATED_BODY()
 
 public:
-    
     explicit AGBFCharacter( const FObjectInitializer & object_initializer );
 
     UFUNCTION( BlueprintPure, Category = "Character" )
@@ -32,6 +31,7 @@ public:
     UFUNCTION( BlueprintPure, Category = "Character" )
     UGBFHealthComponent * GetHealthComponent() const;
 
+    UGBFPawnExtensionComponent * GetPawnExtensionComponent() const;
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
     void GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const override;
@@ -45,7 +45,6 @@ public:
     void SetupPlayerInputComponent( UInputComponent * player_input_component ) override;
 
 protected:
-
     virtual void OnAbilitySystemInitialized();
     virtual void OnAbilitySystemUninitialized();
 
@@ -71,6 +70,11 @@ protected:
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFHealthComponent * HealthComponent;
 };
+
+FORCEINLINE UGBFPawnExtensionComponent * AGBFCharacter::GetPawnExtensionComponent() const
+{
+    return PawnExtComponent;
+}
 
 FORCEINLINE UGBFHealthComponent * AGBFCharacter::GetHealthComponent() const
 {
