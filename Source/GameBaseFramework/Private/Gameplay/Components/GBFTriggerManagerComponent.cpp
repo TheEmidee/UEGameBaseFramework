@@ -176,6 +176,11 @@ void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
                 continue;
             }
 
+            if ( ActorsInTrigger.Contains( actor ) )
+            {
+                continue;
+            }
+
             ActorsInTrigger.AddUnique( actor );
             ActorsWhichActivatedTrigger.AddUnique( actor );
 
