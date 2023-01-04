@@ -164,21 +164,6 @@ bool UGBFGameInstanceIdentitySubsystem::IsLocalPlayerSignedIn( ULocalPlayer * lo
 
 bool UGBFGameInstanceIdentitySubsystem::ValidatePlayerForOnlinePlay( ULocalPlayer * local_player ) const
 {
-#if PLATFORM_XBOXONE
-    if ( GetSubsystem< UGBFGameInstanceOnlineSubsystem >()->GetCurrentConnectionStatus() != EOnlineServerConnectionStatus::Connected )
-    {
-        if ( auto * pc = Cast< AGBFPlayerController >( local_player->GetPlayerController( GetWorld() ) )
-        {
-            pc->GetUIDialogManagerComponent()->ShowConfirmationPopup(
-                NSLOCTEXT( "NetworkFailures", "ServiceDisconnected", "You must be connected to the Xbox LIVE service to play online." ),
-                NSLOCTEXT( "NetworkFailures", "ServiceDisconnected", "You must be connected to the Xbox LIVE service to play online." ),
-                EGBFUIDialogType::AdditiveOnTop );
-        }
-
-        return false;
-    }
-#endif
-
     if ( !IsLocalPlayerOnline( local_player ) )
     {
         if ( auto * pc = Cast< AGBFPlayerController >( local_player->GetPlayerController( GetWorld() ) ) )

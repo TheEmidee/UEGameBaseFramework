@@ -15,13 +15,6 @@
 #include <Kismet/GameplayStatics.h>
 #include <Sound/SoundMix.h>
 
-#if PLATFORM_PS4
-static void ExtendedSaveGameInfoDelegate( const TCHAR * save_name, const EGameDelegates_SaveGame key, FString & value )
-{
-    // Fill save parameter : size - icon path - etc...
-}
-#endif
-
 UGBFGameInstance::UGBFGameInstance()
 {}
 
@@ -32,10 +25,6 @@ void UGBFGameInstance::Init()
     Settings = GetDefault< UGameBaseFrameworkSettings >();
 
     check( Settings != nullptr );
-
-#if PLATFORM_PS4
-    FGameDelegates::Get().GetExtendedSaveGameInfoDelegate() = FExtendedSaveGameInfoDelegate::CreateStatic( LOCAL_ExtendedSaveGameInfoDelegate );
-#endif
 
     if ( SoundMix.IsValid() )
     {

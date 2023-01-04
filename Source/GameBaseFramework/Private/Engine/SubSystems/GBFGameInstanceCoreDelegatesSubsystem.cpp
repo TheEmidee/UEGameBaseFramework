@@ -46,20 +46,12 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleUserLoginChanged( int32 /* ga
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate()
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillDeactivate" ) );
-
-#if PLATFORM_PS4
-    HandleAppDeactivateOrBackground();
-#endif
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
 void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated()
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasReactivated" ) );
-
-#if PLATFORM_PS4
-    HandleAppReactivateOrForeground();
-#endif
 }
 
 // ReSharper disable once CppMemberFunctionMayBeStatic
@@ -67,7 +59,7 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground()
 {
     UE_LOG( LogGBF_OSS, Warning, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppWillEnterBackground" ) );
 
-#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+#if PLATFORM_SWITCH
     HandleAppDeactivateOrBackground();
 #endif
 }
@@ -77,7 +69,7 @@ void UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground()
 {
     UE_LOG( LogGBF_OSS, Log, TEXT( "UGBFGameInstanceCoreDelegatesSubsystem::HandleAppHasEnteredForeground" ) );
 
-#if PLATFORM_SWITCH || PLATFORM_XBOXONE
+#if PLATFORM_SWITCH
     HandleAppReactivateOrForeground();
 #endif
 }

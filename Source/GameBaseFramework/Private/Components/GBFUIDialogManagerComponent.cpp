@@ -111,7 +111,7 @@ void UGBFUIDialogManagerComponent::HideMainUI()
 {
     if ( MainUIWidget != nullptr && !IsMainUIHidden )
     {
-        MainUIWidget->RemoveFromViewport();
+        MainUIWidget->RemoveFromParent();
         IsMainUIHidden = true;
     }
 }
@@ -200,7 +200,7 @@ void UGBFUIDialogManagerComponent::CloseLastDialog()
     }
 
     auto last_stack_entry = DialogStack.Pop();
-    last_stack_entry.UserWidget->RemoveFromViewport();
+    last_stack_entry.UserWidget->RemoveFromParent();
 
     ZOrder--;
 
@@ -371,7 +371,7 @@ void UGBFUIDialogManagerComponent::HideBlurBackground()
 {
     if ( ensure( BlurBackgroundWidget != nullptr ) && IsBlurBackgroundVisible )
     {
-        BlurBackgroundWidget->RemoveFromViewport();
+        BlurBackgroundWidget->RemoveFromParent();
         IsBlurBackgroundVisible = false;
     }
 }
@@ -382,7 +382,7 @@ void UGBFUIDialogManagerComponent::RemoveAllDialogsFromViewport()
     {
         auto info = DialogStack.Pop();
 
-        info.UserWidget->RemoveFromViewport();
+        info.UserWidget->RemoveFromParent();
     }
 
     ZOrder = 2;

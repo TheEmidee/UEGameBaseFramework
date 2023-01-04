@@ -5,6 +5,7 @@
 #include "Gameplay/ConditionalEvents/GBFConditionalEventGroupData.h"
 
 #include <AbilitySystemComponent.h>
+#include <Engine/World.h>
 
 bool UGBFConditionalEventSubsystem::DoesSupportWorldType( EWorldType::Type world_type ) const
 {
