@@ -161,6 +161,7 @@ void UGBFTriggerManagerComponent::Activate( const bool reset /* = false */ )
         bTriggered = false;
     }
 
+    UnRegisterAllActorsFromObservers();
     ToggleCollision( true );
 
     if ( can_check_overlaps )
@@ -205,16 +206,7 @@ void UGBFTriggerManagerComponent::Deactivate()
     ActorsWhichActivatedTrigger.Reset();
 
     ToggleCollision( false );
-
-    for ( auto & [ actor, observers ] : ObserversByActorMap )
-    {
-        for ( auto * observer : observers.Observers )
-        {
-            observer->UnRegisterActor();
-        }
-    }
-
-    ObserversByActorMap.Empty();
+    UnRegisterAllActorsFromObservers();
 }
 
 bool UGBFTriggerManagerComponent::CanObserveTriggerComponent() const
@@ -323,10 +315,21 @@ void UGBFTriggerManagerComponent::RegisterActorForObservers( AActor * actor )
     }
 }
 
+void UGBFTriggerManagerComponent::UnRegisterAllActorsFromObservers()
+{
+    for ( auto & [ actor, observers ] : ObserversByActorMap )
+    {
+        for ( auto * observer : observers.Observers )
+        {
+            observer->UnRegisterActor();
+        }
+    }
+
+    ObserversByActorMap.Empty();
+}
+
 void UGBFTriggerManagerComponent::UnRegisterActorFromObservers( const AActor * actor )
 {
-    ensureAlways( ObserversByActorMap.Contains( actor ) );
-
     if ( auto * observers = ObserversByActorMap.Find( actor ) )
     {
         for ( auto * observer : ( *observers ).Observers )
