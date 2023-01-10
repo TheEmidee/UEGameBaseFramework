@@ -117,9 +117,7 @@ APlayerStart * UGBFPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlaye
 
         for ( auto * start_point : found_start_points )
         {
-            const auto state = start_point->GetLocationOccupancy( controller );
-
-            switch ( state )
+            switch ( const auto state = start_point->GetLocationOccupancy( controller ) )
             {
                 case EGBFPlayerStartLocationOccupancy::Empty:
                 {
@@ -129,6 +127,10 @@ APlayerStart * UGBFPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlaye
                 case EGBFPlayerStartLocationOccupancy::Partial:
                 {
                     occupied_start_points.Add( start_point );
+                }
+                break;
+                case EGBFPlayerStartLocationOccupancy::Full:
+                {
                 }
                 break;
                 default:
