@@ -382,7 +382,6 @@ void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveCom
         ActorsWhichActivatedTrigger.AddUnique( other_actor );
 
         RegisterActorForObservers( other_actor );
-        TryExecuteDelegate( other_actor );
     }
 }
 
