@@ -64,7 +64,6 @@ void UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged( const 
         auto * last_actor = actors_in_trigger.Num() > 0 ? actors_in_trigger.Last() : nullptr;
 
         OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
-        CheckShouldEndTask();
     }
 }
 
