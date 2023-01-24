@@ -389,8 +389,8 @@ void UGBFTriggerManagerComponent::OnObservedComponentEndOverlap( UPrimitiveCompo
 {
     if ( other_actor->IsA( DetectedActorClass ) )
     {
-        UpdateActorOverlapStatus( other_actor, false );
         UnRegisterActorFromObservers( other_actor );
+        UpdateActorOverlapStatus( other_actor, false );
 
         if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggeredAndNoActorsAreInTrigger && ActorsInTrigger.Num() == 0 )
         {
