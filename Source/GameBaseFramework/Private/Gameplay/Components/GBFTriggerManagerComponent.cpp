@@ -369,7 +369,7 @@ void UGBFTriggerManagerComponent::UpdateActorOverlapStatus( AActor * actor, cons
     OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
 }
 
-void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*sweep_hit_result*/ )
+void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * /*other_component*/, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*sweep_hit_result*/ )
 {
     if ( other_actor->IsA( DetectedActorClass ) )
     {
@@ -385,7 +385,7 @@ void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveCom
     }
 }
 
-void UGBFTriggerManagerComponent::OnObservedComponentEndOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/ )
+void UGBFTriggerManagerComponent::OnObservedComponentEndOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * /*other_component*/, int32 /*other_body_index*/ )
 {
     if ( other_actor->IsA( DetectedActorClass ) )
     {
