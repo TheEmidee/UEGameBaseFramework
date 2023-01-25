@@ -4,11 +4,13 @@
 
 UGBFAT_WaitForTriggerManagerEvent * UGBFAT_WaitForTriggerManagerEvent::WaitForTriggerManagerEvent( UGameplayAbility * owning_ability,
     UGBFTriggerManagerComponent * trigger_manager_component,
-    bool broadcast_trigger_count_on_activate )
+    const bool broadcast_trigger_count_on_activate,
+    const bool trigger_once /*= false*/ )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitForTriggerManagerEvent >( owning_ability );
     my_obj->TriggerManagerComponent = trigger_manager_component;
     my_obj->bBroadcastTriggerCountOnActivate = broadcast_trigger_count_on_activate;
+    my_obj->bTriggerOnce = trigger_once;
     return my_obj;
 }
 
@@ -34,7 +36,7 @@ void UGBFAT_WaitForTriggerManagerEvent::Activate()
     }
 }
 
-void UGBFAT_WaitForTriggerManagerEvent::OnDestroy( bool bInOwnerFinished )
+void UGBFAT_WaitForTriggerManagerEvent::OnDestroy( const bool in_owner_finished )
 {
     if ( TriggerManagerComponent != nullptr )
     {
@@ -42,7 +44,7 @@ void UGBFAT_WaitForTriggerManagerEvent::OnDestroy( bool bInOwnerFinished )
         TriggerManagerComponent->OnActorInsideTriggerCountChanged().RemoveDynamic( this, &UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged );
     }
 
-    Super::OnDestroy( bInOwnerFinished );
+    Super::OnDestroy( in_owner_finished );
 }
 
 void UGBFAT_WaitForTriggerManagerEvent::OnTriggerActivated( AActor * activator )
@@ -50,10 +52,11 @@ void UGBFAT_WaitForTriggerManagerEvent::OnTriggerActivated( AActor * activator )
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
         OnTriggerActivatedDelegate.Broadcast( activator, TriggerManagerComponent->GetActorsInTrigger().Num() );
+        CheckShouldEndTask();
     }
 }
 
-void UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged( int actor_count )
+void UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged( const int actor_count )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
@@ -61,5 +64,13 @@ void UGBFAT_WaitForTriggerManagerEvent::OnActorInsideTriggerCountChanged( int ac
         auto * last_actor = actors_in_trigger.Num() > 0 ? actors_in_trigger.Last() : nullptr;
 
         OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
+    }
+}
+
+void UGBFAT_WaitForTriggerManagerEvent::CheckShouldEndTask()
+{
+    if ( bTriggerOnce )
+    {
+        EndTask();
     }
 }

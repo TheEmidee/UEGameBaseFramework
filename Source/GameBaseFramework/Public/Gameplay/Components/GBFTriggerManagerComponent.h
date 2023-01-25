@@ -172,6 +172,7 @@ private:
     void ToggleCollision( bool enable ) const;
     bool IsActorAllowedByObservers( AActor * actor ) const;
     void RegisterActorForObservers( AActor * actor );
+    void UnRegisterAllActorsFromObservers();
     void UnRegisterActorFromObservers( const AActor * actor );
     void UpdateActorOverlapStatus( AActor * actor, bool is_valid );
 
