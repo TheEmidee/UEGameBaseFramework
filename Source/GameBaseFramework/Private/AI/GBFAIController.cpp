@@ -4,6 +4,7 @@
 
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
+#include <Engine/World.h>
 #include <GameFramework/PlayerState.h>
 
 AGBFAIController::AGBFAIController( const FObjectInitializer & object_initializer ) :

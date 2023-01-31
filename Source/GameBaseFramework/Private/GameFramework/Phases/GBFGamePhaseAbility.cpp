@@ -3,6 +3,7 @@
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
 
 #include <AbilitySystemComponent.h>
+#include <Engine/World.h>
 
 UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 {
