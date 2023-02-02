@@ -3,7 +3,6 @@
 #include "GBFGameInstanceSubsystemBase.h"
 
 #include <CoreMinimal.h>
-#include "Interfaces/OnlineIdentityInterface.h"
 
 #include "GBFGameInstanceControllerSubsystem.generated.h"
 
@@ -22,9 +21,6 @@ public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
 
 private:
-    void HandleControllerPairingChanged( int game_user_index, FControllerPairingChangedUserInfo previous_user, FControllerPairingChangedUserInfo new_user );
-    void HandleControllerConnectionChange( bool is_connection, FPlatformUserId new_uer_id, int32 old_user_id );
-
     int IgnorePairingChangeForControllerId;
 };
 

@@ -315,13 +315,7 @@ void UGBFGameInstanceSessionSubsystem::HandleSessionFailure( const FUniqueNetId 
         UE_LOG( LogOnlineGame, Log, TEXT( "UGBFGameInstanceSessionSubsystem::HandleSessionFailure: Going to main menu" ) );
 
         // Display message on consoles
-#if PLATFORM_XBOXONE
-        const auto return_reason = NSLOCTEXT( "NetworkFailures", "ServiceUnavailable", "Connection to Xbox LIVE has been lost." );
-#elif PLATFORM_PS4
-        const auto return_reason = NSLOCTEXT( "NetworkFailures", "ServiceUnavailable", "Connection to PSN has been lost." );
-#else
         const auto return_reason = NSLOCTEXT( "NetworkFailures", "ServiceUnavailable", "Connection has been lost." );
-#endif
         const auto ok_button = NSLOCTEXT( "DialogButtons", "OKAY", "OK" );
 
         auto * settings = GetDefault< UGameBaseFrameworkSettings >();

@@ -287,7 +287,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
         for ( const FString & plugin_name : feature_plugin_list )
         {
             FString plugin_url;
-            if ( UGameFeaturesSubsystem::Get().GetPluginURLForBuiltInPluginByName( plugin_name, /*out*/ plugin_url ) )
+            if ( UGameFeaturesSubsystem::Get().GetPluginURLByName( plugin_name, /*out*/ plugin_url ) )
             {
                 This->GameFeaturePluginURLs.AddUnique( plugin_url );
             }

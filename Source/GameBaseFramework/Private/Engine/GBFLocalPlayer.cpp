@@ -1,7 +1,7 @@
 #include "Engine/GBFLocalPlayer.h"
 
-#include "GameFramework/GBFSaveGame.h"
 #include "GBFLog.h"
+#include "GameFramework/GBFSaveGame.h"
 #include "Log/CoreExtLog.h"
 
 #include <Framework/Application/SlateApplication.h>
@@ -186,7 +186,7 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
         OnlineAchievementWriter->SetFloatStat( achievement_id, progression );
 
         FOnlineAchievementsWriteRef online_achievement_writer_ref = OnlineAchievementWriter.ToSharedRef();
-        FOnAchievementsWrittenDelegate delegate = FOnAchievementsWrittenDelegate::CreateLambda( [this, achievement_id, progression]( const FUniqueNetId & player_id, const bool was_successful ) {
+        FOnAchievementsWrittenDelegate delegate = FOnAchievementsWrittenDelegate::CreateLambda( [ this, achievement_id, progression ]( const FUniqueNetId & player_id, const bool was_successful ) {
             if ( was_successful )
             {
                 UE_LOG( LogGBF_OSS, Error, TEXT( "OnWriteAchievementEnded Success" ) );
@@ -210,11 +210,6 @@ void UGBFLocalPlayer::WriteAchievementCurrentCount( const FName & achievement_id
 
 FString UGBFLocalPlayer::GetSaveGameFilename() const
 {
-    FString save_game_filename;
-
-#if PLATFORM_XBOXONE || PLATFORM_SWITCH
-    save_game_filename = TEXT( "save" );
-#else
     const auto online_subsystem = IOnlineSubsystem::Get();
 
     if ( online_subsystem != nullptr && online_subsystem->GetSubsystemName() == NULL_SUBSYSTEM )
@@ -223,8 +218,7 @@ FString UGBFLocalPlayer::GetSaveGameFilename() const
     }
 
     const auto unique_id = GetPreferredUniqueNetId();
-    save_game_filename = unique_id->ToString();
-#endif
+    const auto save_game_filename = unique_id->ToString();
 
     return save_game_filename;
 }

@@ -2,7 +2,6 @@
   "FileVersion": 3,
   "Version": 1.1,
   "VersionName": "1.1",
-  "EngineVersion": "5.0.0",
   "FriendlyName": "Game Base Framework",
   "Description" : "Helper classes",
   "Category" : "Game Franework",
