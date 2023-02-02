@@ -7,6 +7,7 @@
 
 #if WITH_EDITORONLY_DATA
 #include <Components/BillboardComponent.h>
+#include <Engine/Texture2D.h>
 #endif
 
 AGBFTriggerBox::AGBFTriggerBox()
