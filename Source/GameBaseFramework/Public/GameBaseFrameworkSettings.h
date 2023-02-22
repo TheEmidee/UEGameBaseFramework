@@ -36,15 +36,15 @@ struct FGBFInputSwitchOptions
 
     /* Minimum time to wait before switching to another input type */
     UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MinTimeToSwitch;
+    float MinTimeToSwitch = 0.0f;
 
     /* Minimum value for an axis to trigger an input switch */
     UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float AxisMinThreshold;
+    float AxisMinThreshold = 0.0f;
 
     /* Minimum delta when the mouse moves to trigger an input switch */
     UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MouseMoveMinDelta;
+    float MouseMoveMinDelta = 0.0f;
 };
 
 UCLASS( config = Game, defaultconfig, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
