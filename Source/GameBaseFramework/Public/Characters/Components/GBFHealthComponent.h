@@ -38,6 +38,9 @@ public:
     FGBFOnDeathDelegate & OnDeathStarted();
     FGBFOnDeathDelegate & OnDeathFinished();
 
+    FGBFOnHealthAttributeChangedDelegate & OnHealthChanged();
+    FGBFOnHealthAttributeChangedDelegate & OnMaxHealthChanged();
+
 #if WITH_EDITOR
     FGameplayCueTag GetOnDamagedGameplayCueTag() const;
 #endif
@@ -126,4 +129,14 @@ FORCEINLINE FGBFOnDeathDelegate & UGBFHealthComponent::OnDeathStarted()
 FORCEINLINE FGBFOnDeathDelegate & UGBFHealthComponent::OnDeathFinished()
 {
     return OnDeathFinishedDelegate;
+}
+
+FORCEINLINE FGBFOnHealthAttributeChangedDelegate & UGBFHealthComponent::OnHealthChanged()
+{
+    return OnHealthChangedDelegate;
+}
+
+FORCEINLINE FGBFOnHealthAttributeChangedDelegate & UGBFHealthComponent::OnMaxHealthChanged()
+{
+    return OnMaxHealthChangedDelegate;
 }
