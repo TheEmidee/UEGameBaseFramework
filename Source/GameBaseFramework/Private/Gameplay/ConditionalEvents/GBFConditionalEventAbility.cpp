@@ -13,6 +13,7 @@ UGBFConditionalEventAbility::UGBFConditionalEventAbility()
     NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ServerOnly;
 
     bEndAbilityAfterOutcomes = true;
+    bExecuteOutcomesOnlyOnce = true;
 }
 
 void UGBFConditionalEventAbility::ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data )
@@ -28,11 +29,7 @@ void UGBFConditionalEventAbility::ActivateAbility( const FGameplayAbilitySpecHan
 
 void UGBFConditionalEventAbility::EndAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, bool replicate_end_ability, bool was_cancelled )
 {
-    for ( auto * trigger : Triggers )
-    {
-        trigger->GetOnTriggeredDelegate().RemoveAll( this );
-        trigger->Deactivate();
-    }
+    DeactivateTriggers();
 
     Super::EndAbility( handle, actor_info, activation_info, replicate_end_ability, was_cancelled );
 }
@@ -77,10 +74,24 @@ void UGBFConditionalEventAbility::OnTriggersTriggered( UGBFConditionalTrigger * 
             {
                 K2_EndAbility();
             }
+
+            if ( bExecuteOutcomesOnlyOnce )
+            {
+                DeactivateTriggers();
+            }
         }
 
         return;
     }
 
     TriggeredTriggers.Remove( trigger );
+}
+
+void UGBFConditionalEventAbility::DeactivateTriggers()
+{
+    for ( auto * trigger : Triggers )
+    {
+        trigger->GetOnTriggeredDelegate().RemoveAll( this );
+        trigger->Deactivate();
+    }
 }
