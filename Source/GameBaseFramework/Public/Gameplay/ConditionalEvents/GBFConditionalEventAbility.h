@@ -39,11 +39,16 @@ private:
     UFUNCTION()
     void OnTriggersTriggered( UGBFConditionalTrigger * trigger, bool triggered );
 
+    void DeactivateTriggers();
+
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Instanced, Category = "Conditional Events", meta = ( AllowPrivateAccess = true ) )
     TArray< UGBFConditionalTrigger * > Triggers;
 
     UPROPERTY( EditDefaultsOnly, Category = "Conditional Events" )
     uint8 bEndAbilityAfterOutcomes : 1;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Conditional Events" )
+    uint8 bExecuteOutcomesOnlyOnce : 1;
 
     UPROPERTY()
     TArray< UGBFConditionalTrigger * > TriggeredTriggers;
