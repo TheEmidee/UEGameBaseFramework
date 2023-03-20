@@ -309,7 +309,11 @@ bool UGBFTriggerManagerComponent::IsActorAllowedByObservers( AActor * actor ) co
 
 void UGBFTriggerManagerComponent::RegisterActorForObservers( AActor * actor )
 {
-    ensureAlways( !ObserversByActorMap.Contains( actor ) );
+    if ( ObserversByActorMap.Contains( actor ) )
+    {
+        return;
+    }
+
     auto & observers = ObserversByActorMap.Add( actor );
 
     for ( auto observer_class : OverlappingActorsObservers )
