@@ -18,19 +18,22 @@ void UGBFWaitForTriggerManagerEvent::Activate()
 {
     Super::Activate();
 
-    if ( TriggerManagerComponent != nullptr )
+    if ( TriggerManagerComponent == nullptr )
     {
-        TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &ThisClass::OnTriggerActivated );
-        TriggerManagerComponent->OnActorInsideTriggerCountChanged().AddDynamic( this, &ThisClass::OnActorInsideTriggerCountChanged );
+        SetReadyToDestroy();
+        return;
+    }
 
-        if ( bBroadcastTriggerCountOnActivate )
-        {
-            const auto & actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
-            const auto actor_count = actors_in_trigger.Num();
-            auto * last_actor = actor_count > 0 ? actors_in_trigger.Last() : nullptr;
+    TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &ThisClass::OnTriggerActivated );
+    TriggerManagerComponent->OnActorInsideTriggerCountChanged().AddDynamic( this, &ThisClass::OnActorInsideTriggerCountChanged );
 
-            OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
-        }
+    if ( bBroadcastTriggerCountOnActivate )
+    {
+        const auto & actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
+        const auto actor_count = actors_in_trigger.Num();
+        auto * last_actor = actor_count > 0 ? actors_in_trigger.Last() : nullptr;
+
+        OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
     }
 }
 
