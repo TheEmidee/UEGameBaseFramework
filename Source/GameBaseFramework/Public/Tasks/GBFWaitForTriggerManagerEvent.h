@@ -4,6 +4,7 @@
 
 #include "GBFWaitForTriggerManagerEvent.generated.h"
 
+class UGBFTriggerManagerComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnWaitTriggerManagerEventDelegate, AActor *, activator, int, actor_count );
 
 UCLASS()

@@ -50,7 +50,6 @@ void UGBFWaitForTriggerManagerEvent::SetReadyToDestroy()
 
 void UGBFWaitForTriggerManagerEvent::OnTriggerActivated( AActor * activator )
 {
-
     OnTriggerActivatedDelegate.Broadcast( activator, TriggerManagerComponent->GetActorsInTrigger().Num() );
     CheckShouldEndTask();
 }
