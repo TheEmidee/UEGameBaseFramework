@@ -14,22 +14,10 @@ void UGBFWaitTriggerManagerEventTaskBase::Activate()
 
     BindToTriggerManagerEvents();
 
-    /*TriggerManagerComponent->OnTriggerBoxActivated().AddDynamic( this, &ThisClass::OnTriggerActivated );
-    TriggerManagerComponent->OnActorInsideTriggerCountChanged().AddDynamic( this, &ThisClass::OnActorInsideTriggerCountChanged );*/
-
     if ( bBroadcastOnActivation )
     {
         TryBroadcastEvent();
     }
-
-    /*if ( bBroadcastTriggerCountOnActivate )
-    {
-        const auto & actors_in_trigger = TriggerManagerComponent->GetActorsInTrigger();
-        const auto actor_count = actors_in_trigger.Num();
-        auto * last_actor = actor_count > 0 ? actors_in_trigger.Last() : nullptr;
-
-        OnActorInsideTriggerCountChangedDelegate.Broadcast( last_actor, actor_count );
-    }*/
 }
 
 void UGBFWaitTriggerManagerEventTaskBase::SetReadyToDestroy()
