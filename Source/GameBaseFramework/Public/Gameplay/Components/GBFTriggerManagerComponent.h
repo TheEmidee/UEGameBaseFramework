@@ -137,6 +137,7 @@ enum class EGBFTriggerManagerDeactivationType : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnTriggerActivatedDelegate, AActor *, Activator );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnActorInsideTriggerCountChangedDelegate, int, ActorCount );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnActorOverlapStatusChangedDelegate, AActor *, Actor, bool, IsInsideTrigger );
 
 UCLASS( ClassGroup = ( Custom ), meta = ( BlueprintSpawnableComponent ) )
 class GAMEBASEFRAMEWORK_API UGBFTriggerManagerComponent : public UActorComponent
@@ -148,6 +149,8 @@ public:
 
     FSWOnTriggerActivatedDelegate & OnTriggerBoxActivated();
     FSWOnActorInsideTriggerCountChangedDelegate & OnActorInsideTriggerCountChanged();
+    FSWOnActorOverlapStatusChangedDelegate & OnActorOverlapStatusChanged();
+    bool IsTriggered() const;
 
     UFUNCTION( BlueprintCallable )
     void SetObservedCollisionComponent( UShapeComponent * observed_component );
@@ -201,6 +204,9 @@ private:
     UPROPERTY( BlueprintAssignable )
     FSWOnActorInsideTriggerCountChangedDelegate OnActorInsideTriggerCountChangedDelegate;
 
+    UPROPERTY( BlueprintAssignable )
+    FSWOnActorOverlapStatusChangedDelegate OnActorOverlapStatusChangedDelegate;
+
     UPROPERTY()
     UShapeComponent * ObservedCollisionComponent;
 
@@ -249,6 +255,16 @@ FORCEINLINE FSWOnTriggerActivatedDelegate & UGBFTriggerManagerComponent::OnTrigg
 FORCEINLINE FSWOnActorInsideTriggerCountChangedDelegate & UGBFTriggerManagerComponent::OnActorInsideTriggerCountChanged()
 {
     return OnActorInsideTriggerCountChangedDelegate;
+}
+
+FORCEINLINE FSWOnActorOverlapStatusChangedDelegate & UGBFTriggerManagerComponent::OnActorOverlapStatusChanged()
+{
+    return OnActorOverlapStatusChangedDelegate;
+}
+
+FORCEINLINE bool UGBFTriggerManagerComponent::IsTriggered() const
+{
+    return bTriggered;
 }
 
 FORCEINLINE bool UGBFTriggerManagerComponent::DoesTriggerHaveActorsInside() const

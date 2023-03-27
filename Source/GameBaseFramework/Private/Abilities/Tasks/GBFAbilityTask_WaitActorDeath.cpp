@@ -1,4 +1,4 @@
-#include "Abilities/GBFAbilityTask_WaitActorDeath.h"
+#include "Abilities/Tasks/GBFAbilityTask_WaitActorDeath.h"
 
 UGBFAbilityTask_WaitActorDeath * UGBFAbilityTask_WaitActorDeath::WaitActorDeath( UGameplayAbility * owning_ability, AActor * actor, EGBFDeathState death_state )
 {

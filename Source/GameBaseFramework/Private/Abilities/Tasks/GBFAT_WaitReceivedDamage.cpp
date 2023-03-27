@@ -1,4 +1,4 @@
-#include "Abilities/GBFAT_WaitReceivedDamage.h"
+#include "Abilities/Tasks/GBFAT_WaitReceivedDamage.h"
 
 #include "Abilities/GBFHealthAttributeSet.h"
 #include "AbilitySystemBlueprintLibrary.h"
