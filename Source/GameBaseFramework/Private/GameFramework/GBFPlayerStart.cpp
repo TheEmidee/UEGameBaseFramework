@@ -4,6 +4,12 @@
 #include <GameFramework/GameModeBase.h>
 #include <TimerManager.h>
 
+AGBFPlayerStart::AGBFPlayerStart( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer )
+{
+    bEnabled = true;
+}
+
 EGBFPlayerStartLocationOccupancy AGBFPlayerStart::GetLocationOccupancy( AController * controller_pawn_to_fit ) const
 {
     if ( auto * const world = GetWorld() )
