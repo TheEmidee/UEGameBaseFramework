@@ -1,5 +1,6 @@
 #include "GameFramework/Phases/GBFGamePhaseAbility.h"
 
+#include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
 
 #include <AbilitySystemComponent.h>
@@ -55,4 +56,19 @@ void UGBFGamePhaseAbility::EndAbility( const FGameplayAbilitySpecHandle handle, 
     }
 
     Super::EndAbility( handle, actor_info, activation_info, replicate_end_ability, was_cancelled );
+}
+
+bool UGBFGamePhaseAbility::AreWeWorldSettingsDefaultPhase() const
+{
+    if ( const auto * world = GetWorld() )
+    {
+        if ( const auto * settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() ) )
+        {
+            return settings->GetDefaultGamePhases().FindByPredicate( [ & ]( const TSubclassOf< UGBFGamePhaseAbility > & phase_class ) {
+                return GetClass() == phase_class;
+            } ) != nullptr;
+        }
+    }
+
+    return false;
 }
