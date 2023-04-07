@@ -43,9 +43,7 @@ public:
     // Should be called by the owning pawn when the input component is setup.
     void SetupPlayerInputComponent();
 
-    // Call this anytime the pawn needs to check if it's ready to be initialized (pawn data assigned, possessed, etc..).
-    bool CheckPawnReadyToInitialize();
-
+    // :TODO: Remove + flag
     // Returns true if the pawn is ready to be initialized.
     UFUNCTION( BlueprintCallable, BlueprintPure = false, Category = "Lyra|Pawn", Meta = ( ExpandBoolAsExecs = "ReturnValue" ) )
     bool IsPawnReadyToInitialize() const;
@@ -65,11 +63,20 @@ public:
     // UnRegister with the OnAbilitySystemInitialized delegate.
     void OnAbilitySystemInitialized_UnRegister( FSimpleMulticastDelegate::FDelegate delegate );
 
+    FName GetFeatureName() const override;
+    bool CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const override;
+    void HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) override;
+    void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
+
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
     static UGBFPawnExtensionComponent * FindPawnExtensionComponent( const AActor * actor );
 
+    /** The name of this overall feature, this one depends on the other named component features */
+    static const FName NAME_ActorFeatureName;
+
 protected:
     void OnRegister() override;
+    void EndPlay(const EEndPlayReason::Type end_play_reason) override;
 
     UFUNCTION()
     void OnRep_PawnData();
