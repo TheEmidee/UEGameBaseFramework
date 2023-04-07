@@ -48,10 +48,10 @@ void UGBFGameInstance::Init()
 
     if ( ensure( component_manager ) )
     {
-        component_manager->RegisterInitState( GBF_InitState_Spawned, false, FGameplayTag() );
-        component_manager->RegisterInitState( GBF_InitState_DataAvailable, false, GBF_InitState_Spawned );
-        component_manager->RegisterInitState( GBF_InitState_DataInitialized, false, GBF_InitState_DataAvailable );
-        component_manager->RegisterInitState( GBF_InitState_GameplayReady, false, GBF_InitState_DataInitialized );
+        component_manager->RegisterInitState( GBFTag_InitState_Spawned, false, FGameplayTag() );
+        component_manager->RegisterInitState( GBFTag_InitState_DataAvailable, false, GBFTag_InitState_Spawned );
+        component_manager->RegisterInitState( GBFTag_InitState_DataInitialized, false, GBFTag_InitState_DataAvailable );
+        component_manager->RegisterInitState( GBFTag_InitState_GameplayReady, false, GBFTag_InitState_DataInitialized );
     }
 }
 
