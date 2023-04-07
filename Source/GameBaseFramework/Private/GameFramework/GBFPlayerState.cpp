@@ -126,7 +126,7 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
 
     if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( GetPawn() ) )
     {
-        pawn_ext_comp->CheckPawnReadyToInitialize();
+        pawn_ext_comp->CheckDefaultInitialization();
     }
 }
 
