@@ -11,9 +11,6 @@ bool UGBFPawnComponent::IsPawnComponentReadyToInitialize() const
 
 void UGBFPawnComponent::CheckDefaultInitialization()
 {
-    // Before checking our progress, try progressing any other features we might depend on
-    CheckDefaultInitializationForImplementers();
-
     static const TArray< FGameplayTag > StateChain = { GBFTag_InitState_Spawned, GBFTag_InitState_DataAvailable, GBFTag_InitState_DataInitialized, GBFTag_InitState_GameplayReady };
 
     // This will try to progress from spawned (which is only set in BeginPlay) through the data initialization stages until it gets to gameplay ready
