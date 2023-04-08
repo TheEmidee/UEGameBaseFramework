@@ -170,6 +170,11 @@ void UGBFHeroComponent::OnRegister()
     }
 }
 
+void UGBFHeroComponent::BindToRequiredOnActorInitStateChanged()
+{
+    BindOnActorInitStateChanged( UGBFPawnExtensionComponent::NAME_ActorFeatureName, GBFTag_InitState_DataInitialized, false );
+}
+
 void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_component )
 {
 }

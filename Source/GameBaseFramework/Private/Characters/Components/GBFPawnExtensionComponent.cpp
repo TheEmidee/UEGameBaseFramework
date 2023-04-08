@@ -210,6 +210,14 @@ FName UGBFPawnExtensionComponent::GetFeatureName() const
     return NAME_ActorFeatureName;
 }
 
+void UGBFPawnExtensionComponent::CheckDefaultInitialization()
+{
+    // Before checking our progress, try progressing any other features we might depend on
+    CheckDefaultInitializationForImplementers();
+
+    Super::CheckDefaultInitialization();
+}
+
 bool UGBFPawnExtensionComponent::CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const
 {
     check( manager != nullptr );
@@ -298,6 +306,12 @@ void UGBFPawnExtensionComponent::EndPlay( const EEndPlayReason::Type end_play_re
     UninitializeAbilitySystem();
 
     Super::EndPlay( end_play_reason );
+}
+
+void UGBFPawnExtensionComponent::BindToRequiredOnActorInitStateChanged()
+{
+    // Listen for changes to all features
+    BindOnActorInitStateChanged( NAME_None, FGameplayTag(), false );
 }
 
 void UGBFPawnExtensionComponent::OnRep_PawnData()

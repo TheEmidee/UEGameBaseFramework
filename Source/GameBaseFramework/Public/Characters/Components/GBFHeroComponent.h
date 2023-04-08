@@ -32,7 +32,8 @@ public:
     static UGBFHeroComponent * FindHeroComponent( const AActor * actor );
 
 protected:
-    void OnRegister() override;    
+    void OnRegister() override;
+    void BindToRequiredOnActorInitStateChanged() override;
     virtual void InitializePlayerInput( UInputComponent * player_input_component );
 
 private:

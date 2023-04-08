@@ -64,6 +64,7 @@ public:
     void OnAbilitySystemInitialized_UnRegister( FSimpleMulticastDelegate::FDelegate delegate );
 
     FName GetFeatureName() const override;
+    void CheckDefaultInitialization() override;
     bool CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const override;
     void HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) override;
     void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
@@ -77,6 +78,7 @@ public:
 protected:
     void OnRegister() override;
     void EndPlay(const EEndPlayReason::Type end_play_reason) override;
+    void BindToRequiredOnActorInitStateChanged() override;
 
     UFUNCTION()
     void OnRep_PawnData();
