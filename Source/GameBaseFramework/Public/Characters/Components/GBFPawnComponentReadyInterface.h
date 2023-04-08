@@ -11,6 +11,7 @@ class UGBFPawnComponentReadyInterface : public UInterface
     GENERATED_BODY()
 };
 
+// :TODO: Remove when everything works
 class GAMEBASEFRAMEWORK_API IGBFPawnComponentReadyInterface
 {
     GENERATED_BODY()

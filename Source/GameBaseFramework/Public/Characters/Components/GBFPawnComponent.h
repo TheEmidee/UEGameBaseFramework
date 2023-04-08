@@ -14,6 +14,7 @@ class GAMEBASEFRAMEWORK_API UGBFPawnComponent : public UModularPawnComponent, pu
     GENERATED_BODY()
 
 public:
+    // :TODO: Remove when everything works
     bool IsPawnComponentReadyToInitialize() const override;
 
     void CheckDefaultInitialization() override;
