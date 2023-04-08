@@ -29,8 +29,7 @@ void UGBFPawnComponent::BeginPlay()
 {
     Super::BeginPlay();
 
-    // Listen for changes to all features
-    BindOnActorInitStateChanged( GetFeatureName(), FGameplayTag(), false );
+    BindToRequiredOnActorInitStateChanged();
 
     // Notifies state manager that we have spawned, then try rest of default initialization
     ensure( TryToChangeInitState( GBFTag_InitState_Spawned ) );
@@ -42,4 +41,8 @@ void UGBFPawnComponent::EndPlay( const EEndPlayReason::Type end_play_reason )
     UnregisterInitStateFeature();
 
     Super::EndPlay( end_play_reason );
+}
+
+void UGBFPawnComponent::BindToRequiredOnActorInitStateChanged()
+{
 }

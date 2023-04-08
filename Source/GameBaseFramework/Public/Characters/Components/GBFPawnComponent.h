@@ -22,4 +22,6 @@ protected:
     void OnRegister() override;
     void BeginPlay() override;
     void EndPlay( const EEndPlayReason::Type end_play_reason ) override;
+
+    virtual void BindToRequiredOnActorInitStateChanged();
 };
