@@ -32,7 +32,7 @@ void UGBFPawnComponent::BeginPlay()
     BindToRequiredOnActorInitStateChanged();
 
     // Notifies state manager that we have spawned, then try rest of default initialization
-    ensure( TryToChangeInitState( GBFTag_InitState_Spawned ) );
+    ensureAlways( TryToChangeInitState( GBFTag_InitState_Spawned ) );
     CheckDefaultInitialization();
 }
 
