@@ -2,13 +2,6 @@
 
 #include "GBFTags.h"
 
-bool UGBFPawnComponent::IsPawnComponentReadyToInitialize() const
-{
-    // :TODO: Remove this function
-    ensure( false );
-    return true;
-}
-
 void UGBFPawnComponent::CheckDefaultInitialization()
 {
     static const TArray< FGameplayTag > StateChain = { GBFTag_InitState_Spawned, GBFTag_InitState_DataAvailable, GBFTag_InitState_DataInitialized, GBFTag_InitState_GameplayReady };

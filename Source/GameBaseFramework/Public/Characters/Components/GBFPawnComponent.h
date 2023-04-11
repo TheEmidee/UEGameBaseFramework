@@ -1,7 +1,5 @@
 #pragma once
 
-#include "GBFPawnComponentReadyInterface.h"
-
 #include <Components/GameFrameworkInitStateInterface.h>
 #include <CoreMinimal.h>
 #include <ModularPawnComponent.h>
@@ -9,14 +7,11 @@
 #include "GBFPawnComponent.generated.h"
 
 UCLASS( Blueprintable, Meta = ( BlueprintSpawnableComponent ) )
-class GAMEBASEFRAMEWORK_API UGBFPawnComponent : public UModularPawnComponent, public IGBFPawnComponentReadyInterface, public IGameFrameworkInitStateInterface
+class GAMEBASEFRAMEWORK_API UGBFPawnComponent : public UModularPawnComponent, public IGameFrameworkInitStateInterface
 {
     GENERATED_BODY()
 
 public:
-    // :TODO: Remove when everything works
-    bool IsPawnComponentReadyToInitialize() const override;
-
     void CheckDefaultInitialization() override;
 
 protected:

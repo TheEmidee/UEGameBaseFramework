@@ -20,7 +20,6 @@ UGBFPawnExtensionComponent::UGBFPawnExtensionComponent()
 
     PawnData = nullptr;
     AbilitySystemComponent = nullptr;
-    bPawnReadyToInitialize = false;
 }
 
 void UGBFPawnExtensionComponent::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
@@ -33,8 +32,6 @@ void UGBFPawnExtensionComponent::GetLifetimeReplicatedProps( TArray< FLifetimePr
 void UGBFPawnExtensionComponent::SetPawnData( const UGBFPawnData * pawn_data )
 {
     check( pawn_data != nullptr );
-
-    bPawnReadyToInitialize = false;
 
     auto * pawn = GetPawnChecked< APawn >();
 
@@ -159,19 +156,6 @@ void UGBFPawnExtensionComponent::HandlePlayerStateReplicated()
 void UGBFPawnExtensionComponent::SetupPlayerInputComponent()
 {
     CheckDefaultInitialization();
-}
-
-void UGBFPawnExtensionComponent::OnPawnReadyToInitialize_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate )
-{
-    if ( !OnPawnReadyToInitialize.IsBoundToObject( delegate.GetUObject() ) )
-    {
-        OnPawnReadyToInitialize.Add( delegate );
-    }
-
-    if ( bPawnReadyToInitialize )
-    {
-        delegate.Execute();
-    }
 }
 
 void UGBFPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate )

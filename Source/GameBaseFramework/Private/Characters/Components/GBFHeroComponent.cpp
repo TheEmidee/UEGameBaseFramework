@@ -2,7 +2,6 @@
 
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
-#include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 #include "GameFramework/GBFPlayerController.h"
@@ -19,7 +18,6 @@ const FName UGBFHeroComponent::NAME_ActorFeatureName( "HeroComponent" );
 
 UGBFHeroComponent::UGBFHeroComponent()
 {
-    bPawnHasInitialized = false;
     bReadyToBindInputs = false;
 }
 

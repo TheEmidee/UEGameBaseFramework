@@ -14,9 +14,6 @@ class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
 public:
     UGBFHeroComponent();
 
-    // :TODO: Remove + flag
-    bool HasPawnInitialized() const;
-
     /** True if this player has sent the BindInputsNow event and is prepared for bindings */
     bool IsReadyToBindInputs() const;
 
@@ -39,17 +36,9 @@ protected:
 private:
     FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;
 
-    // True when the pawn has fully finished initialization
-    bool bPawnHasInitialized;
-
     // True when player input bindings have been applyed, will never be true for non-players
     bool bReadyToBindInputs;
 };
-
-FORCEINLINE bool UGBFHeroComponent::HasPawnInitialized() const
-{
-    return bPawnHasInitialized;
-}
 
 FORCEINLINE bool UGBFHeroComponent::IsReadyToBindInputs() const
 {

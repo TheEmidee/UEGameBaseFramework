@@ -43,14 +43,6 @@ public:
     // Should be called by the owning pawn when the input component is setup.
     void SetupPlayerInputComponent();
 
-    // :TODO: Remove + flag
-    // Returns true if the pawn is ready to be initialized.
-    UFUNCTION( BlueprintCallable, BlueprintPure = false, Category = "Lyra|Pawn", Meta = ( ExpandBoolAsExecs = "ReturnValue" ) )
-    bool IsPawnReadyToInitialize() const;
-
-    // Register with the OnPawnReadyToInitialize delegate and broadcast if condition is already met.
-    void OnPawnReadyToInitialize_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate );
-
     // Register with the OnAbilitySystemInitialized delegate and broadcast if condition is already met.
     void OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate );
 
@@ -77,7 +69,7 @@ public:
 
 protected:
     void OnRegister() override;
-    void EndPlay(const EEndPlayReason::Type end_play_reason) override;
+    void EndPlay( const EEndPlayReason::Type end_play_reason ) override;
     void BindToRequiredOnActorInitStateChanged() override;
 
     UFUNCTION()
@@ -100,9 +92,6 @@ protected:
 
     UPROPERTY()
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
-
-    // True when the pawn has everything needed for initialization.
-    int32 bPawnReadyToInitialize : 1;
 };
 
 template < class T >
@@ -114,9 +103,4 @@ const T * UGBFPawnExtensionComponent::GetPawnData() const
 FORCEINLINE UGASExtAbilitySystemComponent * UGBFPawnExtensionComponent::GetGASExtAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
-}
-
-FORCEINLINE bool UGBFPawnExtensionComponent::IsPawnReadyToInitialize() const
-{
-    return bPawnReadyToInitialize;
 }
