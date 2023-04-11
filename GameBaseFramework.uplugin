@@ -62,6 +62,10 @@
     {
       "Name": "MapCheckValidation",
       "Enabled": true
+    },
+    {
+      "Name": "EnhancedInput",
+      "Enabled": true
     }
   ]
 }

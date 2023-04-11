@@ -38,7 +38,8 @@ namespace UnrealBuildTool.Rules
                     "GASExtensions",
                     "DataValidationExtensions",
                     "ModularGameplay",
-                    "GameFeatures"
+                    "GameFeatures",
+                    "EnhancedInput"
                 }
             );
         }
