@@ -3,9 +3,13 @@
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
+#include "GBFTags.h"
 
+#include <Components/GameFrameworkComponentManager.h>
 #include <GameFramework/Controller.h>
 #include <Net/UnrealNetwork.h>
+
+const FName UGBFPawnExtensionComponent::NAME_ActorFeatureName( "PawnExtensionComponent" );
 
 UGBFPawnExtensionComponent::UGBFPawnExtensionComponent()
 {
@@ -16,7 +20,6 @@ UGBFPawnExtensionComponent::UGBFPawnExtensionComponent()
 
     PawnData = nullptr;
     AbilitySystemComponent = nullptr;
-    bPawnReadyToInitialize = false;
 }
 
 void UGBFPawnExtensionComponent::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
@@ -30,26 +33,24 @@ void UGBFPawnExtensionComponent::SetPawnData( const UGBFPawnData * pawn_data )
 {
     check( pawn_data != nullptr );
 
-    bPawnReadyToInitialize = false;
+    auto * pawn = GetPawnChecked< APawn >();
 
-    APawn * Pawn = GetPawnChecked< APawn >();
-
-    if ( Pawn->GetLocalRole() != ROLE_Authority )
+    if ( pawn->GetLocalRole() != ROLE_Authority )
     {
         return;
     }
 
     if ( PawnData != nullptr )
     {
-        UE_LOG( LogGBF, Error, TEXT( "Trying to set PawnData [%s] on pawn [%s] that already has valid PawnData [%s]." ), *GetNameSafe( pawn_data ), *GetNameSafe( Pawn ), *GetNameSafe( PawnData ) );
+        UE_LOG( LogGBF, Error, TEXT( "Trying to set PawnData [%s] on pawn [%s] that already has valid PawnData [%s]." ), *GetNameSafe( pawn_data ), *GetNameSafe( pawn ), *GetNameSafe( PawnData ) );
         return;
     }
 
     PawnData = pawn_data;
 
-    Pawn->ForceNetUpdate();
+    pawn->ForceNetUpdate();
 
-    CheckPawnReadyToInitialize();
+    CheckDefaultInitialization();
 }
 
 void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor )
@@ -144,76 +145,17 @@ void UGBFPawnExtensionComponent::HandleControllerChanged()
         }
     }
 
-    CheckPawnReadyToInitialize();
+    CheckDefaultInitialization();
 }
 
 void UGBFPawnExtensionComponent::HandlePlayerStateReplicated()
 {
-    CheckPawnReadyToInitialize();
+    CheckDefaultInitialization();
 }
 
 void UGBFPawnExtensionComponent::SetupPlayerInputComponent()
 {
-    CheckPawnReadyToInitialize();
-}
-
-bool UGBFPawnExtensionComponent::CheckPawnReadyToInitialize()
-{
-    if ( bPawnReadyToInitialize )
-    {
-        return true;
-    }
-
-    // Pawn data is required.
-    if ( PawnData == nullptr )
-    {
-        return false;
-    }
-
-    const auto * pawn = GetPawnChecked< APawn >();
-
-    const bool has_authority = pawn->HasAuthority();
-    const bool is_locally_controlled = pawn->IsLocallyControlled();
-
-    if ( has_authority || is_locally_controlled )
-    {
-        // Check for being possessed by a controller.
-        if ( !GetController< AController >() )
-        {
-            return false;
-        }
-    }
-
-    // Allow pawn components to have requirements.
-    const auto interactable_components = pawn->GetComponentsByInterface( UGBFPawnComponentReadyInterface::StaticClass() );
-    for ( auto * interactable_component : interactable_components )
-    {
-        const auto * ready_interface = CastChecked< IGBFPawnComponentReadyInterface >( interactable_component );
-        if ( !ready_interface->IsPawnComponentReadyToInitialize() )
-        {
-            return false;
-        }
-    }
-
-    // Pawn is ready to initialize.
-    bPawnReadyToInitialize = true;
-    OnPawnReadyToInitialize.Broadcast();
-    BP_OnPawnReadyToInitialize.Broadcast();
-
-    return true;
-}
-
-void UGBFPawnExtensionComponent::OnPawnReadyToInitialize_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate )
-{
-    if ( !OnPawnReadyToInitialize.IsBoundToObject( delegate.GetUObject() ) )
-    {
-        OnPawnReadyToInitialize.Add( delegate );
-    }
-
-    if ( bPawnReadyToInitialize )
-    {
-        delegate.Execute();
-    }
+    CheckDefaultInitialization();
 }
 
 void UGBFPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate )
@@ -247,6 +189,83 @@ void UGBFPawnExtensionComponent::OnAbilitySystemInitialized_UnRegister( FSimpleM
     OnAbilitySystemInitialized.Remove( delegate.GetHandle() );
 }
 
+FName UGBFPawnExtensionComponent::GetFeatureName() const
+{
+    return NAME_ActorFeatureName;
+}
+
+void UGBFPawnExtensionComponent::CheckDefaultInitialization()
+{
+    // Before checking our progress, try progressing any other features we might depend on
+    CheckDefaultInitializationForImplementers();
+
+    Super::CheckDefaultInitialization();
+}
+
+bool UGBFPawnExtensionComponent::CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const
+{
+    check( manager != nullptr );
+
+    auto * pawn = GetPawn< APawn >();
+
+    if ( !current_state.IsValid() && desired_state == GBFTag_InitState_Spawned )
+    {
+        return pawn != nullptr;
+    }
+    if ( current_state == GBFTag_InitState_Spawned && desired_state == GBFTag_InitState_DataAvailable )
+    {
+        if ( PawnData == nullptr )
+        {
+            return false;
+        }
+
+        const bool has_authority = pawn->HasAuthority();
+        const bool is_locally_controlled = pawn->IsLocallyControlled();
+
+        if ( has_authority || is_locally_controlled )
+        {
+            // Check for being possessed by a controller.
+            if ( GetController< AController >() == nullptr )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    if ( current_state == GBFTag_InitState_DataAvailable && desired_state == GBFTag_InitState_DataInitialized )
+    {
+        // Transition to initialize if all features have their data available
+        return manager->HaveAllFeaturesReachedInitState( pawn, GBFTag_InitState_DataAvailable );
+    }
+    if ( current_state == GBFTag_InitState_DataInitialized && desired_state == GBFTag_InitState_GameplayReady )
+    {
+        return true;
+    }
+
+    return false;
+}
+
+void UGBFPawnExtensionComponent::HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state )
+{
+    if ( desired_state == GBFTag_InitState_DataInitialized )
+    {
+        // This is currently all handled by other components listening to this state change
+    }
+}
+
+void UGBFPawnExtensionComponent::OnActorInitStateChanged( const FActorInitStateChangedParams & params )
+{
+    // If another feature is now in DataAvailable, see if we should transition to DataInitialized
+    if ( params.FeatureName != NAME_ActorFeatureName )
+    {
+        if ( params.FeatureState == GBFTag_InitState_DataAvailable )
+        {
+            CheckDefaultInitialization();
+        }
+    }
+}
+
 UGBFPawnExtensionComponent * UGBFPawnExtensionComponent::FindPawnExtensionComponent( const AActor * actor )
 {
     return actor
@@ -266,7 +285,20 @@ void UGBFPawnExtensionComponent::OnRegister()
     ensureAlwaysMsgf( ( pawn_extension_components.Num() == 1 ), TEXT( "Only one GBFPawnExtensionComponent should exist on [%s]." ), *GetNameSafe( GetOwner() ) );
 }
 
+void UGBFPawnExtensionComponent::EndPlay( const EEndPlayReason::Type end_play_reason )
+{
+    UninitializeAbilitySystem();
+
+    Super::EndPlay( end_play_reason );
+}
+
+void UGBFPawnExtensionComponent::BindToRequiredOnActorInitStateChanged()
+{
+    // Listen for changes to all features
+    BindOnActorInitStateChanged( NAME_None, FGameplayTag(), false );
+}
+
 void UGBFPawnExtensionComponent::OnRep_PawnData()
 {
-    CheckPawnReadyToInitialize();
+    CheckDefaultInitialization();
 }

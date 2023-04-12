@@ -43,16 +43,6 @@ public:
     // Should be called by the owning pawn when the input component is setup.
     void SetupPlayerInputComponent();
 
-    // Call this anytime the pawn needs to check if it's ready to be initialized (pawn data assigned, possessed, etc..).
-    bool CheckPawnReadyToInitialize();
-
-    // Returns true if the pawn is ready to be initialized.
-    UFUNCTION( BlueprintCallable, BlueprintPure = false, Category = "Lyra|Pawn", Meta = ( ExpandBoolAsExecs = "ReturnValue" ) )
-    bool IsPawnReadyToInitialize() const;
-
-    // Register with the OnPawnReadyToInitialize delegate and broadcast if condition is already met.
-    void OnPawnReadyToInitialize_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate );
-
     // Register with the OnAbilitySystemInitialized delegate and broadcast if condition is already met.
     void OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate delegate );
 
@@ -65,11 +55,22 @@ public:
     // UnRegister with the OnAbilitySystemInitialized delegate.
     void OnAbilitySystemInitialized_UnRegister( FSimpleMulticastDelegate::FDelegate delegate );
 
+    FName GetFeatureName() const override;
+    void CheckDefaultInitialization() override;
+    bool CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const override;
+    void HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) override;
+    void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
+
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
     static UGBFPawnExtensionComponent * FindPawnExtensionComponent( const AActor * actor );
 
+    /** The name of this overall feature, this one depends on the other named component features */
+    static const FName NAME_ActorFeatureName;
+
 protected:
     void OnRegister() override;
+    void EndPlay( const EEndPlayReason::Type end_play_reason ) override;
+    void BindToRequiredOnActorInitStateChanged() override;
 
     UFUNCTION()
     void OnRep_PawnData();
@@ -91,9 +92,6 @@ protected:
 
     UPROPERTY()
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
-
-    // True when the pawn has everything needed for initialization.
-    int32 bPawnReadyToInitialize : 1;
 };
 
 template < class T >
@@ -105,9 +103,4 @@ const T * UGBFPawnExtensionComponent::GetPawnData() const
 FORCEINLINE UGASExtAbilitySystemComponent * UGBFPawnExtensionComponent::GetGASExtAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
-}
-
-FORCEINLINE bool UGBFPawnExtensionComponent::IsPawnReadyToInitialize() const
-{
-    return bPawnReadyToInitialize;
 }
