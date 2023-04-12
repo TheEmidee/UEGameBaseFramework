@@ -39,7 +39,9 @@ namespace UnrealBuildTool.Rules
                     "DataValidationExtensions",
                     "ModularGameplay",
                     "GameFeatures",
-                    "EnhancedInput"
+                    "EnhancedInput",
+                    "CommonUI",
+                    "CommonInput"
                 }
             );
         }
