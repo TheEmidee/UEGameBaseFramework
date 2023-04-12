@@ -9,6 +9,7 @@
 class UGASExtAbilityTagRelationshipMapping;
 class UGASExtAbilitySet;
 class UCameraModifier;
+class UGBFInputConfig;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
@@ -16,6 +17,8 @@ class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
+    UGBFPawnData();
+
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
 #if WITH_EDITOR
@@ -35,8 +38,8 @@ public:
     UGASExtAbilityTagRelationshipMapping * TagRelationshipMapping;
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
-    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
-    // ULyraInputConfig * InputConfig;
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
+    UGBFInputConfig * InputConfig;
 
     //// Default camera mode used by player controlled pawns.
     // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )

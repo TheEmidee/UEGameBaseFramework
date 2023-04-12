@@ -2,6 +2,13 @@
 
 #include "DVEDataValidator.h"
 
+UGBFPawnData::UGBFPawnData()
+{
+    PawnClass = nullptr;
+    TagRelationshipMapping = nullptr;
+    InputConfig = nullptr;
+}
+
 FPrimaryAssetId UGBFPawnData::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( TEXT( "PawnData" ), GetPackage()->GetFName() );
