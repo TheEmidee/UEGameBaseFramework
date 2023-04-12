@@ -6,6 +6,9 @@
 
 #include "GBFHeroComponent.generated.h"
 
+class UGBFInputComponent;
+class UGBFInputConfig;
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
 {
@@ -31,7 +34,10 @@ public:
 protected:
     void OnRegister() override;
     void BindToRequiredOnActorInitStateChanged() override;
-    virtual void InitializePlayerInput( UInputComponent * player_input_component );
+    void InitializePlayerInput( UInputComponent * player_input_component );
+    void Input_AbilityInputTagPressed( FGameplayTag input_tag );
+    void Input_AbilityInputTagReleased( FGameplayTag input_tag );
+    virtual void BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * input_config );
 
 private:
     FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;

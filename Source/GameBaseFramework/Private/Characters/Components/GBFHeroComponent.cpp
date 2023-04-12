@@ -2,13 +2,18 @@
 
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
+#include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
+#include "Input/GBFInputComponent.h"
 
 #include <AbilitySystemBlueprintLibrary.h>
 #include <Components/GameFrameworkComponentManager.h>
+#include <EnhancedInputComponent.h>
+#include <EnhancedInputSubsystemInterface.h>
+#include <EnhancedInputSubsystems.h>
 #include <GameFramework/Controller.h>
 #include <Logging/MessageLog.h>
 #include <Misc/UObjectToken.h>
@@ -174,5 +179,66 @@ void UGBFHeroComponent::BindToRequiredOnActorInitStateChanged()
 }
 
 void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_component )
+{
+    check( player_input_component != nullptr );
+
+    const APawn * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    const APlayerController * pc = GetController< APlayerController >();
+    check( pc != nullptr );
+
+    const auto * lp = Cast< UGBFLocalPlayer >( pc->GetLocalPlayer() );
+    check( lp != nullptr );
+
+    UEnhancedInputLocalPlayerSubsystem * enhanced_input_local_player_subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    check( enhanced_input_local_player_subsystem != nullptr );
+
+    enhanced_input_local_player_subsystem->ClearAllMappings();
+
+    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    {
+        if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
+        {
+            if ( const auto * input_config = pawn_data->InputConfig )
+            {
+                auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
+                input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
+
+                TArray< uint32 > bind_handles;
+                input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+
+                BindNativeActions( input_component, input_config );
+
+                // input_component->BindNativeAction( input_config, GameplayTags.InputTag_Move, ETriggerEvent::Triggered, this, &ThisClass::Input_Move, /*bLogIfNotFound=*/false );
+                // input_component->BindNativeAction( input_config, GameplayTags.InputTag_Look_Mouse, ETriggerEvent::Triggered, this, &ThisClass::Input_LookMouse, /*bLogIfNotFound=*/false );
+                // input_component->BindNativeAction( input_config, GameplayTags.InputTag_Look_Stick, ETriggerEvent::Triggered, this, &ThisClass::Input_LookStick, /*bLogIfNotFound=*/false );
+                // input_component->BindNativeAction( input_config, GameplayTags.InputTag_Crouch, ETriggerEvent::Triggered, this, &ThisClass::Input_Crouch, /*bLogIfNotFound=*/false );
+                // input_component->BindNativeAction( input_config, GameplayTags.InputTag_AutoRun, ETriggerEvent::Triggered, this, &ThisClass::Input_AutoRun, /*bLogIfNotFound=*/false );
+            }
+        }
+    }
+
+    if ( ensure( !bReadyToBindInputs ) )
+    {
+        bReadyToBindInputs = true;
+    }
+
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( const_cast< APlayerController * >( pc ), NAME_BindInputsNow );
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( const_cast< APawn * >( pawn ), NAME_BindInputsNow );
+}
+
+void UGBFHeroComponent::Input_AbilityInputTagPressed( FGameplayTag input_tag )
+{
+}
+
+void UGBFHeroComponent::Input_AbilityInputTagReleased( FGameplayTag input_tag )
+{
+}
+
+void UGBFHeroComponent::BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * )
 {
 }
