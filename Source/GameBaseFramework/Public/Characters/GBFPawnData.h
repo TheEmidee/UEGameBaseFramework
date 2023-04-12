@@ -9,6 +9,7 @@
 class UGASExtAbilityTagRelationshipMapping;
 class UGASExtAbilitySet;
 class UCameraModifier;
+class UGBFCameraMode;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
@@ -28,11 +29,11 @@ public:
 
     // Ability sets to grant to this pawn's ability system.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
-    TArray< UGASExtAbilitySet * > AbilitySets;
+    TArray< TObjectPtr< UGASExtAbilitySet > > AbilitySets;
 
     // What mapping of ability tags to use for actions taking by this pawn
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
-    UGASExtAbilityTagRelationshipMapping * TagRelationshipMapping;
+    TObjectPtr< UGASExtAbilityTagRelationshipMapping > TagRelationshipMapping;
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
     // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
@@ -45,4 +46,8 @@ public:
     // Camera modifiers to add to the player camera manager
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
     TArray< TSubclassOf< UCameraModifier > > CameraModifiers;
+
+    // Default camera mode used by player controlled pawns.
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
+    TSubclassOf< UGBFCameraMode > DefaultCameraMode;
 };

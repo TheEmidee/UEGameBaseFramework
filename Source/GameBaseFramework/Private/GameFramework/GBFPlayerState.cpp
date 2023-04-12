@@ -73,7 +73,7 @@ void AGBFPlayerState::SetPawnData( const UGBFPawnData * new_pawn_data )
     // MARK_PROPERTY_DIRTY_FROM_NAME( ThisClass, PawnData, this );
     PawnData = new_pawn_data;
 
-    for ( const auto * ability_set : PawnData->AbilitySets )
+    for ( const auto & ability_set : PawnData->AbilitySets )
     {
         if ( ability_set != nullptr )
         {
