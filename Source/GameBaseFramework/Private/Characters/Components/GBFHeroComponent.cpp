@@ -1,5 +1,7 @@
 #include "Characters/Components/GBFHeroComponent.h"
 
+#include "Camera/GBFCameraComponent.h"
+#include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
@@ -16,11 +18,30 @@ UGBFHeroComponent::UGBFHeroComponent()
 {
     bPawnHasInitialized = false;
     bReadyToBindInputs = false;
+    AbilityCameraMode = nullptr;
 }
 
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
 {
     return actor ? actor->FindComponentByClass< UGBFHeroComponent >() : nullptr;
+}
+
+void UGBFHeroComponent::SetAbilityCameraMode( TSubclassOf< UGBFCameraMode > camera_mode, const FGameplayAbilitySpecHandle & owning_spec_handle )
+{
+    if ( camera_mode )
+    {
+        AbilityCameraMode = camera_mode;
+        AbilityCameraModeOwningSpecHandle = owning_spec_handle;
+    }
+}
+
+void UGBFHeroComponent::ClearAbilityCameraMode( const FGameplayAbilitySpecHandle & owning_spec_handle )
+{
+    if ( AbilityCameraModeOwningSpecHandle == owning_spec_handle )
+    {
+        AbilityCameraMode = nullptr;
+        AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
+    }
 }
 
 void UGBFHeroComponent::OnRegister()
@@ -165,6 +186,11 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
                     player_camera_manager->AddNewCameraModifier( modifier );
                 }
             }
+
+            if ( auto * camera_component = UGBFCameraComponent::FindCameraComponent( pawn ) )
+            {
+                camera_component->DetermineCameraModeDelegate.BindUObject( this, &ThisClass::DetermineCameraMode );
+            }
         }
     }
 
@@ -173,4 +199,28 @@ void UGBFHeroComponent::OnPawnReadyToInitialize()
 
 void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_component )
 {
+}
+
+TSubclassOf< UGBFCameraMode > UGBFHeroComponent::DetermineCameraMode() const
+{
+    if ( AbilityCameraMode )
+    {
+        return AbilityCameraMode;
+    }
+
+    const auto * pawn = GetPawn< APawn >();
+    if ( !pawn )
+    {
+        return nullptr;
+    }
+
+    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    {
+        if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
+        {
+            return pawn_data->DefaultCameraMode;
+        }
+    }
+
+    return nullptr;
 }
