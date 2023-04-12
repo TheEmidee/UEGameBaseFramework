@@ -17,8 +17,8 @@ DECLARE_DELEGATE_RetVal( TSubclassOf< UGBFCameraMode >, FGBFCameraModeDelegate )
  *
  *	The base camera component class used by this project.
  */
-UCLASS()
-class UGBFCameraComponent : public UCameraComponent
+UCLASS( meta = ( BlueprintSpawnableComponent ) )
+class GAMEBASEFRAMEWORK_API UGBFCameraComponent : public UCameraComponent
 {
     GENERATED_BODY()
 

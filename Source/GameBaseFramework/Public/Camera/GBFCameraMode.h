@@ -163,7 +163,7 @@ FORCEINLINE FGameplayTag UGBFCameraMode::GetCameraTypeTag() const
  *	Stack used for blending camera modes.
  */
 UCLASS()
-class UGBFCameraModeStack : public UObject
+class GAMEBASEFRAMEWORK_API UGBFCameraModeStack : public UObject
 {
     GENERATED_BODY()
 
