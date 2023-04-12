@@ -25,6 +25,12 @@ public:
     void HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) override;
     void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
 
+    /** Adds mode-specific input config */
+    void AddAdditionalInputConfig( const UGBFInputConfig * input_config );
+
+    /** Removes a mode-specific input config if it has been added */
+    void RemoveAdditionalInputConfig( const UGBFInputConfig * input_config );
+
     static const FName NAME_BindInputsNow;
     static const FName NAME_ActorFeatureName;
 

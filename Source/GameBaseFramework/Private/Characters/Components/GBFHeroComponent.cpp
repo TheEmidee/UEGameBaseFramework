@@ -147,6 +147,37 @@ void UGBFHeroComponent::OnActorInitStateChanged( const FActorInitStateChangedPar
     }
 }
 
+void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_config )
+{
+    const auto * pawn = GetPawn< APawn >();
+    if ( !pawn )
+    {
+        return;
+    }
+
+    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+    check( input_component != nullptr );
+
+    const APlayerController * pc = GetController< APlayerController >();
+    check( pc != nullptr );
+
+    const ULocalPlayer * lp = pc->GetLocalPlayer();
+    check( lp != nullptr );
+
+    const UEnhancedInputLocalPlayerSubsystem * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    check( subsystem );
+
+    if ( UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) != nullptr )
+    {
+        TArray< uint32 > bind_handles;
+        input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+    }
+}
+
+void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * input_config )
+{
+}
+
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
 {
     return actor ? actor->FindComponentByClass< UGBFHeroComponent >() : nullptr;
