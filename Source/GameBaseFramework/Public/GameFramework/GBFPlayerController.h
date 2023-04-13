@@ -8,6 +8,7 @@
 class UGBFPlatformInputSwitcherComponent;
 class UGBFUIDialogManagerComponent;
 class UGBFLocalPlayer;
+class UGASExtAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public AModularPlayerController
@@ -49,6 +50,8 @@ public:
     void ServerCheatAll( const FString & message );
 
     void AddCheats( bool force ) override;
+
+    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
 
 protected:
     void OnPossess( APawn * pawn ) override;

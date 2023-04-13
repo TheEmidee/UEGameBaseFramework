@@ -5,6 +5,7 @@
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
+#include "Components/GASExtAbilitySystemComponent.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "Input/GBFInputComponent.h"
@@ -264,12 +265,32 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
 
 void UGBFHeroComponent::Input_AbilityInputTagPressed( FGameplayTag input_tag )
 {
+    if ( const auto * pawn = GetPawn< APawn >() )
+    {
+        if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+        {
+            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            {
+                asc->AbilityInputTagPressed( input_tag );
+            }
+        }
+    }
 }
 
 void UGBFHeroComponent::Input_AbilityInputTagReleased( FGameplayTag input_tag )
 {
+    if ( const auto * pawn = GetPawn< APawn >() )
+    {
+        if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+        {
+            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            {
+                asc->AbilityInputTagReleased( input_tag );
+            }
+        }
+    }
 }
 
-void UGBFHeroComponent::BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * )
+void UGBFHeroComponent::BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * input_config )
 {
 }
