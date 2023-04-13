@@ -6,7 +6,6 @@ UGBFPawnData::UGBFPawnData()
 {
     PawnClass = nullptr;
     TagRelationshipMapping = nullptr;
-    InputConfig = nullptr;
 }
 
 FPrimaryAssetId UGBFPawnData::GetPrimaryAssetId() const
@@ -20,6 +19,7 @@ EDataValidationResult UGBFPawnData::IsDataValid( TArray< FText > & validation_er
     return FDVEDataValidator( validation_errors )
         .NotNull( VALIDATOR_GET_PROPERTY( PawnClass ) )
         .NotNull( VALIDATOR_GET_PROPERTY( TagRelationshipMapping ) )
+        .NoNullItem( VALIDATOR_GET_PROPERTY( InputConfigs ) )
         .Result();
 }
 #endif

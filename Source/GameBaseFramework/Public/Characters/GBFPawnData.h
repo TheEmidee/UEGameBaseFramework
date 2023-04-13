@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Input/GBFMappableConfigPair.h"
+
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 #include <GameFramework/Pawn.h>
@@ -39,7 +41,10 @@ public:
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
-    UGBFInputConfig * InputConfig;
+    TArray< TSoftObjectPtr< UGBFInputConfig > > InputConfigs;
+
+    UPROPERTY( EditDefaultsOnly, Category = "Input" )
+    TArray< FGBFMappableConfigPair > MappableConfigs;
 
     //// Default camera mode used by player controlled pawns.
     // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
