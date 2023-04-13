@@ -103,7 +103,7 @@ void UGBFGameFeatureAction_AddInputBinding::AddInputMappingForPlayer( APawn * pa
             {
                 for ( const auto & entry : InputConfigs )
                 {
-                    if ( const auto * bind_set = entry.Get() )
+                    if ( const auto * bind_set = entry.LoadSynchronous() )
                     {
                         hero_component->AddAdditionalInputConfig( bind_set );
                     }
