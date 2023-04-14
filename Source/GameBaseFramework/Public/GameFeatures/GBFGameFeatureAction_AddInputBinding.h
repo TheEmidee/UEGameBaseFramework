@@ -8,7 +8,7 @@
 
 class UGBFInputConfig;
 
-UCLASS()
+UCLASS( DisplayName = "Add Input Binding" )
 class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_AddInputBinding final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()

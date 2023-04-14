@@ -43,7 +43,7 @@ struct FGBFSpawningWorldActorsEntry
 };
 
 // Currently works only for spawning actors on the server
-UCLASS()
+UCLASS( DisplayName = "Spawn Actors" )
 class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_SpawnActors final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()

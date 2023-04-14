@@ -7,7 +7,7 @@
 
 #include "GBFGameFeatureAction_AddMappableInputConfig.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Add Mappable Input Config" )
 class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_AddMappableInputConfig final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()

@@ -20,7 +20,7 @@ struct FInputMappingContextAndPriority
     int32 Priority = 0;
 };
 
-UCLASS()
+UCLASS( DisplayName = "Add Input Context Mapping" )
 class GAMEBASEFRAMEWORK_API UGFEGameFeatureAction_AddInputContextMapping final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
