@@ -103,12 +103,13 @@ void UGBFExperienceManagerComponent::ServerSetCurrentExperience( FPrimaryAssetId
     const auto asset_path = asset_manager.GetPrimaryAssetPath( ExperienceId );
     const TSubclassOf< UGBFExperienceDefinition > asset_class = Cast< UClass >( asset_path.TryLoad() );
 
-    check( asset_class );
+    check( asset_class != nullptr );
 
-    const auto * experience = GetDefault< UGBFExperienceDefinition >( asset_class );
+    const auto * experience = GetDefault< UGBFExperienceDefinition >( asset_class )->Resolve( GetWorld() );
 
     check( experience != nullptr );
     check( CurrentExperience == nullptr );
+
     CurrentExperience = experience;
     StartExperienceLoad();
 }
