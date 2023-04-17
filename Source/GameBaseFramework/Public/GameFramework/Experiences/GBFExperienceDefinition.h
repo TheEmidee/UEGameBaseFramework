@@ -32,14 +32,38 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceDefinitionActions
     TArray< UGBFExperienceActionSet * > ActionSets;
 };
 
-UCLASS( DefaultToInstanced, Blueprintable, Abstract )
+UCLASS( DefaultToInstanced, EditInlineNew, Blueprintable, Abstract )
 class GAMEBASEFRAMEWORK_API UGBFExperienceCondition : public UObject
 {
     GENERATED_BODY()
 
 public:
-    UFUNCTION( BlueprintImplementableEvent )
+    UFUNCTION( BlueprintNativeEvent )
     bool CanApplyActions( UWorld * world ) const;
+};
+
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_HasCommandLineOption : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    bool CanApplyActions_Implementation( UWorld * world ) const;
+
+    UPROPERTY( EditDefaultsOnly )
+    FString Option;
+};
+
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_DoesNotHaveCommandLineOption : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    bool CanApplyActions_Implementation( UWorld * world ) const;
+
+    UPROPERTY( EditDefaultsOnly )
+    FString Option;
 };
 
 USTRUCT()
@@ -50,7 +74,7 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceConditionalActions
     UPROPERTY( EditDefaultsOnly, Instanced )
     TObjectPtr< UGBFExperienceCondition > Condition;
 
-    UPROPERTY()
+    UPROPERTY( EditDefaultsOnly )
     FGBFExperienceDefinitionActions Actions;
 };
 

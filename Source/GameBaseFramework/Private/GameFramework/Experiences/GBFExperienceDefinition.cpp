@@ -2,6 +2,7 @@
 
 #include "DVEDataValidator.h"
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
+#include "Kismet/GameplayStatics.h"
 
 #include <GameFeatureAction.h>
 
@@ -116,6 +117,21 @@ void UGBFExperienceDefinition::UpdateAssetBundleData()
     }
 }
 #endif
+
+bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return false;
+}
+
+bool UGBFExperienceCondition_HasCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return UGameplayStatics::HasOption( FCommandLine::Get(), Option );
+}
+
+bool UGBFExperienceCondition_DoesNotHaveCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return !UGameplayStatics::HasOption( FCommandLine::Get(), Option );
+}
 
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
