@@ -36,6 +36,16 @@ public:
     void EndAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, bool replicate_end_ability, bool was_cancelled ) override;
 
 protected:
+    /*
+     Will return true when that game phase is one of the world default game phases
+     This is useful when you have a level with a succession of game phases, and you want to work on
+     a specific phase without having to go through all the previous ones.
+     This can be used for example to alter the level state so that it's in the state it would be
+     if the previous phases were completed
+     */
+    UFUNCTION( BlueprintCallable, BlueprintPure = "false", meta = ( ExpandBoolAsExecs = "ReturnValue" ) )
+    bool AreWeWorldSettingsDefaultPhase() const;
+
     // Defines the game phase that this game phase ability is part of.  So for example,
     // if your game phase is GamePhase.RoundStart, then it will cancel all sibling phases.
     // So if you had a phase such as GamePhase.WaitingToStart that was active, starting

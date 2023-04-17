@@ -26,13 +26,18 @@ void UGBFPlayerSpawningManagerComponent::InitializeComponent()
     FWorldDelegates::LevelAddedToWorld.AddUObject( this, &ThisClass::OnLevelAdded );
     FWorldDelegates::LevelRemovedFromWorld.AddUObject( this, &ThisClass::OnLevelRemoved );
 
-    auto * world = GetWorld();
+    const auto * world = GetWorld();
     world->AddOnActorSpawnedHandler( FOnActorSpawned::FDelegate::CreateUObject( this, &ThisClass::HandleOnActorSpawned ) );
 
     for ( TActorIterator< AGBFPlayerStart > it( world ); it; ++it )
     {
         if ( auto * player_start = *it )
         {
+            if ( !player_start->IsEnabled() )
+            {
+                continue;
+            }
+
             CachedPlayerStarts.FindOrAdd( player_start->GetLevel() ).PlayerStarts.Add( player_start );
         }
     }
@@ -170,6 +175,11 @@ void UGBFPlayerSpawningManagerComponent::OnLevelAdded( ULevel * level, UWorld * 
         {
             if ( auto * player_start = Cast< AGBFPlayerStart >( actor ) )
             {
+                if ( !player_start->IsEnabled() )
+                {
+                    continue;
+                }
+
                 auto & level_player_starts = CachedPlayerStarts.FindOrAdd( level );
                 ensure( !level_player_starts.PlayerStarts.Contains( player_start ) );
                 level_player_starts.PlayerStarts.Add( player_start );
@@ -190,6 +200,11 @@ void UGBFPlayerSpawningManagerComponent::HandleOnActorSpawned( AActor * spawned_
 {
     if ( auto * player_start = Cast< AGBFPlayerStart >( spawned_actor ) )
     {
+        if ( !player_start->IsEnabled() )
+        {
+            return;
+        }
+
         CachedPlayerStarts.FindOrAdd( player_start->GetLevel() ).PlayerStarts.Add( player_start );
     }
 }
@@ -200,7 +215,7 @@ APlayerStart * UGBFPlayerSpawningManagerComponent::FindPlayFromHereStart( const 
     // Only 'Play From Here' for a player controller, bots etc. should all spawn from normal spawn points.
     if ( player->IsA< APlayerController >() )
     {
-        if ( auto * world = GetWorld() )
+        if ( const auto * world = GetWorld() )
         {
             for ( TActorIterator< APlayerStart > player_start_iterator( world ); player_start_iterator; ++player_start_iterator )
             {
