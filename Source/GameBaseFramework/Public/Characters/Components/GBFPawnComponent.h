@@ -1,18 +1,23 @@
 #pragma once
 
-#include "GBFPawnComponentReadyInterface.h"
-#include "ModularPawnComponent.h"
-
+#include <Components/GameFrameworkInitStateInterface.h>
 #include <CoreMinimal.h>
+#include <ModularPawnComponent.h>
 
 #include "GBFPawnComponent.generated.h"
 
 UCLASS( Blueprintable, Meta = ( BlueprintSpawnableComponent ) )
-class GAMEBASEFRAMEWORK_API UGBFPawnComponent : public UModularPawnComponent, public IGBFPawnComponentReadyInterface
+class GAMEBASEFRAMEWORK_API UGBFPawnComponent : public UModularPawnComponent, public IGameFrameworkInitStateInterface
 {
     GENERATED_BODY()
 
 public:
+    void CheckDefaultInitialization() override;
 
-    bool IsPawnComponentReadyToInitialize() const override;
+protected:
+    void OnRegister() override;
+    void BeginPlay() override;
+    void EndPlay( const EEndPlayReason::Type end_play_reason ) override;
+
+    virtual void BindToRequiredOnActorInitStateChanged();
 };

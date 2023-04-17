@@ -17,12 +17,16 @@ class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
 public:
     UGBFHeroComponent();
 
-    bool HasPawnInitialized() const;
-
     /** True if this player has sent the BindInputsNow event and is prepared for bindings */
     bool IsReadyToBindInputs() const;
 
+    FName GetFeatureName() const override;
+    bool CanChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) const override;
+    void HandleChangeInitState( UGameFrameworkComponentManager * manager, FGameplayTag current_state, FGameplayTag desired_state ) override;
+    void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
+
     static const FName NAME_BindInputsNow;
+    static const FName NAME_ActorFeatureName;
 
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Hero" )
     static UGBFHeroComponent * FindHeroComponent( const AActor * actor );
@@ -35,18 +39,13 @@ public:
 
 protected:
     void OnRegister() override;
-    void OnUnregister() override;
-    bool IsPawnComponentReadyToInitialize() const override;
-    void OnPawnReadyToInitialize();
+    void BindToRequiredOnActorInitStateChanged() override;
     virtual void InitializePlayerInput( UInputComponent * player_input_component );
 
 private:
     TSubclassOf< UGBFCameraMode > DetermineCameraMode() const;
 
     FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;
-
-    // True when the pawn has fully finished initialization
-    bool bPawnHasInitialized;
 
     // True when player input bindings have been applyed, will never be true for non-players
     bool bReadyToBindInputs;
@@ -58,11 +57,6 @@ private:
     /** Spec handle for the last ability to set a camera mode. */
     FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
 };
-
-FORCEINLINE bool UGBFHeroComponent::HasPawnInitialized() const
-{
-    return bPawnHasInitialized;
-}
 
 FORCEINLINE bool UGBFHeroComponent::IsReadyToBindInputs() const
 {
