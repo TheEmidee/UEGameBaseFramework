@@ -208,7 +208,7 @@ void UGBFExperienceManagerComponent::StartExperienceLoad()
     TSet< FSoftObjectPath > raw_asset_list;
 
     bundle_asset_list.Add( CurrentExperience->GetPrimaryAssetId() );
-    for ( const UGBFExperienceActionSet * action_set : CurrentExperience->ActionSets )
+    for ( const UGBFExperienceActionSet * action_set : CurrentExperience->DefaultActions.ActionSets )
     {
         if ( action_set != nullptr )
         {
@@ -310,8 +310,8 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
         // 		}
     };
 
-    collect_game_feature_plugin_urls( CurrentExperience, CurrentExperience->GameFeaturesToEnable );
-    for ( const auto * action_set : CurrentExperience->ActionSets )
+    collect_game_feature_plugin_urls( CurrentExperience, CurrentExperience->DefaultActions.GameFeaturesToEnable );
+    for ( const auto * action_set : CurrentExperience->DefaultActions.ActionSets )
     {
         if ( action_set != nullptr )
         {
@@ -394,8 +394,8 @@ void UGBFExperienceManagerComponent::OnExperienceFullLoadCompleted()
         }
     };
 
-    activate_list_of_actions( CurrentExperience->Actions );
-    for ( const auto * action_set : CurrentExperience->ActionSets )
+    activate_list_of_actions( CurrentExperience->DefaultActions.Actions );
+    for ( const auto * action_set : CurrentExperience->DefaultActions.ActionSets )
     {
         if ( action_set != nullptr )
         {

@@ -43,9 +43,9 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
 
         if ( conditional_action.Condition->CanApplyActions( world ) )
         {
-            new_experience->ActionSets.Append( conditional_action.Actions.ActionSets );
-            new_experience->Actions.Append( conditional_action.Actions.Actions );
-            new_experience->GameFeaturesToEnable.Append( conditional_action.Actions.GameFeaturesToEnable );
+            new_experience->DefaultActions.ActionSets.Append( conditional_action.Actions.ActionSets );
+            new_experience->DefaultActions.Actions.Append( conditional_action.Actions.Actions );
+            new_experience->DefaultActions.GameFeaturesToEnable.Append( conditional_action.Actions.GameFeaturesToEnable );
         }
     }
 
