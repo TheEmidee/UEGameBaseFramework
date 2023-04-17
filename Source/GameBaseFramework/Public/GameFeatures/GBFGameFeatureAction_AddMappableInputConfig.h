@@ -3,6 +3,7 @@
 #include "GBFGameFeatureAction_WorldActionBase.h"
 #include "Input/GBFMappableConfigPair.h"
 
+#include <Components/GameFrameworkComponentManager.h>
 #include <CoreMinimal.h>
 
 #include "GBFGameFeatureAction_AddMappableInputConfig.generated.h"

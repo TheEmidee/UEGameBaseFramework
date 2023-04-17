@@ -4,6 +4,7 @@
 
 #include <AbilitySystemGlobals.h>
 #include <GameFeatureData.h>
+#include <GameFeaturesSubsystem.h>
 #include <GameplayCueSet.h>
 
 #define LOCTEXT_NAMESPACE "GameFeatures"

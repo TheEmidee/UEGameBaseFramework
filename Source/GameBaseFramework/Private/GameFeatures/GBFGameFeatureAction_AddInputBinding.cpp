@@ -3,6 +3,7 @@
 #include "Characters/Components/GBFHeroComponent.h"
 #include "DVEDataValidator.h"
 #include "Engine/LocalPlayer.h"
+#include "Input/GBFInputConfig.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <EnhancedInputSubsystems.h>

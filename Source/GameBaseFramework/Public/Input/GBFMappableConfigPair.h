@@ -1,14 +1,11 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
-
 #pragma once
 
-#include "CommonInputBaseTypes.h"
-#include "GameplayTagContainer.h"
-#include "UObject/SoftObjectPtr.h"
+#include <CommonInputBaseTypes.h>
+#include <GameplayTagContainer.h>
+#include <PlayerMappableInputConfig.h>
+#include <UObject/SoftObjectPtr.h>
 
 #include "GBFMappableConfigPair.generated.h"
-
-class UPlayerMappableInputConfig;
 
 /** A container to organize loaded player mappable configs to their CommonUI input type */
 USTRUCT( BlueprintType )

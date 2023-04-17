@@ -2,6 +2,7 @@
 
 #include "GBFGameFeatureAction_WorldActionBase.h"
 
+#include <Components/GameFrameworkComponentManager.h>
 #include <CoreMinimal.h>
 #include <InputMappingContext.h>
 
