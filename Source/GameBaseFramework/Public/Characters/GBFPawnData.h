@@ -44,7 +44,7 @@ public:
     // TSubclassOf< ULyraCameraMode > DefaultCameraMode;
 
     // Camera modifiers to add to the player camera manager
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
     TArray< TSubclassOf< UCameraModifier > > CameraModifiers;
 
     // Default camera mode used by player controlled pawns.

@@ -19,7 +19,7 @@ UGBFCameraComponent * UGBFCameraComponent::FindCameraComponent( const AActor * a
 
 void UGBFCameraComponent::DrawDebug( UCanvas * canvas ) const
 {
-    check( canvas );
+    check( canvas != nullptr );
 
     auto & display_debug_manager = canvas->DisplayDebugManager;
 
@@ -32,7 +32,7 @@ void UGBFCameraComponent::DrawDebug( UCanvas * canvas ) const
     display_debug_manager.DrawString( FString::Printf( TEXT( "   Rotation: %s" ), *GetComponentRotation().ToCompactString() ) );
     display_debug_manager.DrawString( FString::Printf( TEXT( "   FOV: %f" ), FieldOfView ) );
 
-    check( CameraModeStack );
+    check( CameraModeStack != nullptr );
     CameraModeStack->DrawDebug( canvas );
 }
 
@@ -43,7 +43,7 @@ void UGBFCameraComponent::AddFieldOfViewOffset( const float fov_offset )
 
 void UGBFCameraComponent::GetBlendInfo( float & out_weight_of_top_layer, FGameplayTag & out_tag_of_top_layer ) const
 {
-    check( CameraModeStack );
+    check( CameraModeStack != nullptr );
     CameraModeStack->GetBlendInfo( out_weight_of_top_layer, out_tag_of_top_layer );
 }
 
@@ -51,16 +51,16 @@ void UGBFCameraComponent::OnRegister()
 {
     Super::OnRegister();
 
-    if ( !CameraModeStack )
+    if ( CameraModeStack == nullptr )
     {
         CameraModeStack = NewObject< UGBFCameraModeStack >( this );
-        check( CameraModeStack );
+        check( CameraModeStack != nullptr );
     }
 }
 
 void UGBFCameraComponent::GetCameraView( const float delta_time, FMinimalViewInfo & desired_view )
 {
-    check( CameraModeStack );
+    check( CameraModeStack != nullptr );
 
     UpdateCameraModes();
 
@@ -112,7 +112,7 @@ void UGBFCameraComponent::GetCameraView( const float delta_time, FMinimalViewInf
 
 void UGBFCameraComponent::UpdateCameraModes()
 {
-    check( CameraModeStack );
+    check( CameraModeStack != nullptr );
 
     if ( CameraModeStack->IsStackActivate() )
     {

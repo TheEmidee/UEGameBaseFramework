@@ -77,7 +77,7 @@ AActor * UGBFCameraMode::GetTargetActor() const
 FVector UGBFCameraMode::GetPivotLocation() const
 {
     const auto * target_actor = GetTargetActor();
-    check( target_actor );
+    check( target_actor != nullptr );
 
     if ( const auto * target_pawn = Cast< APawn >( target_actor ) )
     {
@@ -85,13 +85,13 @@ FVector UGBFCameraMode::GetPivotLocation() const
         if ( const auto * target_character = Cast< ACharacter >( target_pawn ) )
         {
             const auto * target_character_cdo = target_character->GetClass()->GetDefaultObject< ACharacter >();
-            check( target_character_cdo );
+            check( target_character_cdo != nullptr );
 
             const auto * capsule_comp = target_character->GetCapsuleComponent();
-            check( capsule_comp );
+            check( capsule_comp != nullptr );
 
             const auto * capsule_comp_cdo = target_character_cdo->GetCapsuleComponent();
-            check( capsule_comp_cdo );
+            check( capsule_comp_cdo != nullptr );
 
             const float default_half_height = capsule_comp_cdo->GetUnscaledCapsuleHalfHeight();
             const float actual_half_height = capsule_comp->GetUnscaledCapsuleHalfHeight();
@@ -109,7 +109,7 @@ FVector UGBFCameraMode::GetPivotLocation() const
 FRotator UGBFCameraMode::GetPivotRotation() const
 {
     const auto * target_actor = GetTargetActor();
-    check( target_actor );
+    check( target_actor != nullptr );
 
     if ( const auto * target_pawn = Cast< APawn >( target_actor ) )
     {
@@ -209,7 +209,7 @@ void UGBFCameraMode::UpdateBlending( const float delta_time )
 
 void UGBFCameraMode::DrawDebug( UCanvas * canvas ) const
 {
-    check( canvas );
+    check( canvas != nullptr );
 
     auto & display_debug_manager = canvas->DisplayDebugManager;
 
@@ -234,7 +234,7 @@ void UGBFCameraModeStack::ActivateStack()
         // Notify camera modes that they are being activated.
         for ( auto & camera_mode : CameraModeStack )
         {
-            check( camera_mode );
+            check( camera_mode != nullptr );
             camera_mode->OnActivation();
         }
     }
@@ -249,7 +249,7 @@ void UGBFCameraModeStack::DeactivateStack()
         // Notify camera modes that they are being deactivated.
         for ( auto & camera_mode : CameraModeStack )
         {
-            check( camera_mode );
+            check( camera_mode != nullptr );
             camera_mode->OnDeactivation();
         }
     }
@@ -257,13 +257,13 @@ void UGBFCameraModeStack::DeactivateStack()
 
 void UGBFCameraModeStack::PushCameraMode( const TSubclassOf< UGBFCameraMode > camera_mode_class )
 {
-    if ( !camera_mode_class )
+    if ( camera_mode_class == nullptr )
     {
         return;
     }
 
     auto * camera_mode = GetCameraModeInstance( camera_mode_class );
-    check( camera_mode );
+    check( camera_mode != nullptr );
 
     auto stack_size = CameraModeStack.Num();
 
@@ -334,7 +334,7 @@ bool UGBFCameraModeStack::EvaluateStack( const float delta_time, FGBFCameraModeV
 
 UGBFCameraMode * UGBFCameraModeStack::GetCameraModeInstance( const TSubclassOf< UGBFCameraMode > camera_mode_class )
 {
-    check( camera_mode_class );
+    check( camera_mode_class != nullptr );
 
     // First see if we already created one.
     for ( auto & camera_mode : CameraModeInstances )
@@ -347,7 +347,7 @@ UGBFCameraMode * UGBFCameraModeStack::GetCameraModeInstance( const TSubclassOf< 
 
     // Not found, so we need to create it.
     auto * new_camera_mode = NewObject< UGBFCameraMode >( GetOuter(), camera_mode_class, NAME_None, RF_NoFlags );
-    check( new_camera_mode );
+    check( new_camera_mode != nullptr );
 
     CameraModeInstances.Add( new_camera_mode );
 
@@ -368,7 +368,7 @@ void UGBFCameraModeStack::UpdateStack( const float delta_time )
     for ( auto stack_index = 0; stack_index < stack_size; ++stack_index )
     {
         auto & camera_mode = CameraModeStack[ stack_index ];
-        check( camera_mode );
+        check( camera_mode != nullptr );
 
         camera_mode->UpdateCameraMode( delta_time );
 
@@ -387,7 +387,7 @@ void UGBFCameraModeStack::UpdateStack( const float delta_time )
         for ( auto stack_index = remove_index; stack_index < stack_size; ++stack_index )
         {
             auto & camera_mode = CameraModeStack[ stack_index ];
-            check( camera_mode );
+            check( camera_mode != nullptr );
 
             camera_mode->OnDeactivation();
         }
@@ -406,14 +406,14 @@ void UGBFCameraModeStack::BlendStack( FGBFCameraModeView & out_camera_mode_view 
 
     // Start at the bottom and blend up the stack
     const auto * camera_mode = CameraModeStack[ stack_size - 1 ].Get();
-    check( camera_mode );
+    check( camera_mode != nullptr );
 
     out_camera_mode_view = camera_mode->GetCameraModeView();
 
     for ( auto stack_index = ( stack_size - 2 ); stack_index >= 0; --stack_index )
     {
         camera_mode = CameraModeStack[ stack_index ].Get();
-        check( camera_mode );
+        check( camera_mode != nullptr );
 
         out_camera_mode_view.Blend( camera_mode->GetCameraModeView(), camera_mode->GetBlendWeight() );
     }
@@ -421,7 +421,7 @@ void UGBFCameraModeStack::BlendStack( FGBFCameraModeView & out_camera_mode_view 
 
 void UGBFCameraModeStack::DrawDebug( UCanvas * canvas ) const
 {
-    check( canvas );
+    check( canvas != nullptr );
 
     auto & display_debug_manager = canvas->DisplayDebugManager;
 
@@ -430,7 +430,7 @@ void UGBFCameraModeStack::DrawDebug( UCanvas * canvas ) const
 
     for ( const auto & camera_mode : CameraModeStack )
     {
-        check( camera_mode );
+        check( camera_mode != nullptr );
         camera_mode->DrawDebug( canvas );
     }
 
@@ -448,7 +448,7 @@ void UGBFCameraModeStack::GetBlendInfo( float & out_weight_of_top_layer, FGamepl
     }
 
     auto & top_entry = CameraModeStack.Last();
-    check( top_entry );
+    check( top_entry != nullptr );
     out_weight_of_top_layer = top_entry->GetBlendWeight();
     out_tag_of_top_layer = top_entry->GetCameraTypeTag();
 }
