@@ -1,10 +1,13 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
 #include "DVEDataValidator.h"
+#include "Engine/World.h"
+#include "GBFLog.h"
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
-#include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameModeBase.h"
 
 #include <GameFeatureAction.h>
+#include <Kismet/GameplayStatics.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
 
@@ -18,6 +21,28 @@ EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( TArray< FTex
         .Result();
 }
 #endif
+
+void FGBFExperienceDefinitionActions::DumpToLog() const
+{
+    UE_LOG( LogGBF_Experience, Log, TEXT( "*** Experience definition details *** " ) );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "GameFeaturesToEnable : " ) );
+    for ( const auto & game_feature : GameFeaturesToEnable )
+    {
+        UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *game_feature );
+    }
+
+    const auto append_objects = [ & ]( const auto & objects ) {
+        for ( const auto * object : objects )
+        {
+            UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *GetNameSafe( object ) );
+        }
+    };
+
+    UE_LOG( LogGBF_Experience, Log, TEXT( "ActionSets : " ) );
+    append_objects( ActionSets );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "Actions: " ) );
+    append_objects( Actions );
+}
 
 FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 {
@@ -44,9 +69,35 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
 
         if ( conditional_action.Condition->CanApplyActions( world ) )
         {
-            new_experience->DefaultActions.ActionSets.Append( conditional_action.Actions.ActionSets );
-            new_experience->DefaultActions.Actions.Append( conditional_action.Actions.Actions );
-            new_experience->DefaultActions.GameFeaturesToEnable.Append( conditional_action.Actions.GameFeaturesToEnable );
+            switch ( conditional_action.Type )
+            {
+
+                case EGBFExperienceConditionalActionType::Append:
+                {
+                    new_experience->DefaultActions.ActionSets.Append( conditional_action.Actions.ActionSets );
+                    new_experience->DefaultActions.Actions.Append( conditional_action.Actions.Actions );
+                    new_experience->DefaultActions.GameFeaturesToEnable.Append( conditional_action.Actions.GameFeaturesToEnable );
+                }
+                break;
+                case EGBFExperienceConditionalActionType::Remove:
+                {
+                    const auto remove_from_array = []( auto & array, const auto & other_array ) {
+                        for ( const auto & other_item : other_array )
+                        {
+                            array.Remove( other_item );
+                        }
+                    };
+
+                    remove_from_array( new_experience->DefaultActions.ActionSets, conditional_action.Actions.ActionSets );
+                    remove_from_array( new_experience->DefaultActions.Actions, conditional_action.Actions.Actions );
+                    remove_from_array( new_experience->DefaultActions.GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
+                }
+                break;
+                default:
+                {
+                    checkNoEntry();
+                };
+            }
         }
     }
 
@@ -125,15 +176,22 @@ bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) c
 
 bool UGBFExperienceCondition_HasCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
 {
-    return UGameplayStatics::HasOption( FCommandLine::Get(), Option );
+    return UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
 }
 
 bool UGBFExperienceCondition_DoesNotHaveCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
 {
-    return !UGameplayStatics::HasOption( FCommandLine::Get(), Option );
+    return !UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
+}
+
+FGBFExperienceConditionalActions::FGBFExperienceConditionalActions() :
+    Type( EGBFExperienceConditionalActionType::Append )
+{
 }
 
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
 }
+
+#undef LOCTEXT_NAMESPACE

@@ -19,6 +19,8 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceDefinitionActions
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) const;
 #endif
 
+    void DumpToLog() const;
+
     // List of Game Feature Plugins this experience wants to have active
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     TArray< FString > GameFeaturesToEnable;
@@ -43,7 +45,7 @@ public:
 };
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_HasCommandLineOption : public UObject
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_HasCommandLineOption final : public UGBFExperienceCondition
 {
     GENERATED_BODY()
 
@@ -55,7 +57,7 @@ public:
 };
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_DoesNotHaveCommandLineOption : public UObject
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_DoesNotHaveCommandLineOption final : public UGBFExperienceCondition
 {
     GENERATED_BODY()
 
@@ -66,13 +68,25 @@ public:
     FString Option;
 };
 
+UENUM()
+enum class EGBFExperienceConditionalActionType : uint8
+{
+    Append,
+    Remove
+};
+
 USTRUCT()
 struct GAMEBASEFRAMEWORK_API FGBFExperienceConditionalActions
 {
     GENERATED_USTRUCT_BODY()
 
+    FGBFExperienceConditionalActions();
+
     UPROPERTY( EditDefaultsOnly, Instanced )
     TObjectPtr< UGBFExperienceCondition > Condition;
+
+    UPROPERTY( EditDefaultsOnly )
+    EGBFExperienceConditionalActionType Type;
 
     UPROPERTY( EditDefaultsOnly )
     FGBFExperienceDefinitionActions Actions;

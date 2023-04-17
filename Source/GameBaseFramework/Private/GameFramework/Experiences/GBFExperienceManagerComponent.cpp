@@ -5,7 +5,6 @@
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 #include "GameFramework/Experiences/GBFExperienceSubsystem.h"
-#include "GameFramework/Phases/GBFGamePhaseAbility.h"
 
 #include <Engine/AssetManager.h>
 #include <GameFeaturesSubsystem.h>
@@ -109,6 +108,8 @@ void UGBFExperienceManagerComponent::ServerSetCurrentExperience( FPrimaryAssetId
 
     check( experience != nullptr );
     check( CurrentExperience == nullptr );
+
+    experience->DefaultActions.DumpToLog();
 
     CurrentExperience = experience;
     StartExperienceLoad();
