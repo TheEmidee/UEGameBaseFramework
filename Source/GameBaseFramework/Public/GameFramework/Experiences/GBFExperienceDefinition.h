@@ -61,12 +61,7 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryData
 
 public:
     FPrimaryAssetId GetPrimaryAssetId() const override;
-
-    static FPrimaryAssetType GetPrimaryAssetType();
-
     const UGBFExperienceDefinition * Resolve( UWorld * world ) const;
-
-    void Serialize( FArchive & ar ) override;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
@@ -75,6 +70,8 @@ public:
 #if WITH_EDITORONLY_DATA
     void UpdateAssetBundleData() override;
 #endif
+
+    static FPrimaryAssetType GetPrimaryAssetType();
 
     UPROPERTY( EditDefaultsOnly )
     FGBFExperienceDefinitionActions DefaultActions;

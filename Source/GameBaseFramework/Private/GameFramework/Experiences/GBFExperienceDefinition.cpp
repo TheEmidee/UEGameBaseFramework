@@ -18,11 +18,6 @@ EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( TArray< FTex
 }
 #endif
 
-FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
-{
-    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
-}
-
 FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 {
     static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
@@ -55,25 +50,6 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
     }
 
     return new_experience;
-}
-
-void UGBFExperienceDefinition::Serialize( FArchive & ar )
-{
-    if ( ar.IsSaving() )
-    {
-        const auto add_if_not_empty = [ & ]( auto & array, const auto & other_array ) {
-            if ( array.IsEmpty() )
-            {
-                array.Append( other_array );
-            }
-        };
-
-        add_if_not_empty( DefaultActions.ActionSets, ActionSets );
-        add_if_not_empty( DefaultActions.Actions, Actions );
-        add_if_not_empty( DefaultActions.GameFeaturesToEnable, GameFeaturesToEnable );
-    }
-
-    Super::Serialize( ar );
 }
 
 #if WITH_EDITOR
@@ -140,3 +116,8 @@ void UGBFExperienceDefinition::UpdateAssetBundleData()
     }
 }
 #endif
+
+FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
+{
+    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
+}
