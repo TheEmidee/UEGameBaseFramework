@@ -1,11 +1,14 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#if WITH_EDITOR
 #include "DVEDataValidator.h"
-#include "Engine/World.h"
+#endif
+
 #include "GBFLog.h"
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 #include "GameFramework/GameModeBase.h"
 
+#include <Engine/World.h>
 #include <GameFeatureAction.h>
 #include <Kismet/GameplayStatics.h>
 
@@ -44,10 +47,29 @@ void FGBFExperienceDefinitionActions::DumpToLog() const
     append_objects( Actions );
 }
 
-FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
+bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) const
 {
-    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
-    return PrimaryAssetType;
+    return false;
+}
+
+bool UGBFExperienceCondition_HasCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
+}
+
+bool UGBFExperienceCondition_DoesNotHaveCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return !Super::CanApplyActions_Implementation( world );
+}
+
+FGBFExperienceConditionalActions::FGBFExperienceConditionalActions() :
+    Type( EGBFExperienceConditionalActionType::Append )
+{
+}
+
+FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
+{
+    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
 }
 
 const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * world ) const
@@ -71,7 +93,6 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
         {
             switch ( conditional_action.Type )
             {
-
                 case EGBFExperienceConditionalActionType::Append:
                 {
                     new_experience->DefaultActions.ActionSets.Append( conditional_action.Actions.ActionSets );
@@ -169,29 +190,10 @@ void UGBFExperienceDefinition::UpdateAssetBundleData()
 }
 #endif
 
-bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) const
+FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
 {
-    return false;
-}
-
-bool UGBFExperienceCondition_HasCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
-{
-    return UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
-}
-
-bool UGBFExperienceCondition_DoesNotHaveCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
-{
-    return !UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
-}
-
-FGBFExperienceConditionalActions::FGBFExperienceConditionalActions() :
-    Type( EGBFExperienceConditionalActionType::Append )
-{
-}
-
-FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
-{
-    return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
+    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
+    return PrimaryAssetType;
 }
 
 #undef LOCTEXT_NAMESPACE

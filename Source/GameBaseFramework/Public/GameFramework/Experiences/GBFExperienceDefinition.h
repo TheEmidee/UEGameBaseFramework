@@ -44,8 +44,8 @@ public:
     bool CanApplyActions( UWorld * world ) const;
 };
 
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_HasCommandLineOption final : public UGBFExperienceCondition
+UCLASS( DisplayName = "Has command line option" )
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_HasCommandLineOption : public UGBFExperienceCondition
 {
     GENERATED_BODY()
 
@@ -56,16 +56,13 @@ public:
     FString Option;
 };
 
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_DoesNotHaveCommandLineOption final : public UGBFExperienceCondition
+UCLASS( DisplayName = "Does not have command line option" )
+class GAMEBASEFRAMEWORK_API UGBFExperienceCondition_DoesNotHaveCommandLineOption final : public UGBFExperienceCondition_HasCommandLineOption
 {
     GENERATED_BODY()
 
 public:
     bool CanApplyActions_Implementation( UWorld * world ) const;
-
-    UPROPERTY( EditDefaultsOnly )
-    FString Option;
 };
 
 UENUM()
