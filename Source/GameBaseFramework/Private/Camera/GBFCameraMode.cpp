@@ -13,7 +13,7 @@ FGBFCameraModeView::FGBFCameraModeView() :
     Location( ForceInit ),
     Rotation( ForceInit ),
     ControlRotation( ForceInit ),
-    FieldOfView( GBF_CAMERA_DEFAULT_FOV )
+    FieldOfView( GBF::CameraMode::DefaultFov )
 {
 }
 
@@ -46,9 +46,9 @@ void FGBFCameraModeView::Blend( const FGBFCameraModeView & other, const float ot
 //////////////////////////////////////////////////////////////////////////
 UGBFCameraMode::UGBFCameraMode()
 {
-    FieldOfView = GBF_CAMERA_DEFAULT_FOV;
-    ViewPitchMin = GBF_CAMERA_DEFAULT_PITCH_MIN;
-    ViewPitchMax = GBF_CAMERA_DEFAULT_PITCH_MAX;
+    FieldOfView = GBF::CameraMode::DefaultFov;
+    ViewPitchMin = GBF::CameraMode::DefaultPitchMin;
+    ViewPitchMax = GBF::CameraMode::DefaultPitchMax;
 
     BlendTime = 0.5f;
     BlendFunction = EGBFCameraModeBlendFunction::EaseOut;

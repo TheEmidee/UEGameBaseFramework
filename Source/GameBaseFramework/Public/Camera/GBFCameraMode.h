@@ -9,9 +9,15 @@
 class UGBFCameraComponent;
 class UCanvas;
 
-#define GBF_CAMERA_DEFAULT_FOV ( 80.0f )
-#define GBF_CAMERA_DEFAULT_PITCH_MIN ( -89.0f )
-#define GBF_CAMERA_DEFAULT_PITCH_MAX ( 89.0f )
+namespace GBF
+{
+    namespace CameraMode
+    {
+        static constexpr float DefaultFov = 80.0f;
+        static constexpr float DefaultPitchMin = -89.0f;
+        static constexpr float DefaultPitchMax = 89.0f;
+    }
+}
 
 /**
  * EGBFCameraModeBlendFunction
