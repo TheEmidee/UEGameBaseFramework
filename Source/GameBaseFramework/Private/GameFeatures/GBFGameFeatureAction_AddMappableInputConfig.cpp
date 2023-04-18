@@ -54,7 +54,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureDeactivating( FG
     Super::OnGameFeatureDeactivating( context );
 
     if ( auto * active_data = ContextData.Find( context );
-         ensure( active_data ) )
+         ensure( active_data != nullptr ) )
     {
         Reset( *active_data );
     }

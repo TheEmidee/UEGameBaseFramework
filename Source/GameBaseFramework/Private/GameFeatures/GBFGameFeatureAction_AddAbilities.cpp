@@ -328,8 +328,8 @@ void UGBFGameFeatureAction_AddAbilities::RemoveActorAbilities( AActor * actor, F
 UActorComponent * UGBFGameFeatureAction_AddAbilities::FindOrAddComponentForActor( UClass * component_type, AActor * actor, const FGBFGameFeatureAbilitiesEntry & abilities_entry, FPerContextData & active_data ) const
 {
     auto * component = actor->FindComponentByClass( component_type );
+    auto make_component_request = component == nullptr;
 
-    bool make_component_request = component == nullptr;
     if ( component != nullptr )
     {
         // Check to see if this component was created from a different `UGameFrameworkComponentManager` request.
