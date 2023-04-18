@@ -13,7 +13,7 @@
 
 #define LOCTEXT_NAMESPACE "UGFEGameFeatureAction_AddInputContextMapping"
 
-void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
+void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
          !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
@@ -24,7 +24,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGam
     Super::OnGameFeatureActivating( context );
 }
 
-void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FGameFeatureDeactivatingContext & context )
+void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FGameFeatureDeactivatingContext & context )
 {
     Super::OnGameFeatureDeactivating( context );
 
@@ -36,10 +36,10 @@ void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FG
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGFEGameFeatureAction_AddInputContextMapping::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid( TArray< FText > & validation_errors )
 {
     return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FInputMappingContextAndPriority > >( InputMappings, []( TArray< FText > & errors, TArray< FInputMappingContextAndPriority > input_mappings ) {
+        .CustomValidation< TArray< FGBFInputMappingContextAndPriority > >( InputMappings, []( TArray< FText > & errors, TArray< FGBFInputMappingContextAndPriority > input_mappings ) {
             auto entry_index = 0;
 
             for ( const auto & input_mapping : input_mappings )
@@ -56,7 +56,7 @@ EDataValidationResult UGFEGameFeatureAction_AddInputContextMapping::IsDataValid(
 }
 #endif
 
-void UGFEGameFeatureAction_AddInputContextMapping::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
+void UGBFGameFeatureAction_AddInputContextMapping::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
 {
     const auto * world = world_context.World();
     const auto game_instance = world_context.OwningGameInstance;
@@ -74,7 +74,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::AddToWorld( const FWorldConte
     }
 }
 
-void UGFEGameFeatureAction_AddInputContextMapping::Reset( FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputContextMapping::Reset( FPerContextData & active_data )
 {
     active_data.ExtensionRequestHandles.Empty();
 
@@ -92,7 +92,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::Reset( FPerContextData & acti
     }
 }
 
-void UGFEGameFeatureAction_AddInputContextMapping::HandleControllerExtension( AActor * actor, FName event_name, const FGameFeatureStateChangeContext change_context )
+void UGBFGameFeatureAction_AddInputContextMapping::HandleControllerExtension( AActor * actor, FName event_name, const FGameFeatureStateChangeContext change_context )
 {
     auto * pc = CastChecked< APlayerController >( actor );
     auto & active_data = ContextData.FindOrAdd( change_context );
@@ -108,7 +108,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::HandleControllerExtension( AA
     }
 }
 
-void UGFEGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer( UPlayer * player, FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer( UPlayer * player, FPerContextData & active_data )
 {
     if ( const auto * lp = Cast< ULocalPlayer >( player ) )
     {
@@ -129,7 +129,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer( UPl
     }
 }
 
-void UGFEGameFeatureAction_AddInputContextMapping::RemoveInputMapping( APlayerController * player_controller, FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputContextMapping::RemoveInputMapping( APlayerController * player_controller, FPerContextData & active_data )
 {
     if ( const auto * lp = player_controller->GetLocalPlayer() )
     {

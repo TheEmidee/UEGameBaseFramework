@@ -9,7 +9,7 @@
 #include "GBFGameFeatureAction_AddInputContextMapping.generated.h"
 
 USTRUCT()
-struct FInputMappingContextAndPriority
+struct FGBFInputMappingContextAndPriority
 {
     GENERATED_BODY()
 
@@ -22,7 +22,7 @@ struct FInputMappingContextAndPriority
 };
 
 UCLASS( DisplayName = "Add Input Context Mapping" )
-class GAMEBASEFRAMEWORK_API UGFEGameFeatureAction_AddInputContextMapping final : public UGBFGameFeatureAction_WorldActionBase
+class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_AddInputContextMapping final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
 
@@ -35,7 +35,7 @@ public:
 #endif
 
     UPROPERTY( EditAnywhere, Category = "Input" )
-    TArray< FInputMappingContextAndPriority > InputMappings;
+    TArray< FGBFInputMappingContextAndPriority > InputMappings;
 
 private:
     struct FPerContextData
