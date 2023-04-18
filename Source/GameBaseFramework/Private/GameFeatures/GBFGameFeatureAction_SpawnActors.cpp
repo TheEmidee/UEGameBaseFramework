@@ -1,6 +1,8 @@
 #include "GameFeatures/GBFGameFeatureAction_SpawnActors.h"
 
+#if WITH_EDITOR
 #include "DVEDataValidator.h"
+#endif
 
 #include <Engine/AssetManager.h>
 #include <GameFramework/GameModeBase.h>

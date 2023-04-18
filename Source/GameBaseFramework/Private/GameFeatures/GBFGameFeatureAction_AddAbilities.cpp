@@ -1,5 +1,14 @@
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 
+#if WITH_EDITORONLY_DATA
+#include <Engine/AssetManager.h>
+#include <GameFeaturesSubsystemSettings.h>
+#endif
+
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
+
 #include <AbilitySystemComponent.h>
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"

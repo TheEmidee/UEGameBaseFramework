@@ -1,5 +1,9 @@
 #include "GameFeatures/GBFGameFeatureAction_AddInputContextMapping.h"
 
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
+
 #include "Characters/Components/GBFHeroComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>

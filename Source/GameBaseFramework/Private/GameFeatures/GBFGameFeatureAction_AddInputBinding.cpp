@@ -1,13 +1,16 @@
 #include "GameFeatures/GBFGameFeatureAction_AddInputBinding.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
-#include "DVEDataValidator.h"
-#include "Engine/LocalPlayer.h"
 #include "Input/GBFInputConfig.h"
 
 #include <Components/GameFrameworkComponentManager.h>
+#include <Engine/LocalPlayer.h>
 #include <EnhancedInputSubsystems.h>
 #include <GameFramework/PlayerController.h>
+
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
 
 void UGBFGameFeatureAction_AddInputBinding::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {

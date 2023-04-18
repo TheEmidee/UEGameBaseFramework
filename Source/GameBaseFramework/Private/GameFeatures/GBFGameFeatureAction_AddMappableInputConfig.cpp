@@ -1,7 +1,10 @@
 #include "GameFeatures/GBFGameFeatureAction_AddMappableInputConfig.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
+
+#if WITH_EDITOR
 #include "DVEDataValidator.h"
+#endif
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/LocalPlayer.h>
