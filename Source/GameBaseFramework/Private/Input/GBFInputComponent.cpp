@@ -1,7 +1,6 @@
 #include "Input/GBFInputComponent.h"
 
-#include "Engine/GBFLocalPlayer.h"
-#include "EnhancedInputSubsystems.h"
+#include <EnhancedInputSubsystems.h>
 
 UGBFInputComponent::UGBFInputComponent( const FObjectInitializer & object_initializer )
 {
@@ -34,20 +33,20 @@ void UGBFInputComponent::RemoveInputMappings( const UGBFInputConfig * input_conf
 {
     // :TODO: Uncomment when local settings will be added to the plugin
     // check( input_config != nullptr );
-    //check( input_system != nullptr );
+    // check( input_system != nullptr );
 
-    //const auto * local_player = input_system->GetLocalPlayer< UGBFLocalPlayer >();
-    //check( local_player != nullptr );
+    // const auto * local_player = input_system->GetLocalPlayer< UGBFLocalPlayer >();
+    // check( local_player != nullptr );
 
     //// Add any registered input mappings from the settings!
-    //if ( auto * local_settings = UGBFSettingsLocal::Get() )
+    // if ( auto * local_settings = UGBFSettingsLocal::Get() )
     //{
-    //    // Remove any registered input contexts
-    //    const auto & configs = local_settings->GetAllRegisteredInputConfigs();
-    //    for ( const auto & pair : configs )
-    //    {
-    //        input_system->RemovePlayerMappableConfig( pair.Config );
-    //    }
+    //     // Remove any registered input contexts
+    //     const auto & configs = local_settings->GetAllRegisteredInputConfigs();
+    //     for ( const auto & pair : configs )
+    //     {
+    //         input_system->RemovePlayerMappableConfig( pair.Config );
+    //     }
 
     //    // Clear any player mapped keys from enhanced input
     //    for ( const TPair< FName, FKey > & pair : local_settings->GetCustomPlayerInputConfig() )

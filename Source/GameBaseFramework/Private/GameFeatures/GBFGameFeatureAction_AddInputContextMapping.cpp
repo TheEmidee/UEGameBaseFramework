@@ -1,17 +1,17 @@
 #include "GameFeatures/GBFGameFeatureAction_AddInputContextMapping.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
-#include "Components/GameFrameworkComponentManager.h"
-#include "DVEDataValidator.h"
-#include "Engine/LocalPlayer.h"
-#include "EnhancedInputSubsystems.h"
-#include "GameFramework/PlayerController.h"
+
+#include <Components/GameFrameworkComponentManager.h>
+#include <Engine/LocalPlayer.h>
+#include <EnhancedInputSubsystems.h>
+#include <GameFramework/PlayerController.h>
 
 #define LOCTEXT_NAMESPACE "UGFEGameFeatureAction_AddInputContextMapping"
 
 void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
-    if ( FPerContextData & active_data = ContextData.FindOrAdd( context );
+    if ( auto & active_data = ContextData.FindOrAdd( context );
          !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
          !ensure( active_data.ControllersAddedTo.IsEmpty() ) )
     {
@@ -24,7 +24,7 @@ void UGFEGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FG
 {
     Super::OnGameFeatureDeactivating( context );
 
-    if ( FPerContextData * active_data = ContextData.Find( context );
+    if ( auto * active_data = ContextData.Find( context );
          ensure( active_data ) )
     {
         Reset( *active_data );

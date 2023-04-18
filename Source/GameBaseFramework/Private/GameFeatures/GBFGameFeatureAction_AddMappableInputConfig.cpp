@@ -17,7 +17,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureRegistering()
     // Register the input configs with the local settings, this way the data inside them is available all the time
     // and not just when this game feature is active. This is necessary for displaying key binding options
     // on the main menu, or other times when the game feature may not be active.
-    for ( const FGBFMappableConfigPair & pair : InputConfigs )
+    for ( const auto & pair : InputConfigs )
     {
         FGBFMappableConfigPair::RegisterPair( pair );
     }
@@ -27,7 +27,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureUnregistering()
 {
     Super::OnGameFeatureUnregistering();
 
-    for ( const FGBFMappableConfigPair & pair : InputConfigs )
+    for ( const auto & pair : InputConfigs )
     {
         FGBFMappableConfigPair::UnregisterPair( pair );
     }
@@ -35,7 +35,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureUnregistering()
 
 void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
-    if ( FPerContextData & active_data = ContextData.FindOrAdd( context );
+    if ( auto & active_data = ContextData.FindOrAdd( context );
          !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
          !ensure( active_data.PawnsAddedTo.IsEmpty() ) )
     {
@@ -50,7 +50,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureDeactivating( FG
 {
     Super::OnGameFeatureDeactivating( context );
 
-    if ( FPerContextData * active_data = ContextData.Find( context );
+    if ( auto * active_data = ContextData.Find( context );
          ensure( active_data ) )
     {
         Reset( *active_data );
@@ -80,8 +80,8 @@ EDataValidationResult UGBFGameFeatureAction_AddMappableInputConfig::IsDataValid(
 
 void UGBFGameFeatureAction_AddMappableInputConfig::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
 {
-    const UWorld * world = world_context.World();
-    const UGameInstance * game_instance = world_context.OwningGameInstance;
+    const auto * world = world_context.World();
+    const auto game_instance = world_context.OwningGameInstance;
     auto & [ extension_request_handles, pawns_added_to ] = ContextData.FindOrAdd( change_context );
 
     if ( game_instance != nullptr && world != nullptr && world->IsGameWorld() )
@@ -116,7 +116,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::Reset( FPerContextData & acti
 void UGBFGameFeatureAction_AddMappableInputConfig::HandlePawnExtension( AActor * actor, FName event_name, const FGameFeatureStateChangeContext change_context )
 {
     auto * pawn = CastChecked< APawn >( actor );
-    FPerContextData & active_data = ContextData.FindOrAdd( change_context );
+    auto & active_data = ContextData.FindOrAdd( change_context );
 
     if ( event_name == UGameFrameworkComponentManager::NAME_ExtensionAdded || event_name == UGBFHeroComponent::NAME_BindInputsNow )
     {

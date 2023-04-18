@@ -1,10 +1,6 @@
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 
-#include "DVEDataValidator.h"
-
 #include <AbilitySystemComponent.h>
-#include <Engine/AssetManager.h>
-#include <GameFeaturesSubsystemSettings.h>
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"
 
@@ -24,7 +20,7 @@ void UGBFGameFeatureAction_AddAbilities::OnGameFeatureDeactivating( FGameFeature
 {
     Super::OnGameFeatureDeactivating( context );
 
-    if ( FPerContextData * active_data = ContextData.Find( context ); ensure( active_data ) )
+    if ( auto * active_data = ContextData.Find( context ); ensure( active_data ) )
     {
         Reset( *active_data );
     }

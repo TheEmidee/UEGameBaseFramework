@@ -160,13 +160,13 @@ void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_
     auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
     check( input_component != nullptr );
 
-    const APlayerController * pc = GetController< APlayerController >();
+    const auto * pc = GetController< APlayerController >();
     check( pc != nullptr );
 
-    const ULocalPlayer * lp = pc->GetLocalPlayer();
+    const auto * lp = pc->GetLocalPlayer();
     check( lp != nullptr );
 
-    const UEnhancedInputLocalPlayerSubsystem * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    const auto * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
     check( subsystem );
 
     if ( UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) != nullptr )
@@ -215,13 +215,13 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
 {
     check( player_input_component != nullptr );
 
-    const APawn * pawn = GetPawn< APawn >();
+    const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
     {
         return;
     }
 
-    const APlayerController * pc = GetController< APlayerController >();
+    const auto * pc = GetController< APlayerController >();
     check( pc != nullptr );
 
     const auto * lp = Cast< UGBFLocalPlayer >( pc->GetLocalPlayer() );
