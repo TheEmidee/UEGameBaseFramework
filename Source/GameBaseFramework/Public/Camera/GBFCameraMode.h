@@ -76,10 +76,10 @@ public:
     UWorld * GetWorld() const override;
 
     // Called when this camera mode is activated on the camera mode stack.
-    virtual void OnActivation() {};
+    virtual void OnActivation();
 
     // Called when this camera mode is deactivated on the camera mode stack.
-    virtual void OnDeactivation() {};
+    virtual void OnDeactivation();
 
     virtual void DrawDebug( UCanvas * canvas ) const;
 

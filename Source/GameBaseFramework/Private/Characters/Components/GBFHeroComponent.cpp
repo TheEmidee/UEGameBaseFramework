@@ -157,7 +157,7 @@ UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
 
 void UGBFHeroComponent::SetAbilityCameraMode( TSubclassOf< UGBFCameraMode > camera_mode, const FGameplayAbilitySpecHandle & owning_spec_handle )
 {
-    if ( camera_mode )
+    if ( camera_mode != nullptr )
     {
         AbilityCameraMode = camera_mode;
         AbilityCameraModeOwningSpecHandle = owning_spec_handle;
@@ -205,13 +205,13 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
 
 TSubclassOf< UGBFCameraMode > UGBFHeroComponent::DetermineCameraMode() const
 {
-    if ( AbilityCameraMode )
+    if ( AbilityCameraMode != nullptr )
     {
         return AbilityCameraMode;
     }
 
     const auto * pawn = GetPawn< APawn >();
-    if ( !pawn )
+    if ( pawn == nullptr )
     {
         return nullptr;
     }

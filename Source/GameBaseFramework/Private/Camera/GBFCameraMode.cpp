@@ -67,6 +67,14 @@ UWorld * UGBFCameraMode::GetWorld() const
     return HasAnyFlags( RF_ClassDefaultObject ) ? nullptr : GetOuter()->GetWorld();
 }
 
+void UGBFCameraMode::OnActivation()
+{
+}
+
+void UGBFCameraMode::OnDeactivation()
+{
+}
+
 AActor * UGBFCameraMode::GetTargetActor() const
 {
     const auto * camera_component = GetGBFCameraComponent();
@@ -148,24 +156,30 @@ void UGBFCameraMode::SetBlendWeight( const float weight )
     switch ( BlendFunction )
     {
         case EGBFCameraModeBlendFunction::Linear:
+        {
             BlendAlpha = BlendWeight;
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseIn:
+        {
             BlendAlpha = FMath::InterpEaseIn( 0.0f, 1.0f, BlendWeight, inv_exponent );
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseOut:
+        {
             BlendAlpha = FMath::InterpEaseOut( 0.0f, 1.0f, BlendWeight, inv_exponent );
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseInOut:
+        {
             BlendAlpha = FMath::InterpEaseInOut( 0.0f, 1.0f, BlendWeight, inv_exponent );
-            break;
-
+        }
+        break;
         default:
+        {
             checkf( false, TEXT( "SetBlendWeight: Invalid BlendFunction [%d]\n" ), ( uint8 ) BlendFunction );
-            break;
+        }
+        break;
     }
 }
 
@@ -186,24 +200,30 @@ void UGBFCameraMode::UpdateBlending( const float delta_time )
     switch ( BlendFunction )
     {
         case EGBFCameraModeBlendFunction::Linear:
+        {
             BlendWeight = BlendAlpha;
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseIn:
+        {
             BlendWeight = FMath::InterpEaseIn( 0.0f, 1.0f, BlendAlpha, exponent );
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseOut:
+        {
             BlendWeight = FMath::InterpEaseOut( 0.0f, 1.0f, BlendAlpha, exponent );
-            break;
-
+        }
+        break;
         case EGBFCameraModeBlendFunction::EaseInOut:
+        {
             BlendWeight = FMath::InterpEaseInOut( 0.0f, 1.0f, BlendAlpha, exponent );
-            break;
-
+        }
+        break;
         default:
+        {
             checkf( false, TEXT( "UpdateBlending: Invalid BlendFunction [%d]\n" ), ( uint8 ) BlendFunction );
-            break;
+        }
+        break;
     }
 }
 
@@ -267,7 +287,7 @@ void UGBFCameraModeStack::PushCameraMode( const TSubclassOf< UGBFCameraMode > ca
 
     auto stack_size = CameraModeStack.Num();
 
-    if ( ( stack_size > 0 ) && ( CameraModeStack[ 0 ] == camera_mode ) )
+    if ( stack_size > 0 && CameraModeStack[ 0 ] == camera_mode )
     {
         // Already top of stack.
         return;
@@ -287,7 +307,7 @@ void UGBFCameraModeStack::PushCameraMode( const TSubclassOf< UGBFCameraMode > ca
             break;
         }
 
-        existing_stack_contribution *= ( 1.0f - CameraModeStack[ stack_index ]->GetBlendWeight() );
+        existing_stack_contribution *= 1.0f - CameraModeStack[ stack_index ]->GetBlendWeight();
     }
 
     if ( existing_stack_index != INDEX_NONE )
@@ -301,8 +321,8 @@ void UGBFCameraModeStack::PushCameraMode( const TSubclassOf< UGBFCameraMode > ca
     }
 
     // Decide what initial weight to start with.
-    const auto should_blend = ( ( camera_mode->GetBlendTime() > 0.0f ) && ( stack_size > 0 ) );
-    const auto blend_weight = ( should_blend ? existing_stack_contribution : 1.0f );
+    const auto should_blend = camera_mode->GetBlendTime() > 0.0f && stack_size > 0;
+    const auto blend_weight = should_blend ? existing_stack_contribution : 1.0f;
 
     camera_mode->SetBlendWeight( blend_weight );
 
@@ -339,7 +359,7 @@ UGBFCameraMode * UGBFCameraModeStack::GetCameraModeInstance( const TSubclassOf< 
     // First see if we already created one.
     for ( auto & camera_mode : CameraModeInstances )
     {
-        if ( ( camera_mode != nullptr ) && ( camera_mode->GetClass() == camera_mode_class ) )
+        if ( camera_mode != nullptr && camera_mode->GetClass() == camera_mode_class )
         {
             return camera_mode.Get();
         }
@@ -375,8 +395,8 @@ void UGBFCameraModeStack::UpdateStack( const float delta_time )
         if ( camera_mode->GetBlendWeight() >= 1.0f )
         {
             // Everything below this mode is now irrelevant and can be removed.
-            remove_index = ( stack_index + 1 );
-            remove_count = ( stack_size - remove_index );
+            remove_index = stack_index + 1;
+            remove_count = stack_size - remove_index;
             break;
         }
     }
@@ -410,7 +430,7 @@ void UGBFCameraModeStack::BlendStack( FGBFCameraModeView & out_camera_mode_view 
 
     out_camera_mode_view = camera_mode->GetCameraModeView();
 
-    for ( auto stack_index = ( stack_size - 2 ); stack_index >= 0; --stack_index )
+    for ( auto stack_index = stack_size - 2; stack_index >= 0; --stack_index )
     {
         camera_mode = CameraModeStack[ stack_index ].Get();
         check( camera_mode != nullptr );
