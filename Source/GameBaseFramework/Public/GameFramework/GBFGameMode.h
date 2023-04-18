@@ -6,7 +6,7 @@
 
 #include "GBFGameMode.generated.h"
 
-class UGBFExperienceDefinition;
+class UGBFExperienceImplementation;
 class UGBFPawnData;
 
 DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeControllerLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
@@ -47,7 +47,7 @@ protected:
 private:
     void HandleMatchAssignmentIfNotExpectingOne();
     void OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source );
-    void OnExperienceLoaded( const UGBFExperienceDefinition * current_experience );
+    void OnExperienceLoaded( const UGBFExperienceImplementation * current_experience );
     bool IsExperienceLoaded() const;
 
     FOnGameModeControllerLogEventDelegate OnControllerPostLoginDelegate;

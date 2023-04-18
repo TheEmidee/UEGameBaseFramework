@@ -19,8 +19,6 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceDefinitionActions
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) const;
 #endif
 
-    void DumpToLog() const;
-
     // List of Game Feature Plugins this experience wants to have active
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     TArray< FString > GameFeaturesToEnable;
@@ -89,6 +87,30 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceConditionalActions
     FGBFExperienceDefinitionActions Actions;
 };
 
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFExperienceImplementation final : public UObject
+{
+    GENERATED_BODY()
+
+public:
+
+    void DumpToLog() const;
+    bool IsSupportedForNetworking() const override;
+    void GetLifetimeReplicatedProps( TArray<FLifetimeProperty> & OutLifetimeProps ) const override;
+
+    UPROPERTY( Replicated )
+    TArray< FString > GameFeaturesToEnable;
+
+    UPROPERTY( Replicated )
+    TArray< UGameFeatureAction * > Actions;
+
+    UPROPERTY( Replicated )
+    TArray< UGBFExperienceActionSet * > ActionSets;
+
+    UPROPERTY( Replicated )
+    const UGBFPawnData * DefaultPawnData;
+};
+
 UCLASS( BlueprintType, Const )
 class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryDataAsset
 {
@@ -96,7 +118,7 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryData
 
 public:
     FPrimaryAssetId GetPrimaryAssetId() const override;
-    const UGBFExperienceDefinition * Resolve( UWorld * world ) const;
+    UGBFExperienceImplementation * Resolve( UObject * owner ) const;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;

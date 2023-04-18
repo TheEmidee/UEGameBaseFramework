@@ -6,11 +6,13 @@
 
 #include "GBFLog.h"
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
-#include "GameFramework/GameModeBase.h"
 
+#include <Engine/Engine.h>
 #include <Engine/World.h>
 #include <GameFeatureAction.h>
+#include <GameFramework/GameModeBase.h>
 #include <Kismet/GameplayStatics.h>
+#include <Net/UnrealNetwork.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
 
@@ -24,28 +26,6 @@ EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( TArray< FTex
         .Result();
 }
 #endif
-
-void FGBFExperienceDefinitionActions::DumpToLog() const
-{
-    UE_LOG( LogGBF_Experience, Log, TEXT( "*** Experience definition details *** " ) );
-    UE_LOG( LogGBF_Experience, Log, TEXT( "GameFeaturesToEnable : " ) );
-    for ( const auto & game_feature : GameFeaturesToEnable )
-    {
-        UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *game_feature );
-    }
-
-    const auto append_objects = [ & ]( const auto & objects ) {
-        for ( const auto * object : objects )
-        {
-            UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *GetNameSafe( object ) );
-        }
-    };
-
-    UE_LOG( LogGBF_Experience, Log, TEXT( "ActionSets : " ) );
-    append_objects( ActionSets );
-    UE_LOG( LogGBF_Experience, Log, TEXT( "Actions: " ) );
-    append_objects( Actions );
-}
 
 bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) const
 {
@@ -67,20 +47,60 @@ FGBFExperienceConditionalActions::FGBFExperienceConditionalActions() :
 {
 }
 
+void UGBFExperienceImplementation::DumpToLog() const
+{
+    UE_LOG( LogGBF_Experience, Log, TEXT( "*** Experience definition details *** " ) );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "GameFeaturesToEnable : " ) );
+    for ( const auto & game_feature : GameFeaturesToEnable )
+    {
+        UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *game_feature );
+    }
+
+    const auto append_objects = [ & ]( const auto & objects ) {
+        for ( const auto * object : objects )
+        {
+            UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *GetNameSafe( object ) );
+        }
+    };
+
+    UE_LOG( LogGBF_Experience, Log, TEXT( "ActionSets : " ) );
+    append_objects( ActionSets );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "Actions: " ) );
+    append_objects( Actions );
+}
+
+bool UGBFExperienceImplementation::IsSupportedForNetworking() const
+{
+    return true;
+}
+
+void UGBFExperienceImplementation::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
+{
+    Super::GetLifetimeReplicatedProps( OutLifetimeProps );
+
+    DOREPLIFETIME( ThisClass, GameFeaturesToEnable );
+    DOREPLIFETIME( ThisClass, Actions );
+    DOREPLIFETIME( ThisClass, ActionSets );
+    DOREPLIFETIME( ThisClass, DefaultPawnData );
+}
+
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
 }
 
-const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * world ) const
+UGBFExperienceImplementation * UGBFExperienceDefinition::Resolve( UObject * owner ) const
 {
-    if ( ConditionalActions.IsEmpty() )
-    {
-        return this;
-    }
+    auto * implementation = NewObject< UGBFExperienceImplementation >( owner );
 
-    auto * new_experience = NewObject< UGBFExperienceDefinition >();
-    new_experience->DefaultActions = DefaultActions;
+    const auto append_to_array = []( auto & array, const auto & other_array ) {
+        array.Append( other_array );
+    };
+
+    implementation->DefaultPawnData = DefaultPawnData;
+    append_to_array( implementation->Actions, DefaultActions.Actions );
+    append_to_array( implementation->ActionSets, DefaultActions.ActionSets );
+    append_to_array( implementation->GameFeaturesToEnable, DefaultActions.GameFeaturesToEnable );
 
     for ( const auto & conditional_action : ConditionalActions )
     {
@@ -89,15 +109,17 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
             continue;
         }
 
+        auto * world = GEngine->GetWorldFromContextObject( owner, EGetWorldErrorMode::LogAndReturnNull );
+
         if ( conditional_action.Condition->CanApplyActions( world ) )
         {
             switch ( conditional_action.Type )
             {
                 case EGBFExperienceConditionalActionType::Append:
                 {
-                    new_experience->DefaultActions.ActionSets.Append( conditional_action.Actions.ActionSets );
-                    new_experience->DefaultActions.Actions.Append( conditional_action.Actions.Actions );
-                    new_experience->DefaultActions.GameFeaturesToEnable.Append( conditional_action.Actions.GameFeaturesToEnable );
+                    append_to_array( implementation->ActionSets, conditional_action.Actions.ActionSets );
+                    append_to_array( implementation->Actions, conditional_action.Actions.Actions );
+                    append_to_array( implementation->GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
                 }
                 break;
                 case EGBFExperienceConditionalActionType::Remove:
@@ -109,9 +131,9 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
                         }
                     };
 
-                    remove_from_array( new_experience->DefaultActions.ActionSets, conditional_action.Actions.ActionSets );
-                    remove_from_array( new_experience->DefaultActions.Actions, conditional_action.Actions.Actions );
-                    remove_from_array( new_experience->DefaultActions.GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
+                    remove_from_array( implementation->ActionSets, conditional_action.Actions.ActionSets );
+                    remove_from_array( implementation->Actions, conditional_action.Actions.Actions );
+                    remove_from_array( implementation->GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
                 }
                 break;
                 default:
@@ -122,7 +144,7 @@ const UGBFExperienceDefinition * UGBFExperienceDefinition::Resolve( UWorld * wor
         }
     }
 
-    return new_experience;
+    return implementation;
 }
 
 #if WITH_EDITOR

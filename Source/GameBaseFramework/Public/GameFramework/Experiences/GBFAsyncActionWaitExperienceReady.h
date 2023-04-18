@@ -5,7 +5,7 @@
 
 #include "GBFAsyncActionWaitExperienceReady.generated.h"
 
-class UGBFExperienceDefinition;
+class UGBFExperienceImplementation;
 class AGameStateBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FOnExperienceReadyDelegate );
@@ -30,7 +30,7 @@ protected:
 private:
     void Step1_HandleGameStateSet( AGameStateBase * game_state );
     void Step2_ListenToExperienceLoading( AGameStateBase * game_state );
-    void Step3_HandleExperienceLoaded( const UGBFExperienceDefinition * current_experience );
+    void Step3_HandleExperienceLoaded( const UGBFExperienceImplementation * current_experience );
     void Step4_BroadcastReady();
 
     TWeakObjectPtr< UWorld > WorldPtr;

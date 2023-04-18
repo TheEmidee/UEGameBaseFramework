@@ -72,7 +72,7 @@ void UGBFAsyncActionWaitExperienceReady::Step2_ListenToExperienceLoading( AGameS
     }
 }
 
-void UGBFAsyncActionWaitExperienceReady::Step3_HandleExperienceLoaded( const UGBFExperienceDefinition * /*current_experience*/ )
+void UGBFAsyncActionWaitExperienceReady::Step3_HandleExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
 {
     Step4_BroadcastReady();
 }

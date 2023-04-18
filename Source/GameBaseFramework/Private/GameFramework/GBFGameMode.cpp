@@ -441,7 +441,7 @@ void AGBFGameMode::OnExperienceDefined( FPrimaryAssetId experience_id, const FSt
 #endif
 }
 
-void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
+void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
 {
     // Spawn any players that are already attached
     //@TODO: Here we're handling only *player* controllers, but in GetDefaultPawnClassForController_Implementation we skipped all controllers
