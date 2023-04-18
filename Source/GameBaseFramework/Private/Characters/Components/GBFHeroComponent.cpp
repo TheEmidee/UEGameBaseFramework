@@ -4,13 +4,20 @@
 #include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
+#include "Components/GASExtAbilitySystemComponent.h"
+#include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
+#include "Input/GBFInputComponent.h"
+#include "Input/GBFMappableConfigPair.h"
 
 #include <AbilitySystemBlueprintLibrary.h>
 #include <Components/GameFrameworkComponentManager.h>
+#include <EnhancedInputComponent.h>
+#include <EnhancedInputSubsystemInterface.h>
+#include <EnhancedInputSubsystems.h>
 #include <GameFramework/Controller.h>
 #include <Logging/MessageLog.h>
 #include <Misc/UObjectToken.h>
@@ -150,6 +157,37 @@ void UGBFHeroComponent::OnActorInitStateChanged( const FActorInitStateChangedPar
     }
 }
 
+void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_config )
+{
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+    check( input_component != nullptr );
+
+    const auto * pc = GetController< APlayerController >();
+    check( pc != nullptr );
+
+    const auto * lp = pc->GetLocalPlayer();
+    check( lp != nullptr );
+
+    const auto * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    check( subsystem != nullptr );
+
+    if ( UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) != nullptr )
+    {
+        TArray< uint32 > bind_handles;
+        input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+    }
+}
+
+void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * input_config )
+{
+}
+
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
 {
     return actor ? actor->FindComponentByClass< UGBFHeroComponent >() : nullptr;
@@ -200,6 +238,98 @@ void UGBFHeroComponent::BindToRequiredOnActorInitStateChanged()
 }
 
 void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_component )
+{
+    check( player_input_component != nullptr );
+
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    const auto * pc = GetController< APlayerController >();
+    check( pc != nullptr );
+
+    const auto * lp = Cast< UGBFLocalPlayer >( pc->GetLocalPlayer() );
+    check( lp != nullptr );
+
+    auto * enhanced_input_local_player_subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    check( enhanced_input_local_player_subsystem != nullptr );
+
+    enhanced_input_local_player_subsystem->ClearAllMappings();
+
+    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    {
+        if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
+        {
+            auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
+
+            for ( const auto input_config_ptr : pawn_data->InputConfigs )
+            {
+                if ( const auto * input_config = input_config_ptr.LoadSynchronous() )
+                {
+                    input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
+
+                    TArray< uint32 > bind_handles;
+                    input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+
+                    BindNativeActions( input_component, input_config );
+                }
+            }
+            FModifyContextOptions options = {};
+            options.bIgnoreAllPressedKeysUntilRelease = false;
+
+            for ( const auto & mappable_config : pawn_data->MappableConfigs )
+            {
+                if ( const auto * config = mappable_config.Config.LoadSynchronous() )
+                {
+                    if ( mappable_config.bShouldActivateAutomatically && mappable_config.CanBeActivated() )
+                    {
+                        enhanced_input_local_player_subsystem->AddPlayerMappableConfig( config, options );
+                    }
+                }
+            }
+        }
+    }
+
+    if ( ensure( !bReadyToBindInputs ) )
+    {
+        bReadyToBindInputs = true;
+    }
+
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( const_cast< APlayerController * >( pc ), NAME_BindInputsNow );
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( const_cast< APawn * >( pawn ), NAME_BindInputsNow );
+}
+
+void UGBFHeroComponent::Input_AbilityInputTagPressed( FGameplayTag input_tag )
+{
+    if ( const auto * pawn = GetPawn< APawn >() )
+    {
+        if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+        {
+            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            {
+                asc->AbilityInputTagPressed( input_tag );
+            }
+        }
+    }
+}
+
+void UGBFHeroComponent::Input_AbilityInputTagReleased( FGameplayTag input_tag )
+{
+    if ( const auto * pawn = GetPawn< APawn >() )
+    {
+        if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+        {
+            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            {
+                asc->AbilityInputTagReleased( input_tag );
+            }
+        }
+    }
+}
+
+void UGBFHeroComponent::BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * input_config )
 {
 }
 

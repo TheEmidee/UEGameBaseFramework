@@ -4,7 +4,7 @@
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
-#include "GameFeatures/GASExtGameFeatureAction_AddAbilities.h"
+#include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 #include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFGameState.h"
@@ -81,7 +81,7 @@ void AGBFPlayerState::SetPawnData( const UGBFPawnData * new_pawn_data )
         }
     }
 
-    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( this, UGASExtGameFeatureAction_AddAbilities::NAME_AbilityReady );
+    UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( this, UGBFGameFeatureAction_AddAbilities::NAME_AbilityReady );
 
     ForceNetUpdate();
 }
@@ -130,7 +130,7 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
     }
 }
 
-void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
+void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
 {
     if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
     {

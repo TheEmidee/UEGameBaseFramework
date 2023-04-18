@@ -1,10 +1,12 @@
 #include "GameFramework/GBFPlayerController.h"
 
+#include "Components/GASExtAbilitySystemComponent.h"
 #include "Components/GBFPlatformInputSwitcherComponent.h"
 #include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerController.h"
+#include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFSaveGame.h"
 
 #include <AbilitySystemComponent.h>
@@ -131,11 +133,10 @@ void AGBFPlayerController::SetPlayer( UPlayer * player )
 
 void AGBFPlayerController::PostProcessInput( const float DeltaTime, const bool bGamePaused )
 {
-    // :TODO: ASC Inputs
-    /*if ( auto * asc = GetAbilitySystemComponent() )
+    if ( auto * asc = GetAbilitySystemComponent() )
     {
         asc->ProcessAbilityInput( DeltaTime, bGamePaused );
-    }*/
+    }
 
     Super::PostProcessInput( DeltaTime, bGamePaused );
 }
@@ -182,9 +183,15 @@ void AGBFPlayerController::AddCheats( bool force )
 {
 #if USING_CHEAT_MANAGER
     Super::AddCheats( true );
-#else //#if USING_CHEAT_MANAGER
+#else  // #if USING_CHEAT_MANAGER
     Super::AddCheats( force );
 #endif //
+}
+
+UGASExtAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
+{
+    const auto * ps = GetPlayerState< AGBFPlayerState >();
+    return ( ps ? ps->GetGASExtAbilitySystemComponent() : nullptr );
 }
 
 void AGBFPlayerController::OnPossess( APawn * pawn )
@@ -252,7 +259,7 @@ void AGBFPlayerController::UpdateInputRelatedFlags()
     }
 
     // :TODO: It's not a good idea to always show the cursor. This breaks FPS camera because the player must always click on the game viewport to turn the camera
-    //bShowMouseCursor = !is_using_game_pad;
+    // bShowMouseCursor = !is_using_game_pad;
 }
 
 void AGBFPlayerController::BroadcastOnPlayerStateChanged()
