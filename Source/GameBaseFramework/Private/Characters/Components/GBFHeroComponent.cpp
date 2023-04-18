@@ -152,7 +152,7 @@ void UGBFHeroComponent::OnActorInitStateChanged( const FActorInitStateChangedPar
 void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_config )
 {
     const auto * pawn = GetPawn< APawn >();
-    if ( !pawn )
+    if ( pawn == nullptr )
     {
         return;
     }
@@ -167,7 +167,7 @@ void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_
     check( lp != nullptr );
 
     const auto * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
-    check( subsystem );
+    check( subsystem != nullptr );
 
     if ( UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) != nullptr )
     {

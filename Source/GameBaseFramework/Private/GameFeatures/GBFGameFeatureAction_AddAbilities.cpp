@@ -1,5 +1,14 @@
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 
+#if WITH_EDITORONLY_DATA
+#include <Engine/AssetManager.h>
+#include <GameFeaturesSubsystemSettings.h>
+#endif
+
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
+
 #include <AbilitySystemComponent.h>
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"
@@ -319,8 +328,8 @@ void UGBFGameFeatureAction_AddAbilities::RemoveActorAbilities( AActor * actor, F
 UActorComponent * UGBFGameFeatureAction_AddAbilities::FindOrAddComponentForActor( UClass * component_type, AActor * actor, const FGBFGameFeatureAbilitiesEntry & abilities_entry, FPerContextData & active_data ) const
 {
     auto * component = actor->FindComponentByClass( component_type );
+    auto make_component_request = component == nullptr;
 
-    bool make_component_request = component == nullptr;
     if ( component != nullptr )
     {
         // Check to see if this component was created from a different `UGameFrameworkComponentManager` request.

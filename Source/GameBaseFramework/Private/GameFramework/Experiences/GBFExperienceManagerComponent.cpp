@@ -5,8 +5,8 @@
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 #include "GameFramework/Experiences/GBFExperienceSubsystem.h"
-#include "GameFramework/Phases/GBFGamePhaseAbility.h"
 
+#include <Engine/ActorChannel.h>
 #include <Engine/AssetManager.h>
 #include <GameFeaturesSubsystem.h>
 #include <GameFeaturesSubsystemSettings.h>
@@ -103,12 +103,15 @@ void UGBFExperienceManagerComponent::ServerSetCurrentExperience( FPrimaryAssetId
     const auto asset_path = asset_manager.GetPrimaryAssetPath( ExperienceId );
     const TSubclassOf< UGBFExperienceDefinition > asset_class = Cast< UClass >( asset_path.TryLoad() );
 
-    check( asset_class );
+    check( asset_class != nullptr );
 
-    const auto * experience = GetDefault< UGBFExperienceDefinition >( asset_class );
+    auto * experience = GetDefault< UGBFExperienceDefinition >( asset_class )->Resolve( this );
 
     check( experience != nullptr );
     check( CurrentExperience == nullptr );
+
+    experience->DumpToLog();
+
     CurrentExperience = experience;
     StartExperienceLoad();
 }
@@ -150,7 +153,7 @@ void UGBFExperienceManagerComponent::CallOrRegister_OnExperienceLoaded_LowPriori
     }
 }
 
-const UGBFExperienceDefinition * UGBFExperienceManagerComponent::GetCurrentExperienceChecked() const
+const UGBFExperienceImplementation * UGBFExperienceManagerComponent::GetCurrentExperienceChecked() const
 {
     check( LoadState == EGBFExperienceLoadState::Loaded );
     check( CurrentExperience != nullptr );
@@ -160,6 +163,15 @@ const UGBFExperienceDefinition * UGBFExperienceManagerComponent::GetCurrentExper
 bool UGBFExperienceManagerComponent::IsExperienceLoaded() const
 {
     return ( LoadState == EGBFExperienceLoadState::Loaded ) && ( CurrentExperience != nullptr );
+}
+
+bool UGBFExperienceManagerComponent::ReplicateSubobjects( UActorChannel * channel, FOutBunch * bunch, FReplicationFlags * rep_flags )
+{
+    auto wrote_something = Super::ReplicateSubobjects( channel, bunch, rep_flags );
+
+    wrote_something |= channel->ReplicateSubobject( CurrentExperience, *bunch, *rep_flags );
+
+    return wrote_something;
 }
 
 UGBFExperienceManagerComponent * UGBFExperienceManagerComponent::GetExperienceManagerComponent( const UObject * world_context )
@@ -175,7 +187,7 @@ UGBFExperienceManagerComponent * UGBFExperienceManagerComponent::GetExperienceMa
     return nullptr;
 }
 
-const UGBFExperienceDefinition * UGBFExperienceManagerComponent::GetCurrentExperience( const UObject * world_context )
+const UGBFExperienceImplementation * UGBFExperienceManagerComponent::GetCurrentExperience( const UObject * world_context )
 {
     return GetExperienceManagerComponent( world_context )->GetCurrentExperienceChecked();
 }
@@ -284,7 +296,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();
 
-    auto collect_game_feature_plugin_urls = [ This = this ]( const UPrimaryDataAsset * context, const TArray< FString > & feature_plugin_list ) {
+    auto collect_game_feature_plugin_urls = [ This = this ]( const TArray< FString > & feature_plugin_list ) {
         for ( const FString & plugin_name : feature_plugin_list )
         {
             FString plugin_url;
@@ -294,7 +306,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
             }
             else
             {
-                ensureMsgf( false, TEXT( "OnExperienceLoadComplete failed to find plugin URL from PluginName %s for experience %s - fix data, ignoring for this run" ), *plugin_name, *context->GetPrimaryAssetId().ToString() );
+                ensureMsgf( false, TEXT( "OnExperienceLoadComplete failed to find plugin URL from PluginName %s for experience - fix data, ignoring for this run" ), *plugin_name );
             }
         }
 
@@ -309,12 +321,12 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
         // 		}
     };
 
-    collect_game_feature_plugin_urls( CurrentExperience, CurrentExperience->GameFeaturesToEnable );
+    collect_game_feature_plugin_urls( CurrentExperience->GameFeaturesToEnable );
     for ( const auto * action_set : CurrentExperience->ActionSets )
     {
         if ( action_set != nullptr )
         {
-            collect_game_feature_plugin_urls( action_set, action_set->GameFeaturesToEnable );
+            collect_game_feature_plugin_urls( action_set->GameFeaturesToEnable );
         }
     }
 

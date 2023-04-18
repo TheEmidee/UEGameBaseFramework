@@ -1,7 +1,10 @@
 #include "GameFeatures/GBFGameFeatureAction_AddMappableInputConfig.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
+
+#if WITH_EDITOR
 #include "DVEDataValidator.h"
+#endif
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/LocalPlayer.h>
@@ -51,7 +54,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureDeactivating( FG
     Super::OnGameFeatureDeactivating( context );
 
     if ( auto * active_data = ContextData.Find( context );
-         ensure( active_data ) )
+         ensure( active_data != nullptr ) )
     {
         Reset( *active_data );
     }

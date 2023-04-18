@@ -1,43 +1,166 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
+
+#include "GBFLog.h"
 #include "GameFramework/Experiences/GBFExperienceActionSet.h"
 
+#include <Engine/Engine.h>
 #include <Engine/World.h>
 #include <GameFeatureAction.h>
+#include <GameFramework/GameModeBase.h>
+#include <Kismet/GameplayStatics.h>
+#include <Net/UnrealNetwork.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
+
+#if WITH_EDITOR
+EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( TArray< FText > & validation_errors ) const
+{
+    return FDVEDataValidator( validation_errors )
+        .NoEmptyItem( VALIDATOR_GET_PROPERTY( GameFeaturesToEnable ) )
+        .NoNullItem( VALIDATOR_GET_PROPERTY( Actions ) )
+        .NoNullItem( VALIDATOR_GET_PROPERTY( ActionSets ) )
+        .Result();
+}
+#endif
+
+bool UGBFExperienceCondition::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return false;
+}
+
+bool UGBFExperienceCondition_HasCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return UGameplayStatics::HasOption( world->GetAuthGameMode()->OptionsString, Option );
+}
+
+bool UGBFExperienceCondition_DoesNotHaveCommandLineOption::CanApplyActions_Implementation( UWorld * world ) const
+{
+    return !Super::CanApplyActions_Implementation( world );
+}
+
+FGBFExperienceConditionalActions::FGBFExperienceConditionalActions() :
+    Type( EGBFExperienceConditionalActionType::Append )
+{
+}
+
+void UGBFExperienceImplementation::DumpToLog() const
+{
+    UE_LOG( LogGBF_Experience, Log, TEXT( "*** Experience definition details *** " ) );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "GameFeaturesToEnable : " ) );
+    for ( const auto & game_feature : GameFeaturesToEnable )
+    {
+        UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *game_feature );
+    }
+
+    const auto append_objects = [ & ]( const auto & objects ) {
+        for ( const auto * object : objects )
+        {
+            UE_LOG( LogGBF_Experience, Log, TEXT( "* %s" ), *GetNameSafe( object ) );
+        }
+    };
+
+    UE_LOG( LogGBF_Experience, Log, TEXT( "ActionSets : " ) );
+    append_objects( ActionSets );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "Actions: " ) );
+    append_objects( Actions );
+}
+
+bool UGBFExperienceImplementation::IsSupportedForNetworking() const
+{
+    return true;
+}
+
+void UGBFExperienceImplementation::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
+{
+    Super::GetLifetimeReplicatedProps( OutLifetimeProps );
+
+    DOREPLIFETIME( ThisClass, GameFeaturesToEnable );
+    DOREPLIFETIME( ThisClass, Actions );
+    DOREPLIFETIME( ThisClass, ActionSets );
+    DOREPLIFETIME( ThisClass, DefaultPawnData );
+}
 
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( GetPrimaryAssetType(), GetPackage()->GetFName() );
 }
 
-FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
+UGBFExperienceImplementation * UGBFExperienceDefinition::Resolve( UObject * owner ) const
 {
-    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
-    return PrimaryAssetType;
+    auto * implementation = NewObject< UGBFExperienceImplementation >( owner );
+
+    const auto append_to_array = []( auto & array, const auto & other_array ) {
+        array.Append( other_array );
+    };
+
+    implementation->DefaultPawnData = DefaultPawnData;
+    append_to_array( implementation->Actions, DefaultActions.Actions );
+    append_to_array( implementation->ActionSets, DefaultActions.ActionSets );
+    append_to_array( implementation->GameFeaturesToEnable, DefaultActions.GameFeaturesToEnable );
+
+    for ( const auto & conditional_action : ConditionalActions )
+    {
+        if ( !ensureAlways( conditional_action.Condition != nullptr ) )
+        {
+            continue;
+        }
+
+        auto * world = GEngine->GetWorldFromContextObject( owner, EGetWorldErrorMode::LogAndReturnNull );
+
+        if ( conditional_action.Condition->CanApplyActions( world ) )
+        {
+            switch ( conditional_action.Type )
+            {
+                case EGBFExperienceConditionalActionType::Append:
+                {
+                    append_to_array( implementation->ActionSets, conditional_action.Actions.ActionSets );
+                    append_to_array( implementation->Actions, conditional_action.Actions.Actions );
+                    append_to_array( implementation->GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
+                }
+                break;
+                case EGBFExperienceConditionalActionType::Remove:
+                {
+                    const auto remove_from_array = []( auto & array, const auto & other_array ) {
+                        for ( const auto & other_item : other_array )
+                        {
+                            array.Remove( other_item );
+                        }
+                    };
+
+                    remove_from_array( implementation->ActionSets, conditional_action.Actions.ActionSets );
+                    remove_from_array( implementation->Actions, conditional_action.Actions.Actions );
+                    remove_from_array( implementation->GameFeaturesToEnable, conditional_action.Actions.GameFeaturesToEnable );
+                }
+                break;
+                default:
+                {
+                    checkNoEntry();
+                };
+            }
+        }
+    }
+
+    return implementation;
 }
 
 #if WITH_EDITOR
 EDataValidationResult UGBFExperienceDefinition::IsDataValid( TArray< FText > & validation_errors )
 {
-    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
+    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), DefaultActions.IsDataValid( validation_errors ) );
 
-    auto entry_index = 0;
-    for ( auto * action : Actions )
+    for ( const auto & conditional_action : ConditionalActions )
     {
-        if ( action != nullptr )
+        if ( conditional_action.Condition == nullptr )
         {
-            const auto child_result = action->IsDataValid( validation_errors );
-            result = CombineDataValidationResults( result, child_result );
-        }
-        else
-        {
-            result = EDataValidationResult::Invalid;
-            validation_errors.Add( FText::Format( LOCTEXT( "ActionEntryIsNull", "Null entry at index {0} in Actions" ), FText::AsNumber( entry_index ) ) );
-        }
+            validation_errors.Add( FText::FromString( TEXT( "You can't have a null conditional action." ) ) );
 
-        ++entry_index;
+            result = EDataValidationResult::Invalid;
+        }
+        result = CombineDataValidationResults( result, conditional_action.Actions.IsDataValid( validation_errors ) );
     }
 
     // Make sure users didn't subclass from a BP of this (it's fine and expected to subclass once in BP, just not twice)
@@ -70,12 +193,29 @@ void UGBFExperienceDefinition::UpdateAssetBundleData()
 {
     Super::UpdateAssetBundleData();
 
-    for ( auto * action : Actions )
-    {
-        if ( action != nullptr )
+    const auto update_action_bundle_data = [ & ]( const TArray< UGameFeatureAction * > & actions ) {
+        for ( auto * action : actions )
         {
-            action->AddAdditionalAssetBundleData( AssetBundleData );
+            if ( action != nullptr )
+            {
+                action->AddAdditionalAssetBundleData( AssetBundleData );
+            }
         }
+    };
+
+    update_action_bundle_data( DefaultActions.Actions );
+
+    for ( const auto & conditional_action : ConditionalActions )
+    {
+        update_action_bundle_data( conditional_action.Actions.Actions );
     }
 }
 #endif
+
+FPrimaryAssetType UGBFExperienceDefinition::GetPrimaryAssetType()
+{
+    static const FPrimaryAssetType PrimaryAssetType( TEXT( "ExperienceDefinition" ) );
+    return PrimaryAssetType;
+}
+
+#undef LOCTEXT_NAMESPACE

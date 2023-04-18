@@ -130,7 +130,7 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
     }
 }
 
-void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceDefinition * current_experience )
+void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
 {
     if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
     {

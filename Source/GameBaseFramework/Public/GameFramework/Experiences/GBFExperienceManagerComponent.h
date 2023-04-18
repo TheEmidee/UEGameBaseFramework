@@ -21,7 +21,7 @@ enum class EGBFExperienceLoadState
     Deactivating
 };
 
-DECLARE_MULTICAST_DELEGATE_OneParam( FOnGBFExperienceLoaded, const UGBFExperienceDefinition * /*Experience*/ );
+DECLARE_MULTICAST_DELEGATE_OneParam( FOnGBFExperienceLoaded, const UGBFExperienceImplementation * /*Experience*/ );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFExperienceManagerComponent final : public UGameStateComponent
@@ -52,15 +52,17 @@ public:
 
     // This returns the current experience if it is fully loaded, asserting otherwise
     // (i.e., if you called it too soon)
-    const UGBFExperienceDefinition * GetCurrentExperienceChecked() const;
+    const UGBFExperienceImplementation * GetCurrentExperienceChecked() const;
 
     // Returns true if the experience is fully loaded
     bool IsExperienceLoaded() const;
 
+    bool ReplicateSubobjects( UActorChannel * channel, FOutBunch * bunch, FReplicationFlags * rep_flags ) override;
+
     static UGBFExperienceManagerComponent * GetExperienceManagerComponent( const UObject * world_context );
 
     UFUNCTION( BlueprintPure, meta = ( WorldContext = "world_context" ) )
-    static const UGBFExperienceDefinition * GetCurrentExperience( const UObject * world_context );
+    static const UGBFExperienceImplementation * GetCurrentExperience( const UObject * world_context );
 
 private:
     UFUNCTION()
@@ -75,7 +77,7 @@ private:
     void OnAllActionsDeactivated();
 
     UPROPERTY( ReplicatedUsing = OnRep_CurrentExperience )
-    const UGBFExperienceDefinition * CurrentExperience;
+    UGBFExperienceImplementation * CurrentExperience;
 
     EGBFExperienceLoadState LoadState = EGBFExperienceLoadState::Unloaded;
 
