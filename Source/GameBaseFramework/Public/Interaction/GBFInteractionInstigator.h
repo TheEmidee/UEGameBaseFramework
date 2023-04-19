@@ -16,7 +16,7 @@ class UGBFInteractionInstigator : public UInterface
 /**
  * Implementing this interface allows you to add an arbitrator to the interaction process.  For example,
  * some games present the user with a menu to pick which interaction they want to perform.  This will allow you
- * to take the multiple matches (Assuming your ULyraGameplayAbility_Interact subclass generates more than one option).
+ * to take the multiple matches (Assuming your UGBFGameplayAbility_Interact subclass generates more than one option).
  */
 class IGBFInteractionInstigator
 {
