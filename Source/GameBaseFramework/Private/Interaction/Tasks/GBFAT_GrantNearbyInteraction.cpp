@@ -13,13 +13,17 @@
 UGBFAT_GrantNearbyInteraction::UGBFAT_GrantNearbyInteraction( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
 {
+    InteractionScanRange = 100.0f;
+    InteractionScanRate = 0.1f;
+    TraceChannel = ECC_Visibility;
 }
 
-UGBFAT_GrantNearbyInteraction * UGBFAT_GrantNearbyInteraction::GrantAbilitiesForNearbyInteractors( UGameplayAbility * owning_ability, const float interaction_scan_range, const float interaction_scan_rate )
+UGBFAT_GrantNearbyInteraction * UGBFAT_GrantNearbyInteraction::GrantAbilitiesForNearbyInteractors( UGameplayAbility * owning_ability, const float interaction_scan_range, const float interaction_scan_rate, const ECollisionChannel trace_channel )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_GrantNearbyInteraction >( owning_ability );
     my_obj->InteractionScanRange = interaction_scan_range;
     my_obj->InteractionScanRate = interaction_scan_rate;
+    my_obj->TraceChannel = trace_channel;
     return my_obj;
 }
 
@@ -52,7 +56,7 @@ void UGBFAT_GrantNearbyInteraction::QueryInteractables()
 
         TArray< FOverlapResult > overlap_results;
         // :TODO: TRACE CHANNEL!
-        // world->OverlapMultiByChannel( OUT overlap_results, actor_owner->GetActorLocation(), FQuat::Identity, Lyra_TraceChannel_Interaction, FCollisionShape::MakeSphere( InteractionScanRange ), params );
+        world->OverlapMultiByChannel( OUT overlap_results, actor_owner->GetActorLocation(), FQuat::Identity, TraceChannel, FCollisionShape::MakeSphere( InteractionScanRange ), params );
 
         if ( overlap_results.Num() > 0 )
         {

@@ -14,6 +14,10 @@ UGBFGameplayAbility_Interact::UGBFGameplayAbility_Interact()
     ActivationPolicy = EGASExtAbilityActivationPolicy::OnSpawn;
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
+
+    InteractionScanRange = 500.0f;
+    InteractionScanRate = 0.1f;
+    InteractionTraceChannel = ECollisionChannel::ECC_Visibility;
 }
 
 void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data )
@@ -23,7 +27,7 @@ void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHa
     const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
     if ( ability_system && ability_system->GetOwnerRole() == ROLE_Authority )
     {
-        auto * task = UGBFAT_GrantNearbyInteraction::GrantAbilitiesForNearbyInteractors( this, InteractionScanRange, InteractionScanRate );
+        auto * task = UGBFAT_GrantNearbyInteraction::GrantAbilitiesForNearbyInteractors( this, InteractionScanRange, InteractionScanRate, InteractionTraceChannel );
         task->ReadyForActivation();
     }
 }

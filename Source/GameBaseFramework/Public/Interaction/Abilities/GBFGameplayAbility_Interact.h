@@ -34,10 +34,13 @@ protected:
     // TArray< TObjectPtr< UIndicatorDescriptor > > Indicators;
 
     UPROPERTY( EditDefaultsOnly )
-    float InteractionScanRate = 0.1f;
+    float InteractionScanRate ;
 
     UPROPERTY( EditDefaultsOnly )
-    float InteractionScanRange = 500;
+    float InteractionScanRange ;
+
+    UPROPERTY( EditDefaultsOnly )
+    TEnumAsByte< ECollisionChannel > InteractionTraceChannel;
 
     UPROPERTY( EditDefaultsOnly )
     TSoftClassPtr< UUserWidget > DefaultInteractionWidgetClass;
