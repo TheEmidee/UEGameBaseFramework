@@ -1,14 +1,14 @@
 #include "Input/GBFMappableConfigPair.h"
 
 #include "Engine/GBFAssetManager.h"
+#include "Engine/GBFPlatformInfosSubsystem.h"
 
-#include <CommonUISettings.h>
-#include <ICommonUIModule.h>
+#include <Engine/Engine.h>
 #include <Templates/Casts.h>
 
 bool FGBFMappableConfigPair::CanBeActivated() const
 {
-    const auto & platform_traits = ICommonUIModule::GetSettings().GetPlatformTraits();
+    const auto & platform_traits = GEngine->GetEngineSubsystem< UGBFPlatformInfosSubsystem >()->GetPlatformTraits();
 
     // If the current platform does NOT have all the dependent traits, then don't activate it
     if ( !DependentPlatformTraits.IsEmpty() && !platform_traits.HasAll( DependentPlatformTraits ) )
