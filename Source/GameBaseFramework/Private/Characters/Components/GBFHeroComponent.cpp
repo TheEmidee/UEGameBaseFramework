@@ -1,5 +1,7 @@
 #include "Characters/Components/GBFHeroComponent.h"
 
+#include "Camera/GBFCameraComponent.h"
+#include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Components/GASExtAbilitySystemComponent.h"
@@ -26,6 +28,7 @@ const FName UGBFHeroComponent::NAME_ActorFeatureName( "HeroComponent" );
 UGBFHeroComponent::UGBFHeroComponent()
 {
     bReadyToBindInputs = false;
+    AbilityCameraMode = nullptr;
 }
 
 FName UGBFHeroComponent::GetFeatureName() const
@@ -132,6 +135,11 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
                         player_camera_manager->AddNewCameraModifier( modifier );
                     }
                 }
+
+                if ( auto * camera_component = UGBFCameraComponent::FindCameraComponent( pawn ) )
+                {
+                    camera_component->DetermineCameraModeDelegate.BindUObject( this, &ThisClass::DetermineCameraMode );
+                }
             }
         }
     }
@@ -183,6 +191,24 @@ void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * inp
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
 {
     return actor ? actor->FindComponentByClass< UGBFHeroComponent >() : nullptr;
+}
+
+void UGBFHeroComponent::SetAbilityCameraMode( TSubclassOf< UGBFCameraMode > camera_mode, const FGameplayAbilitySpecHandle & owning_spec_handle )
+{
+    if ( camera_mode != nullptr )
+    {
+        AbilityCameraMode = camera_mode;
+        AbilityCameraModeOwningSpecHandle = owning_spec_handle;
+    }
+}
+
+void UGBFHeroComponent::ClearAbilityCameraMode( const FGameplayAbilitySpecHandle & owning_spec_handle )
+{
+    if ( AbilityCameraModeOwningSpecHandle == owning_spec_handle )
+    {
+        AbilityCameraMode = nullptr;
+        AbilityCameraModeOwningSpecHandle = FGameplayAbilitySpecHandle();
+    }
 }
 
 void UGBFHeroComponent::OnRegister()
@@ -305,4 +331,28 @@ void UGBFHeroComponent::Input_AbilityInputTagReleased( FGameplayTag input_tag )
 
 void UGBFHeroComponent::BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * input_config )
 {
+}
+
+TSubclassOf< UGBFCameraMode > UGBFHeroComponent::DetermineCameraMode() const
+{
+    if ( AbilityCameraMode != nullptr )
+    {
+        return AbilityCameraMode;
+    }
+
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return nullptr;
+    }
+
+    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    {
+        if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
+        {
+            return pawn_data->DefaultCameraMode;
+        }
+    }
+
+    return nullptr;
 }
