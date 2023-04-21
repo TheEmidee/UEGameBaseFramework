@@ -7,6 +7,7 @@
 
 #include "GBFHeroComponent.generated.h"
 
+struct FGBFMappableConfigPair;
 class UGBFInputComponent;
 class UGBFInputConfig;
 class UGBFCameraMode;
@@ -60,6 +61,17 @@ private:
 
     // True when player input bindings have been applyed, will never be true for non-players
     bool bReadyToBindInputs;
+
+    /**
+     * Input Configs that should be added to this player when initializing the input. These configs
+     * will NOT be registered with the settings because they are added at runtime. If you want the config
+     * pair to be in the settings, then add it via the GameFeatureAction_AddInputConfig
+     *
+     * NOTE: You should only add to this if you do not have a game feature plugin accessible to you.
+     * If you do, then use the GameFeatureAction_AddInputConfig instead.
+     */
+    UPROPERTY( EditDefaultsOnly )
+    TArray< FGBFMappableConfigPair > DefaultInputConfigs;
 
     /** Camera mode set by an ability. */
     UPROPERTY()

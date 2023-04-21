@@ -42,10 +42,7 @@ public:
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
-    TArray< TSoftObjectPtr< UGBFInputConfig > > InputConfigs;
-
-    UPROPERTY( EditDefaultsOnly, Category = "Input" )
-    TArray< FGBFMappableConfigPair > MappableConfigs;
+    TObjectPtr< UGBFInputConfig > InputConfig;
 
     //// Default camera mode used by player controlled pawns.
     // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
