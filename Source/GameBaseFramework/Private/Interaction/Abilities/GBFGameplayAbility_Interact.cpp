@@ -4,7 +4,7 @@
 #include "Interaction/GBFInteractableTarget.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
-#include "Interaction/Tasks/GBFAT_GrantNearbyInteraction.h"
+#include "Interaction/Tasks/GBFAT_WaitForInteractableTargets.h"
 #include "NativeGameplayTags.h"
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Ability_Interaction_Activate, "Ability.Interaction.Activate" );
@@ -24,17 +24,12 @@ void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHa
 {
     Super::ActivateAbility( handle, actor_info, activation_info, trigger_event_data );
 
-    const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
-    if ( ability_system && ability_system->GetOwnerRole() == ROLE_Authority )
-    {
-        auto * task = UGBFAT_GrantNearbyInteraction::GrantAbilitiesForNearbyInteractors( this, InteractionScanRange, InteractionScanRate, InteractionTraceChannel );
-        task->ReadyForActivation();
-    }
+    LookForInteractables();
 }
 
 void UGBFGameplayAbility_Interact::UpdateInteractions( const TArray< FGBFInteractionOption > & interactive_options )
 {
-    // :TODO: Implement indicator system
+    // :TODO: Implement indicator system and allow to display widget in different ways
     // if ( ALyraPlayerController * PC = GetLyraPlayerControllerFromActorInfo() )
     // {
     //     if ( ULyraIndicatorManagerComponent * IndicatorManager = ULyraIndicatorManagerComponent::GetComponent( PC ) )

@@ -4,6 +4,7 @@
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+class UGBFAT_WaitForInteractableTargets;
 /**
  * UGBFGameplayAbility_Interact
  *
@@ -26,6 +27,9 @@ public:
     void TriggerInteraction();
 
 protected:
+    UFUNCTION( BlueprintImplementableEvent )
+    void LookForInteractables();
+
     UPROPERTY( BlueprintReadWrite )
     TArray< FGBFInteractionOption > CurrentOptions;
 
@@ -34,10 +38,10 @@ protected:
     // TArray< TObjectPtr< UIndicatorDescriptor > > Indicators;
 
     UPROPERTY( EditDefaultsOnly )
-    float InteractionScanRate ;
+    float InteractionScanRate;
 
     UPROPERTY( EditDefaultsOnly )
-    float InteractionScanRange ;
+    float InteractionScanRange;
 
     UPROPERTY( EditDefaultsOnly )
     TEnumAsByte< ECollisionChannel > InteractionTraceChannel;
