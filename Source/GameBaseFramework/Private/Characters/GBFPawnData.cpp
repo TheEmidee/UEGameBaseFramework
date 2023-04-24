@@ -19,7 +19,7 @@ EDataValidationResult UGBFPawnData::IsDataValid( TArray< FText > & validation_er
     return FDVEDataValidator( validation_errors )
         .NotNull( VALIDATOR_GET_PROPERTY( PawnClass ) )
         .NotNull( VALIDATOR_GET_PROPERTY( TagRelationshipMapping ) )
-        .NoNullItem( VALIDATOR_GET_PROPERTY( InputConfigs ) )
+        .NotNull( VALIDATOR_GET_PROPERTY( InputConfig ) )
         .Result();
 }
 #endif

@@ -262,32 +262,26 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
     {
         if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
         {
-            auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
-
-            for ( const auto input_config_ptr : pawn_data->InputConfigs )
+            if ( const auto * input_config = pawn_data->InputConfig.Get() )
             {
-                if ( const auto * input_config = input_config_ptr.LoadSynchronous() )
+                FModifyContextOptions options = {};
+                options.bIgnoreAllPressedKeysUntilRelease = false;
+
+                for ( const auto & pair : DefaultInputConfigs )
                 {
-                    input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
-
-                    TArray< uint32 > bind_handles;
-                    input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
-
-                    BindNativeActions( input_component, input_config );
-                }
-            }
-            FModifyContextOptions options = {};
-            options.bIgnoreAllPressedKeysUntilRelease = false;
-
-            for ( const auto & mappable_config : pawn_data->MappableConfigs )
-            {
-                if ( const auto * config = mappable_config.Config.LoadSynchronous() )
-                {
-                    if ( mappable_config.bShouldActivateAutomatically && mappable_config.CanBeActivated() )
+                    if ( pair.bShouldActivateAutomatically && pair.CanBeActivated() )
                     {
-                        enhanced_input_local_player_subsystem->AddPlayerMappableConfig( config, options );
+                        enhanced_input_local_player_subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
                     }
                 }
+
+                auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
+                input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
+
+                TArray< uint32 > bind_handles;
+                input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+
+                BindNativeActions( input_component, input_config );
             }
         }
     }
