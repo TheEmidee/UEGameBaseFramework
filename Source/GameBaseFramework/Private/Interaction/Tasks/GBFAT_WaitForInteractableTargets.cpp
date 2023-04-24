@@ -105,6 +105,11 @@ void UGBFAT_WaitForInteractableTargets::UpdateInteractableOptions( const FGBFInt
 
     for ( const auto & interactive_target : interactable_targets )
     {
+        if ( !ensureAlways( interactive_target.GetInterface() != nullptr ) )
+        {
+            continue;
+        }
+
         TArray< FGBFInteractionOption > temp_options;
         FGBFInteractionOptionBuilder interaction_builder( interactive_target, temp_options );
         interactive_target->GatherInteractionOptions( interact_query, interaction_builder );
@@ -128,7 +133,6 @@ void UGBFAT_WaitForInteractableTargets::UpdateInteractableOptions( const FGBFInt
                 if ( interaction_ability_spec != nullptr )
                 {
                     // update the option
-                    option.TargetAbilitySystem = AbilitySystemComponent.Get();
                     option.TargetInteractionAbilityHandle = interaction_ability_spec->Handle;
                 }
             }
@@ -136,11 +140,14 @@ void UGBFAT_WaitForInteractableTargets::UpdateInteractableOptions( const FGBFInt
             if ( interaction_ability_spec != nullptr )
             {
                 // Filter any options that we can't activate right now for whatever reason.
-                if ( interaction_ability_spec->Ability->CanActivateAbility( interaction_ability_spec->Handle, AbilitySystemComponent->AbilityActorInfo.Get() ) )
+                if ( !interaction_ability_spec->Ability->CanActivateAbility( interaction_ability_spec->Handle, AbilitySystemComponent->AbilityActorInfo.Get() ) )
                 {
-                    new_options.Add( option );
+                    continue;
                 }
             }
+
+            option.TargetAbilitySystem = AbilitySystemComponent.Get();
+            new_options.Add( option );
         }
     }
 

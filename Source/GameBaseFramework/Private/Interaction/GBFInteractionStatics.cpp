@@ -53,13 +53,13 @@ void UGBFInteractionStatics::AppendInteractableTargetsFromOverlapResults( const 
     for ( const auto & overlap : overlap_results )
     {
         TScriptInterface< IGBFInteractableTarget > interactable_actor( overlap.GetActor() );
-        if ( interactable_actor != nullptr )
+        if ( interactable_actor.GetInterface() != nullptr )
         {
             out_interactable_targets.AddUnique( interactable_actor );
         }
 
         const TScriptInterface< IGBFInteractableTarget > interactable_component( overlap.GetComponent() );
-        if ( interactable_component != nullptr )
+        if ( interactable_component.GetInterface() != nullptr )
         {
             out_interactable_targets.AddUnique( interactable_component );
         }
@@ -69,13 +69,13 @@ void UGBFInteractionStatics::AppendInteractableTargetsFromOverlapResults( const 
 void UGBFInteractionStatics::AppendInteractableTargetsFromHitResult( const FHitResult & hit_result, TArray< TScriptInterface< IGBFInteractableTarget > > & out_interactable_targets )
 {
     const TScriptInterface< IGBFInteractableTarget > interactable_actor( hit_result.GetActor() );
-    if ( interactable_actor != nullptr )
+    if ( interactable_actor.GetInterface() != nullptr )
     {
         out_interactable_targets.AddUnique( interactable_actor );
     }
 
     const TScriptInterface< IGBFInteractableTarget > interactable_component( hit_result.GetComponent() );
-    if ( interactable_component != nullptr )
+    if ( interactable_component.GetInterface() != nullptr )
     {
         out_interactable_targets.AddUnique( interactable_component );
     }
