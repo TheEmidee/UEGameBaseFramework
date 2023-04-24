@@ -75,7 +75,13 @@ void UGBFGameplayAbility_Interact::TriggerInteraction()
     const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
     if ( ability_system != nullptr )
     {
-        const auto & interaction_option = CurrentOptions[ 0 ];
+        auto & interaction_option = CurrentOptions[ 0 ];
+
+        if ( !interaction_option.TargetInteractionAbilityHandle.IsValid() )
+        {
+            FGameplayAbilitySpec spec( interaction_option.InteractionAbilityToGrant, 1, INDEX_NONE, this );
+            interaction_option.TargetInteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
+        }
 
         auto * instigator = GetAvatarActorFromActorInfo();
         auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
