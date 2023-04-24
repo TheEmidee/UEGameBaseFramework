@@ -16,7 +16,15 @@ class GAMEBASEFRAMEWORK_API UGBFAT_WaitForInteractableTargets_SingleLineTrace : 
 
     /** Wait until we trace new set of interactables.  This task automatically loops. */
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = true ) )
-    static UGBFAT_WaitForInteractableTargets_SingleLineTrace * WaitForInteractableTargets_SingleLineTrace( UGameplayAbility * owning_ability, FGBFInteractionQuery interaction_query, FCollisionProfileName trace_profile, FGameplayAbilityTargetingLocationInfo start_location, float interaction_scan_range = 100, float interaction_scan_rate = 0.100, bool show_debug = false );
+    static UGBFAT_WaitForInteractableTargets_SingleLineTrace * WaitForInteractableTargets_SingleLineTrace(
+        UGameplayAbility * owning_ability,
+        FGBFInteractionQuery interaction_query,
+        FCollisionProfileName trace_profile,
+        FGameplayAbilityTargetingLocationInfo start_location,
+        float interaction_scan_range = 100,
+        float interaction_scan_rate = 0.100,
+        bool aim_with_player_controller = true,
+        bool show_debug = false );
 
 private:
     void OnDestroy( bool ability_ended ) override;
@@ -27,6 +35,9 @@ private:
 
     UPROPERTY()
     FGameplayAbilityTargetingLocationInfo StartLocation;
+
+    UPROPERTY()
+    uint8 bAimWithPlayerController : 1;
 
     float InteractionScanRange = 100;
     float InteractionScanRate = 0.100;

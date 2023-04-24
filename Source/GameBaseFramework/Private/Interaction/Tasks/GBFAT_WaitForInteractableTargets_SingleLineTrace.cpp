@@ -12,7 +12,15 @@ UGBFAT_WaitForInteractableTargets_SingleLineTrace::UGBFAT_WaitForInteractableTar
 {
 }
 
-UGBFAT_WaitForInteractableTargets_SingleLineTrace * UGBFAT_WaitForInteractableTargets_SingleLineTrace::WaitForInteractableTargets_SingleLineTrace( UGameplayAbility * owning_ability, const FGBFInteractionQuery interaction_query, const FCollisionProfileName trace_profile, const FGameplayAbilityTargetingLocationInfo start_location, const float interaction_scan_range, const float interaction_scan_rate, const bool show_debug )
+UGBFAT_WaitForInteractableTargets_SingleLineTrace * UGBFAT_WaitForInteractableTargets_SingleLineTrace::WaitForInteractableTargets_SingleLineTrace(
+    UGameplayAbility * owning_ability,
+    const FGBFInteractionQuery interaction_query,
+    const FCollisionProfileName trace_profile,
+    const FGameplayAbilityTargetingLocationInfo start_location,
+    const float interaction_scan_range,
+    const float interaction_scan_rate,
+    bool aim_with_player_controller /*= true*/,
+    const bool show_debug /*= false*/ )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitForInteractableTargets_SingleLineTrace >( owning_ability );
     my_obj->InteractionScanRange = interaction_scan_range;
@@ -20,6 +28,7 @@ UGBFAT_WaitForInteractableTargets_SingleLineTrace * UGBFAT_WaitForInteractableTa
     my_obj->StartLocation = start_location;
     my_obj->InteractionQuery = interaction_query;
     my_obj->TraceProfile = trace_profile;
+    my_obj->bAimWithPlayerController = aim_with_player_controller;
     my_obj->bShowDebug = show_debug;
 
     return my_obj;
@@ -61,7 +70,15 @@ void UGBFAT_WaitForInteractableTargets_SingleLineTrace::PerformTrace()
 
     auto trace_start = StartLocation.GetTargetingTransform().GetLocation();
     FVector trace_end;
-    AimWithPlayerController( avatar_actor, params, trace_start, InteractionScanRange, OUT trace_end );
+    if ( bAimWithPlayerController )
+    {
+        AimWithPlayerController( avatar_actor, params, trace_start, InteractionScanRange, trace_end );
+    }
+    else
+    {
+        const auto forward_vector = avatar_actor->GetActorForwardVector();
+        trace_end = trace_start + forward_vector * InteractionScanRange;
+    }
 
     FHitResult out_hit_result;
     LineTrace( out_hit_result, world, trace_start, trace_end, TraceProfile.Name, params );
