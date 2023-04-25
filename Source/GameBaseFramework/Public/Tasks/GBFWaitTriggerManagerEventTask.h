@@ -63,7 +63,7 @@ protected:
     void TryBroadcastEvent() override;
 
     UFUNCTION()
-    void OnTriggerActivated( AActor * activator );
+    void OnTriggerActivated( UGBFTriggerManagerComponent * component, AActor * activator );
 
     UPROPERTY( BlueprintAssignable )
     FGBFOnWaitTriggerManagerTriggeredDelegate OnTriggerTriggeredDelegate;

@@ -135,7 +135,7 @@ enum class EGBFTriggerManagerDeactivationType : uint8
     WhenTriggeredAndNoActorsAreInTrigger
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnTriggerActivatedDelegate, AActor *, Activator );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnTriggerActivatedDelegate, UGBFTriggerManagerComponent *, TriggerManagerComponent, AActor *, Activator );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnActorInsideTriggerCountChangedDelegate, int, ActorCount );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnActorOverlapStatusChangedDelegate, AActor *, Actor, bool, IsInsideTrigger );
 
