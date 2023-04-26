@@ -66,7 +66,7 @@ protected:
 
 private:
     UFUNCTION()
-    void OnTriggerActivated( AActor * activator );
+    void OnTriggerActivated( UGBFTriggerManagerComponent * component, AActor * activator );
 };
 
 UCLASS()

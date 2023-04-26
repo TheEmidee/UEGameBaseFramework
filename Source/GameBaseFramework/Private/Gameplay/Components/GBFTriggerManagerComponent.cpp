@@ -286,7 +286,7 @@ void UGBFTriggerManagerComponent::TryExecuteDelegate( AActor * activator )
     if ( can_broadcast_trigger )
     {
         bTriggered = true;
-        OnTriggerActivatedDelegate.Broadcast( activator );
+        OnTriggerActivatedDelegate.Broadcast( this, activator );
 
         if ( DeactivationType == EGBFTriggerManagerDeactivationType::WhenTriggered )
         {
