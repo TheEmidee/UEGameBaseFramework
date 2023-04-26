@@ -47,15 +47,25 @@ enum class EGBFCameraModeBlendFunction : uint8
  *
  *	View data produced by the camera mode that is used to blend camera modes.
  */
-struct FGBFCameraModeView
+USTRUCT( BlueprintType )
+struct GAMEBASEFRAMEWORK_API FGBFCameraModeView
 {
+    GENERATED_BODY()
+
     FGBFCameraModeView();
 
     void Blend( const FGBFCameraModeView & other, float other_weight );
 
+    UPROPERTY( BlueprintReadWrite )
     FVector Location;
+
+    UPROPERTY( BlueprintReadWrite )
     FRotator Rotation;
+
+    UPROPERTY( BlueprintReadWrite )
     FRotator ControlRotation;
+
+    UPROPERTY( BlueprintReadWrite )
     float FieldOfView;
 };
 
