@@ -67,6 +67,9 @@ struct GAMEBASEFRAMEWORK_API FGBFCameraModeView
 
     UPROPERTY( BlueprintReadWrite )
     float FieldOfView;
+
+    UPROPERTY( BlueprintReadWrite )
+    float PerspectiveNearClipPlane;
 };
 
 /**

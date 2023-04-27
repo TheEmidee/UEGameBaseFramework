@@ -88,6 +88,7 @@ void UGBFCameraComponent::GetCameraView( const float delta_time, FMinimalViewInf
     desired_view.Location = camera_mode_view.Location;
     desired_view.Rotation = camera_mode_view.Rotation;
     desired_view.FOV = camera_mode_view.FieldOfView;
+    desired_view.PerspectiveNearClipPlane = camera_mode_view.PerspectiveNearClipPlane;
     desired_view.OrthoWidth = OrthoWidth;
     desired_view.OrthoNearClipPlane = OrthoNearClipPlane;
     desired_view.OrthoFarClipPlane = OrthoFarClipPlane;
