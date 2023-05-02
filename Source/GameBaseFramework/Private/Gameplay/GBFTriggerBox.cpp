@@ -76,6 +76,6 @@ void AGBFTriggerBox::Multicast_DeactivateTrigger_Implementation()
     TriggerManagerComponent->Deactivate();
 }
 
-void AGBFTriggerBox::OnTriggerBoxActivated_Implementation( AActor * /*activator*/ )
+void AGBFTriggerBox::OnTriggerBoxActivated_Implementation( UGBFTriggerManagerComponent * /*component*/, AActor * /*activator*/  )
 {
 }

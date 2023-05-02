@@ -27,7 +27,7 @@ public:
 
 protected:
     UFUNCTION( BlueprintNativeEvent )
-    void OnTriggerBoxActivated( AActor * activator );
+    void OnTriggerBoxActivated( UGBFTriggerManagerComponent * component, AActor * activator );
 
 private:
     UPROPERTY( BlueprintReadOnly, VisibleAnywhere, meta = ( AllowPrivateAccess = "true" ) )

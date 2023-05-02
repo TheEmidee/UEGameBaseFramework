@@ -68,7 +68,7 @@ void UGBFAT_WaitTriggerManagerTriggered::UnbindFromTriggerManagerEvents()
     TriggerManagerComponent->OnTriggerBoxActivated().RemoveDynamic( this, &ThisClass::OnTriggerActivated );
 }
 
-void UGBFAT_WaitTriggerManagerTriggered::OnTriggerActivated( AActor * activator )
+void UGBFAT_WaitTriggerManagerTriggered::OnTriggerActivated( UGBFTriggerManagerComponent * /*component*/, AActor * activator )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {

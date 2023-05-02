@@ -66,7 +66,7 @@ void UGBFWaitTriggerManagerTriggeredTask::TryBroadcastEvent()
     }
 }
 
-void UGBFWaitTriggerManagerTriggeredTask::OnTriggerActivated( AActor * activator )
+void UGBFWaitTriggerManagerTriggeredTask::OnTriggerActivated( UGBFTriggerManagerComponent * /*component*/, AActor * activator )
 {
     OnTriggerTriggeredDelegate.Broadcast( activator );
     CheckShouldEndTask();
