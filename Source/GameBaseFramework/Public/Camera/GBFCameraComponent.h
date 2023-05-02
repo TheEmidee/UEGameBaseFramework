@@ -28,6 +28,8 @@ public:
     // Returns the target actor that the camera is looking at.
     virtual AActor * GetTargetActor() const;
 
+    void SetPerspectiveNearClipPlane( float perspective_near_clip_plane );
+
     // Returns the camera component if one exists on the specified actor.
     UFUNCTION( BlueprintPure, Category = "GBF|Camera" )
     static UGBFCameraComponent * FindCameraComponent( const AActor * actor );
@@ -55,9 +57,18 @@ protected:
 
     // Offset applied to the field of view.  The offset is only for one frame, it gets cleared once it is applied.
     float FieldOfViewOffset;
+
+private:
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = CameraSettings, meta = ( AllowPrivateAccess = true ) )
+    float PerspectiveNearClipPlane;
 };
 
 FORCEINLINE AActor * UGBFCameraComponent::GetTargetActor() const
 {
     return GetOwner();
+}
+
+FORCEINLINE void UGBFCameraComponent::SetPerspectiveNearClipPlane( float perspective_near_clip_plane )
+{
+    PerspectiveNearClipPlane = perspective_near_clip_plane;
 }

@@ -346,6 +346,11 @@ bool UGBFCameraModeStack::EvaluateStack( const float delta_time, FGBFCameraModeV
         return false;
     }
 
+    if ( CameraModeStack.Num() <= 0 )
+    {
+        return false;
+    }
+
     UpdateStack( delta_time );
     BlendStack( out_camera_mode_view );
 
