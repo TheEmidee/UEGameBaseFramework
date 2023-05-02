@@ -28,7 +28,6 @@ public:
     // Returns the target actor that the camera is looking at.
     virtual AActor * GetTargetActor() const;
 
-    UFUNCTION( BlueprintCallable, Category = Camera )
     void SetPerspectiveNearClipPlane( float perspective_near_clip_plane );
 
     // Returns the camera component if one exists on the specified actor.
