@@ -2,9 +2,11 @@
 
 #include "Interaction/GBFInteractableTarget.h"
 #include "Interaction/GBFInteractionOption.h"
+#include "Interaction/GBFInteractionQuery.h"
 #include "Interaction/GBFInteractionStatics.h"
 
 #include <AbilitySystemComponent.h>
+#include <GameFramework/Controller.h>
 #include <NativeGameplayTags.h>
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Ability_Interaction_Activate, "Ability.Interaction.Activate" );
@@ -27,8 +29,13 @@ void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHa
     LookForInteractables();
 }
 
-void UGBFGameplayAbility_Interact::UpdateInteractions( const TArray< FGBFInteractionOption > & interactive_options )
+void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTargetDataHandle & target_data_handle )
 {
+    TArray< TScriptInterface< IGBFInteractableTarget > > interactable_targets;
+    UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( target_data_handle, interactable_targets );
+
+    UpdateInteractableOptions( interactable_targets );
+
     // :TODO: Implement indicator system and allow to display widget in different ways
     // if ( ALyraPlayerController * PC = GetLyraPlayerControllerFromActorInfo() )
     // {
@@ -61,8 +68,6 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const TArray< FGBFInterac
     //         // :TODO: This should probably be a noisy warning.  Why are we updating interactions on a PC that can never do anything with them?
     //     }
     // }
-
-    CurrentOptions = interactive_options;
 }
 
 void UGBFGameplayAbility_Interact::TriggerInteraction()
@@ -113,5 +118,91 @@ void UGBFGameplayAbility_Interact::TriggerInteraction()
             TAG_Ability_Interaction_Activate,
             &payload,
             *interaction_option.TargetAbilitySystem );
+    }
+}
+
+void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets )
+{
+    TArray< FGBFInteractionOption > new_options;
+
+    for ( const auto & interactive_target : interactable_targets )
+    {
+        if ( !ensureAlways( interactive_target.GetInterface() != nullptr ) )
+        {
+            continue;
+        }
+
+        TArray< FGBFInteractionOption > temp_options;
+        FGBFInteractionOptionBuilder interaction_builder( interactive_target, temp_options );
+
+        FGBFInteractionQuery interact_query;
+        interact_query.RequestingAvatar = GetAvatarActorFromActorInfo();
+        interact_query.RequestingController = Cast< AController >( GetOwningActorFromActorInfo() );
+
+        interactive_target->GatherInteractionOptions( interact_query, interaction_builder );
+
+        for ( auto & option : temp_options )
+        {
+            const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
+            auto * asc = GetAbilitySystemComponentFromActorInfo_Checked();
+
+            // if there is a handle an a target ability system, we're triggering the ability on the target.
+            if ( option.TargetAbilitySystem != nullptr && option.TargetInteractionAbilityHandle.IsValid() )
+            {
+                // Find the spec
+                interaction_ability_spec = option.TargetAbilitySystem->FindAbilitySpecFromHandle( option.TargetInteractionAbilityHandle );
+            }
+            // If there's an interaction ability then we're activating it on ourselves.
+            else if ( option.InteractionAbilityToGrant != nullptr )
+            {
+                // Find the spec
+                interaction_ability_spec = asc->FindAbilitySpecFromClass( option.InteractionAbilityToGrant );
+
+                if ( interaction_ability_spec != nullptr )
+                {
+                    // update the option
+                    option.TargetInteractionAbilityHandle = interaction_ability_spec->Handle;
+                }
+            }
+
+            if ( interaction_ability_spec != nullptr )
+            {
+                // Filter any options that we can't activate right now for whatever reason.
+                if ( !interaction_ability_spec->Ability->CanActivateAbility( interaction_ability_spec->Handle, asc->AbilityActorInfo.Get() ) )
+                {
+                    continue;
+                }
+            }
+
+            option.TargetAbilitySystem = asc;
+            new_options.Add( option );
+        }
+    }
+
+    bool options_changed = false;
+    if ( new_options.Num() == CurrentOptions.Num() )
+    {
+        new_options.Sort();
+
+        for ( auto option_index = 0; option_index < new_options.Num(); option_index++ )
+        {
+            const auto & new_option = new_options[ option_index ];
+            const auto & current_option = CurrentOptions[ option_index ];
+
+            if ( new_option != current_option )
+            {
+                options_changed = true;
+                break;
+            }
+        }
+    }
+    else
+    {
+        options_changed = true;
+    }
+
+    if ( options_changed )
+    {
+        CurrentOptions = new_options;
     }
 }

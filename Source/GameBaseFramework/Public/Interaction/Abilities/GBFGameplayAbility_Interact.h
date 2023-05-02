@@ -4,7 +4,10 @@
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+struct FGBFInteractionOption;
+class IGBFInteractableTarget;
 class UGBFAT_WaitForInteractableTargets;
+
 /**
  * UGBFGameplayAbility_Interact
  *
@@ -21,7 +24,7 @@ public:
     void ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data ) override;
 
     UFUNCTION( BlueprintCallable )
-    void UpdateInteractions( const TArray< FGBFInteractionOption > & interactive_options );
+    void UpdateInteractions( const FGameplayAbilityTargetDataHandle & target_data_handle );
 
     UFUNCTION( BlueprintCallable )
     void TriggerInteraction();
@@ -48,4 +51,7 @@ protected:
 
     UPROPERTY( EditDefaultsOnly )
     TSoftClassPtr< UUserWidget > DefaultInteractionWidgetClass;
+
+private:
+    void UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets );
 };

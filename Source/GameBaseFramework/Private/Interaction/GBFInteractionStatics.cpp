@@ -35,7 +35,7 @@ void UGBFInteractionStatics::GetInteractableTargetsFromActor( AActor * actor, TA
 {
     // If the actor is directly interactable, return that.
     const TScriptInterface< IGBFInteractableTarget > interactable_actor( actor );
-    if ( interactable_actor != nullptr )
+    if ( interactable_actor.GetInterface() != nullptr )
     {
         out_interactable_targets.Add( interactable_actor );
     }
@@ -78,5 +78,26 @@ void UGBFInteractionStatics::AppendInteractableTargetsFromHitResult( const FHitR
     if ( interactable_component.GetInterface() != nullptr )
     {
         out_interactable_targets.AddUnique( interactable_component );
+    }
+}
+
+void UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( const FGameplayAbilityTargetDataHandle & target_data_handle, TArray< TScriptInterface< IGBFInteractableTarget > > & out_interactable_targets )
+{
+    for ( auto & target_data : target_data_handle.Data )
+    {
+        if ( !target_data.IsValid() )
+        {
+            continue;
+        }
+
+        for ( auto & actor : target_data->GetActors() )
+        {
+            if ( !actor.IsValid() )
+            {
+                continue;
+            }
+
+            GetInteractableTargetsFromActor( actor.Get(), out_interactable_targets );
+        }
     }
 }
