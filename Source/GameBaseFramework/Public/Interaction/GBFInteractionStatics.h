@@ -8,7 +8,7 @@ class IGBFInteractableTarget;
 struct FOverlapResult;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFInteractionStatics : public UBlueprintFunctionLibrary
+class GAMEBASEFRAMEWORK_API UGBFInteractionStatics final : public UBlueprintFunctionLibrary
 {
     GENERATED_BODY()
 

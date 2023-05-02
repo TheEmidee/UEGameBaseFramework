@@ -1,11 +1,11 @@
 #include "Interaction/Abilities/GBFGameplayAbility_Interact.h"
 
-#include "AbilitySystemComponent.h"
 #include "Interaction/GBFInteractableTarget.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
-#include "Interaction/Tasks/GBFAT_WaitForInteractableTargets.h"
-#include "NativeGameplayTags.h"
+
+#include <AbilitySystemComponent.h>
+#include <NativeGameplayTags.h>
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Ability_Interaction_Activate, "Ability.Interaction.Activate" );
 
