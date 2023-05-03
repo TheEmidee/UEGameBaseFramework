@@ -1,12 +1,5 @@
 #include "Interaction/Tasks/GBFAT_WaitForInteractableTargets_SingleLineTrace.h"
 
-#include "Interaction/GBFInteractableTarget.h"
-#include "Interaction/GBFInteractionStatics.h"
-
-#include <DrawDebugHelpers.h>
-#include <Engine/World.h>
-#include <TimerManager.h>
-
 UGBFAT_WaitForInteractableTargets_SingleLineTrace::UGBFAT_WaitForInteractableTargets_SingleLineTrace()
 {
     bEndTaskWhenTargetDataSent = false;

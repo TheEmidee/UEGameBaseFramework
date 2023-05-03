@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Interaction/GBFInteractionQuery.h"
-#include "Interaction/Tasks/GBFAT_WaitForInteractableTargets.h"
 #include "Tasks/GASExtAT_WaitTargetDataHitScan.h"
 
 #include "GBFAT_WaitForInteractableTargets_SingleLineTrace.generated.h"
