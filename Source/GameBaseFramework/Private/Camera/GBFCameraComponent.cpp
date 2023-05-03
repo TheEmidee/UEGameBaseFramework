@@ -10,6 +10,7 @@ UGBFCameraComponent::UGBFCameraComponent( const FObjectInitializer & object_init
 {
     CameraModeStack = nullptr;
     FieldOfViewOffset = 0.0f;
+    PerspectiveNearClipPlane = 0.0f;
 }
 
 UGBFCameraComponent * UGBFCameraComponent::FindCameraComponent( const AActor * actor )
@@ -60,12 +61,32 @@ void UGBFCameraComponent::OnRegister()
 
 void UGBFCameraComponent::GetCameraView( const float delta_time, FMinimalViewInfo & desired_view )
 {
+    desired_view.PerspectiveNearClipPlane = PerspectiveNearClipPlane;
+    desired_view.OrthoWidth = OrthoWidth;
+    desired_view.OrthoNearClipPlane = OrthoNearClipPlane;
+    desired_view.OrthoFarClipPlane = OrthoFarClipPlane;
+    desired_view.AspectRatio = AspectRatio;
+    desired_view.bConstrainAspectRatio = bConstrainAspectRatio;
+    desired_view.bUseFieldOfViewForLOD = bUseFieldOfViewForLOD;
+    desired_view.ProjectionMode = ProjectionMode;
+
+    // See if the CameraActor wants to override the PostProcess settings used.
+    desired_view.PostProcessBlendWeight = PostProcessBlendWeight;
+    if ( PostProcessBlendWeight > 0.0f )
+    {
+        desired_view.PostProcessSettings = PostProcessSettings;
+    }
+
     check( CameraModeStack != nullptr );
 
     UpdateCameraModes();
 
     FGBFCameraModeView camera_mode_view;
-    CameraModeStack->EvaluateStack( delta_time, camera_mode_view );
+    if ( !CameraModeStack->EvaluateStack( delta_time, camera_mode_view ) )
+    {
+        Super::GetCameraView( delta_time, desired_view );
+        return;
+    }
 
     // Keep player controller in sync with the latest view.
     if ( const auto * target_pawn = Cast< APawn >( GetTargetActor() ) )
@@ -88,20 +109,7 @@ void UGBFCameraComponent::GetCameraView( const float delta_time, FMinimalViewInf
     desired_view.Location = camera_mode_view.Location;
     desired_view.Rotation = camera_mode_view.Rotation;
     desired_view.FOV = camera_mode_view.FieldOfView;
-    desired_view.OrthoWidth = OrthoWidth;
-    desired_view.OrthoNearClipPlane = OrthoNearClipPlane;
-    desired_view.OrthoFarClipPlane = OrthoFarClipPlane;
-    desired_view.AspectRatio = AspectRatio;
-    desired_view.bConstrainAspectRatio = bConstrainAspectRatio;
-    desired_view.bUseFieldOfViewForLOD = bUseFieldOfViewForLOD;
-    desired_view.ProjectionMode = ProjectionMode;
-
-    // See if the CameraActor wants to override the PostProcess settings used.
-    desired_view.PostProcessBlendWeight = PostProcessBlendWeight;
-    if ( PostProcessBlendWeight > 0.0f )
-    {
-        desired_view.PostProcessSettings = PostProcessSettings;
-    }
+    desired_view.PerspectiveNearClipPlane = camera_mode_view.PerspectiveNearClipPlane;
 
     if ( IsXRHeadTrackedCamera() )
     {
