@@ -15,5 +15,10 @@ class GAMEBASEFRAMEWORK_API UGBFEngineNetworkSubsystem final : public UEngineSub
     GENERATED_BODY()
 
 public:
-    void HandleNetworkFailure( UGBFGameInstance * game_instance, UNetDriver * net_driver, ENetworkFailure::Type failure_type, const FString & error_string );
+    void Initialize( FSubsystemCollectionBase & collection ) override;
+    void Deinitialize() override;
+
+private:
+    void HandleNetworkFailure( UWorld * world, UNetDriver * net_driver, ENetworkFailure::Type failure_type, const FString & error_string );
+    FDelegateHandle HandleNetworkFailureDelegateHandle;
 };

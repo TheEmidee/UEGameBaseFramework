@@ -1,10 +1,27 @@
 #include "Engine/SubSystems/GBFEngineNetworkSubsystem.h"
 
 #include "Engine/GBFGameInstance.h"
+#include "Messaging/CommonGameDialog.h"
+#include "Messaging/CommonMessagingSubsystem.h"
 
+#include <Engine/Engine.h>
 #include <Engine/NetDriver.h>
 
-void UGBFEngineNetworkSubsystem::HandleNetworkFailure( UGBFGameInstance * game_instance, UNetDriver * net_driver, const ENetworkFailure::Type failure_type, const FString & error_string )
+void UGBFEngineNetworkSubsystem::Initialize( FSubsystemCollectionBase & collection )
+{
+    Super::Initialize( collection );
+
+    HandleNetworkFailureDelegateHandle = GEngine->OnNetworkFailure().AddUObject( this, &ThisClass::HandleNetworkFailure );
+}
+
+void UGBFEngineNetworkSubsystem::Deinitialize()
+{
+    Super::Deinitialize();
+
+    GEngine->OnNetworkFailure().Remove( HandleNetworkFailureDelegateHandle );
+}
+
+void UGBFEngineNetworkSubsystem::HandleNetworkFailure( UWorld * world, UNetDriver * net_driver, const ENetworkFailure::Type failure_type, const FString & error_string )
 {
     if ( net_driver == nullptr )
     {
@@ -15,11 +32,6 @@ void UGBFEngineNetworkSubsystem::HandleNetworkFailure( UGBFGameInstance * game_i
     const auto net_driver_name = net_driver->NetDriverName;
 
     if ( !( net_driver_name == NAME_GameNetDriver || net_driver_name == NAME_PendingNetDriver ) )
-    {
-        return;
-    }
-
-    if ( game_instance == nullptr )
     {
         return;
     }
@@ -61,6 +73,12 @@ void UGBFEngineNetworkSubsystem::HandleNetworkFailure( UGBFGameInstance * game_i
 
     if ( !error_text.IsEmpty() )
     {
-        game_instance->ShowMessageThenGotoMainMenuState( NSLOCTEXT( "GBF", "LocKey_NetworkFailure", "Network Failure" ), error_text );
+        if ( auto * first_player = world->GetGameInstance->GetFirstGamePlayer() )
+        {
+            if ( auto * messaging = first_player->GetSubsystem< UCommonMessagingSubsystem >() )
+            {
+                messaging->ShowError( UCommonGameDialogDescriptor::CreateConfirmationOk( NSLOCTEXT( "GBF", "LocKey_NetworkFailure", "Network Failure" ), error_text ) );
+            }
+        }
     }
 }
