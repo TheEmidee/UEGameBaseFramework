@@ -41,7 +41,8 @@ namespace UnrealBuildTool.Rules
                     "GameFeatures",
                     "EnhancedInput",
                     "CommonUI",
-                    "CommonInput"
+                    "CommonInput",
+                    "ControlFlows"
                 }
             );
         }

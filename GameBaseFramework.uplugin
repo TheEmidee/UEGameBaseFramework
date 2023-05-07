@@ -70,6 +70,10 @@
     {
       "Name": "CommonUI",
       "Enabled": true
+    },
+    {
+      "Name": "ControlFlows",
+      "Enabled": true
     }
   ]
 }
