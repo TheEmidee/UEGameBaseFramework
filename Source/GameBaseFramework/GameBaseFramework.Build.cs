@@ -42,7 +42,10 @@ namespace UnrealBuildTool.Rules
                     "EnhancedInput",
                     "CommonUI",
                     "CommonInput",
-                    "ControlFlows"
+                    "ControlFlows",
+                    "CommonGame",
+                    "CommonUser",
+                    "CommonLoadingScreen"
                 }
             );
         }

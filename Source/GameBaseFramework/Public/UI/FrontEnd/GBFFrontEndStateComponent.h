@@ -7,6 +7,8 @@
 
 #include "GBFFrontEndStateComponent.generated.h"
 
+class UCommonActivatableWidget;
+
 /*
  * This class comes from Lyra
  */
@@ -20,7 +22,7 @@ public:
     void BeginPlay() override;
 
 private:
-    void OnExperienceLoaded( const ULyraExperienceDefinition * experience );
+    void OnExperienceLoaded( const UGBFExperienceImplementation * experience );
 
     UFUNCTION()
     void OnUserInitialized( const UCommonUserInfo * user_info, bool success, FText error, ECommonUserPrivilege requested_privilege, ECommonUserOnlineContext online_context );
