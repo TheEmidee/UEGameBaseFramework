@@ -16,14 +16,11 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerControlle
 public:
     AGBFPlayerController();
 
-    void BeginPlay() override;
-    void EndPlay( const EEndPlayReason::Type reason ) override;
-
     UFUNCTION( BlueprintPure )
     UGBFLocalPlayer * GetGBFLocalPlayer() const;
 
-    void EnableInput( class APlayerController * player_controller ) override;
-    void DisableInput( class APlayerController * player_controller ) override;
+    void EnableInput( APlayerController * player_controller ) override;
+    void DisableInput( APlayerController * player_controller ) override;
 
     UFUNCTION( BlueprintCallable )
     void ForceEnableInput( class APlayerController * player_controller );

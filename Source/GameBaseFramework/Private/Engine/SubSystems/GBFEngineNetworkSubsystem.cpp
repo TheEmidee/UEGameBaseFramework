@@ -73,7 +73,7 @@ void UGBFEngineNetworkSubsystem::HandleNetworkFailure( UWorld * world, UNetDrive
 
     if ( !error_text.IsEmpty() )
     {
-        if ( auto * first_player = world->GetGameInstance->GetFirstGamePlayer() )
+        if ( const auto * first_player = world->GetGameInstance()->GetFirstGamePlayer() )
         {
             if ( auto * messaging = first_player->GetSubsystem< UCommonMessagingSubsystem >() )
             {

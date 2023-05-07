@@ -1,7 +1,6 @@
 #include "GameBaseFramework/Public/Online/GBFOnlineSessionClient.h"
 
 #include "Engine/GBFGameInstance.h"
-#include "Engine/SubSystems/GBFGameInstanceSessionSubsystem.h"
 
 void UGBFOnlineSessionClient::OnSessionUserInviteAccepted( const bool was_success, const int32 controller_id, const TSharedPtr< const FUniqueNetId > user_id, const FOnlineSessionSearchResult & invite_result )
 {
@@ -26,14 +25,14 @@ void UGBFOnlineSessionClient::OnSessionUserInviteAccepted( const bool was_succes
 
     if ( const auto * game_instance = Cast< UGBFGameInstance >( GetGameInstance() ) )
     {
-        FGBFSessionPendingInvite pending_invite;
+        //FGBFSessionPendingInvite pending_invite;
 
-        // Set the pending invite, and then go to the initial screen, which is where we will process it
-        pending_invite.ControllerId = controller_id;
-        pending_invite.UserId = user_id;
-        pending_invite.InviteResult = invite_result;
-        pending_invite.PrivilegesCheckedAndAllowed = false;
+        //// Set the pending invite, and then go to the initial screen, which is where we will process it
+        //pending_invite.ControllerId = controller_id;
+        //pending_invite.UserId = user_id;
+        //pending_invite.InviteResult = invite_result;
+        //pending_invite.PrivilegesCheckedAndAllowed = false;
 
-        game_instance->GetSubsystem< UGBFGameInstanceSessionSubsystem >()->SetPendingInvite( pending_invite );
+        //game_instance->GetSubsystem< UGBFGameInstanceSessionSubsystem >()->SetPendingInvite( pending_invite );
     }
 }

@@ -4,9 +4,6 @@
 
 #include <Components/GameFrameworkComponentManager.h>
 
-UGBFGameInstance::UGBFGameInstance()
-{}
-
 void UGBFGameInstance::Init()
 {
     Super::Init();

@@ -8,6 +8,7 @@
 #include "GBFFrontEndStateComponent.generated.h"
 
 class UCommonActivatableWidget;
+class UGBFExperienceImplementation;
 
 /*
  * This class comes from Lyra

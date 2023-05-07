@@ -9,43 +9,8 @@
 #include "GameBaseFrameworkSettings.generated.h"
 
 class UUserWidget;
-
-class UGBFPlatformInputTextures;
 class UGBFGameState;
-class UGBFConfirmationWidget;
-
-USTRUCT()
-struct FGBFUIOptions
-{
-    GENERATED_BODY()
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    TSubclassOf< UUserWidget > BackgroundBlurWidgetClass;
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    TSubclassOf< UGBFConfirmationWidget > ConfirmationWidgetClass;
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    uint8 IsConfirmationButtonOnTheLeft : 1;
-};
-
-USTRUCT()
-struct FGBFInputSwitchOptions
-{
-    GENERATED_BODY()
-
-    /* Minimum time to wait before switching to another input type */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MinTimeToSwitch = 0.0f;
-
-    /* Minimum value for an axis to trigger an input switch */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float AxisMinThreshold = 0.0f;
-
-    /* Minimum delta when the mouse moves to trigger an input switch */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MouseMoveMinDelta = 0.0f;
-};
+class UCommonGameDialog;
 
 UCLASS( config = Game, defaultconfig, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
 class UGameBaseFrameworkSettings : public UDeveloperSettings
@@ -63,11 +28,7 @@ public:
 
     GAMEBASEFRAMEWORK_API void OnPlayInEditorStarted() const;
 
-    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
-
-    GAMEBASEFRAMEWORK_API static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
-
-    EDataValidationResult IsDataValid( TArray<FText> & validation_errors ) override;
+    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
 #endif
 
     UPROPERTY( config, EditAnywhere, Category = Input )

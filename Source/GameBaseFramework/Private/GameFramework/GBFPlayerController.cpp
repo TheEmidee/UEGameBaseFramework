@@ -2,11 +2,8 @@
 
 #include "CommonInputSubsystem.h"
 #include "Components/GASExtAbilitySystemComponent.h"
-#include "Components/GBFPlatformInputSwitcherComponent.h"
-#include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
-#include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFSaveGame.h"
 
@@ -18,18 +15,6 @@
 
 AGBFPlayerController::AGBFPlayerController()
 {
-}
-
-void AGBFPlayerController::BeginPlay()
-{
-    Super::BeginPlay();
-
-    UpdateInputRelatedFlags();
-}
-
-void AGBFPlayerController::EndPlay( const EEndPlayReason::Type reason )
-{
-    Super::EndPlay( reason );
 }
 
 UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const
