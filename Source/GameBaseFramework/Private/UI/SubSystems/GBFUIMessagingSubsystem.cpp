@@ -27,14 +27,14 @@ void UGBFUIMessagingSubsystem::ShowConfirmation( UCommonGameDialogDescriptor * d
     }
 }
 
-void UGBFUIMessagingSubsystem::ShowError( UCommonGameDialogDescriptor * DialogDescriptor, FCommonMessagingResultDelegate ResultCallback )
+void UGBFUIMessagingSubsystem::ShowError( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback )
 {
     if ( const auto * local_player = GetLocalPlayer< UGBFLocalPlayer >() )
     {
         if ( auto * root_layout = local_player->GetRootUILayout() )
         {
-            root_layout->PushWidgetToLayerStack< UCommonGameDialog >( GBFTag_UI_Layer_Modal, ErrorDialogClassPtr, [ DialogDescriptor, ResultCallback ]( UCommonGameDialog & dialog ) {
-                dialog.SetupDialog( DialogDescriptor, ResultCallback );
+            root_layout->PushWidgetToLayerStack< UCommonGameDialog >( GBFTag_UI_Layer_Modal, ErrorDialogClassPtr, [ dialog_descriptor, result_callback ]( UCommonGameDialog & dialog ) {
+                dialog.SetupDialog( dialog_descriptor, result_callback );
             } );
         }
     }

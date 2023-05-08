@@ -15,7 +15,7 @@ public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
 
     void ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback = FCommonMessagingResultDelegate() ) override;
-    void ShowError( UCommonGameDialogDescriptor * DialogDescriptor, FCommonMessagingResultDelegate ResultCallback = FCommonMessagingResultDelegate() ) override;
+    void ShowError( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback = FCommonMessagingResultDelegate() ) override;
 
 private:
     UPROPERTY()
