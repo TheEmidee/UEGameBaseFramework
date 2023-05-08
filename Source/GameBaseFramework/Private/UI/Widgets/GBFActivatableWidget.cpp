@@ -1,4 +1,4 @@
-#include "UI/GBFActivatableWidget.h"
+#include "UI/Widgets/GBFActivatableWidget.h"
 
 #if WITH_EDITOR
 #include <Editor/WidgetCompilerLog.h>
