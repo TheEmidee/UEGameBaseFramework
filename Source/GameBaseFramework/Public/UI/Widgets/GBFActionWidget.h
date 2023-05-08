@@ -9,7 +9,7 @@
 class UInputAction;
 class UEnhancedInputLocalPlayerSubsystem;
 
-UCLASS()
+UCLASS( BlueprintType, Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFActionWidget : public UCommonActionWidget
 {
     GENERATED_BODY()
