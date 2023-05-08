@@ -22,6 +22,10 @@ class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent final : public UGameState
 public:
     void BeginPlay() override;
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+#endif
+
 private:
     void OnExperienceLoaded( const UGBFExperienceImplementation * experience );
 

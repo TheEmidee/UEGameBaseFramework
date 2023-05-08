@@ -11,6 +11,10 @@
 #include <Kismet/GameplayStatics.h>
 #include <NativeGameplayTags.h>
 
+#if WITH_EDITOR
+#include "DVEDataValidator.h"
+#endif
+
 namespace FrontendTags
 {
     UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_PLATFORM_TRAIT_SINGLEONLINEUSER, "Platform.Trait.SingleOnlineUser" );
@@ -30,13 +34,23 @@ void UGBFFrontEndStateComponent::BeginPlay()
     experience_component->CallOrRegister_OnExperienceLoaded_HighPriority( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
 }
 
+#if WITH_EDITOR
+EDataValidationResult UGBFFrontEndStateComponent::IsDataValid( TArray< FText > & validation_errors )
+{
+    return FDVEDataValidator( validation_errors )
+        .NotNull( VALIDATOR_GET_PROPERTY( PressStartScreenClass ) )
+        .NotNull( VALIDATOR_GET_PROPERTY( MainScreenClass ) )
+        .Result();
+}
+#endif
+
 void UGBFFrontEndStateComponent::OnExperienceLoaded( const UGBFExperienceImplementation * /*experience*/ )
 {
     auto & flow = FControlFlowStatics::Create( this, TEXT( "FrontendFlow" ) )
-                  .QueueStep( TEXT( "Wait For User Initialization" ), this, &ThisClass::FlowStep_WaitForUserInitialization )
-                  .QueueStep( TEXT( "Try Show Press Start Screen" ), this, &ThisClass::FlowStep_TryShowPressStartScreen )
-                  .QueueStep( TEXT( "Try Join Requested Session" ), this, &ThisClass::FlowStep_TryJoinRequestedSession )
-                  .QueueStep( TEXT( "Try Show Main Screen" ), this, &ThisClass::FlowStep_TryShowMainScreen );
+                      .QueueStep( TEXT( "Wait For User Initialization" ), this, &ThisClass::FlowStep_WaitForUserInitialization )
+                      .QueueStep( TEXT( "Try Show Press Start Screen" ), this, &ThisClass::FlowStep_TryShowPressStartScreen )
+                      .QueueStep( TEXT( "Try Join Requested Session" ), this, &ThisClass::FlowStep_TryJoinRequestedSession )
+                      .QueueStep( TEXT( "Try Show Main Screen" ), this, &ThisClass::FlowStep_TryShowMainScreen );
 
     flow.ExecuteFlow();
 
