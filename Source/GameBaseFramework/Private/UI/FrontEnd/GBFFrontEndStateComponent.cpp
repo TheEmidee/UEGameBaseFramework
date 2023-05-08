@@ -206,16 +206,19 @@ void UGBFFrontEndStateComponent::FlowStep_TryShowMainScreen( FControlFlowNodeRef
             switch ( state )
             {
                 case EAsyncWidgetLayerState::AfterPush:
+                {
                     bShouldShowLoadingScreen = false;
                     sub_flow->ContinueFlow();
-                    return;
+                }
+                break;
                 case EAsyncWidgetLayerState::Canceled:
+                {
                     bShouldShowLoadingScreen = false;
                     sub_flow->ContinueFlow();
-                    return;
+                }
+                break;
                 default:
                 {
-                    checkNoEntry();
                 }
             }
         } );
