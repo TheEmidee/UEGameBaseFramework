@@ -46,7 +46,8 @@ namespace UnrealBuildTool.Rules
                     "CommonGame",
                     "CommonUser",
                     "CommonLoadingScreen",
-                    "AudioMixer"
+                    "AudioMixer",
+                    "GameSettings"
                 }
             );
         }
