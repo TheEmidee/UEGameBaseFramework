@@ -22,13 +22,11 @@ public:
     bool SpawnPlayActor( const FString & url, FString & error, UWorld * world ) override;
     void InitOnlineSession() override;
 
-    /*
-    :TODO: Settings
     UFUNCTION()
-    ULyraSettingsLocal * GetLocalSettings() const;
+    UGBFSettingsLocal * GetLocalSettings() const;
 
     UFUNCTION()
-    ULyraSettingsShared * GetSharedSettings() const;*/
+    UGBFSettingsShared * GetSharedSettings() const;
 
 protected:
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
@@ -39,8 +37,8 @@ protected:
 private:
     void OnPlayerControllerChanged( APlayerController * new_controller );
 
-    /*UPROPERTY( Transient )
-    mutable TObjectPtr< ULyraSettingsShared > SharedSettings;*/
+    UPROPERTY( Transient )
+    mutable TObjectPtr< UGBFSaveGame > SharedSettings;
 
     UPROPERTY()
     TWeakObjectPtr< APlayerController > LastBoundPC;

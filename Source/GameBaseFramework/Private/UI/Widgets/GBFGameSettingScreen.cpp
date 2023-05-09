@@ -11,11 +11,6 @@ void UGBFGameSettingScreen::NativeOnInitialized()
     CancelChangesHandle = RegisterUIActionBinding( FBindUIActionArgs( CancelChangesInputActionData, true, FSimpleDelegate::CreateUObject( this, &ThisClass::HandleCancelChangesAction ) ) );
 }
 
-UGameSettingRegistry * UGBFGameSettingScreen::CreateRegistry()
-{
-    return Super::CreateRegistry();
-}
-
 void UGBFGameSettingScreen::HandleBackActionCustom()
 {
     if ( AttemptToPopNavigation() )

@@ -13,9 +13,6 @@ class GAMEBASEFRAMEWORK_API UGBFGameSettingScreen : public UGameSettingScreen
 
 protected:
     void NativeOnInitialized() override;
-    UGameSettingRegistry * CreateRegistry() override;
-
-    // 
     void HandleBackActionCustom();
     void HandleApplyAction();
     void HandleCancelChangesAction();
