@@ -44,6 +44,11 @@
 			"Name": "CommonGame",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+    {
+			"Name": "GameSettings",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
   ],
   "Plugins": [
