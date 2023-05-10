@@ -49,7 +49,8 @@ namespace UnrealBuildTool.Rules
                     "AudioMixer",
                     "GameSettings",
                     "AudioModulation",
-                    "ApplicationCore"
+                    "ApplicationCore",
+                    "RHI"
                 }
             );
         }

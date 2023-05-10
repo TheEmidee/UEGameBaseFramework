@@ -106,6 +106,118 @@ FGBFScalabilitySnapshot::FGBFScalabilitySnapshot()
     Qualities.ShadingQuality = -1;
 }
 
+template < typename T >
+struct TMobileQualityWrapper
+{
+private:
+    T DefaultValue;
+    TAutoConsoleVariable< FString > & WatchedVar;
+    FString LastSeenCVarString;
+
+    struct FLimitPair
+    {
+        int32 Limit = 0;
+        T Value = T( 0 );
+    };
+
+    TArray< FLimitPair > Thresholds;
+
+public:
+    TMobileQualityWrapper( T InDefaultValue, TAutoConsoleVariable< FString > & InWatchedVar ) :
+        DefaultValue( InDefaultValue ),
+        WatchedVar( InWatchedVar )
+    {
+    }
+
+    T Query( int32 TestValue )
+    {
+        UpdateCache();
+
+        for ( const FLimitPair & Pair : Thresholds )
+        {
+            if ( TestValue >= Pair.Limit )
+            {
+                return Pair.Value;
+            }
+        }
+
+        return DefaultValue;
+    }
+
+    // Returns the first threshold value or INDEX_NONE if there aren't any
+    int32 GetFirstThreshold()
+    {
+        UpdateCache();
+        return ( Thresholds.Num() > 0 ) ? Thresholds[ 0 ].Limit : INDEX_NONE;
+    }
+
+    // Returns the lowest value of all the pairs or DefaultIfNoPairs if there are no pairs
+    T GetLowestValue( T DefaultIfNoPairs )
+    {
+        UpdateCache();
+
+        T Result = DefaultIfNoPairs;
+        bool bFirstValue = true;
+        for ( const FLimitPair & Pair : Thresholds )
+        {
+            if ( bFirstValue )
+            {
+                Result = Pair.Value;
+                bFirstValue = false;
+            }
+            else
+            {
+                Result = FMath::Min( Result, Pair.Value );
+            }
+        }
+
+        return Result;
+    }
+
+private:
+    void UpdateCache()
+    {
+        const FString CurrentValue = WatchedVar.GetValueOnGameThread();
+        if ( !CurrentValue.Equals( LastSeenCVarString, ESearchCase::CaseSensitive ) )
+        {
+            LastSeenCVarString = CurrentValue;
+
+            Thresholds.Reset();
+
+            // Parse the thresholds
+            int32 ScanIndex = 0;
+            while ( ScanIndex < LastSeenCVarString.Len() )
+            {
+                const int32 ColonIndex = LastSeenCVarString.Find( TEXT( ":" ), ESearchCase::CaseSensitive, ESearchDir::FromStart, ScanIndex );
+                if ( ColonIndex > 0 )
+                {
+                    const int32 CommaIndex = LastSeenCVarString.Find( TEXT( "," ), ESearchCase::CaseSensitive, ESearchDir::FromStart, ColonIndex );
+                    const int32 EndOfPairIndex = ( CommaIndex != INDEX_NONE ) ? CommaIndex : LastSeenCVarString.Len();
+
+                    FLimitPair Pair;
+                    LexFromString( Pair.Limit, *LastSeenCVarString.Mid( ScanIndex, ColonIndex - ScanIndex ) );
+                    LexFromString( Pair.Value, *LastSeenCVarString.Mid( ColonIndex + 1, EndOfPairIndex - ColonIndex - 1 ) );
+                    Thresholds.Add( Pair );
+
+                    ScanIndex = EndOfPairIndex + 1;
+                }
+                else
+                {
+
+                    UE_LOG( LogConsoleResponse, Error, TEXT( "Malformed value for '%s'='%s', expecting a ':'" ), *IConsoleManager::Get().FindConsoleObjectName( WatchedVar.AsVariable() ), *LastSeenCVarString );
+                    Thresholds.Reset();
+                    break;
+                }
+            }
+
+            // Sort the pairs
+            Thresholds.Sort( []( const FLimitPair A, const FLimitPair B ) {
+                return A.Limit < B.Limit;
+            } );
+        }
+    }
+};
+
 namespace LyraSettingsHelpers
 {
     bool HasPlatformTrait( const FGameplayTag tag )
@@ -203,6 +315,22 @@ namespace LyraSettingsHelpers
             return limit1;
         }
         return FMath::Min( limit1, limit2 );
+    }
+
+    TMobileQualityWrapper< int32 > OverallQualityLimits( -1, CVarMobileQualityLimits );
+    TMobileQualityWrapper< float > ResolutionQualityLimits( 100.0f, CVarMobileResolutionQualityLimits );
+    TMobileQualityWrapper< float > ResolutionQualityRecommendations( 75.0f, CVarMobileResolutionQualityRecommendation );
+
+    // Returns the first frame rate at which overall quality is restricted/limited by the current device profile
+    int32 GetFirstFrameRateWithQualityLimit()
+    {
+        return OverallQualityLimits.GetFirstThreshold();
+    }
+
+    // Returns the lowest quality at which there's a limit on the overall frame rate (or -1 if there is no limit)
+    int32 GetLowestQualityWithFrameRateLimit()
+    {
+        return OverallQualityLimits.GetLowestValue( -1 );
     }
 }
 
@@ -347,6 +475,29 @@ FString UGBFGameUserSettings::GetDesiredDeviceProfileQualitySuffix() const
 void UGBFGameUserSettings::SetDesiredDeviceProfileQualitySuffix( const FString & desired_suffix )
 {
     DesiredUserChosenDeviceProfileSuffix = desired_suffix;
+}
+
+int32 UGBFGameUserSettings::GetMaxSupportedOverallQualityLevel() const
+{
+    /*const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+    if ( ( PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle ) && DeviceDefaultScalabilitySettings.bHasOverrides )
+    {
+        return LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel( DeviceDefaultScalabilitySettings.Qualities );
+    }
+    else*/
+    {
+        return 3;
+    }
+}
+
+int32 UGBFGameUserSettings::GetFirstFrameRateWithQualityLimit() const
+{
+    return LyraSettingsHelpers::GetFirstFrameRateWithQualityLimit();
+}
+
+int32 UGBFGameUserSettings::GetLowestQualityWithFrameRateLimit() const
+{
+    return LyraSettingsHelpers::GetLowestQualityWithFrameRateLimit();
 }
 
 void UGBFGameUserSettings::SetHeadphoneModeEnabled( bool is_enabled )

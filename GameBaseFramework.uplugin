@@ -18,7 +18,7 @@
     {
       "Name": "GameBaseFramework",
       "Type": "Runtime",
-      "LoadingPhase": "PreDefault"
+      "LoadingPhase": "Default"
     },
     {
       "Name": "GameBaseFrameworkEditor",
@@ -98,6 +98,10 @@
     },
     {
       "Name": "ControlFlows",
+      "Enabled": true
+    },
+    {
+      "Name": "AudioModulation",
       "Enabled": true
     }
   ]

@@ -2,6 +2,7 @@
 
 #include "GameFramework/GameUserSettings.h"
 
+#include <CommonInputTypeEnum.h>
 #include <CoreMinimal.h>
 
 #include "GBFGameUserSettings.generated.h"
@@ -9,6 +10,7 @@
 class USoundControlBus;
 class USoundControlBusMix;
 struct FGBFLoadedMappableConfigPair;
+class UGBFLocalPlayer;
 
 USTRUCT()
 struct FGBFScalabilitySnapshot
@@ -69,6 +71,14 @@ public:
     FString GetDesiredDeviceProfileQualitySuffix() const;
     UFUNCTION()
     void SetDesiredDeviceProfileQualitySuffix( const FString & desired_suffix );
+
+    int32 GetMaxSupportedOverallQualityLevel() const;
+
+    // Returns the first frame rate at which overall quality is restricted/limited by the current device profile
+    int32 GetFirstFrameRateWithQualityLimit() const;
+
+    // Returns the lowest quality at which there's a limit on the overall frame rate (or -1 if there is no limit)
+    int32 GetLowestQualityWithFrameRateLimit() const;
 
 protected:
     /** Updates device profiles, FPS mode etc for the current game mode */
