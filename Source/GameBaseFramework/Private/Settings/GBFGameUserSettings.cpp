@@ -1,10 +1,13 @@
 #include "Settings/GBFGameUserSettings.h"
 
+#include "Development/GBFPlatformEmulationSettings.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "Input/GBFMappableConfigPair.h"
+#include "Settings/GBFPerformanceSettings.h"
 
 #include <CommonInputSubsystem.h>
 #include <CommonUISettings.h>
+#include <DeviceProfiles/DeviceProfile.h>
 #include <DeviceProfiles/DeviceProfileManager.h>
 #include <Engine/Engine.h>
 #include <EnhancedInputSubsystems.h>
@@ -105,49 +108,101 @@ FGBFScalabilitySnapshot::FGBFScalabilitySnapshot()
 
 namespace LyraSettingsHelpers
 {
-    bool HasPlatformTrait( FGameplayTag Tag )
+    bool HasPlatformTrait( const FGameplayTag tag )
     {
-        return ICommonUIModule::GetSettings().GetPlatformTraits().HasTag( Tag );
+        return ICommonUIModule::GetSettings().GetPlatformTraits().HasTag( tag );
     }
 
     // Returns the max level from the integer scalability settings (ignores ResolutionQuality)
-    int32 GetHighestLevelOfAnyScalabilityChannel( const Scalability::FQualityLevels & ScalabilityQuality )
+    int32 GetHighestLevelOfAnyScalabilityChannel( const Scalability::FQualityLevels & scalability_quality )
     {
         static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
 
-        int32 MaxScalability = ScalabilityQuality.ViewDistanceQuality;
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.AntiAliasingQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.ShadowQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.GlobalIlluminationQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.ReflectionQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.PostProcessQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.TextureQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.EffectsQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.FoliageQuality );
-        MaxScalability = FMath::Max( MaxScalability, ScalabilityQuality.ShadingQuality );
+        int32 max_scalability = scalability_quality.ViewDistanceQuality;
+        max_scalability = FMath::Max( max_scalability, scalability_quality.AntiAliasingQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.ShadowQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.GlobalIlluminationQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.ReflectionQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.PostProcessQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.TextureQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.EffectsQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.FoliageQuality );
+        max_scalability = FMath::Max( max_scalability, scalability_quality.ShadingQuality );
 
-        return ( MaxScalability >= 0 ) ? MaxScalability : -1;
+        return max_scalability >= 0 ? max_scalability : -1;
     }
 
-    void FillScalabilitySettingsFromDeviceProfile( FGBFScalabilitySnapshot & Mode, const FString & Suffix = FString() )
+    void FillScalabilitySettingsFromDeviceProfile( FGBFScalabilitySnapshot & mode, const FString & suffix = FString() )
     {
         static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
 
         // Default out before filling so we can correctly mark non-overridden scalability values.
         // It's technically possible to swap device profile when testing so safest to clear and refill
-        Mode = FGBFScalabilitySnapshot();
+        mode = FGBFScalabilitySnapshot();
 
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ResolutionQuality%s" ), *Suffix ), Mode.Qualities.ResolutionQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ViewDistanceQuality%s" ), *Suffix ), Mode.Qualities.ViewDistanceQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.AntiAliasingQuality%s" ), *Suffix ), Mode.Qualities.AntiAliasingQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ShadowQuality%s" ), *Suffix ), Mode.Qualities.ShadowQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.GlobalIlluminationQuality%s" ), *Suffix ), Mode.Qualities.GlobalIlluminationQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ReflectionQuality%s" ), *Suffix ), Mode.Qualities.ReflectionQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.PostProcessQuality%s" ), *Suffix ), Mode.Qualities.PostProcessQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.TextureQuality%s" ), *Suffix ), Mode.Qualities.TextureQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.EffectsQuality%s" ), *Suffix ), Mode.Qualities.EffectsQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.FoliageQuality%s" ), *Suffix ), Mode.Qualities.FoliageQuality );
-        Mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ShadingQuality%s" ), *Suffix ), Mode.Qualities.ShadingQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ResolutionQuality%s" ), *suffix ), mode.Qualities.ResolutionQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ViewDistanceQuality%s" ), *suffix ), mode.Qualities.ViewDistanceQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.AntiAliasingQuality%s" ), *suffix ), mode.Qualities.AntiAliasingQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ShadowQuality%s" ), *suffix ), mode.Qualities.ShadowQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.GlobalIlluminationQuality%s" ), *suffix ), mode.Qualities.GlobalIlluminationQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ReflectionQuality%s" ), *suffix ), mode.Qualities.ReflectionQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.PostProcessQuality%s" ), *suffix ), mode.Qualities.PostProcessQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.TextureQuality%s" ), *suffix ), mode.Qualities.TextureQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.EffectsQuality%s" ), *suffix ), mode.Qualities.EffectsQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.FoliageQuality%s" ), *suffix ), mode.Qualities.FoliageQuality );
+        mode.bHasOverrides |= UDeviceProfileManager::GetScalabilityCVar( FString::Printf( TEXT( "sg.ShadingQuality%s" ), *suffix ), mode.Qualities.ShadingQuality );
+    }
+
+    /* Modifies the input levels based on the active mode's overrides */
+    void OverrideQualityLevelsToScalabilityMode( Scalability::FQualityLevels & levels, const FGBFScalabilitySnapshot & mode )
+    {
+        static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
+
+        // Overrides any valid (non-negative) settings
+        levels.ResolutionQuality = ( mode.Qualities.ResolutionQuality >= 0.f ) ? mode.Qualities.ResolutionQuality : levels.ResolutionQuality;
+        levels.ViewDistanceQuality = ( mode.Qualities.ViewDistanceQuality >= 0 ) ? mode.Qualities.ViewDistanceQuality : levels.ViewDistanceQuality;
+        levels.AntiAliasingQuality = ( mode.Qualities.AntiAliasingQuality >= 0 ) ? mode.Qualities.AntiAliasingQuality : levels.AntiAliasingQuality;
+        levels.ShadowQuality = ( mode.Qualities.ShadowQuality >= 0 ) ? mode.Qualities.ShadowQuality : levels.ShadowQuality;
+        levels.GlobalIlluminationQuality = ( mode.Qualities.GlobalIlluminationQuality >= 0 ) ? mode.Qualities.GlobalIlluminationQuality : levels.GlobalIlluminationQuality;
+        levels.ReflectionQuality = ( mode.Qualities.ReflectionQuality >= 0 ) ? mode.Qualities.ReflectionQuality : levels.ReflectionQuality;
+        levels.PostProcessQuality = ( mode.Qualities.PostProcessQuality >= 0 ) ? mode.Qualities.PostProcessQuality : levels.PostProcessQuality;
+        levels.TextureQuality = ( mode.Qualities.TextureQuality >= 0 ) ? mode.Qualities.TextureQuality : levels.TextureQuality;
+        levels.EffectsQuality = ( mode.Qualities.EffectsQuality >= 0 ) ? mode.Qualities.EffectsQuality : levels.EffectsQuality;
+        levels.FoliageQuality = ( mode.Qualities.FoliageQuality >= 0 ) ? mode.Qualities.FoliageQuality : levels.FoliageQuality;
+        levels.ShadingQuality = ( mode.Qualities.ShadingQuality >= 0 ) ? mode.Qualities.ShadingQuality : levels.ShadingQuality;
+    }
+
+    /* Clamps the input levels based on the active device profile's default allowed levels */
+    void ClampQualityLevelsToDeviceProfile( Scalability::FQualityLevels & levels, const Scalability::FQualityLevels & clamp_levels )
+    {
+        static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
+
+        // Clamps any valid (non-negative) settings
+        levels.ResolutionQuality = ( clamp_levels.ResolutionQuality >= 0.f ) ? FMath::Min( clamp_levels.ResolutionQuality, levels.ResolutionQuality ) : levels.ResolutionQuality;
+        levels.ViewDistanceQuality = ( clamp_levels.ViewDistanceQuality >= 0 ) ? FMath::Min( clamp_levels.ViewDistanceQuality, levels.ViewDistanceQuality ) : levels.ViewDistanceQuality;
+        levels.AntiAliasingQuality = ( clamp_levels.AntiAliasingQuality >= 0 ) ? FMath::Min( clamp_levels.AntiAliasingQuality, levels.AntiAliasingQuality ) : levels.AntiAliasingQuality;
+        levels.ShadowQuality = ( clamp_levels.ShadowQuality >= 0 ) ? FMath::Min( clamp_levels.ShadowQuality, levels.ShadowQuality ) : levels.ShadowQuality;
+        levels.GlobalIlluminationQuality = ( clamp_levels.GlobalIlluminationQuality >= 0 ) ? FMath::Min( clamp_levels.GlobalIlluminationQuality, levels.GlobalIlluminationQuality ) : levels.GlobalIlluminationQuality;
+        levels.ReflectionQuality = ( clamp_levels.ReflectionQuality >= 0 ) ? FMath::Min( clamp_levels.ReflectionQuality, levels.ReflectionQuality ) : levels.ReflectionQuality;
+        levels.PostProcessQuality = ( clamp_levels.PostProcessQuality >= 0 ) ? FMath::Min( clamp_levels.PostProcessQuality, levels.PostProcessQuality ) : levels.PostProcessQuality;
+        levels.TextureQuality = ( clamp_levels.TextureQuality >= 0 ) ? FMath::Min( clamp_levels.TextureQuality, levels.TextureQuality ) : levels.TextureQuality;
+        levels.EffectsQuality = ( clamp_levels.EffectsQuality >= 0 ) ? FMath::Min( clamp_levels.EffectsQuality, levels.EffectsQuality ) : levels.EffectsQuality;
+        levels.FoliageQuality = ( clamp_levels.FoliageQuality >= 0 ) ? FMath::Min( clamp_levels.FoliageQuality, levels.FoliageQuality ) : levels.FoliageQuality;
+        levels.ShadingQuality = ( clamp_levels.ShadingQuality >= 0 ) ? FMath::Min( clamp_levels.ShadingQuality, levels.ShadingQuality ) : levels.ShadingQuality;
+    }
+
+    // Combines two limits, always taking the minimum of the two (with special handling for values of <= 0 meaning unlimited)
+    float CombineFrameRateLimits( const float limit1, const float limit2 )
+    {
+        if ( limit1 <= 0.0f )
+        {
+            return limit2;
+        }
+        if ( limit2 <= 0.0f )
+        {
+            return limit1;
+        }
+        return FMath::Min( limit1, limit2 );
     }
 }
 
@@ -171,18 +226,18 @@ void UGBFGameUserSettings::SetToDefaults()
     bUseHDRAudioMode = false;
     bSoundControlBusMixLoaded = false;
 
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-    UserChosenDeviceProfileSuffix = PlatformSettings->DefaultDeviceProfileSuffix;
+    const auto * platform_settings = UGBFPlatformSpecificRenderingSettings::Get();
+    UserChosenDeviceProfileSuffix = platform_settings->DefaultDeviceProfileSuffix;
     DesiredUserChosenDeviceProfileSuffix = UserChosenDeviceProfileSuffix;
 }
 
-void UGBFGameUserSettings::LoadSettings( bool bForceReload )
+void UGBFGameUserSettings::LoadSettings( bool force_reload )
 {
-    Super::LoadSettings( bForceReload );
+    Super::LoadSettings( force_reload );
 
     // Console platforms use rhi.SyncInterval to limit framerate
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-    if ( PlatformSettings->FramePacingMode == EGBFFramePacingMode::ConsoleStyle )
+    const auto * platform_settings = UGBFPlatformSpecificRenderingSettings::Get();
+    if ( platform_settings->FramePacingMode == EGBFFramePacingMode::ConsoleStyle )
     {
         FrameRateLimit = 0.0f;
     }
@@ -218,26 +273,9 @@ UGBFGameUserSettings * UGBFGameUserSettings::Get()
     return GEngine ? CastChecked< UGBFGameUserSettings >( GEngine->GetGameUserSettings() ) : nullptr;
 }
 
-// Combines two limits, always taking the minimum of the two (with special handling for values of <= 0 meaning unlimited)
-float CombineFrameRateLimits( float Limit1, float Limit2 )
-{
-    if ( Limit1 <= 0.0f )
-    {
-        return Limit2;
-    }
-    else if ( Limit2 <= 0.0f )
-    {
-        return Limit1;
-    }
-    else
-    {
-        return FMath::Min( Limit1, Limit2 );
-    }
-}
-
 float UGBFGameUserSettings::GetEffectiveFrameRateLimit()
 {
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
+    const auto * platform_settings = UGBFPlatformSpecificRenderingSettings::Get();
 
 #if WITH_EDITOR
     if ( GIsEditor && !CVarApplyFrameRateSettingsInPIE.GetValueOnGameThread() )
@@ -246,55 +284,17 @@ float UGBFGameUserSettings::GetEffectiveFrameRateLimit()
     }
 #endif
 
-    if ( PlatformSettings->FramePacingMode == ELyraFramePacingMode::ConsoleStyle )
+    if ( platform_settings->FramePacingMode == EGBFFramePacingMode::ConsoleStyle )
     {
         return 0.0f;
     }
 
-    float EffectiveFrameRateLimit = Super::GetEffectiveFrameRateLimit();
-
-    return EffectiveFrameRateLimit;
+    return Super::GetEffectiveFrameRateLimit();
 }
 
 int32 UGBFGameUserSettings::GetHighestLevelOfAnyScalabilityChannel() const
 {
     return LyraSettingsHelpers::GetHighestLevelOfAnyScalabilityChannel( ScalabilityQuality );
-}
-
-void UGBFGameUserSettings::OverrideQualityLevelsToScalabilityMode( const FGBFScalabilitySnapshot & InMode, Scalability::FQualityLevels & InOutLevels )
-{
-    static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
-
-    // Overrides any valid (non-negative) settings
-    InOutLevels.ResolutionQuality = ( InMode.Qualities.ResolutionQuality >= 0.f ) ? InMode.Qualities.ResolutionQuality : InOutLevels.ResolutionQuality;
-    InOutLevels.ViewDistanceQuality = ( InMode.Qualities.ViewDistanceQuality >= 0 ) ? InMode.Qualities.ViewDistanceQuality : InOutLevels.ViewDistanceQuality;
-    InOutLevels.AntiAliasingQuality = ( InMode.Qualities.AntiAliasingQuality >= 0 ) ? InMode.Qualities.AntiAliasingQuality : InOutLevels.AntiAliasingQuality;
-    InOutLevels.ShadowQuality = ( InMode.Qualities.ShadowQuality >= 0 ) ? InMode.Qualities.ShadowQuality : InOutLevels.ShadowQuality;
-    InOutLevels.GlobalIlluminationQuality = ( InMode.Qualities.GlobalIlluminationQuality >= 0 ) ? InMode.Qualities.GlobalIlluminationQuality : InOutLevels.GlobalIlluminationQuality;
-    InOutLevels.ReflectionQuality = ( InMode.Qualities.ReflectionQuality >= 0 ) ? InMode.Qualities.ReflectionQuality : InOutLevels.ReflectionQuality;
-    InOutLevels.PostProcessQuality = ( InMode.Qualities.PostProcessQuality >= 0 ) ? InMode.Qualities.PostProcessQuality : InOutLevels.PostProcessQuality;
-    InOutLevels.TextureQuality = ( InMode.Qualities.TextureQuality >= 0 ) ? InMode.Qualities.TextureQuality : InOutLevels.TextureQuality;
-    InOutLevels.EffectsQuality = ( InMode.Qualities.EffectsQuality >= 0 ) ? InMode.Qualities.EffectsQuality : InOutLevels.EffectsQuality;
-    InOutLevels.FoliageQuality = ( InMode.Qualities.FoliageQuality >= 0 ) ? InMode.Qualities.FoliageQuality : InOutLevels.FoliageQuality;
-    InOutLevels.ShadingQuality = ( InMode.Qualities.ShadingQuality >= 0 ) ? InMode.Qualities.ShadingQuality : InOutLevels.ShadingQuality;
-}
-
-void UGBFGameUserSettings::ClampQualityLevelsToDeviceProfile( const Scalability::FQualityLevels & ClampLevels, Scalability::FQualityLevels & InOutLevels )
-{
-    static_assert( sizeof( Scalability::FQualityLevels ) == 88, "This function may need to be updated to account for new members" );
-
-    // Clamps any valid (non-negative) settings
-    InOutLevels.ResolutionQuality = ( ClampLevels.ResolutionQuality >= 0.f ) ? FMath::Min( ClampLevels.ResolutionQuality, InOutLevels.ResolutionQuality ) : InOutLevels.ResolutionQuality;
-    InOutLevels.ViewDistanceQuality = ( ClampLevels.ViewDistanceQuality >= 0 ) ? FMath::Min( ClampLevels.ViewDistanceQuality, InOutLevels.ViewDistanceQuality ) : InOutLevels.ViewDistanceQuality;
-    InOutLevels.AntiAliasingQuality = ( ClampLevels.AntiAliasingQuality >= 0 ) ? FMath::Min( ClampLevels.AntiAliasingQuality, InOutLevels.AntiAliasingQuality ) : InOutLevels.AntiAliasingQuality;
-    InOutLevels.ShadowQuality = ( ClampLevels.ShadowQuality >= 0 ) ? FMath::Min( ClampLevels.ShadowQuality, InOutLevels.ShadowQuality ) : InOutLevels.ShadowQuality;
-    InOutLevels.GlobalIlluminationQuality = ( ClampLevels.GlobalIlluminationQuality >= 0 ) ? FMath::Min( ClampLevels.GlobalIlluminationQuality, InOutLevels.GlobalIlluminationQuality ) : InOutLevels.GlobalIlluminationQuality;
-    InOutLevels.ReflectionQuality = ( ClampLevels.ReflectionQuality >= 0 ) ? FMath::Min( ClampLevels.ReflectionQuality, InOutLevels.ReflectionQuality ) : InOutLevels.ReflectionQuality;
-    InOutLevels.PostProcessQuality = ( ClampLevels.PostProcessQuality >= 0 ) ? FMath::Min( ClampLevels.PostProcessQuality, InOutLevels.PostProcessQuality ) : InOutLevels.PostProcessQuality;
-    InOutLevels.TextureQuality = ( ClampLevels.TextureQuality >= 0 ) ? FMath::Min( ClampLevels.TextureQuality, InOutLevels.TextureQuality ) : InOutLevels.TextureQuality;
-    InOutLevels.EffectsQuality = ( ClampLevels.EffectsQuality >= 0 ) ? FMath::Min( ClampLevels.EffectsQuality, InOutLevels.EffectsQuality ) : InOutLevels.EffectsQuality;
-    InOutLevels.FoliageQuality = ( ClampLevels.FoliageQuality >= 0 ) ? FMath::Min( ClampLevels.FoliageQuality, InOutLevels.FoliageQuality ) : InOutLevels.FoliageQuality;
-    InOutLevels.ShadingQuality = ( ClampLevels.ShadingQuality >= 0 ) ? FMath::Min( ClampLevels.ShadingQuality, InOutLevels.ShadingQuality ) : InOutLevels.ShadingQuality;
 }
 
 void UGBFGameUserSettings::OnExperienceLoaded()
@@ -312,20 +312,28 @@ void UGBFGameUserSettings::ReapplyThingsDueToPossibleDeviceProfileChange()
     ApplyNonResolutionSettings();
 }
 
+void UGBFGameUserSettings::UpdateEffectiveFrameRateLimit()
+{
+    if ( !IsRunningDedicatedServer() )
+    {
+        SetFrameRateLimitCVar( GetEffectiveFrameRateLimit() );
+    }
+}
+
 float UGBFGameUserSettings::GetDisplayGamma() const
 {
     return DisplayGamma;
 }
 
-void UGBFGameUserSettings::SetDisplayGamma( float InGamma )
+void UGBFGameUserSettings::SetDisplayGamma( float gamma )
 {
-    DisplayGamma = InGamma;
+    DisplayGamma = gamma;
     ApplyDisplayGamma();
 }
 
-void UGBFGameUserSettings::ApplyDisplayGamma()
+void UGBFGameUserSettings::ApplyDisplayGamma() const
 {
-    if ( GEngine )
+    if ( GEngine != nullptr )
     {
         GEngine->DisplayGamma = DisplayGamma;
     }
@@ -336,24 +344,23 @@ FString UGBFGameUserSettings::GetDesiredDeviceProfileQualitySuffix() const
     return DesiredUserChosenDeviceProfileSuffix;
 }
 
-void UGBFGameUserSettings::SetDesiredDeviceProfileQualitySuffix( const FString & InDesiredSuffix )
+void UGBFGameUserSettings::SetDesiredDeviceProfileQualitySuffix( const FString & desired_suffix )
 {
-    DesiredUserChosenDeviceProfileSuffix = InDesiredSuffix;
+    DesiredUserChosenDeviceProfileSuffix = desired_suffix;
 }
 
-void UGBFGameUserSettings::SetHeadphoneModeEnabled( bool bEnabled )
+void UGBFGameUserSettings::SetHeadphoneModeEnabled( bool is_enabled )
 {
     if ( CanModifyHeadphoneModeEnabled() )
     {
-        static IConsoleVariable * BinauralSpatializationDisabledCVar = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) );
-        if ( BinauralSpatializationDisabledCVar )
+        if ( static auto * binaural_spatialization_disabled_c_var = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) ) )
         {
-            BinauralSpatializationDisabledCVar->Set( !bEnabled, ECVF_SetByGameSetting );
+            binaural_spatialization_disabled_c_var->Set( !is_enabled, ECVF_SetByGameSetting );
 
             // Only save settings if the setting actually changed
-            if ( bUseHeadphoneMode != bEnabled )
+            if ( bUseHeadphoneMode != is_enabled )
             {
-                bUseHeadphoneMode = bEnabled;
+                bUseHeadphoneMode = is_enabled;
                 SaveSettings();
             }
         }
@@ -367,12 +374,12 @@ bool UGBFGameUserSettings::IsHeadphoneModeEnabled() const
 
 bool UGBFGameUserSettings::CanModifyHeadphoneModeEnabled() const
 {
-    static IConsoleVariable * BinauralSpatializationDisabledCVar = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) );
-    const bool bHRTFOptionAvailable = BinauralSpatializationDisabledCVar && ( ( BinauralSpatializationDisabledCVar->GetFlags() & EConsoleVariableFlags::ECVF_SetByMask ) <= EConsoleVariableFlags::ECVF_SetByGameSetting );
+    static auto * binaural_spatialization_disabled_c_var = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) );
+    const auto hrtf_option_available = binaural_spatialization_disabled_c_var && ( binaural_spatialization_disabled_c_var->GetFlags() & EConsoleVariableFlags::ECVF_SetByMask ) <= EConsoleVariableFlags::ECVF_SetByGameSetting;
 
-    const bool bBinauralSettingControlledByOS = LyraSettingsHelpers::HasPlatformTrait( TAG_Platform_Trait_BinauralSettingControlledByOS );
+    const auto binaural_setting_controlled_by_os = LyraSettingsHelpers::HasPlatformTrait( TAG_Platform_Trait_BinauralSettingControlledByOS );
 
-    return bHRTFOptionAvailable && !bBinauralSettingControlledByOS;
+    return hrtf_option_available && !binaural_setting_controlled_by_os;
 }
 
 bool UGBFGameUserSettings::IsHDRAudioModeEnabled() const
@@ -380,19 +387,20 @@ bool UGBFGameUserSettings::IsHDRAudioModeEnabled() const
     return bUseHDRAudioMode;
 }
 
-void UGBFGameUserSettings::SetHDRAudioModeEnabled( bool bEnabled )
+void UGBFGameUserSettings::SetHDRAudioModeEnabled( bool is_enabled )
 {
-    bUseHDRAudioMode = bEnabled;
+    bUseHDRAudioMode = is_enabled;
 
-    if ( GEngine )
+    if ( GEngine != nullptr )
     {
-        if ( const UWorld * World = GEngine->GetCurrentPlayWorld() )
+        // :TODO: Audio
+        /*if ( const UWorld * World = GEngine->GetCurrentPlayWorld() )
         {
             if ( ULyraAudioMixEffectsSubsystem * LyraAudioMixEffectsSubsystem = World->GetSubsystem< ULyraAudioMixEffectsSubsystem >() )
             {
                 LyraAudioMixEffectsSubsystem->ApplyDynamicRangeEffectsChains( bEnabled );
             }
-        }
+        }*/
     }
 }
 
@@ -406,10 +414,10 @@ float UGBFGameUserSettings::GetOverallVolume() const
     return OverallVolume;
 }
 
-void UGBFGameUserSettings::SetOverallVolume( float InVolume )
+void UGBFGameUserSettings::SetOverallVolume( float volume )
 {
     // Cache the incoming volume value
-    OverallVolume = InVolume;
+    OverallVolume = volume;
 
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called from the UI
@@ -421,14 +429,7 @@ void UGBFGameUserSettings::SetOverallVolume( float InVolume )
     // Ensure it's been loaded before continuing
     ensureMsgf( bSoundControlBusMixLoaded, TEXT( "UserControlBusMix Settings Failed to Load." ) );
 
-    // Locate the locally cached bus and set the volume on it
-    if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Overall" ) ) )
-    {
-        if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-        {
-            SetVolumeForControlBus( ControlBusPtr, OverallVolume );
-        }
-    }
+    FindVolumeControlBusAndSetVolume( TEXT( "Overall" ), volume );
 }
 
 float UGBFGameUserSettings::GetMusicVolume() const
@@ -436,10 +437,10 @@ float UGBFGameUserSettings::GetMusicVolume() const
     return MusicVolume;
 }
 
-void UGBFGameUserSettings::SetMusicVolume( float InVolume )
+void UGBFGameUserSettings::SetMusicVolume( const float volume )
 {
     // Cache the incoming volume value
-    MusicVolume = InVolume;
+    MusicVolume = volume;
 
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called from the UI
@@ -451,14 +452,7 @@ void UGBFGameUserSettings::SetMusicVolume( float InVolume )
     // Ensure it's been loaded before continuing
     ensureMsgf( bSoundControlBusMixLoaded, TEXT( "UserControlBusMix Settings Failed to Load." ) );
 
-    // Locate the locally cached bus and set the volume on it
-    if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Music" ) ) )
-    {
-        if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-        {
-            SetVolumeForControlBus( ControlBusPtr, MusicVolume );
-        }
-    }
+    FindVolumeControlBusAndSetVolume( TEXT( "Music" ), volume );
 }
 
 float UGBFGameUserSettings::GetSoundFXVolume() const
@@ -466,10 +460,10 @@ float UGBFGameUserSettings::GetSoundFXVolume() const
     return SoundFXVolume;
 }
 
-void UGBFGameUserSettings::SetSoundFXVolume( float InVolume )
+void UGBFGameUserSettings::SetSoundFXVolume( const float volume )
 {
     // Cache the incoming volume value
-    SoundFXVolume = InVolume;
+    SoundFXVolume = volume;
 
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called from the UI
@@ -481,14 +475,7 @@ void UGBFGameUserSettings::SetSoundFXVolume( float InVolume )
     // Ensure it's been loaded before continuing
     ensureMsgf( bSoundControlBusMixLoaded, TEXT( "UserControlBusMix Settings Failed to Load." ) );
 
-    // Locate the locally cached bus and set the volume on it
-    if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "SoundFX" ) ) )
-    {
-        if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-        {
-            SetVolumeForControlBus( ControlBusPtr, SoundFXVolume );
-        }
-    }
+    FindVolumeControlBusAndSetVolume( TEXT( "SoundFX" ), volume );
 }
 
 float UGBFGameUserSettings::GetDialogueVolume() const
@@ -496,10 +483,10 @@ float UGBFGameUserSettings::GetDialogueVolume() const
     return DialogueVolume;
 }
 
-void UGBFGameUserSettings::SetDialogueVolume( float InVolume )
+void UGBFGameUserSettings::SetDialogueVolume( const float volume )
 {
     // Cache the incoming volume value
-    DialogueVolume = InVolume;
+    DialogueVolume = volume;
 
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called from the UI
@@ -511,14 +498,7 @@ void UGBFGameUserSettings::SetDialogueVolume( float InVolume )
     // Ensure it's been loaded before continuing
     ensureMsgf( bSoundControlBusMixLoaded, TEXT( "UserControlBusMix Settings Failed to Load." ) );
 
-    // Locate the locally cached bus and set the volume on it
-    if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Dialogue" ) ) )
-    {
-        if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-        {
-            SetVolumeForControlBus( ControlBusPtr, DialogueVolume );
-        }
-    }
+    FindVolumeControlBusAndSetVolume( TEXT( "Dialog" ), volume );
 }
 
 float UGBFGameUserSettings::GetVoiceChatVolume() const
@@ -526,10 +506,10 @@ float UGBFGameUserSettings::GetVoiceChatVolume() const
     return VoiceChatVolume;
 }
 
-void UGBFGameUserSettings::SetVoiceChatVolume( float InVolume )
+void UGBFGameUserSettings::SetVoiceChatVolume( const float volume )
 {
     // Cache the incoming volume value
-    VoiceChatVolume = InVolume;
+    VoiceChatVolume = volume;
 
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called from the UI
@@ -541,17 +521,10 @@ void UGBFGameUserSettings::SetVoiceChatVolume( float InVolume )
     // Ensure it's been loaded before continuing
     ensureMsgf( bSoundControlBusMixLoaded, TEXT( "UserControlBusMix Settings Failed to Load." ) );
 
-    // Locate the locally cached bus and set the volume on it
-    if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "VoiceChat" ) ) )
-    {
-        if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-        {
-            SetVolumeForControlBus( ControlBusPtr, VoiceChatVolume );
-        }
-    }
+    FindVolumeControlBusAndSetVolume( TEXT( "VoiceChat" ), volume );
 }
 
-void UGBFGameUserSettings::SetVolumeForControlBus( USoundControlBus * InSoundControlBus, float InVolume )
+void UGBFGameUserSettings::SetVolumeForControlBus( const USoundControlBus * control_bus, float volume )
 {
     // Check to see if references to the control buses and control bus mixes have been loaded yet
     // Will likely need to be loaded if this function is the first time a setter has been called
@@ -565,36 +538,48 @@ void UGBFGameUserSettings::SetVolumeForControlBus( USoundControlBus * InSoundCon
 
     // Assuming everything has been loaded correctly, we retrieve the world and use AudioModulationStatics to update the Control Bus Volume values and
     // apply the settings to the cached User Control Bus Mix
-    if ( GEngine && InSoundControlBus && bSoundControlBusMixLoaded )
+    if ( GEngine != nullptr && control_bus != nullptr && bSoundControlBusMixLoaded )
     {
-        if ( const UWorld * AudioWorld = GEngine->GetCurrentPlayWorld() )
+        if ( const auto * world = GEngine->GetCurrentPlayWorld() )
         {
             ensureMsgf( ControlBusMix, TEXT( "Control Bus Mix failed to load." ) );
 
+            // :TODO: Audio
             // Create and set the Control Bus Mix Stage Parameters
-            FSoundControlBusMixStage UpdatedControlBusMixStage;
-            UpdatedControlBusMixStage.Bus = InSoundControlBus;
-            UpdatedControlBusMixStage.Value.TargetValue = InVolume;
-            UpdatedControlBusMixStage.Value.AttackTime = 0.01f;
-            UpdatedControlBusMixStage.Value.ReleaseTime = 0.01f;
+            // FSoundControlBusMixStage UpdatedControlBusMixStage;
+            // UpdatedControlBusMixStage.Bus = InSoundControlBus;
+            // UpdatedControlBusMixStage.Value.TargetValue = InVolume;
+            // UpdatedControlBusMixStage.Value.AttackTime = 0.01f;
+            // UpdatedControlBusMixStage.Value.ReleaseTime = 0.01f;
 
-            // Add the Control Bus Mix Stage to an Array as the UpdateMix function requires
-            TArray< FSoundControlBusMixStage > UpdatedMixStageArray;
-            UpdatedMixStageArray.Add( UpdatedControlBusMixStage );
+            //// Add the Control Bus Mix Stage to an Array as the UpdateMix function requires
+            // TArray< FSoundControlBusMixStage > UpdatedMixStageArray;
+            // UpdatedMixStageArray.Add( UpdatedControlBusMixStage );
 
-            // Modify the matching bus Mix Stage parameters on the User Control Bus Mix
-            UAudioModulationStatics::UpdateMix( AudioWorld, ControlBusMix, UpdatedMixStageArray );
+            //// Modify the matching bus Mix Stage parameters on the User Control Bus Mix
+            // UAudioModulationStatics::UpdateMix( AudioWorld, ControlBusMix, UpdatedMixStageArray );
         }
     }
 }
 
-void UGBFGameUserSettings::SetAudioOutputDeviceId( const FString & InAudioOutputDeviceId )
+void UGBFGameUserSettings::SetAudioOutputDeviceId( const FString & audio_output_device_id )
 {
-    AudioOutputDeviceId = InAudioOutputDeviceId;
-    OnAudioOutputDeviceChanged.Broadcast( InAudioOutputDeviceId );
+    AudioOutputDeviceId = audio_output_device_id;
+    OnAudioOutputDeviceChanged.Broadcast( audio_output_device_id );
 }
 
-void UGBFGameUserSettings::ApplySafeZoneScale()
+void UGBFGameUserSettings::FindVolumeControlBusAndSetVolume( FName bus_name, float volume )
+{
+    if ( const auto * control_bus_dbl_ptr = ControlBusMap.Find( bus_name ) )
+    {
+        if ( const USoundControlBus * control_bus_ptr = *control_bus_dbl_ptr )
+        {
+            SetVolumeForControlBus( control_bus_ptr, volume );
+        }
+    }
+}
+
+void UGBFGameUserSettings::ApplySafeZoneScale() const
 {
     SSafeZone::SetGlobalSafeZoneScale( GetSafeZone() );
 }
@@ -612,50 +597,16 @@ void UGBFGameUserSettings::ApplyNonResolutionSettings()
 
     // In this section, update each Control Bus to the currently cached UI settings
     {
-        if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Overall" ) ) )
-        {
-            if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-            {
-                SetVolumeForControlBus( ControlBusPtr, OverallVolume );
-            }
-        }
-
-        if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Music" ) ) )
-        {
-            if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-            {
-                SetVolumeForControlBus( ControlBusPtr, MusicVolume );
-            }
-        }
-
-        if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "SoundFX" ) ) )
-        {
-            if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-            {
-                SetVolumeForControlBus( ControlBusPtr, SoundFXVolume );
-            }
-        }
-
-        if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "Dialogue" ) ) )
-        {
-            if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-            {
-                SetVolumeForControlBus( ControlBusPtr, DialogueVolume );
-            }
-        }
-
-        if ( TObjectPtr< USoundControlBus > * ControlBusDblPtr = ControlBusMap.Find( TEXT( "VoiceChat" ) ) )
-        {
-            if ( USoundControlBus * ControlBusPtr = *ControlBusDblPtr )
-            {
-                SetVolumeForControlBus( ControlBusPtr, VoiceChatVolume );
-            }
-        }
+        FindVolumeControlBusAndSetVolume( TEXT( "Overall" ), OverallVolume );
+        FindVolumeControlBusAndSetVolume( TEXT( "Music" ), MusicVolume );
+        FindVolumeControlBusAndSetVolume( TEXT( "SoundFX" ), SoundFXVolume );
+        FindVolumeControlBusAndSetVolume( TEXT( "Dialogue" ), DialogueVolume );
+        FindVolumeControlBusAndSetVolume( TEXT( "VoiceChat" ), VoiceChatVolume );
     }
 
-    if ( UCommonInputSubsystem * InputSubsystem = UCommonInputSubsystem::Get( GetTypedOuter< ULocalPlayer >() ) )
+    if ( auto * input_subsystem = UCommonInputSubsystem::Get( GetTypedOuter< ULocalPlayer >() ) )
     {
-        InputSubsystem->SetGamepadInputType( ControllerPlatform );
+        input_subsystem->SetGamepadInputType( ControllerPlatform );
     }
 
     if ( bUseHeadphoneMode != bDesiredHeadphoneMode )
@@ -676,54 +627,16 @@ void UGBFGameUserSettings::ApplyNonResolutionSettings()
     }
 }
 
-int32 UGBFGameUserSettings::GetOverallScalabilityLevel() const
+void UGBFGameUserSettings::SetControllerPlatform( const FName controller_platform )
 {
-    int32 Result = Super::GetOverallScalabilityLevel();
-
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-    if ( PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle )
+    if ( ControllerPlatform != controller_platform )
     {
-        Result = GetHighestLevelOfAnyScalabilityChannel();
-    }
-
-    return Result;
-}
-
-void UGBFGameUserSettings::SetOverallScalabilityLevel( int32 Value )
-{
-    TGuardValue Guard( bSettingOverallQualityGuard, true );
-
-    Value = FMath::Clamp( Value, 0, 3 );
-
-    float CurrentMobileResolutionQuality = ScalabilityQuality.ResolutionQuality;
-
-    Super::SetOverallScalabilityLevel( Value );
-
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-    if ( PlatformSettings->FramePacingMode == ELyraFramePacingMode::MobileStyle )
-    {
-        // Restore the resolution quality, mobile decouples this from overall quality
-        ScalabilityQuality.ResolutionQuality = CurrentMobileResolutionQuality;
-
-        // Changing the overall quality can end up adjusting the frame rate on mobile since there are limits
-        const int32 ConstrainedFrameRateLimit = LyraSettingsHelpers::ConstrainFrameRateToBeCompatibleWithOverallQuality( DesiredMobileFrameRateLimit, Value );
-        if ( ConstrainedFrameRateLimit != DesiredMobileFrameRateLimit )
-        {
-            SetDesiredMobileFrameRateLimit( ConstrainedFrameRateLimit );
-        }
-    }
-}
-
-void UGBFGameUserSettings::SetControllerPlatform( const FName InControllerPlatform )
-{
-    if ( ControllerPlatform != InControllerPlatform )
-    {
-        ControllerPlatform = InControllerPlatform;
+        ControllerPlatform = controller_platform;
 
         // Apply the change to the common input subsystem so that we refresh any input icons we're using.
-        if ( UCommonInputSubsystem * InputSubsystem = UCommonInputSubsystem::Get( GetTypedOuter< ULocalPlayer >() ) )
+        if ( auto * input_subsystem = UCommonInputSubsystem::Get( GetTypedOuter< ULocalPlayer >() ) )
         {
-            InputSubsystem->SetGamepadInputType( ControllerPlatform );
+            input_subsystem->SetGamepadInputType( ControllerPlatform );
         }
     }
 }
@@ -733,101 +646,102 @@ FName UGBFGameUserSettings::GetControllerPlatform() const
     return ControllerPlatform;
 }
 
-void UGBFGameUserSettings::RegisterInputConfig( ECommonInputType Type, const UPlayerMappableInputConfig * NewConfig, const bool bIsActive )
+void UGBFGameUserSettings::RegisterInputConfig( const ECommonInputType type, const UPlayerMappableInputConfig * new_config, const bool is_active )
 {
-    if ( NewConfig )
+    if ( new_config )
     {
-        const int32 ExistingConfigIdx = RegisteredInputConfigs.IndexOfByPredicate( [ &NewConfig ]( const FGBFLoadedMappableConfigPair & Pair ) {
-            return Pair.Config == NewConfig;
-        } );
-        if ( ExistingConfigIdx == INDEX_NONE )
+        if ( const int32 existing_config_idx = RegisteredInputConfigs.IndexOfByPredicate( [ &new_config ]( const FGBFLoadedMappableConfigPair & pair ) {
+                 return pair.Config == new_config;
+             } );
+             existing_config_idx == INDEX_NONE )
         {
-            const int32 NumAdded = RegisteredInputConfigs.Add( FGBFLoadedMappableConfigPair( NewConfig, Type, bIsActive ) );
-            if ( NumAdded != INDEX_NONE )
+            if ( const int32 num_added = RegisteredInputConfigs.Add( FGBFLoadedMappableConfigPair( new_config, type, is_active ) );
+                 num_added != INDEX_NONE )
             {
-                OnInputConfigRegistered.Broadcast( RegisteredInputConfigs[ NumAdded ] );
+                OnInputConfigRegistered.Broadcast( RegisteredInputConfigs[ num_added ] );
             }
         }
     }
 }
 
-int32 UGBFGameUserSettings::UnregisterInputConfig( const UPlayerMappableInputConfig * ConfigToRemove )
+int32 UGBFGameUserSettings::UnregisterInputConfig( const UPlayerMappableInputConfig * config_to_remove )
 {
-    if ( ConfigToRemove )
+    if ( config_to_remove )
     {
-        const int32 Index = RegisteredInputConfigs.IndexOfByPredicate( [ &ConfigToRemove ]( const FGBFLoadedMappableConfigPair & Pair ) {
-            return Pair.Config == ConfigToRemove;
-        } );
-        if ( Index != INDEX_NONE )
+        if ( const int32 index = RegisteredInputConfigs.IndexOfByPredicate( [ &config_to_remove ]( const FGBFLoadedMappableConfigPair & pair ) {
+                 return pair.Config == config_to_remove;
+             } );
+             index != INDEX_NONE )
         {
-            RegisteredInputConfigs.RemoveAt( Index );
+            RegisteredInputConfigs.RemoveAt( index );
             return 1;
         }
     }
     return INDEX_NONE;
 }
 
-const UPlayerMappableInputConfig * UGBFGameUserSettings::GetInputConfigByName( FName ConfigName ) const
+const UPlayerMappableInputConfig * UGBFGameUserSettings::GetInputConfigByName( const FName config_name ) const
 {
-    for ( const FGBFLoadedMappableConfigPair & Pair : RegisteredInputConfigs )
+    for ( const auto & pair : RegisteredInputConfigs )
     {
-        if ( Pair.Config->GetConfigName() == ConfigName )
+        if ( pair.Config->GetConfigName() == config_name )
         {
-            return Pair.Config;
+            return pair.Config;
         }
     }
     return nullptr;
 }
 
-void UGBFGameUserSettings::GetRegisteredInputConfigsOfType( ECommonInputType Type, TArray< FGBFLoadedMappableConfigPair > & OutArray ) const
+void UGBFGameUserSettings::GetRegisteredInputConfigsOfType( TArray< FGBFLoadedMappableConfigPair > & result, const ECommonInputType type ) const
 {
-    OutArray.Empty();
+    result.Empty();
 
     // If "Count" is passed in then
-    if ( Type == ECommonInputType::Count )
+    if ( type == ECommonInputType::Count )
     {
-        OutArray = RegisteredInputConfigs;
+        result = RegisteredInputConfigs;
         return;
     }
 
-    for ( const FGBFLoadedMappableConfigPair & Pair : RegisteredInputConfigs )
+    for ( const auto & pair : RegisteredInputConfigs )
     {
-        if ( Pair.Type == Type )
+        if ( pair.Type == type )
         {
-            OutArray.Emplace( Pair );
+            result.Emplace( pair );
         }
     }
 }
 
-void UGBFGameUserSettings::GetAllMappingNamesFromKey( const FKey InKey, TArray< FName > & OutActionNames )
+void UGBFGameUserSettings::GetAllMappingNamesFromKey( TArray< FName > & result, const FKey key )
 {
-    if ( InKey == EKeys::Invalid )
+    if ( key == EKeys::Invalid )
     {
         return;
     }
 
     // adding any names of actions that are bound to that key
-    for ( const FGBFLoadedMappableConfigPair & Pair : RegisteredInputConfigs )
+    for ( const auto & pair : RegisteredInputConfigs )
     {
-        if ( Pair.Type == ECommonInputType::MouseAndKeyboard )
+        if ( pair.Type == ECommonInputType::MouseAndKeyboard )
         {
-            for ( const FEnhancedActionKeyMapping & Mapping : Pair.Config->GetPlayerMappableKeys() )
+            for ( const auto & mapping : pair.Config->GetPlayerMappableKeys() )
             {
-                FName MappingName( Mapping.PlayerMappableOptions.DisplayName.ToString() );
-                FName ActionName = Mapping.PlayerMappableOptions.Name;
+                FName mapping_name( mapping.PlayerMappableOptions.DisplayName.ToString() );
+                FName action_name = mapping.PlayerMappableOptions.Name;
+
                 // make sure it isn't custom bound as well
-                if ( const FKey * MappingKey = CustomKeyboardConfig.Find( ActionName ) )
+                if ( const auto * mapping_key = CustomKeyboardConfig.Find( action_name ) )
                 {
-                    if ( *MappingKey == InKey )
+                    if ( *mapping_key == key )
                     {
-                        OutActionNames.Add( MappingName );
+                        result.Add( mapping_name );
                     }
                 }
                 else
                 {
-                    if ( Mapping.Key == InKey )
+                    if ( mapping.Key == key )
                     {
-                        OutActionNames.Add( MappingName );
+                        result.Add( mapping_name );
                     }
                 }
             }
@@ -835,9 +749,9 @@ void UGBFGameUserSettings::GetAllMappingNamesFromKey( const FKey InKey, TArray< 
     }
 }
 
-void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName MappingName, const FKey NewKey, UGBFLocalPlayer * LocalPlayer )
+void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mapping_name, const FKey new_key, const UGBFLocalPlayer * local_player )
 {
-    if ( MappingName == NAME_None )
+    if ( mapping_name == NAME_None )
     {
         return;
     }
@@ -845,15 +759,15 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName Mappin
     if ( InputConfigName != TEXT( "Custom" ) )
     {
         // Copy Presets.
-        if ( const UPlayerMappableInputConfig * DefaultConfig = GetInputConfigByName( TEXT( "Default" ) ) )
+        if ( const auto * default_config = GetInputConfigByName( TEXT( "Default" ) ) )
         {
-            for ( const FEnhancedActionKeyMapping & Mapping : DefaultConfig->GetPlayerMappableKeys() )
+            for ( const auto & mapping : default_config->GetPlayerMappableKeys() )
             {
                 // Make sure that the mapping has a valid name, its possible to have an empty name
                 // if someone has marked a mapping as "Player Mappable" but deleted the default field value
-                if ( Mapping.PlayerMappableOptions.Name != NAME_None )
+                if ( mapping.PlayerMappableOptions.Name != NAME_None )
                 {
-                    CustomKeyboardConfig.Add( Mapping.PlayerMappableOptions.Name, Mapping.Key );
+                    CustomKeyboardConfig.Add( mapping.PlayerMappableOptions.Name, mapping.Key );
                 }
             }
         }
@@ -861,154 +775,155 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName Mappin
         InputConfigName = TEXT( "Custom" );
     }
 
-    if ( FKey * ExistingMapping = CustomKeyboardConfig.Find( MappingName ) )
+    if ( CustomKeyboardConfig.Find( mapping_name ) )
     {
         // Change the key to the new one
-        CustomKeyboardConfig[ MappingName ] = NewKey;
+        CustomKeyboardConfig[ mapping_name ] = new_key;
     }
     else
     {
-        CustomKeyboardConfig.Add( MappingName, NewKey );
+        CustomKeyboardConfig.Add( mapping_name, new_key );
     }
 
     // Tell the enhanced input subsystem for this local player that we should remap some input! Woo
-    if ( UEnhancedInputLocalPlayerSubsystem * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( LocalPlayer ) )
+    if ( auto * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        Subsystem->AddPlayerMappedKey( MappingName, NewKey );
+        Subsystem->AddPlayerMappedKey( mapping_name, new_key );
     }
 }
 
-void UGBFGameUserSettings::ResetKeybindingToDefault( const FName MappingName, UGBFLocalPlayer * LocalPlayer )
+void UGBFGameUserSettings::ResetKeybindingToDefault( const FName mapping_name, const UGBFLocalPlayer * local_player )
 {
-    if ( UEnhancedInputLocalPlayerSubsystem * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( LocalPlayer ) )
+    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        Subsystem->RemovePlayerMappedKey( MappingName );
+        subsystem->RemovePlayerMappedKey( mapping_name );
     }
 }
 
-void UGBFGameUserSettings::ResetKeybindingsToDefault( UGBFLocalPlayer * LocalPlayer )
+void UGBFGameUserSettings::ResetKeybindingsToDefault( const UGBFLocalPlayer * local_player )
 {
-    if ( UEnhancedInputLocalPlayerSubsystem * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( LocalPlayer ) )
+    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        Subsystem->RemoveAllPlayerMappedKeys();
+        subsystem->RemoveAllPlayerMappedKeys();
     }
 }
 
 void UGBFGameUserSettings::LoadUserControlBusMix()
 {
-    if ( GEngine )
-    {
-        if ( const UWorld * World = GEngine->GetCurrentPlayWorld() )
-        {
-            if ( const ULyraAudioSettings * LyraAudioSettings = GetDefault< ULyraAudioSettings >() )
-            {
-                USoundControlBus * OverallControlBus = nullptr;
-                USoundControlBus * MusicControlBus = nullptr;
-                USoundControlBus * SoundFXControlBus = nullptr;
-                USoundControlBus * DialogueControlBus = nullptr;
-                USoundControlBus * VoiceChatControlBus = nullptr;
-
-                ControlBusMap.Empty();
-
-                if ( UObject * ObjPath = LyraAudioSettings->OverallVolumeControlBus.TryLoad() )
-                {
-                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
-                    {
-                        OverallControlBus = SoundControlBus;
-                        ControlBusMap.Add( TEXT( "Overall" ), OverallControlBus );
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBus, TEXT( "Overall Control Bus reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-
-                if ( UObject * ObjPath = LyraAudioSettings->MusicVolumeControlBus.TryLoad() )
-                {
-                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
-                    {
-                        MusicControlBus = SoundControlBus;
-                        ControlBusMap.Add( TEXT( "Music" ), MusicControlBus );
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBus, TEXT( "Music Control Bus reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-
-                if ( UObject * ObjPath = LyraAudioSettings->SoundFXVolumeControlBus.TryLoad() )
-                {
-                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
-                    {
-                        SoundFXControlBus = SoundControlBus;
-                        ControlBusMap.Add( TEXT( "SoundFX" ), SoundFXControlBus );
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBus, TEXT( "SoundFX Control Bus reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-
-                if ( UObject * ObjPath = LyraAudioSettings->DialogueVolumeControlBus.TryLoad() )
-                {
-                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
-                    {
-                        DialogueControlBus = SoundControlBus;
-                        ControlBusMap.Add( TEXT( "Dialogue" ), DialogueControlBus );
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBus, TEXT( "Dialogue Control Bus reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-
-                if ( UObject * ObjPath = LyraAudioSettings->VoiceChatVolumeControlBus.TryLoad() )
-                {
-                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
-                    {
-                        VoiceChatControlBus = SoundControlBus;
-                        ControlBusMap.Add( TEXT( "VoiceChat" ), VoiceChatControlBus );
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBus, TEXT( "VoiceChat Control Bus reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-
-                if ( UObject * ObjPath = LyraAudioSettings->UserSettingsControlBusMix.TryLoad() )
-                {
-                    if ( USoundControlBusMix * SoundControlBusMix = Cast< USoundControlBusMix >( ObjPath ) )
-                    {
-                        ControlBusMix = SoundControlBusMix;
-
-                        const FSoundControlBusMixStage OverallControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, OverallControlBus, OverallVolume );
-                        const FSoundControlBusMixStage MusicControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, MusicControlBus, MusicVolume );
-                        const FSoundControlBusMixStage SoundFXControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, SoundFXControlBus, SoundFXVolume );
-                        const FSoundControlBusMixStage DialogueControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, DialogueControlBus, DialogueVolume );
-                        const FSoundControlBusMixStage VoiceChatControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, VoiceChatControlBus, VoiceChatVolume );
-
-                        TArray< FSoundControlBusMixStage > ControlBusMixStageArray;
-                        ControlBusMixStageArray.Add( OverallControlBusMixStage );
-                        ControlBusMixStageArray.Add( MusicControlBusMixStage );
-                        ControlBusMixStageArray.Add( SoundFXControlBusMixStage );
-                        ControlBusMixStageArray.Add( DialogueControlBusMixStage );
-                        ControlBusMixStageArray.Add( VoiceChatControlBusMixStage );
-
-                        UAudioModulationStatics::UpdateMix( World, ControlBusMix, ControlBusMixStageArray );
-
-                        bSoundControlBusMixLoaded = true;
-                    }
-                    else
-                    {
-                        ensureMsgf( SoundControlBusMix, TEXT( "User Settings Control Bus Mix reference missing from Lyra Audio Settings." ) );
-                    }
-                }
-            }
-        }
-    }
+    // :TODO: Audio
+    //    if ( GEngine )
+    //    {
+    //        if ( const UWorld * World = GEngine->GetCurrentPlayWorld() )
+    //        {
+    //            if ( const ULyraAudioSettings * LyraAudioSettings = GetDefault< ULyraAudioSettings >() )
+    //            {
+    //                USoundControlBus * OverallControlBus = nullptr;
+    //                USoundControlBus * MusicControlBus = nullptr;
+    //                USoundControlBus * SoundFXControlBus = nullptr;
+    //                USoundControlBus * DialogueControlBus = nullptr;
+    //                USoundControlBus * VoiceChatControlBus = nullptr;
+    //
+    //                ControlBusMap.Empty();
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->OverallVolumeControlBus.TryLoad() )
+    //                {
+    //                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
+    //                    {
+    //                        OverallControlBus = SoundControlBus;
+    //                        ControlBusMap.Add( TEXT( "Overall" ), OverallControlBus );
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBus, TEXT( "Overall Control Bus reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->MusicVolumeControlBus.TryLoad() )
+    //                {
+    //                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
+    //                    {
+    //                        MusicControlBus = SoundControlBus;
+    //                        ControlBusMap.Add( TEXT( "Music" ), MusicControlBus );
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBus, TEXT( "Music Control Bus reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->SoundFXVolumeControlBus.TryLoad() )
+    //                {
+    //                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
+    //                    {
+    //                        SoundFXControlBus = SoundControlBus;
+    //                        ControlBusMap.Add( TEXT( "SoundFX" ), SoundFXControlBus );
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBus, TEXT( "SoundFX Control Bus reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->DialogueVolumeControlBus.TryLoad() )
+    //                {
+    //                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
+    //                    {
+    //                        DialogueControlBus = SoundControlBus;
+    //                        ControlBusMap.Add( TEXT( "Dialogue" ), DialogueControlBus );
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBus, TEXT( "Dialogue Control Bus reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->VoiceChatVolumeControlBus.TryLoad() )
+    //                {
+    //                    if ( USoundControlBus * SoundControlBus = Cast< USoundControlBus >( ObjPath ) )
+    //                    {
+    //                        VoiceChatControlBus = SoundControlBus;
+    //                        ControlBusMap.Add( TEXT( "VoiceChat" ), VoiceChatControlBus );
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBus, TEXT( "VoiceChat Control Bus reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //
+    //                if ( UObject * ObjPath = LyraAudioSettings->UserSettingsControlBusMix.TryLoad() )
+    //                {
+    //                    if ( USoundControlBusMix * SoundControlBusMix = Cast< USoundControlBusMix >( ObjPath ) )
+    //                    {
+    //                        ControlBusMix = SoundControlBusMix;
+    //
+    //                        const FSoundControlBusMixStage OverallControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, OverallControlBus, OverallVolume );
+    //                        const FSoundControlBusMixStage MusicControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, MusicControlBus, MusicVolume );
+    //                        const FSoundControlBusMixStage SoundFXControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, SoundFXControlBus, SoundFXVolume );
+    //                        const FSoundControlBusMixStage DialogueControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, DialogueControlBus, DialogueVolume );
+    //                        const FSoundControlBusMixStage VoiceChatControlBusMixStage = UAudioModulationStatics::CreateBusMixStage( World, VoiceChatControlBus, VoiceChatVolume );
+    //
+    //                        TArray< FSoundControlBusMixStage > ControlBusMixStageArray;
+    //                        ControlBusMixStageArray.Add( OverallControlBusMixStage );
+    //                        ControlBusMixStageArray.Add( MusicControlBusMixStage );
+    //                        ControlBusMixStageArray.Add( SoundFXControlBusMixStage );
+    //                        ControlBusMixStageArray.Add( DialogueControlBusMixStage );
+    //                        ControlBusMixStageArray.Add( VoiceChatControlBusMixStage );
+    //
+    //                        UAudioModulationStatics::UpdateMix( World, ControlBusMix, ControlBusMixStageArray );
+    //
+    //                        bSoundControlBusMixLoaded = true;
+    //                    }
+    //                    else
+    //                    {
+    //                        ensureMsgf( SoundControlBusMix, TEXT( "User Settings Control Bus Mix reference missing from Lyra Audio Settings." ) );
+    //                    }
+    //                }
+    //            }
+    //        }
+    //    }
 }
 
-void UGBFGameUserSettings::OnAppActivationStateChanged( bool bIsActive )
+void UGBFGameUserSettings::OnAppActivationStateChanged( bool is_active )
 {
     // We might want to adjust the frame rate when the app loses/gains focus on multi-window platforms
     UpdateEffectiveFrameRateLimit();
@@ -1023,122 +938,120 @@ void UGBFGameUserSettings::UpdateGameModeDeviceProfileAndFps()
     }
 #endif
 
-    UDeviceProfileManager & Manager = UDeviceProfileManager::Get();
+    auto & device_profile_manager = UDeviceProfileManager::Get();
 
-    const ULyraPlatformSpecificRenderingSettings * PlatformSettings = ULyraPlatformSpecificRenderingSettings::Get();
-    const TArray< FLyraQualityDeviceProfileVariant > & UserFacingVariants = PlatformSettings->UserFacingDeviceProfileOptions;
+    const auto * platform_settings = UGBFPlatformSpecificRenderingSettings::Get();
+    const auto & user_facing_variants = platform_settings->UserFacingDeviceProfileOptions;
 
     //@TODO: Might want to allow specific experiences to specify a suffix to attempt to use as well
     // The code below will handle searching with this suffix (alone or in conjunction with the frame rate), but nothing sets it right now
-    FString ExperienceSuffix;
+    const FString experience_suffix;
 
     // Make sure the chosen setting is supported for the current display, walking down the list to try fallbacks
-    const int32 PlatformMaxRefreshRate = FPlatformMisc::GetMaxRefreshRate();
+    const auto platform_max_refresh_rate = FPlatformMisc::GetMaxRefreshRate();
 
-    int32 SuffixIndex = UserFacingVariants.IndexOfByPredicate( [ & ]( const FLyraQualityDeviceProfileVariant & Data ) {
-        return Data.DeviceProfileSuffix == UserChosenDeviceProfileSuffix;
+    auto suffix_index = user_facing_variants.IndexOfByPredicate( [ & ]( const auto & data ) {
+        return data.DeviceProfileSuffix == UserChosenDeviceProfileSuffix;
     } );
-    while ( UserFacingVariants.IsValidIndex( SuffixIndex ) )
+    while ( user_facing_variants.IsValidIndex( suffix_index ) )
     {
-        if ( PlatformMaxRefreshRate >= UserFacingVariants[ SuffixIndex ].MinRefreshRate )
+        if ( platform_max_refresh_rate >= user_facing_variants[ suffix_index ].MinRefreshRate )
         {
             break;
         }
-        else
-        {
-            --SuffixIndex;
-        }
+
+        --suffix_index;
     }
 
-    const FString EffectiveUserSuffix = UserFacingVariants.IsValidIndex( SuffixIndex ) ? UserFacingVariants[ SuffixIndex ].DeviceProfileSuffix : PlatformSettings->DefaultDeviceProfileSuffix;
+    const auto effective_user_suffix = user_facing_variants.IsValidIndex( suffix_index ) ? user_facing_variants[ suffix_index ].DeviceProfileSuffix : platform_settings->DefaultDeviceProfileSuffix;
 
     // Build up a list of names to try
-    const bool bHadUserSuffix = !EffectiveUserSuffix.IsEmpty();
-    const bool bHadExperienceSuffix = !ExperienceSuffix.IsEmpty();
+    const auto had_user_suffix = !effective_user_suffix.IsEmpty();
+    const auto had_experience_suffix = !experience_suffix.IsEmpty();
 
-    FString BasePlatformName = UDeviceProfileManager::GetPlatformDeviceProfileName();
-    FName PlatformName; // Default unless in editor
+    auto base_platform_name = UDeviceProfileManager::GetPlatformDeviceProfileName();
+    FName platform_name; // Default unless in editor
 #if WITH_EDITOR
     if ( GIsEditor )
     {
-        const ULyraPlatformEmulationSettings * Settings = GetDefault< ULyraPlatformEmulationSettings >();
-        const FName PretendBaseDeviceProfile = Settings->GetPretendBaseDeviceProfile();
-        if ( PretendBaseDeviceProfile != NAME_None )
+        const auto * settings = GetDefault< UGBFPlatformEmulationSettings >();
+        if ( const FName pretend_base_device_profile = settings->GetPretendBaseDeviceProfile();
+             pretend_base_device_profile != NAME_None )
         {
-            BasePlatformName = PretendBaseDeviceProfile.ToString();
+            base_platform_name = pretend_base_device_profile.ToString();
         }
 
-        PlatformName = Settings->GetPretendPlatformName();
+        platform_name = settings->GetPretendPlatformName();
     }
 #endif
 
-    TArray< FString > ComposedNamesToFind;
-    if ( bHadExperienceSuffix && bHadUserSuffix )
+    TArray< FString > composed_names_to_find;
+    if ( had_experience_suffix && had_user_suffix )
     {
-        ComposedNamesToFind.Add( BasePlatformName + TEXT( "_" ) + ExperienceSuffix + TEXT( "_" ) + EffectiveUserSuffix );
+        composed_names_to_find.Add( base_platform_name + TEXT( "_" ) + experience_suffix + TEXT( "_" ) + effective_user_suffix );
     }
-    if ( bHadUserSuffix )
+    if ( had_user_suffix )
     {
-        ComposedNamesToFind.Add( BasePlatformName + TEXT( "_" ) + EffectiveUserSuffix );
+        composed_names_to_find.Add( base_platform_name + TEXT( "_" ) + effective_user_suffix );
     }
-    if ( bHadExperienceSuffix )
+    if ( had_experience_suffix )
     {
-        ComposedNamesToFind.Add( BasePlatformName + TEXT( "_" ) + ExperienceSuffix );
+        composed_names_to_find.Add( base_platform_name + TEXT( "_" ) + experience_suffix );
     }
     if ( GIsEditor )
     {
-        ComposedNamesToFind.Add( BasePlatformName );
+        composed_names_to_find.Add( base_platform_name );
     }
 
     // See if any of the potential device profiles actually exists
-    FString ActualProfileToApply;
-    for ( const FString & TestProfileName : ComposedNamesToFind )
+    FString actual_profile_to_apply;
+    for ( const FString & test_profile_name : composed_names_to_find )
     {
-        if ( Manager.HasLoadableProfileName( TestProfileName, PlatformName ) )
+        if ( device_profile_manager.HasLoadableProfileName( test_profile_name, platform_name ) )
         {
-            ActualProfileToApply = TestProfileName;
-            UDeviceProfile * Profile = Manager.FindProfile( TestProfileName, /*bCreateOnFail=*/false );
-            if ( Profile == nullptr )
+            actual_profile_to_apply = test_profile_name;
+            const auto * profile = device_profile_manager.FindProfile( test_profile_name, /*bCreateOnFail=*/false );
+            if ( profile == nullptr )
             {
-                Profile = Manager.CreateProfile( TestProfileName, TEXT( "" ), TestProfileName, *PlatformName.ToString() );
+                profile = device_profile_manager.CreateProfile( test_profile_name, TEXT( "" ), test_profile_name, *platform_name.ToString() );
             }
 
-            UE_LOG( LogConsoleResponse, Log, TEXT( "Profile %s exists" ), *Profile->GetName() );
+            UE_LOG( LogConsoleResponse, Log, TEXT( "Profile %s exists" ), *profile->GetName() );
             break;
         }
     }
 
-    UE_LOG( LogConsoleResponse, Log, TEXT( "UpdateGameModeDeviceProfileAndFps MaxRefreshRate=%d, ExperienceSuffix='%s', UserPicked='%s'->'%s', PlatformBase='%s', AppliedActual='%s'" ), PlatformMaxRefreshRate, *ExperienceSuffix, *UserChosenDeviceProfileSuffix, *EffectiveUserSuffix, *BasePlatformName, *ActualProfileToApply );
+    UE_LOG( LogConsoleResponse, Log, TEXT( "UpdateGameModeDeviceProfileAndFps MaxRefreshRate=%d, ExperienceSuffix='%s', UserPicked='%s'->'%s', PlatformBase='%s', AppliedActual='%s'" ), platform_max_refresh_rate, *experience_suffix, *UserChosenDeviceProfileSuffix, *effective_user_suffix, *base_platform_name, *actual_profile_to_apply );
 
     // Apply the device profile if it's different to what we currently have
-    if ( ActualProfileToApply != CurrentAppliedDeviceProfileOverrideSuffix )
+    if ( actual_profile_to_apply != CurrentAppliedDeviceProfileOverrideSuffix )
     {
-        if ( Manager.GetActiveDeviceProfileName() != ActualProfileToApply )
+        if ( device_profile_manager.GetActiveDeviceProfileName() != actual_profile_to_apply )
         {
             // Restore the default first
             if ( GIsEditor )
             {
 #if ALLOW_OTHER_PLATFORM_CONFIG
-                Manager.RestorePreviewDeviceProfile();
+                device_profile_manager.RestorePreviewDeviceProfile();
 #endif
             }
             else
             {
-                Manager.RestoreDefaultDeviceProfile();
+                device_profile_manager.RestoreDefaultDeviceProfile();
             }
 
             // Apply the new one (if it wasn't the default)
-            if ( Manager.GetActiveDeviceProfileName() != ActualProfileToApply )
+            if ( device_profile_manager.GetActiveDeviceProfileName() != actual_profile_to_apply )
             {
-                UDeviceProfile * NewDeviceProfile = Manager.FindProfile( ActualProfileToApply );
-                ensureMsgf( NewDeviceProfile != nullptr, TEXT( "DeviceProfile %s not found " ), *ActualProfileToApply );
-                if ( NewDeviceProfile )
+                auto * new_device_profile = device_profile_manager.FindProfile( actual_profile_to_apply );
+                ensureMsgf( new_device_profile != nullptr, TEXT( "DeviceProfile %s not found " ), *actual_profile_to_apply );
+                if ( new_device_profile != nullptr )
                 {
                     if ( GIsEditor )
                     {
 #if ALLOW_OTHER_PLATFORM_CONFIG
-                        UE_LOG( LogConsoleResponse, Log, TEXT( "Overriding *preview* device profile to %s" ), *ActualProfileToApply );
-                        Manager.SetPreviewDeviceProfile( NewDeviceProfile );
+                        UE_LOG( LogConsoleResponse, Log, TEXT( "Overriding *preview* device profile to %s" ), *actual_profile_to_apply );
+                        device_profile_manager.SetPreviewDeviceProfile( new_device_profile );
 
                         // Reload the default settings from the pretend profile
                         LyraSettingsHelpers::FillScalabilitySettingsFromDeviceProfile( DeviceDefaultScalabilitySettings );
@@ -1146,49 +1059,50 @@ void UGBFGameUserSettings::UpdateGameModeDeviceProfileAndFps()
                     }
                     else
                     {
-                        UE_LOG( LogConsoleResponse, Log, TEXT( "Overriding device profile to %s" ), *ActualProfileToApply );
-                        Manager.SetOverrideDeviceProfile( NewDeviceProfile );
+                        UE_LOG( LogConsoleResponse, Log, TEXT( "Overriding device profile to %s" ), *actual_profile_to_apply );
+                        device_profile_manager.SetOverrideDeviceProfile( new_device_profile );
                     }
                 }
             }
         }
-        CurrentAppliedDeviceProfileOverrideSuffix = ActualProfileToApply;
+        CurrentAppliedDeviceProfileOverrideSuffix = actual_profile_to_apply;
     }
 
-    switch ( PlatformSettings->FramePacingMode )
+    switch ( platform_settings->FramePacingMode )
     {
-        case ELyraFramePacingMode::MobileStyle:
-            UpdateMobileFramePacing();
-            break;
-        case ELyraFramePacingMode::ConsoleStyle:
+        case EGBFFramePacingMode::ConsoleStyle:
+        {
             UpdateConsoleFramePacing();
-            break;
-        case ELyraFramePacingMode::DesktopStyle:
+        }
+        break;
+        case EGBFFramePacingMode::DesktopStyle:
+        {
             UpdateDesktopFramePacing();
-            break;
+        }
+        break;
     }
 }
 
 void UGBFGameUserSettings::UpdateConsoleFramePacing()
 {
     // Apply device-profile-driven frame sync and frame pace
-    const int32 FrameSyncType = CVarDeviceProfileDrivenFrameSyncType.GetValueOnGameThread();
-    if ( FrameSyncType != -1 )
+    if ( const int32 frame_sync_type = CVarDeviceProfileDrivenFrameSyncType.GetValueOnGameThread();
+         frame_sync_type != -1 )
     {
-        UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame sync mode to %d." ), FrameSyncType );
-        SetSyncTypeCVar( FrameSyncType );
+        UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame sync mode to %d." ), frame_sync_type );
+        SetSyncTypeCVar( frame_sync_type );
     }
 
-    const int32 TargetFPS = CVarDeviceProfileDrivenTargetFps.GetValueOnGameThread();
-    if ( TargetFPS != -1 )
+    if ( const int32 target_fps = CVarDeviceProfileDrivenTargetFps.GetValueOnGameThread();
+         target_fps != -1 )
     {
-        UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame pace to %d Hz." ), TargetFPS );
-        FPlatformRHIFramePacer::SetFramePace( TargetFPS );
+        UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame pace to %d Hz." ), target_fps );
+        FPlatformRHIFramePacer::SetFramePace( target_fps );
 
         // Set the CSV metadata and analytics Fps mode strings
 #if CSV_PROFILER
-        const FString TargetFramerateString = FString::Printf( TEXT( "%d" ), TargetFPS );
-        CSV_METADATA( TEXT( "TargetFramerate" ), *TargetFramerateString );
+        const FString target_framerate_string = FString::Printf( TEXT( "%d" ), target_fps );
+        CSV_METADATA( TEXT( "TargetFramerate" ), *target_framerate_string );
 #endif
     }
 }
@@ -1199,20 +1113,19 @@ void UGBFGameUserSettings::UpdateDesktopFramePacing()
     // applied via UpdateEffectiveFrameRateLimit()
     // So this function is only doing 'second order' effects of desktop frame pacing preferences
 
-    const float TargetFPS = GetEffectiveFrameRateLimit();
-    const float ClampedFPS = ( TargetFPS <= 0.0f ) ? 60.0f : FMath::Clamp( TargetFPS, 30.0f, 60.0f );
-    UpdateDynamicResFrameTime( ClampedFPS );
+    const auto target_fps = GetEffectiveFrameRateLimit();
+    const auto clamped_fps = target_fps <= 0.0f ? 60.0f : FMath::Clamp( target_fps, 30.0f, 60.0f );
+    UpdateDynamicResFrameTime( clamped_fps );
 }
 
-void UGBFGameUserSettings::UpdateDynamicResFrameTime( float TargetFPS )
+void UGBFGameUserSettings::UpdateDynamicResFrameTime( const float target_fps ) const
 {
-    static IConsoleVariable * CVarDyResFrameTimeBudget = IConsoleManager::Get().FindConsoleVariable( TEXT( "r.DynamicRes.FrameTimeBudget" ) );
-    if ( CVarDyResFrameTimeBudget )
+    if ( static auto * c_var_dy_res_frame_time_budget = IConsoleManager::Get().FindConsoleVariable( TEXT( "r.DynamicRes.FrameTimeBudget" ) ) )
     {
-        if ( ensure( TargetFPS > 0.0f ) )
+        if ( ensure( target_fps > 0.0f ) )
         {
-            const float DyResFrameTimeBudget = 1000.0f / TargetFPS;
-            CVarDyResFrameTimeBudget->Set( DyResFrameTimeBudget, ECVF_SetByGameSetting );
+            const auto dy_res_frame_time_budget = 1000.0f / target_fps;
+            c_var_dy_res_frame_time_budget->Set( dy_res_frame_time_budget, ECVF_SetByGameSetting );
         }
     }
 }

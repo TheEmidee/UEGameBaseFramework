@@ -6,7 +6,7 @@
 #include "GBFPlatformEmulationSettings.generated.h"
 
 UCLASS( config = EditorPerProjectUserSettings, MinimalAPI )
-class GAMEBASEFRAMEWORK_API UGBFPlatformEmulationSettings : public UDeveloperSettingsBackedByCVars
+class UGBFPlatformEmulationSettings : public UDeveloperSettingsBackedByCVars
 {
     GENERATED_BODY()
 

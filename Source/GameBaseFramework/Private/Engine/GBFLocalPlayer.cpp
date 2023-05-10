@@ -1,6 +1,8 @@
 #include "Engine/GBFLocalPlayer.h"
 
-#include "AudioMixerBlueprintLibrary.h"
+#include "Settings/GBFGameUserSettings.h"
+
+#include <AudioMixerBlueprintLibrary.h>
 
 UGBFLocalPlayer::UGBFLocalPlayer()
 {
@@ -38,12 +40,12 @@ void UGBFLocalPlayer::InitOnlineSession()
     Super::InitOnlineSession();
 }
 
-UGBFSettingsLocal * UGBFLocalPlayer::GetLocalSettings() const
+UGBFGameUserSettings * UGBFLocalPlayer::GetLocalSettings() const
 {
-    return UGBFSettingsLocal::Get();
+    return UGBFGameUserSettings::Get();
 }
 
-UGBFSettingsShared * UGBFLocalPlayer::GetSharedSettings() const
+UGBFSaveGame * UGBFLocalPlayer::GetSharedSettings() const
 {
     if ( SharedSettings == nullptr )
     {

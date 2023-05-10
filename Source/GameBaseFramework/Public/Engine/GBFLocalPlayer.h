@@ -6,6 +6,7 @@
 
 #include "GBFLocalPlayer.generated.h"
 
+class UGBFGameUserSettings;
 class UGBFSaveGame;
 
 UCLASS()
@@ -23,10 +24,10 @@ public:
     void InitOnlineSession() override;
 
     UFUNCTION()
-    UGBFSettingsLocal * GetLocalSettings() const;
+    UGBFGameUserSettings * GetLocalSettings() const;
 
     UFUNCTION()
-    UGBFSettingsShared * GetSharedSettings() const;
+    UGBFSaveGame * GetSharedSettings() const;
 
 protected:
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );

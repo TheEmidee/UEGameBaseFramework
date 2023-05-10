@@ -1,8 +1,10 @@
 #pragma once
 
-#include "GameFramework/SaveGame.h"
+#include <GameFramework/SaveGame.h>
 
 #include "GBFSaveGame.generated.h"
+
+class UGBFLocalPlayer;
 
 UENUM( BlueprintType )
 enum class EGBFColorBlindMode : uint8
@@ -50,10 +52,9 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
     GENERATED_BODY()
 
 public:
-    DECLARE_EVENT_OneParam( UGBFSaveGame, FOnSettingChangedEvent, UGBFSettingsShared * Settings );
+    DECLARE_EVENT_OneParam( UGBFSaveGame, FOnSettingChangedEvent, UGBFSaveGame * Settings );
     FOnSettingChangedEvent OnSettingChanged;
 
-public:
     UGBFSaveGame();
 
     void Initialize( UGBFLocalPlayer * LocalPlayer );
@@ -72,7 +73,6 @@ public:
 
     void ApplySettings();
 
-public:
     ////////////////////////////////////////////////////////
     // Color Blind Options
 
@@ -217,83 +217,83 @@ private:
     ////////////////////////////////////////////////////////
     // Subtitles
     // :TODO: Subtitles
-//public:
-//    UFUNCTION()
-//    bool GetSubtitlesEnabled() const
-//    {
-//        return bEnableSubtitles;
-//    }
-//    UFUNCTION()
-//    void SetSubtitlesEnabled( bool Value )
-//    {
-//        ChangeValueAndDirty( bEnableSubtitles, Value );
-//    }
-//
-//    UFUNCTION()
-//    ESubtitleDisplayTextSize GetSubtitlesTextSize() const
-//    {
-//        return SubtitleTextSize;
-//    }
-//    UFUNCTION()
-//    void SetSubtitlesTextSize( ESubtitleDisplayTextSize Value )
-//    {
-//        ChangeValueAndDirty( SubtitleTextSize, Value );
-//        ApplySubtitleOptions();
-//    }
-//
-//    UFUNCTION()
-//    ESubtitleDisplayTextColor GetSubtitlesTextColor() const
-//    {
-//        return SubtitleTextColor;
-//    }
-//    UFUNCTION()
-//    void SetSubtitlesTextColor( ESubtitleDisplayTextColor Value )
-//    {
-//        ChangeValueAndDirty( SubtitleTextColor, Value );
-//        ApplySubtitleOptions();
-//    }
-//
-//    UFUNCTION()
-//    ESubtitleDisplayTextBorder GetSubtitlesTextBorder() const
-//    {
-//        return SubtitleTextBorder;
-//    }
-//    UFUNCTION()
-//    void SetSubtitlesTextBorder( ESubtitleDisplayTextBorder Value )
-//    {
-//        ChangeValueAndDirty( SubtitleTextBorder, Value );
-//        ApplySubtitleOptions();
-//    }
-//
-//    UFUNCTION()
-//    ESubtitleDisplayBackgroundOpacity GetSubtitlesBackgroundOpacity() const
-//    {
-//        return SubtitleBackgroundOpacity;
-//    }
-//    UFUNCTION()
-//    void SetSubtitlesBackgroundOpacity( ESubtitleDisplayBackgroundOpacity Value )
-//    {
-//        ChangeValueAndDirty( SubtitleBackgroundOpacity, Value );
-//        ApplySubtitleOptions();
-//    }
-//
-//    void ApplySubtitleOptions();
-//
-//private:
-//    UPROPERTY()
-//    bool bEnableSubtitles = true;
-//
-//    UPROPERTY()
-//    ESubtitleDisplayTextSize SubtitleTextSize = ESubtitleDisplayTextSize::Medium;
-//
-//    UPROPERTY()
-//    ESubtitleDisplayTextColor SubtitleTextColor = ESubtitleDisplayTextColor::White;
-//
-//    UPROPERTY()
-//    ESubtitleDisplayTextBorder SubtitleTextBorder = ESubtitleDisplayTextBorder::None;
-//
-//    UPROPERTY()
-//    ESubtitleDisplayBackgroundOpacity SubtitleBackgroundOpacity = ESubtitleDisplayBackgroundOpacity::Medium;
+    // public:
+    //     UFUNCTION()
+    //     bool GetSubtitlesEnabled() const
+    //     {
+    //         return bEnableSubtitles;
+    //     }
+    //     UFUNCTION()
+    //     void SetSubtitlesEnabled( bool Value )
+    //     {
+    //         ChangeValueAndDirty( bEnableSubtitles, Value );
+    //     }
+    //
+    //     UFUNCTION()
+    //     ESubtitleDisplayTextSize GetSubtitlesTextSize() const
+    //     {
+    //         return SubtitleTextSize;
+    //     }
+    //     UFUNCTION()
+    //     void SetSubtitlesTextSize( ESubtitleDisplayTextSize Value )
+    //     {
+    //         ChangeValueAndDirty( SubtitleTextSize, Value );
+    //         ApplySubtitleOptions();
+    //     }
+    //
+    //     UFUNCTION()
+    //     ESubtitleDisplayTextColor GetSubtitlesTextColor() const
+    //     {
+    //         return SubtitleTextColor;
+    //     }
+    //     UFUNCTION()
+    //     void SetSubtitlesTextColor( ESubtitleDisplayTextColor Value )
+    //     {
+    //         ChangeValueAndDirty( SubtitleTextColor, Value );
+    //         ApplySubtitleOptions();
+    //     }
+    //
+    //     UFUNCTION()
+    //     ESubtitleDisplayTextBorder GetSubtitlesTextBorder() const
+    //     {
+    //         return SubtitleTextBorder;
+    //     }
+    //     UFUNCTION()
+    //     void SetSubtitlesTextBorder( ESubtitleDisplayTextBorder Value )
+    //     {
+    //         ChangeValueAndDirty( SubtitleTextBorder, Value );
+    //         ApplySubtitleOptions();
+    //     }
+    //
+    //     UFUNCTION()
+    //     ESubtitleDisplayBackgroundOpacity GetSubtitlesBackgroundOpacity() const
+    //     {
+    //         return SubtitleBackgroundOpacity;
+    //     }
+    //     UFUNCTION()
+    //     void SetSubtitlesBackgroundOpacity( ESubtitleDisplayBackgroundOpacity Value )
+    //     {
+    //         ChangeValueAndDirty( SubtitleBackgroundOpacity, Value );
+    //         ApplySubtitleOptions();
+    //     }
+    //
+    //     void ApplySubtitleOptions();
+    //
+    // private:
+    //     UPROPERTY()
+    //     bool bEnableSubtitles = true;
+    //
+    //     UPROPERTY()
+    //     ESubtitleDisplayTextSize SubtitleTextSize = ESubtitleDisplayTextSize::Medium;
+    //
+    //     UPROPERTY()
+    //     ESubtitleDisplayTextColor SubtitleTextColor = ESubtitleDisplayTextColor::White;
+    //
+    //     UPROPERTY()
+    //     ESubtitleDisplayTextBorder SubtitleTextBorder = ESubtitleDisplayTextBorder::None;
+    //
+    //     UPROPERTY()
+    //     ESubtitleDisplayBackgroundOpacity SubtitleBackgroundOpacity = ESubtitleDisplayBackgroundOpacity::Medium;
 
     ////////////////////////////////////////////////////////
     // Shared audio settings
