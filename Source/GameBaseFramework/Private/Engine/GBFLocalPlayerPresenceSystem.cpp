@@ -13,10 +13,10 @@ void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & colle
     {
         if ( auto * gi = lp->GetGameInstance() )
         {
-            //if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            // if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
             //{
-            //    //game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
-            //}
+            //     //game_instance_state_system->OnStateChanged().AddDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            // }
         }
     }
 }
@@ -29,10 +29,10 @@ void UGBFLocalPlayerPresenceSystem::Deinitialize()
     {
         if ( auto * gi = lp->GetGameInstance() )
         {
-            //if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
+            // if ( auto * game_instance_state_system = gi->GetSubsystem< UGBFGameInstanceGameStateSystem >() )
             //{
-            //    //game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
-            //}
+            //     //game_instance_state_system->OnStateChanged().RemoveDynamic( this, &UGBFLocalPlayerPresenceSystem::OnGameStateChanged );
+            // }
         }
     }
 }
@@ -43,9 +43,9 @@ void UGBFLocalPlayerPresenceSystem::SetPresenceForLocalPlayer( const FText & sta
 
     if ( presence_interface.IsValid() )
     {
-        if ( auto * game_instance = Cast< UGBFGameInstance >( GetLocalPlayer()->GetGameInstance() ) )
+        if ( const auto * game_instance = Cast< UGBFGameInstance >( GetLocalPlayer()->GetGameInstance() ) )
         {
-            const auto user_id = game_instance->GetFirstLocalPlayer()->GetPreferredUniqueNetId();
+            const auto user_id = game_instance->GetFirstGamePlayer()->GetPreferredUniqueNetId();
 
             if ( user_id.IsValid() && user_id->IsValid() )
             {
@@ -61,7 +61,7 @@ void UGBFLocalPlayerPresenceSystem::SetPresenceForLocalPlayer( const FText & sta
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-//void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
+// void UGBFLocalPlayerPresenceSystem::OnGameStateChanged( FName state_name, const UGBFGameState * new_state )
 //{
 //    if ( !new_state->OnlinePresenceText.IsEmptyOrWhitespace() )
 //    {

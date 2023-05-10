@@ -1,37 +1,26 @@
 #pragma once
 
+#include "CommonPlayerController.h"
 #include "Input/GBFInputTypes.h"
-#include "ModularPlayerController.h"
 
 #include "GBFPlayerController.generated.h"
 
-class UGBFPlatformInputSwitcherComponent;
-class UGBFUIDialogManagerComponent;
 class UGBFLocalPlayer;
 class UGASExtAbilitySystemComponent;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFPlayerController : public AModularPlayerController
+class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerController
 {
     GENERATED_BODY()
 
 public:
     AGBFPlayerController();
 
-#if PLATFORM_DESKTOP
-    FORCEINLINE UGBFPlatformInputSwitcherComponent * GetPlatformInputSwitcherComponent() const;
-#endif
-
-    FORCEINLINE UGBFUIDialogManagerComponent * GetUIDialogManagerComponent() const;
-
-    void BeginPlay() override;
-    void EndPlay( const EEndPlayReason::Type reason ) override;
-
     UFUNCTION( BlueprintPure )
     UGBFLocalPlayer * GetGBFLocalPlayer() const;
 
-    void EnableInput( class APlayerController * player_controller ) override;
-    void DisableInput( class APlayerController * player_controller ) override;
+    void EnableInput( APlayerController * player_controller ) override;
+    void DisableInput( APlayerController * player_controller ) override;
 
     UFUNCTION( BlueprintCallable )
     void ForceEnableInput( class APlayerController * player_controller );
@@ -41,7 +30,8 @@ public:
     void InitPlayerState() override;
     void CleanupPlayerState() override;
     void SetPlayer( UPlayer * player ) override;
-    void PostProcessInput( const float DeltaTime, const bool bGamePaused ) override;
+    void PostProcessInput( const float delta_time, const bool game_paused ) override;
+    void UpdateForceFeedback( IInputInterface * input_interface, const int32 controller_id ) override;
 
     UFUNCTION( Reliable, Server, WithValidation )
     void ServerCheat( const FString & message );
@@ -61,32 +51,10 @@ protected:
     virtual void OnPlayerStateChanged();
 
 private:
-    UFUNCTION()
-    void OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType input_type );
-
-    void UpdateInputRelatedFlags();
     void BroadcastOnPlayerStateChanged();
-
-    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFPlatformInputSwitcherComponent * PlatformInputSwitcherComponent;
-
-    UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFUIDialogManagerComponent * UIDialogManagerComponent;
 
     UPROPERTY()
     APlayerState * LastSeenPlayerState;
 
     FTimerHandle ReEnableInputTimerHandle;
 };
-
-#if PLATFORM_DESKTOP
-UGBFPlatformInputSwitcherComponent * AGBFPlayerController::GetPlatformInputSwitcherComponent() const
-{
-    return PlatformInputSwitcherComponent;
-}
-#endif
-
-UGBFUIDialogManagerComponent * AGBFPlayerController::GetUIDialogManagerComponent() const
-{
-    return UIDialogManagerComponent;
-}

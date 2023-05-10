@@ -24,7 +24,27 @@
       "Name": "GameBaseFrameworkEditor",
       "Type": "Editor",
       "LoadingPhase": "Default"
-    }
+    },
+    {
+			"Name": "CommonUser",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+    {
+			"Name": "CommonLoadingScreen",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "CommonStartupLoadingScreen",
+			"Type": "ClientOnly",
+			"LoadingPhase": "PreLoadingScreen"
+		},
+    {
+			"Name": "CommonGame",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
   ],
   "Plugins": [
     {
@@ -69,6 +89,10 @@
     },
     {
       "Name": "CommonUI",
+      "Enabled": true
+    },
+    {
+      "Name": "ControlFlows",
       "Enabled": true
     }
   ]

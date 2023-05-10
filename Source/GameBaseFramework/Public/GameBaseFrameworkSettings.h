@@ -4,48 +4,12 @@
 
 #include <CoreMinimal.h>
 #include <Engine/DeveloperSettings.h>
-#include <Templates/SubclassOf.h>
 
 #include "GameBaseFrameworkSettings.generated.h"
 
 class UUserWidget;
-
-class UGBFPlatformInputTextures;
+class UCommonGameDialog;
 class UGBFGameState;
-class UGBFConfirmationWidget;
-
-USTRUCT()
-struct FGBFUIOptions
-{
-    GENERATED_BODY()
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    TSubclassOf< UUserWidget > BackgroundBlurWidgetClass;
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    TSubclassOf< UGBFConfirmationWidget > ConfirmationWidgetClass;
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    uint8 IsConfirmationButtonOnTheLeft : 1;
-};
-
-USTRUCT()
-struct FGBFInputSwitchOptions
-{
-    GENERATED_BODY()
-
-    /* Minimum time to wait before switching to another input type */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MinTimeToSwitch = 0.0f;
-
-    /* Minimum value for an axis to trigger an input switch */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float AxisMinThreshold = 0.0f;
-
-    /* Minimum delta when the mouse moves to trigger an input switch */
-    UPROPERTY( config, EditAnywhere, Category = InputSwitch )
-    float MouseMoveMinDelta = 0.0f;
-};
 
 UCLASS( config = Game, defaultconfig, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
 class UGameBaseFrameworkSettings : public UDeveloperSettings
@@ -63,21 +27,8 @@ public:
 
     GAMEBASEFRAMEWORK_API void OnPlayInEditorStarted() const;
 
-    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameBaseFrameworkettingsChanged, const FString &, const UGameBaseFrameworkSettings * )
-
-    GAMEBASEFRAMEWORK_API static FOnGameBaseFrameworkettingsChanged & OnSettingsChanged();
-
     EDataValidationResult IsDataValid( TArray<FText> & validation_errors ) override;
 #endif
-
-    UPROPERTY( config, EditAnywhere, Category = Input )
-    FGBFInputSwitchOptions InputSwitchConfig;
-
-    UPROPERTY( config, EditAnywhere, Category = InputTextures )
-    TSoftObjectPtr< UGBFPlatformInputTextures > PlatformInputTextures;
-
-    UPROPERTY( config, EditAnywhere, Category = UI )
-    FGBFUIOptions UIOptions;
 
     UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
     FString LevelPath;
@@ -98,8 +49,9 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, config, Category = "Experience", meta = ( AllowedTypes = "ExperienceDefinition" ) )
     FPrimaryAssetId ExperienceOverride;
 
-protected:
-#if WITH_EDITOR
-    static FOnGameBaseFrameworkettingsChanged SettingsChangedDelegate;
-#endif
+    UPROPERTY( EditDefaultsOnly, config, Category = "UI" )
+    TSoftClassPtr< UCommonGameDialog > ConfirmationDialogClass;
+
+    UPROPERTY( EditDefaultsOnly, config, Category = "UI" )
+    TSoftClassPtr< UCommonGameDialog > ErrorDialogClass;
 };

@@ -1,58 +1,47 @@
 #pragma once
 
+#include "CommonLocalPlayer.h"
+
 #include <CoreMinimal.h>
-#include <Engine/LocalPlayer.h>
-#include <Interfaces/OnlineAchievementsInterface.h>
-#include <OnlineStats.h>
-#include <OnlineSubsystemTypes.h>
 
 #include "GBFLocalPlayer.generated.h"
 
 class UGBFSaveGame;
 
-UCLASS( BlueprintType, Blueprintable )
-class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public ULocalPlayer
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public UCommonLocalPlayer
 {
     GENERATED_BODY()
 
 public:
     UGBFLocalPlayer();
 
-    void SetControllerId( int32 new_controller_id ) override;
+    void PostInitProperties() override;
+    void SwitchController( class APlayerController * pc ) override;
 
-    UFUNCTION( BlueprintPure )
-    FString GetDisplayName() const;
+    bool SpawnPlayActor( const FString & url, FString & error, UWorld * world ) override;
+    void InitOnlineSession() override;
 
-    UGBFSaveGame * GetSaveGame() const;
-    FPlatformUserId GetPlatformUserId() const;
-    ELoginStatus::Type GetLoginStatus() const;
+    /*
+    :TODO: Settings
+    UFUNCTION()
+    ULyraSettingsLocal * GetLocalSettings() const;
 
-    void InitializeAfterLogin( const int controller_index );
-    void SetPresenceStatus( const FText & status ) const;
-
-    UFUNCTION( BlueprintCallable )
-    void WriteAchievementCurrentCount( const FName & achievement_id, const int current_count, const int trigger_count );
+    UFUNCTION()
+    ULyraSettingsShared * GetSharedSettings() const;*/
 
 protected:
-    UPROPERTY( EditDefaultsOnly )
-    TSubclassOf< UGBFSaveGame > SaveGameClass;
+    void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
 
-    UFUNCTION( BlueprintImplementableEvent )
-    void ReceiveSaveGameLoaded( UGBFSaveGame * save_game );
+    UFUNCTION()
+    void OnCompletedAudioDeviceSwap( const FSwapAudioOutputResult & swap_result );
 
 private:
-    FString GetSaveGameFilename() const;
+    void OnPlayerControllerChanged( APlayerController * new_controller );
 
-    void QueryAchievements();
-    void LoadSaveGame();
-    UGBFSaveGame * LoadSaveGameOrCreateFromSlot( const FString & slot_name, const int user_index );
-    void CheckChangedControllerId( const FString & save_name );
-    void OnQueryAchievementsComplete( const FUniqueNetId & player_id, bool was_successful );
+    /*UPROPERTY( Transient )
+    mutable TObjectPtr< ULyraSettingsShared > SharedSettings;*/
 
-    UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    UGBFSaveGame * SaveGame;
-
-    FOnlineAchievementsWritePtr OnlineAchievementWriter;
-    TArray< FOnlineAchievement > AchievementsArray;
-    bool AreAchievementsCached;
+    UPROPERTY()
+    TWeakObjectPtr< APlayerController > LastBoundPC;
 };

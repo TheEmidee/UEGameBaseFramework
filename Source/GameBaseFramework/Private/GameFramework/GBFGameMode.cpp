@@ -2,6 +2,7 @@
 
 #include "AI/GBFAIController.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
+#include "Characters/GBFCharacter.h"
 #include "Characters/GBFPawnDataSelector.h"
 #include "Engine/GBFAssetManager.h"
 #include "GBFLog.h"
@@ -9,13 +10,24 @@
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 #include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameState.h"
+#include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
+#include "Online/GBFGameSession.h"
 
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>
 #include <TimerManager.h>
+
+AGBFGameMode::AGBFGameMode()
+{
+    GameStateClass = AGBFGameState::StaticClass();
+    GameSessionClass = AGBFGameSession::StaticClass();
+    PlayerControllerClass = AGBFPlayerController::StaticClass();
+    PlayerStateClass = AGBFPlayerState::StaticClass();
+    DefaultPawnClass = AGBFCharacter::StaticClass();
+}
 
 const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController * controller ) const
 {

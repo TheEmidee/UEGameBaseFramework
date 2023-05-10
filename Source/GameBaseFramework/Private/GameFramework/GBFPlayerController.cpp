@@ -1,11 +1,9 @@
 #include "GameFramework/GBFPlayerController.h"
 
+#include "CommonInputSubsystem.h"
 #include "Components/GASExtAbilitySystemComponent.h"
-#include "Components/GBFPlatformInputSwitcherComponent.h"
-#include "Components/GBFUIDialogManagerComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
-#include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFSaveGame.h"
 
@@ -17,37 +15,6 @@
 
 AGBFPlayerController::AGBFPlayerController()
 {
-#if PLATFORM_DESKTOP
-    PlatformInputSwitcherComponent = CreateDefaultSubobject< UGBFPlatformInputSwitcherComponent >( TEXT( "PlatformInputSwitcherComponent" ) );
-#endif
-
-    UIDialogManagerComponent = CreateDefaultSubobject< UGBFUIDialogManagerComponent >( TEXT( "UIDialogManagerComponent" ) );
-}
-
-void AGBFPlayerController::BeginPlay()
-{
-    if ( !IsLocalPlayerController() || Player == nullptr )
-    {
-        PlatformInputSwitcherComponent->UnregisterComponent();
-        UIDialogManagerComponent->UnregisterComponent();
-    }
-
-    Super::BeginPlay();
-
-    UpdateInputRelatedFlags();
-
-#if PLATFORM_DESKTOP
-    PlatformInputSwitcherComponent->OnPlatformInputTypeUpdated().AddUniqueDynamic( this, &AGBFPlayerController::OnPlatformInputTypeUpdatedEvent );
-#endif
-}
-
-void AGBFPlayerController::EndPlay( const EEndPlayReason::Type reason )
-{
-    Super::EndPlay( reason );
-
-#if PLATFORM_DESKTOP
-    PlatformInputSwitcherComponent->OnPlatformInputTypeUpdated().RemoveDynamic( this, &AGBFPlayerController::OnPlatformInputTypeUpdatedEvent );
-#endif
 }
 
 UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const
@@ -131,14 +98,32 @@ void AGBFPlayerController::SetPlayer( UPlayer * player )
     }
 }
 
-void AGBFPlayerController::PostProcessInput( const float DeltaTime, const bool bGamePaused )
+void AGBFPlayerController::PostProcessInput( const float delta_time, const bool game_paused )
 {
     if ( auto * asc = GetAbilitySystemComponent() )
     {
-        asc->ProcessAbilityInput( DeltaTime, bGamePaused );
+        asc->ProcessAbilityInput( delta_time, game_paused );
     }
 
-    Super::PostProcessInput( DeltaTime, bGamePaused );
+    Super::PostProcessInput( delta_time, game_paused );
+}
+
+void AGBFPlayerController::UpdateForceFeedback( IInputInterface * input_interface, const int32 controller_id )
+{
+    if ( bForceFeedbackEnabled )
+    {
+        if ( const auto * common_input_subsystem = UCommonInputSubsystem::Get( GetLocalPlayer() ) )
+        {
+            const ECommonInputType CurrentInputType = common_input_subsystem->GetCurrentInputType();
+            if ( CurrentInputType == ECommonInputType::Gamepad || CurrentInputType == ECommonInputType::Touch )
+            {
+                input_interface->SetForceFeedbackChannelValues( controller_id, ForceFeedbackValues );
+                return;
+            }
+        }
+    }
+
+    input_interface->SetForceFeedbackChannelValues( controller_id, FForceFeedbackValues() );
 }
 
 void AGBFPlayerController::ServerCheat_Implementation( const FString & message )
@@ -231,35 +216,6 @@ void AGBFPlayerController::OnUnPossess()
 
 void AGBFPlayerController::OnPlayerStateChanged()
 {
-}
-
-// -- PRIVATE
-
-void AGBFPlayerController::OnPlatformInputTypeUpdatedEvent( EGBFPlatformInputType /*input_type*/ )
-{
-    UpdateInputRelatedFlags();
-}
-
-void AGBFPlayerController::UpdateInputRelatedFlags()
-{
-    const auto is_using_game_pad =
-#if PLATFORM_DESKTOP
-        PlatformInputSwitcherComponent->GetPlatformInputType() == EGBFPlatformInputType::Gamepad;
-#else
-        true;
-#endif
-
-    // Can be null when the debug camera is toggled for example
-    if ( auto * local_player = GetGBFLocalPlayer() )
-    {
-        if ( auto * save_game = local_player->GetSaveGame() )
-        {
-            bForceFeedbackEnabled = save_game->GetEnableForceFeedback() && is_using_game_pad;
-        }
-    }
-
-    // :TODO: It's not a good idea to always show the cursor. This breaks FPS camera because the player must always click on the game viewport to turn the camera
-    // bShowMouseCursor = !is_using_game_pad;
 }
 
 void AGBFPlayerController::BroadcastOnPlayerStateChanged()

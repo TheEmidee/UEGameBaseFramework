@@ -2,8 +2,10 @@
 
 #include "DVEDataValidator.h"
 
+#if WITH_EDITOR
 #include <Framework/Notifications/NotificationManager.h>
 #include <Widgets/Notifications/SNotificationList.h>
+#endif
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkCheats"
 
@@ -26,7 +28,6 @@ void UGameBaseFrameworkSettings::PostEditChangeProperty( FPropertyChangedEvent &
 {
     if ( property_change_event.Property != nullptr )
     {
-        SettingsChangedDelegate.Broadcast( property_change_event.Property->GetName(), this );
     }
 }
 
@@ -43,11 +44,6 @@ void UGameBaseFrameworkSettings::OnPlayInEditorStarted() const
     }
 }
 
-UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged & UGameBaseFrameworkSettings::OnSettingsChanged()
-{
-    return SettingsChangedDelegate;
-}
-
 EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray< FText > & validation_errors )
 {
     return FDVEDataValidator( validation_errors )
@@ -55,7 +51,6 @@ EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray< FText > &
         .Result();
 }
 
-UGameBaseFrameworkSettings::FOnGameBaseFrameworkettingsChanged UGameBaseFrameworkSettings::SettingsChangedDelegate;
 #endif
 
 #undef LOCTEXT_NAMESPACE

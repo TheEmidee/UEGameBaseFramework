@@ -20,6 +20,8 @@ public:
     FOnGameModeControllerLogEventDelegate & OnControllerPostLogin();
     FOnGameModeControllerLogEventDelegate & OnControllerLogout();
 
+    AGBFGameMode();
+
     const UGBFPawnData * GetPawnDataForController( const AController * controller ) const;
     APawn * SpawnDefaultPawnAtTransform_Implementation( AController * new_player, const FTransform & spawn_transform ) override;
     UClass * GetDefaultPawnClassForController_Implementation( AController * controller ) override;
