@@ -12,10 +12,10 @@ void UGBFGameSettingRegistry::OnInitialize( ULocalPlayer * local_player )
     VideoSettings = InitializeVideoSettings( gbf_local_player );
     RegisterSetting( VideoSettings );
 
-    /*AudioSettings = InitializeAudioSettings( gbf_local_player );
+    AudioSettings = InitializeAudioSettings( gbf_local_player );
     RegisterSetting( AudioSettings );
 
-    GameplaySettings = InitializeGameplaySettings( gbf_local_player );
+    /*GameplaySettings = InitializeGameplaySettings( gbf_local_player );
     RegisterSetting( GameplaySettings );
 
     MouseAndKeyboardSettings = InitializeMouseAndKeyboardSettings( gbf_local_player );

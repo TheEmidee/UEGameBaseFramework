@@ -4,7 +4,6 @@
 #include "GameFramework/GBFSaveGame.h"
 
 #include <CoreMinimal.h>
-#include <DataSource/GameSettingDataSourceDynamic.h>
 #include <GameSettingRegistry.h>
 
 #include "GBFGameSettingRegistry.generated.h"
@@ -31,8 +30,8 @@ protected:
     void SaveChanges() override;
 
     virtual UGameSettingCollection * InitializeVideoSettings( UGBFLocalPlayer * local_player );
-    /*virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * InLocalPlayer );
-    virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * InLocalPlayer );
+    virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * InLocalPlayer );
+    /*virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * InLocalPlayer );
     virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * InLocalPlayer );
     virtual UGameSettingCollection * InitializeGamepadSettings( UGBFLocalPlayer * InLocalPlayer );*/
 

@@ -216,7 +216,6 @@ private:
 
     ////////////////////////////////////////////////////////
     // Subtitles
-    // :TODO: Subtitles
     // public:
     //     UFUNCTION()
     //     bool GetSubtitlesEnabled() const

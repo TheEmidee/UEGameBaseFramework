@@ -1,5 +1,6 @@
 #include "Settings/CustomSettings/GBFSettingAction_SafeZoneEditor.h"
 
+#include "DataSource/GameSettingDataSourceDynamic.h"
 #include "Engine/GBFLocalPlayer.h"
 
 #include <Settings/GBFGameSettingRegistry.h>
