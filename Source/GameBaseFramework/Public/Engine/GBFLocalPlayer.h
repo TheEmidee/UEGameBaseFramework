@@ -6,6 +6,7 @@
 
 #include "GBFLocalPlayer.generated.h"
 
+struct FSwapAudioOutputResult;
 class UGBFGameUserSettings;
 class UGBFSaveGame;
 

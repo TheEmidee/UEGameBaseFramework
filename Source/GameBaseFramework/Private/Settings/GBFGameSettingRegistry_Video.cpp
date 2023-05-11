@@ -5,12 +5,14 @@
 #include "GameSettingAction.h"
 #include "GameSettingValueDiscreteDynamic.h"
 #include "GameSettingValueScalarDynamic.h"
+#include "Settings/CustomSettings/GBFSettingAction_SafeZoneEditor.h"
 #include "Settings/CustomSettings/GBFSettingValueDiscrete_OverallQuality.h"
 #include "Settings/CustomSettings/GBFSettingValueDiscrete_Resolution.h"
 #include "Settings/GBFGameSettingRegistry.h"
 #include "Settings/GBFGameUserSettings.h"
 #include "Settings/GBFPerformanceSettings.h"
 
+#include <Framework/Application/SlateApplication.h>
 #include <GameSettingCollection.h>
 #include <NativeGameplayTags.h>
 
@@ -210,7 +212,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL
         }
         //----------------------------------------------------------------------------------
         {
-            /*ULyraSettingAction_SafeZoneEditor * Setting = NewObject< ULyraSettingAction_SafeZoneEditor >();
+            auto * Setting = NewObject< UGBFSettingAction_SafeZoneEditor >();
             Setting->SetDevName( TEXT( "SafeZone" ) );
             Setting->SetDisplayName( LOCTEXT( "SafeZone_Name", "Safe Zone" ) );
             Setting->SetDescriptionRichText( LOCTEXT( "SafeZone_Description", "Set the UI safe zone for the platform." ) );
@@ -227,7 +229,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL
                 }
             } ) );
 
-            Graphics->AddSetting( Setting );*/
+            graphics->AddSetting( Setting );
         }
         //----------------------------------------------------------------------------------
     }

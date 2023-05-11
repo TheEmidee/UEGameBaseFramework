@@ -3,6 +3,7 @@
 #include "Settings/GBFGameUserSettings.h"
 
 #include <AudioMixerBlueprintLibrary.h>
+#include <GameFramework/PlayerController.h>
 
 UGBFLocalPlayer::UGBFLocalPlayer()
 {
