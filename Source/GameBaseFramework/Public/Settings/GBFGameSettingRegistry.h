@@ -30,9 +30,9 @@ protected:
     void SaveChanges() override;
 
     virtual UGameSettingCollection * InitializeVideoSettings( UGBFLocalPlayer * local_player );
-    virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * InLocalPlayer );
-    /*virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * InLocalPlayer );
-    virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * InLocalPlayer );
+    virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * local_player );
+    virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * local_player );
+    /*virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * InLocalPlayer );
     virtual UGameSettingCollection * InitializeGamepadSettings( UGBFLocalPlayer * InLocalPlayer );*/
 
     UPROPERTY()
