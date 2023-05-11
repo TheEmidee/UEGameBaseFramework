@@ -1,1 +1,1 @@
-This is the main page of the docs in docs
+This is the main page of the docs MD
