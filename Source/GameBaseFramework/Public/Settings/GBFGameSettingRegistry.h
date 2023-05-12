@@ -32,8 +32,8 @@ protected:
     virtual UGameSettingCollection * InitializeVideoSettings( UGBFLocalPlayer * local_player );
     virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * local_player );
     virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * local_player );
-    /*virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * InLocalPlayer );
-    virtual UGameSettingCollection * InitializeGamepadSettings( UGBFLocalPlayer * InLocalPlayer );*/
+    //virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * local_player );
+    virtual UGameSettingCollection * InitializeGamepadSettings( UGBFLocalPlayer * local_player );
 
     UPROPERTY()
     TObjectPtr< UGameSettingCollection > VideoSettings;

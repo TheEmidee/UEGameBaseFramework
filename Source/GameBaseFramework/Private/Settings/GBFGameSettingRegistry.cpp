@@ -19,10 +19,10 @@ void UGBFGameSettingRegistry::OnInitialize( ULocalPlayer * local_player )
     RegisterSetting( GameplaySettings );
 
     /*MouseAndKeyboardSettings = InitializeMouseAndKeyboardSettings( gbf_local_player );
-    RegisterSetting( MouseAndKeyboardSettings );
+    RegisterSetting( MouseAndKeyboardSettings );*/
 
     GamepadSettings = InitializeGamepadSettings( gbf_local_player );
-    RegisterSetting( GamepadSettings );*/
+    RegisterSetting( GamepadSettings );
 }
 
 bool UGBFGameSettingRegistry::IsFinishedInitializing() const
