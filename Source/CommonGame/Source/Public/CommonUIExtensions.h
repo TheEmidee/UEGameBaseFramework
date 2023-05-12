@@ -2,16 +2,13 @@
 
 #pragma once
 
-#include "CommonInputBaseTypes.h"
-#include "GameplayTagContainer.h"
-#include "HAL/Platform.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "Templates/SubclassOf.h"
-#include "UObject/NameTypes.h"
 #include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "CommonUIExtensions.generated.h"
+
+enum class ECommonInputType : uint8;
+template <typename T> class TSubclassOf;
 
 class APlayerController;
 class UCommonActivatableWidget;

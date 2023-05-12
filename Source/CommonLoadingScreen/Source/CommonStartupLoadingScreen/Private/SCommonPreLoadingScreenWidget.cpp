@@ -2,14 +2,6 @@
 
 #include "SCommonPreLoadingScreenWidget.h"
 
-#include "HAL/Platform.h"
-#include "Layout/Children.h"
-#include "Layout/Margin.h"
-#include "Math/Color.h"
-#include "Misc/Attribute.h"
-#include "Styling/CoreStyle.h"
-#include "Styling/ISlateStyle.h"
-#include "Styling/SlateColor.h"
 #include "Widgets/Layout/SBorder.h"
 
 class FReferenceCollector;

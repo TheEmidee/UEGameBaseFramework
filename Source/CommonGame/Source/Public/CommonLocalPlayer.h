@@ -2,10 +2,7 @@
 
 #pragma once
 
-#include "Delegates/Delegate.h"
 #include "Engine/LocalPlayer.h"
-#include "HAL/Platform.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "CommonLocalPlayer.generated.h"
 

@@ -2,19 +2,12 @@
 
 #pragma once
 
-#include "CommonInputBaseTypes.h"
 #include "CommonUserWidget.h"
 #include "Fonts/SlateFontInfo.h"
-#include "HAL/Platform.h"
-#include "InputCoreTypes.h"
-#include "Internationalization/Text.h"
-#include "Layout/Margin.h"
-#include "Math/Vector2D.h"
-#include "Styling/SlateBrush.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "CommonPlayerInputKey.generated.h"
+
+enum class ECommonInputType : uint8;
 
 class APlayerController;
 class FPaintArgs;

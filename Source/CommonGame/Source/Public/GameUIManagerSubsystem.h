@@ -4,7 +4,6 @@
 
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameUIManagerSubsystem.generated.h"
 

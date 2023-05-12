@@ -3,9 +3,7 @@
 #pragma once
 
 #include "Engine/DeveloperSettingsBackedByCVars.h"
-#include "HAL/Platform.h"
 #include "UObject/SoftObjectPath.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "CommonLoadingScreenSettings.generated.h"
 

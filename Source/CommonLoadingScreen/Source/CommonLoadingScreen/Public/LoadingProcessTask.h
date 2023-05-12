@@ -2,10 +2,8 @@
 
 #pragma once
 
-#include "Containers/UnrealString.h"
 #include "LoadingProcessInterface.h"
 #include "UObject/Object.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "LoadingProcessTask.generated.h"
 

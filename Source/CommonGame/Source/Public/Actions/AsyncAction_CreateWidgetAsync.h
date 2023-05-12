@@ -2,14 +2,8 @@
 
 #pragma once
 
-#include "Delegates/Delegate.h"
 #include "Engine/CancellableAsyncAction.h"
-#include "Templates/SharedPointer.h"
-#include "UObject/NameTypes.h"
-#include "UObject/Object.h"
 #include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
-#include "UObject/WeakObjectPtrTemplates.h"
 
 #include "AsyncAction_CreateWidgetAsync.generated.h"
 
