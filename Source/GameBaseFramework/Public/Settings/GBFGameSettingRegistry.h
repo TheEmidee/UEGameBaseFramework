@@ -11,6 +11,8 @@
 class UGameSettingCollection;
 class UGBFLocalPlayer;
 
+DECLARE_LOG_CATEGORY_EXTERN( LogGBFGameSettingRegistry, Log, Log );
+
 #define GET_SHARED_SETTINGS_FUNCTION_PATH( FunctionOrPropertyName )                                                                           \
     MakeShared< FGameSettingDataSourceDynamic >( TArray< FString >( { GET_FUNCTION_NAME_STRING_CHECKED( UGBFLocalPlayer, GetSharedSettings ), \
         GET_FUNCTION_NAME_STRING_CHECKED( UGBFSaveGame, FunctionOrPropertyName ) } ) )
@@ -32,7 +34,7 @@ protected:
     virtual UGameSettingCollection * InitializeVideoSettings( UGBFLocalPlayer * local_player );
     virtual UGameSettingCollection * InitializeAudioSettings( UGBFLocalPlayer * local_player );
     virtual UGameSettingCollection * InitializeGameplaySettings( UGBFLocalPlayer * local_player );
-    //virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * local_player );
+    virtual UGameSettingCollection * InitializeMouseAndKeyboardSettings( UGBFLocalPlayer * local_player );
     virtual UGameSettingCollection * InitializeGamepadSettings( UGBFLocalPlayer * local_player );
 
     UPROPERTY()

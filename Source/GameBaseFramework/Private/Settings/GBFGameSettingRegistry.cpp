@@ -5,6 +5,8 @@
 
 #include <GameSettingCollection.h>
 
+DEFINE_LOG_CATEGORY( LogGBFGameSettingRegistry );
+
 void UGBFGameSettingRegistry::OnInitialize( ULocalPlayer * local_player )
 {
     auto * gbf_local_player = Cast< UGBFLocalPlayer >( local_player );
@@ -18,8 +20,8 @@ void UGBFGameSettingRegistry::OnInitialize( ULocalPlayer * local_player )
     GameplaySettings = InitializeGameplaySettings( gbf_local_player );
     RegisterSetting( GameplaySettings );
 
-    /*MouseAndKeyboardSettings = InitializeMouseAndKeyboardSettings( gbf_local_player );
-    RegisterSetting( MouseAndKeyboardSettings );*/
+    MouseAndKeyboardSettings = InitializeMouseAndKeyboardSettings( gbf_local_player );
+    RegisterSetting( MouseAndKeyboardSettings );
 
     GamepadSettings = InitializeGamepadSettings( gbf_local_player );
     RegisterSetting( GamepadSettings );
