@@ -2,6 +2,7 @@
 
 #include "CommonInputSubsystem.h"
 
+#include <Engine/LocalPlayer.h>
 #include <EnhancedInputSubsystems.h>
 
 FSlateBrush UGBFActionWidget::GetIcon() const

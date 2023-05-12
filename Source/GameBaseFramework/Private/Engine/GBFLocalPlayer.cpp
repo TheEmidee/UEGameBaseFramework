@@ -1,6 +1,7 @@
 #include "Engine/GBFLocalPlayer.h"
 
-#include "AudioMixerBlueprintLibrary.h"
+#include <AudioMixerBlueprintLibrary.h>
+#include <GameFramework/PlayerController.h>
 
 UGBFLocalPlayer::UGBFLocalPlayer()
 {

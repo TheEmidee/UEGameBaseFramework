@@ -2,6 +2,7 @@
 
 #include "GameUIManagerSubsystem.h"
 
+#include <Containers/Ticker.h>
 #include <CoreMinimal.h>
 
 #include "GBFGameUIManagerSubsystem.generated.h"

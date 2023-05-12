@@ -10,6 +10,7 @@
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
 #include <Engine/World.h>
+#include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerState.h>
 #include <TimerManager.h>
 

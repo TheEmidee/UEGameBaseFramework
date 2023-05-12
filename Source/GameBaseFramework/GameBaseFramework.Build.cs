@@ -42,6 +42,11 @@ namespace UnrealBuildTool.Rules
                     "EnhancedInput",
                     "CommonUI",
                     "CommonInput",
+                    "ControlFlows",
+                    "CommonGame",
+                    "CommonUser",
+                    "CommonLoadingScreen",
+                    "AudioMixer",
                     "NetCore"
                 }
             );

@@ -3,6 +3,7 @@
 #include "Engine/GBFGameInstance.h"
 
 #include <Engine/LocalPlayer.h>
+#include <Interfaces/OnlinePresenceInterface.h>
 #include <Online.h>
 
 void UGBFLocalPlayerPresenceSystem::Initialize( FSubsystemCollectionBase & collection )
