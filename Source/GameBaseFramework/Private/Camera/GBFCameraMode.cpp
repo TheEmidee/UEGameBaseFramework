@@ -13,7 +13,8 @@ FGBFCameraModeView::FGBFCameraModeView() :
     Location( ForceInit ),
     Rotation( ForceInit ),
     ControlRotation( ForceInit ),
-    FieldOfView( GBF::CameraMode::DefaultFov )
+    FieldOfView( GBF::CameraMode::DefaultFov ),
+    PerspectiveNearClipPlane( 0.0f )
 {
 }
 

@@ -1,5 +1,7 @@
 #include "Characters/GBFPawnDataSelector.h"
 
+#include <UObject/Package.h>
+
 UGBFPawnDataSelector::UGBFPawnDataSelector()
 {
     Priority = 0;

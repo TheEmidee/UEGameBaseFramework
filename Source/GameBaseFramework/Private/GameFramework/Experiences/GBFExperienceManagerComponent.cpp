@@ -8,6 +8,7 @@
 
 #include <Engine/ActorChannel.h>
 #include <Engine/AssetManager.h>
+#include <GameFeatureAction.h>
 #include <GameFeaturesSubsystem.h>
 #include <GameFeaturesSubsystemSettings.h>
 #include <Net/UnrealNetwork.h>

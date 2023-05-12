@@ -3,6 +3,8 @@
 #include "Camera/GBFCameraMode.h"
 
 #include <Engine/Canvas.h>
+#include <Engine/Engine.h>
+#include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerController.h>
 
 UGBFCameraComponent::UGBFCameraComponent( const FObjectInitializer & object_initializer ) :

@@ -6,6 +6,7 @@
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/Engine.h>
+#include <Misc/App.h>
 #include <Misc/ScopedSlowTask.h>
 #include <Stats/StatsMisc.h>
 

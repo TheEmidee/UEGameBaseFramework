@@ -2,6 +2,8 @@
 
 #include "DVEDataValidator.h"
 
+#include <UObject/Package.h>
+
 UGBFPawnData::UGBFPawnData()
 {
     PawnClass = nullptr;

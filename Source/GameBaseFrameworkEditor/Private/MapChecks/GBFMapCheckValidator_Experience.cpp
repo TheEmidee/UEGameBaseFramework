@@ -1,8 +1,8 @@
 #include "MapChecks/GBFMapCheckValidator_Experience.h"
 
-#include "DVEDataValidator.h"
 #include "GameFramework/GBFWorldSettings.h"
 
+#include <Logging/MessageLog.h>
 #include <Misc/UObjectToken.h>
 
 #if WITH_EDITOR

@@ -6,7 +6,7 @@ namespace UnrealBuildTool.Rules
             : base( Target )
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-            bEnforceIWYU = true;
+            IWYUSupport = IWYUSupport.Full;
             PrivatePCHHeaderFile = "Private/GameBaseFrameworkPCH.h";
 
             PrivateIncludePaths.AddRange( 
@@ -42,11 +42,7 @@ namespace UnrealBuildTool.Rules
                     "EnhancedInput",
                     "CommonUI",
                     "CommonInput",
-                    "ControlFlows",
-                    "CommonGame",
-                    "CommonUser",
-                    "CommonLoadingScreen",
-                    "AudioMixer"
+                    "NetCore"
                 }
             );
         }
