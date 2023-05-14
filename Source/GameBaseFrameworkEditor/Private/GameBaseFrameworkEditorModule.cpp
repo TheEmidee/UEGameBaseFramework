@@ -123,7 +123,9 @@ namespace
     void RegisterGameEditorMenus()
     {
         auto * menu = UToolMenus::Get()->ExtendMenu( "LevelEditor.LevelEditorToolBar.PlayToolBar" );
-        auto & section = menu->AddSection( "PlayGameExtensions", TAttribute< FText >(), FToolMenuInsert( "Play", EToolMenuInsertType::After ) );
+        auto & section = menu->FindOrAddSection( "PlayGameExtensions" );
+        section.InsertPosition.Name = "Play";
+        section.InsertPosition.Position = EToolMenuInsertType::After;
 
         FToolMenuEntry common_map_entry = FToolMenuEntry::InitComboButton(
             "CommonMapOptions",
