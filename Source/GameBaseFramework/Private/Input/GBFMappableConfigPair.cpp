@@ -2,6 +2,7 @@
 
 #include "Engine/GBFAssetManager.h"
 #include "Engine/GBFPlatformInfosSubsystem.h"
+#include "Settings/GBFGameUserSettings.h"
 
 #include <Engine/Engine.h>
 #include <Templates/Casts.h>
@@ -29,16 +30,15 @@ bool FGBFMappableConfigPair::RegisterPair( const FGBFMappableConfigPair & pair )
 {
     auto & asset_manager = UGBFAssetManager::Get();
 
-    // :TODO: Settings
-    // if ( ULyraSettingsLocal * Settings = ULyraSettingsLocal::Get() )
-    //{
-    //    // Register the pair with the settings, but do not activate it yet
-    //    if ( const UPlayerMappableInputConfig * LoadedConfig = asset_manager.GetAsset( pair.Config ) )
-    //    {
-    //        Settings->RegisterInputConfig( pair.Type, LoadedConfig, false );
-    //        return true;
-    //    }
-    //}
+    if ( auto * settings = UGBFGameUserSettings::Get() )
+    {
+        // Register the pair with the settings, but do not activate it yet
+        if ( const auto * loaded_config = asset_manager.GetAsset( pair.Config ) )
+        {
+            settings->RegisterInputConfig( pair.Type, loaded_config, false );
+            return true;
+        }
+    }
 
     return false;
 }
@@ -47,12 +47,11 @@ void FGBFMappableConfigPair::UnregisterPair( const FGBFMappableConfigPair & pair
 {
     auto & asset_manager = UGBFAssetManager::Get();
 
-    // :TODO: Settings
-    /*if ( ULyraSettingsLocal * Settings = ULyraSettingsLocal::Get() )
+    if ( auto * settings = UGBFGameUserSettings::Get() )
     {
-        if ( const UPlayerMappableInputConfig * LoadedConfig = asset_manager.GetAsset( pair.Config ) )
+        if ( const auto * loaded_config = asset_manager.GetAsset( pair.Config ) )
         {
-            Settings->UnregisterInputConfig( LoadedConfig );
+            settings->UnregisterInputConfig( loaded_config );
         }
-    }*/
+    }
 }
