@@ -1,7 +1,5 @@
 #include "GameBaseFrameworkSettings.h"
 
-#include "DVEDataValidator.h"
-
 #if WITH_EDITOR
 #include <Framework/Notifications/NotificationManager.h>
 #include <Widgets/Notifications/SNotificationList.h>
@@ -14,7 +12,7 @@ UGameBaseFrameworkSettings::UGameBaseFrameworkSettings()
 
 FName UGameBaseFrameworkSettings::GetCategoryName() const
 {
-    return TEXT( "Game" );
+    return FApp::GetProjectName();
 }
 
 #if WITH_EDITOR
@@ -42,13 +40,6 @@ void UGameBaseFrameworkSettings::OnPlayInEditorStarted() const
         info.ExpireDuration = 2.0f;
         FSlateNotificationManager::Get().AddNotification( info );
     }
-}
-
-EDataValidationResult UGameBaseFrameworkSettings::IsDataValid( TArray< FText > & validation_errors )
-{
-    return FDVEDataValidator( validation_errors )
-        .IsValid( VALIDATOR_GET_PROPERTY( DefaultExperience ) )
-        .Result();
 }
 
 #endif
