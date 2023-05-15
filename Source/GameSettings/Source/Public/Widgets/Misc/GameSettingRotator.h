@@ -3,8 +3,6 @@
 #pragma once
 
 #include "CommonRotator.h"
-#include "HAL/Platform.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingRotator.generated.h"
 

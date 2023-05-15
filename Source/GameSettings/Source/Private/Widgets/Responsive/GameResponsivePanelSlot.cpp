@@ -3,10 +3,7 @@
 #include "GameResponsivePanelSlot.h"
 
 #include "Components/Widget.h"
-#include "SlotBase.h"
-#include "UObject/ObjectPtr.h"
 #include "Widgets/Responsive/SGameResponsivePanel.h"
-#include "Widgets/SNullWidget.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameResponsivePanelSlot)
 

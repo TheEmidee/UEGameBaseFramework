@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "GameSettingValueDiscreteDynamic.h"
+#include "DataSource/GameSettingDataSource.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingValueDiscreteDynamic)
 

@@ -3,8 +3,6 @@
 #include "EditCondition/WhenPlayingAsPrimaryPlayer.h"
 
 #include "Engine/LocalPlayer.h"
-#include "GameSettingFilterState.h"
-#include "Internationalization/Internationalization.h"
 
 #define LOCTEXT_NAMESPACE "GameSetting"
 

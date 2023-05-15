@@ -3,7 +3,6 @@
 #include "DataSource/GameSettingDataSourceDynamic.h"
 
 #include "Engine/LocalPlayer.h"
-#include "Misc/AssertionMacros.h"
 
 //--------------------------------------
 // FGameSettingDataSourceDynamic

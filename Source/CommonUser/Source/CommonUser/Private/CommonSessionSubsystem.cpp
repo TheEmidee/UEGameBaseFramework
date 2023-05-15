@@ -1,24 +1,26 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CommonSessionSubsystem.h"
-#include "GameFramework/GameModeBase.h"
+#include "AssetRegistry/AssetData.h"
+#include "CommonUserTypes.h"
 #include "Engine/AssetManager.h"
-#include "Engine/Engine.h"
+#include "Engine/GameInstance.h"
 #include "Engine/LocalPlayer.h"
-#include "GenericPlatform/GenericPlatformInputDeviceMapper.h"
+#include "GameFramework/PlayerController.h"
+#include "Interfaces/OnlineSessionDelegates.h"
+#include "Online/OnlineSessionNames.h"
+#include "OnlineSessionSettings.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonSessionSubsystem)
 
 #if COMMONUSER_OSSV1
-#include "OnlineSubsystem.h"
-#include "Online.h"
-#include "OnlineSubsystemSessionSettings.h"
+#include "Engine/World.h"
 #include "OnlineSubsystemUtils.h"
-#include "Interfaces/OnlineIdentityInterface.h"
 
 FName SETTING_ONLINESUBSYSTEM_VERSION(TEXT("OSSv1"));
 #else
 #include "Online/OnlineSessionNames.h"
+#include "Interfaces/OnlineSessionDelegates.h"
 #include "Online/OnlineServicesEngineUtils.h"
 
 FName SETTING_ONLINESUBSYSTEM_VERSION(TEXT("OSSv2"));
@@ -286,15 +288,22 @@ FString UCommonSession_HostSessionRequest::ConstructTravelURL() const
 		*CombinedExtraArgs);
 }
 
-bool UCommonSession_HostSessionRequest::ValidateAndLogErrors() const
+bool UCommonSession_HostSessionRequest::ValidateAndLogErrors(FText& OutError) const
 {
+#if WITH_SERVER_CODE
 	if (GetMapName().IsEmpty())
 	{
-		UE_LOG(LogCommonSession, Error, TEXT("Couldn't find asset data for MapID %s, hosting request failed"), *MapID.ToString());
+		OutError = FText::Format(NSLOCTEXT("NetworkErrors", "InvalidMapFormat", "Can't find asset data for MapID {0}, hosting request failed."), FText::FromString(MapID.ToString()));
 		return false;
 	}
 
 	return true;
+#else
+	// Client builds are only meant to connect to dedicated servers, they are missing the code to host a session by default
+	// You can change this behavior in subclasses to handle something like a tutorial
+	OutError = NSLOCTEXT("NetworkErrors", "ClientBuildCannotHost", "Client builds cannot host game sessions.");
+	return false;
+#endif
 }
 
 int32 UCommonSession_HostSessionRequest::GetMaxPlayers() const
@@ -312,6 +321,9 @@ void UCommonSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	GEngine->OnTravelFailure().AddUObject(this, &UCommonSessionSubsystem::TravelLocalSessionFailure);
 
 	FCoreUObjectDelegates::PostLoadMapWithWorld.AddUObject(this, &UCommonSessionSubsystem::HandlePostLoadMap);
+
+	UGameInstance* GameInstance = GetGameInstance();
+	bIsDedicatedServer = GameInstance->IsDedicatedServerInstance();
 }
 
 void UCommonSessionSubsystem::BindOnlineDelegates()
@@ -346,12 +358,12 @@ void UCommonSessionSubsystem::BindOnlineDelegatesOSSv1()
 // 	SessionInterface->AddOnPingSearchResultsCompleteDelegate_Handle(FOnPingSearchResultsCompleteDelegate::CreateUObject(this, &ThisClass::OnPingSearchResultsComplete));
 	SessionInterface->AddOnJoinSessionCompleteDelegate_Handle(FOnJoinSessionCompleteDelegate::CreateUObject(this, &ThisClass::OnJoinSessionComplete));
 
-//	THREE_PARAM(OnSessionParticipantsChange, FName, const FUniqueNetId&, bool);
+//	TWO_PARAM(OnSessionParticipantJoined, FName, const FUniqueNetId&);
+//	THREE_PARAM(OnSessionParticipantLeft, FName, const FUniqueNetId&, EOnSessionParticipantLeftReason);
 //	ONE_PARAM(OnQosDataRequested, FName);
 //	TWO_PARAM(OnSessionCustomDataChanged, FName, const FOnlineSessionSettings&);
 //	TWO_PARAM(OnSessionSettingsUpdated, FName, const FOnlineSessionSettings&);
 //	THREE_PARAM(OnSessionParticipantSettingsUpdated, FName, const FUniqueNetId&, const FOnlineSessionSettings&);
-//	TWO_PARAM(OnSessionParticipantRemoved, FName, const FUniqueNetId&);
 //	FOUR_PARAM(OnSessionInviteReceived, const FUniqueNetId& /*UserId*/, const FUniqueNetId& /*FromId*/, const FString& /*AppId*/, const FOnlineSessionSearchResult& /*InviteResult*/);
 //	THREE_PARAM(OnRegisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
 //	THREE_PARAM(OnUnregisterPlayersComplete, FName, const TArray< FUniqueNetIdRef >&, bool);
@@ -436,21 +448,23 @@ void UCommonSessionSubsystem::HostSession(APlayerController* HostingPlayer, UCom
 {
 	if (Request == nullptr)
 	{
-		UE_LOG(LogCommonSession, Error, TEXT("HostSession passed a null request"));
+		SetCreateSessionError(NSLOCTEXT("NetworkErrors", "InvalidRequest", "HostSession passed an invalid request."));
 		OnCreateSessionComplete(NAME_None, false);
 		return;
 	}
 
 	ULocalPlayer* LocalPlayer = (HostingPlayer != nullptr) ? HostingPlayer->GetLocalPlayer() : nullptr;
-	if (LocalPlayer == nullptr)
+	if (LocalPlayer == nullptr && !bIsDedicatedServer)
 	{
-		UE_LOG(LogCommonSession, Error, TEXT("HostingPlayer is invalid"));
+		SetCreateSessionError(NSLOCTEXT("NetworkErrors", "InvalidHostingPlayer", "HostingPlayer is invalid."));
 		OnCreateSessionComplete(NAME_None, false);
 		return;
 	}
 
-	if (!Request->ValidateAndLogErrors())
+	FText OutError;
+	if (!Request->ValidateAndLogErrors(OutError))
 	{
+		SetCreateSessionError(OutError);
 		OnCreateSessionComplete(NAME_None, false);
 		return;
 	}
@@ -459,7 +473,7 @@ void UCommonSessionSubsystem::HostSession(APlayerController* HostingPlayer, UCom
 	{
 		if (GetWorld()->GetNetMode() == NM_Client)
 		{
-			UE_LOG(LogCommonSession, Error, TEXT("Client trying to do an offline game mode, need to move to a Standalone world first"));
+			SetCreateSessionError(NSLOCTEXT("NetworkErrors", "CannotHostAsClient", "Cannot host offline game as client."));
 			OnCreateSessionComplete(NAME_None, false);
 			return;
 		}
@@ -477,6 +491,7 @@ void UCommonSessionSubsystem::HostSession(APlayerController* HostingPlayer, UCom
 
 void UCommonSessionSubsystem::CreateOnlineSessionInternal(ULocalPlayer* LocalPlayer, UCommonSession_HostSessionRequest* Request)
 {
+	CreateSessionResult = FOnlineResultInformation();
 	PendingTravelURL = Request->ConstructTravelURL();
 
 #if COMMONUSER_OSSV1
@@ -499,7 +514,15 @@ void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv1(ULocalPlayer* Loc
 	IOnlineSessionPtr Sessions = OnlineSub->GetSessionInterface();
 	check(Sessions);
 
-	const FUniqueNetIdPtr UserId = LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId();
+	FUniqueNetIdPtr UserId;
+	if (LocalPlayer)
+	{
+		UserId = LocalPlayer->GetPreferredUniqueNetId().GetUniqueNetId();
+	}
+	else if (bIsDedicatedServer)
+	{
+		UserId = OnlineSub->GetIdentityInterface()->GetUniquePlayerId(0);
+	}
 
 	//@TODO: You can get here on some platforms while trying to do a LAN session, does that require a valid user id?
 	if (ensure(UserId.IsValid()))
@@ -543,7 +566,16 @@ void UCommonSessionSubsystem::CreateOnlineSessionInternalOSSv2(ULocalPlayer* Loc
 	ILobbiesPtr Lobbies = OnlineServices->GetLobbiesInterface();
 	check(Lobbies);
 	FCreateLobby::Params CreateParams;
-	CreateParams.LocalAccountId = LocalPlayer->GetPreferredUniqueNetId().GetV2();
+
+	if (LocalPlayer)
+	{
+		CreateParams.LocalAccountId = LocalPlayer->GetPreferredUniqueNetId().GetV2();
+	}
+	else if (bIsDedicatedServer)
+	{
+		// TODO what should this do for v2?
+	}
+
 	CreateParams.LocalName = SessionName;
 	CreateParams.SchemaId = FSchemaId(TEXT("GameLobby")); // TODO: make a parameter
 	CreateParams.MaxMembers = MaxPlayers;
@@ -620,8 +652,9 @@ void UCommonSessionSubsystem::FinishSessionCreation(bool bWasSuccessful)
 	if (bWasSuccessful)
 	{
 		//@TODO Synchronize timing of this with join callbacks, modify both places and the comments if plan changes
-		FOnlineResultInformation CreateSessionResult;
+		CreateSessionResult = FOnlineResultInformation();
 		CreateSessionResult.bWasSuccessful = true;
+
 		NotifyCreateSessionComplete(CreateSessionResult);
 
 		// Travel to the specified match URL
@@ -629,16 +662,18 @@ void UCommonSessionSubsystem::FinishSessionCreation(bool bWasSuccessful)
 	}
 	else
 	{
-		FString ReturnError = TEXT("GenericFailure"); // TODO: No good way to get session error codes out of OSSV1
-		FText ReturnReason = NSLOCTEXT("NetworkErrors", "CreateSessionFailed", "Failed to create session.");
+		if (CreateSessionResult.bWasSuccessful || CreateSessionResult.ErrorText.IsEmpty())
+		{
+			FString ReturnError = TEXT("GenericFailure"); // TODO: No good way to get session error codes out of OSSV1
+			FText ReturnReason = NSLOCTEXT("NetworkErrors", "CreateSessionFailed", "Failed to create session.");
 
-		UE_LOG(LogCommonSession, Error, TEXT("FinishSessionCreation(%s)"), *ReturnError);
+			CreateSessionResult.bWasSuccessful = false;
+			CreateSessionResult.ErrorId = ReturnError;
+			CreateSessionResult.ErrorText = ReturnReason;
+		}
 
-		// No FOnlineError to initialize from
-		FOnlineResultInformation CreateSessionResult;
-		CreateSessionResult.bWasSuccessful = false;
-		CreateSessionResult.ErrorId = ReturnError;
-		CreateSessionResult.ErrorText = ReturnReason;
+		UE_LOG(LogCommonSession, Error, TEXT("FinishSessionCreation(%s): %s"), *CreateSessionResult.ErrorId, *CreateSessionResult.ErrorText.ToString());
+
 		NotifyCreateSessionComplete(CreateSessionResult);
 	}
 }
@@ -1262,6 +1297,9 @@ void UCommonSessionSubsystem::InternalTravelToSession(const FName SessionName)
 	}
 #endif // COMMONUSER_OSSV1
 
+	// Allow modification of the URL prior to travel
+	OnPreClientTravelEvent.Broadcast(URL);
+		
 	PlayerController->ClientTravel(URL, TRAVEL_Absolute);
 }
 
@@ -1281,6 +1319,15 @@ void UCommonSessionSubsystem::NotifyCreateSessionComplete(const FOnlineResultInf
 {
 	OnCreateSessionCompleteEvent.Broadcast(Result);
 	K2_OnCreateSessionCompleteEvent.Broadcast(Result);
+}
+
+void UCommonSessionSubsystem::SetCreateSessionError(const FText& ErrorText)
+{
+	CreateSessionResult.bWasSuccessful = false;
+	CreateSessionResult.ErrorId = TEXT("InternalFailure");
+
+	// TODO May want to replace with a generic error text in shipping builds depending on how much data you want to give users
+	CreateSessionResult.ErrorText = ErrorText;
 }
 
 #if COMMONUSER_OSSV1

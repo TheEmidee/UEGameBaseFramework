@@ -2,10 +2,9 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
 #include "Misc/TextFilterExpressionEvaluator.h"
 
+#include "UObject/ObjectPtr.h"
 #include "GameSettingFilterState.generated.h"
 
 class ULocalPlayer;

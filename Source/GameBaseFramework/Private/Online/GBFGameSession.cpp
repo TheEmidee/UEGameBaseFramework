@@ -4,6 +4,7 @@
 #include "Online/GBFOnlineSessionSettings.h"
 
 #include <Kismet/KismetStringLibrary.h>
+#include <Online/OnlineSessionNames.h>
 #include <OnlineSubsystemSessionSettings.h>
 #include <OnlineSubsystemUtils.h>
 

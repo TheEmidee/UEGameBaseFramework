@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameSettingFilterState.h"
-#include "Templates/SharedPointer.h"
 
 class ULocalPlayer;
 

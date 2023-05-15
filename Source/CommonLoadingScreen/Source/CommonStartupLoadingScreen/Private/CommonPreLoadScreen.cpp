@@ -2,10 +2,8 @@
 
 #include "CommonPreLoadScreen.h"
 
-#include "CoreGlobals.h"
 #include "Misc/App.h"
 #include "SCommonPreLoadingScreenWidget.h"
-#include "Widgets/DeclarativeSyntaxSupport.h"
 
 #define LOCTEXT_NAMESPACE "CommonPreLoadingScreen"
 

@@ -4,13 +4,11 @@
 
 #include "Blueprint/IUserObjectListEntry.h"
 #include "CommonUserWidget.h"
-#include "GameSettingFilterState.h"
-#include "HAL/Platform.h"
-#include "Input/Reply.h"
-#include "Internationalization/Text.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingListEntry.generated.h"
+
+class FGameSettingEditableState;
+enum class EGameSettingChangeReason : uint8;
 
 class UAnalogSlider;
 class UCommonButtonBase;

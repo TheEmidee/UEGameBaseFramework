@@ -2,12 +2,7 @@
 
 #include "Widgets/GameSettingScreen.h"
 
-#include "Delegates/Delegate.h"
-#include "GameSetting.h"
 #include "GameSettingCollection.h"
-#include "GameSettingFilterState.h"
-#include "GameSettingRegistry.h"
-#include "Templates/Casts.h"
 #include "Widgets/GameSettingPanel.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingScreen)

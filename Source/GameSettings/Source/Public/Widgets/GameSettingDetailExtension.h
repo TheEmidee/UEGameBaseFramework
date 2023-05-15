@@ -3,10 +3,10 @@
 #pragma once
 
 #include "Blueprint/UserWidget.h"
-#include "GameSettingFilterState.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingDetailExtension.generated.h"
+
+enum class EGameSettingChangeReason : uint8;
 
 class UGameSetting;
 class UObject;

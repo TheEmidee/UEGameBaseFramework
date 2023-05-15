@@ -2,11 +2,9 @@
 
 #include "GameSettingRegistry.h"
 
-#include "GameSetting.h"
 #include "GameSettingCollection.h"
 #include "GameSettingAction.h"
-#include <IAnalyticsProviderET.h>
-#include "Stats/Stats.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingRegistry)
 

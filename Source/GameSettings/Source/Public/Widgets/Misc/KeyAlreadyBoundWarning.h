@@ -1,12 +1,11 @@
-﻿// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "CommonActivatableWidget.h"
 #include "GameSettingPressAnyKey.h"
-#include "Components/TextBlock.h"
 #include "KeyAlreadyBoundWarning.generated.h"
+
+class UTextBlock;
 
 /**
  * UKeyAlreadyBoundWarning

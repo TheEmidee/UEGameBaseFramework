@@ -2,12 +2,7 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "Containers/Map.h"
 #include "Engine/DataAsset.h"
-#include "Templates/SubclassOf.h"
-#include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingVisualData.generated.h"
 

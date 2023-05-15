@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "Containers/UnrealString.h"
 #include "GameSettingDataSource.h"
 #include "PropertyPathHelpers.h"
 

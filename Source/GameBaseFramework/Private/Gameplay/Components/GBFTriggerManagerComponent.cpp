@@ -1,6 +1,7 @@
 #include "Gameplay/Components/GBFTriggerManagerComponent.h"
 
 #include <Components/ShapeComponent.h>
+#include <Engine/Engine.h>
 #include <Engine/World.h>
 #include <EngineUtils.h>
 #include <GameFramework/Character.h>

@@ -3,8 +3,8 @@
 #include "GameSetting.h"
 #include "Framework/Text/ITextDecorator.h"
 #include "Framework/Text/RichTextMarkupProcessing.h"
-#include "Templates/UnrealTemplate.h"
 #include "Engine/LocalPlayer.h"
+#include "HAL/IConsoleManager.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSetting)
 

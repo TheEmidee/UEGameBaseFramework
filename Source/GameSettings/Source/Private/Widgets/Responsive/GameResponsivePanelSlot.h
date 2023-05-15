@@ -4,8 +4,6 @@
 
 #include "Components/PanelSlot.h"
 #include "SGameResponsivePanel.h"
-#include "Templates/SharedPointer.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameResponsivePanelSlot.generated.h"
 

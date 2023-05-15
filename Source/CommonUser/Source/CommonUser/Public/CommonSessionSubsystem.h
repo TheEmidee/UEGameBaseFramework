@@ -2,14 +2,19 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/GameInstance.h"
-#include "Subsystems/GameInstanceSubsystem.h"
-#include "UObject/StrongObjectPtr.h"
 #include "CommonUserTypes.h"
+#include "Subsystems/GameInstanceSubsystem.h"
+#include "UObject/ObjectPtr.h"
+#include "UObject/StrongObjectPtr.h"
+#include "UObject/PrimaryAssetId.h"
+#include "UObject/WeakObjectPtr.h"
+
+class APlayerController;
+class ULocalPlayer;
+namespace ETravelFailure { enum Type : int; }
+struct FOnlineResultInformation;
 
 #if COMMONUSER_OSSV1
-#include "OnlineSubsystemTypes.h"
 #include "Interfaces/OnlineSessionInterface.h"
 #include "Public/OnlineSessionSettings.h"
 #else
@@ -84,7 +89,7 @@ public:
 	virtual FString ConstructTravelURL() const;
 
 	/** Returns true if this request is valid, returns false and logs errors if it is not */
-	virtual bool ValidateAndLogErrors() const;
+	virtual bool ValidateAndLogErrors(FText& OutError) const;
 };
 
 
@@ -205,6 +210,12 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnJoinSessionComplete_
 DECLARE_MULTICAST_DELEGATE_OneParam(FCommonSessionOnCreateSessionComplete, const FOnlineResultInformation& /*Result*/);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCommonSessionOnCreateSessionComplete_Dynamic, const FOnlineResultInformation&, Result);
 
+/**
+ * Event triggered when a session join has completed, after resolving the connect string and prior to the client traveling.
+ * @param URL resolved connection string for the session with any additional arguments
+ */
+DECLARE_MULTICAST_DELEGATE_OneParam(FCommonSessionOnPreClientTravel, FString& /*URL*/);
+
 //////////////////////////////////////////////////////////////////////
 // UCommonSessionSubsystem
 
@@ -274,6 +285,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events", meta = (DisplayName = "On Create Session Complete"))
 	FCommonSessionOnCreateSessionComplete_Dynamic K2_OnCreateSessionCompleteEvent;
 
+	/** Native Delegate for modifying the connect URL prior to a client travel */
+	FCommonSessionOnPreClientTravel OnPreClientTravelEvent;
+
 protected:
 	// Functions called during the process of creating or joining a session, these can be overidden for game-specific behavior
 
@@ -306,6 +320,7 @@ protected:
 	void NotifyUserRequestedSession(const FPlatformUserId& PlatformUserId, UCommonSession_SearchResult* RequestedSession, const FOnlineResultInformation& RequestedSessionResult);
 	void NotifyJoinSessionComplete(const FOnlineResultInformation& Result);
 	void NotifyCreateSessionComplete(const FOnlineResultInformation& Result);
+	void SetCreateSessionError(const FText& ErrorText);
 
 #if COMMONUSER_OSSV1
 	void BindOnlineDelegatesOSSv1();
@@ -350,8 +365,14 @@ protected:
 	/** The travel URL that will be used after session operations are complete */
 	FString PendingTravelURL;
 
+	/** Most recent result information for a session creation attempt, stored here to allow storing error codes for later */
+	FOnlineResultInformation CreateSessionResult;
+
 	/** True if we want to cancel the session after it is created */
 	bool bWantToDestroyPendingSession = false;
+
+	/** True if this is a dedicated server, which doesn't require a LocalPlayer to create a session */
+	bool bIsDedicatedServer = false;
 
 	/** Settings for the current search */
 	TSharedPtr<FCommonOnlineSearchSettings> SearchSettings;

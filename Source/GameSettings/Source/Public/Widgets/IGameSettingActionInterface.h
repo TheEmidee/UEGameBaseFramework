@@ -4,7 +4,6 @@
 
 #include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "IGameSettingActionInterface.generated.h"
 

@@ -2,13 +2,7 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "Containers/UnrealString.h"
-#include "CoreTypes.h"
 #include "GameSettingValue.h"
-#include "Internationalization/Text.h"
-#include "Misc/AssertionMacros.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingValueDiscrete.generated.h"
 

@@ -2,11 +2,8 @@
 
 #pragma once
 
-#include "Containers/UnrealString.h"
 #include "GameSettingFilterState.h"
 #include "GameplayTagContainer.h"
-#include "Internationalization/Text.h"
-#include "Templates/SharedPointer.h"
 
 class ULocalPlayer;
 

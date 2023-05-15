@@ -1,5 +1,7 @@
 #include "Online/GBFOnlineSessionSettings.h"
 
+#include <Online/OnlineSessionNames.h>
+
 FGBFOnlineSessionSettings::FGBFOnlineSessionSettings( const bool is_lan, const bool is_presence, const int32 max_num_players )
 {
     NumPublicConnections = max_num_players;

@@ -2,8 +2,7 @@
 
 #include "GameResponsivePanel.h"
 #include "GameResponsivePanelSlot.h"
-#include "Widgets/Layout/SGridPanel.h"
-#include "HAL/PlatformApplicationMisc.h"
+#include "Widgets/Responsive/SGameResponsivePanel.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameResponsivePanel)
 

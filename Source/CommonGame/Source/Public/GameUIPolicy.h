@@ -2,15 +2,7 @@
 
 #pragma once
 
-#include "Containers/Array.h"
 #include "Engine/World.h"
-#include "HAL/Platform.h"
-#include "Misc/AssertionMacros.h"
-#include "Templates/Casts.h"
-#include "Templates/SubclassOf.h"
-#include "UObject/Object.h"
-#include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameUIPolicy.generated.h"
 

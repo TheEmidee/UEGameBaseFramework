@@ -2,9 +2,7 @@
 
 #pragma once
 
-#include "PreLoadScreen.h"
 #include "PreLoadScreenBase.h"
-#include "Templates/SharedPointer.h"
 
 class SWidget;
 

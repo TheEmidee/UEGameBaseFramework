@@ -3,8 +3,6 @@
 #include "EditCondition/WhenPlatformHasTrait.h"
 
 #include "CommonUIVisibilitySubsystem.h"
-#include "GameSettingFilterState.h"
-#include "Misc/AssertionMacros.h"
 
 #define LOCTEXT_NAMESPACE "GameSetting"
 

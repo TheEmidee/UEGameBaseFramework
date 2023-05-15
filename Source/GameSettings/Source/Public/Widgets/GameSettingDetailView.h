@@ -2,11 +2,7 @@
 
 #pragma once
 
-#include "Blueprint/UserWidget.h"
 #include "Blueprint/UserWidgetPool.h"
-#include "Templates/SharedPointer.h"
-#include "Templates/SubclassOf.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingDetailView.generated.h"
 

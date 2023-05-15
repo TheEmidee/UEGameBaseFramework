@@ -2,7 +2,6 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/SlateWrapperTypes.h"
 #include "GameSettingFilterState.h"

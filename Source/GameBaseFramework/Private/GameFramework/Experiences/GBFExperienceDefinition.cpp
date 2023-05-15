@@ -13,6 +13,7 @@
 #include <GameFramework/GameModeBase.h>
 #include <Kismet/GameplayStatics.h>
 #include <Net/UnrealNetwork.h>
+#include <UObject/Package.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
 

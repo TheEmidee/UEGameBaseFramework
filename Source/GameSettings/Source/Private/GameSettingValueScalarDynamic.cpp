@@ -2,7 +2,8 @@
 
 #include "GameSettingValueScalarDynamic.h"
 
-#include "DataSource/GameSettingDataSourceDynamic.h"
+#include "DataSource/GameSettingDataSource.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingValueScalarDynamic)
 

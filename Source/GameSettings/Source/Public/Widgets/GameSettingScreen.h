@@ -3,13 +3,8 @@
 #pragma once
 
 #include "CommonActivatableWidget.h"
-#include "Containers/Array.h"
-#include "CoreTypes.h"
 #include "GameSettingRegistry.h"
 #include "GameSettingRegistryChangeTracker.h"
-#include "Misc/AssertionMacros.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingScreen.generated.h"
 

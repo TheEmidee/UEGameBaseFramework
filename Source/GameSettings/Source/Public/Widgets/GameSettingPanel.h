@@ -3,16 +3,13 @@
 #pragma once
 
 #include "CommonUserWidget.h"
-#include "Containers/Array.h"
 #include "Containers/Ticker.h"
-#include "Delegates/Delegate.h"
 #include "GameSettingFilterState.h"
 #include "GameplayTagContainer.h"
-#include "Input/Reply.h"
-#include "UObject/NameTypes.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingPanel.generated.h"
+
+struct FCompiledToken;
 
 class UGameSetting;
 class UGameSettingDetailView;

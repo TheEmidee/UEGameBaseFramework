@@ -4,21 +4,10 @@
 
 #include "CommonActivatableWidget.h"
 #include "CommonUIExtensions.h"
-#include "CommonUserWidget.h"
-#include "Containers/Array.h"
-#include "Containers/Map.h"
 #include "Engine/AssetManager.h"
 #include "Engine/StreamableManager.h"
 #include "GameplayTagContainer.h"
-#include "HAL/Platform.h"
-#include "Templates/Function.h"
-#include "Templates/SharedPointer.h"
-#include "Templates/UnrealTypeTraits.h"
-#include "UObject/NameTypes.h"
-#include "UObject/SoftObjectPtr.h"
-#include "UObject/UObjectGlobals.h"
-#include "UObject/UnrealNames.h"
-#include "Widgets/CommonActivatableWidgetContainer.h"
+#include "Widgets/CommonActivatableWidgetContainer.h" // IWYU pragma: keep
 
 #include "PrimaryGameLayout.generated.h"
 

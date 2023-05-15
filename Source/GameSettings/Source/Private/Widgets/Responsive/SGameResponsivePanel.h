@@ -2,13 +2,6 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "HAL/Platform.h"
-#include "Layout/Visibility.h"
-#include "Math/Vector2D.h"
-#include "Misc/Attribute.h"
-#include "Templates/SharedPointer.h"
-#include "Widgets/DeclarativeSyntaxSupport.h"
 #include "Widgets/Layout/SGridPanel.h"
 #include "Widgets/SCompoundWidget.h"
 

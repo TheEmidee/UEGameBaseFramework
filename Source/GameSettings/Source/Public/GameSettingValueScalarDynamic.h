@@ -2,16 +2,11 @@
 
 #pragma once
 
-#include "GameSettingFilterState.h"
 #include "GameSettingValueScalar.h"
-#include "Internationalization/Text.h"
-#include "Math/Range.h"
-#include "Misc/Optional.h"
-#include "Templates/Function.h"
-#include "Templates/SharedPointer.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingValueScalarDynamic.generated.h"
+
+struct FNumberFormattingOptions;
 
 class FGameSettingDataSource;
 class UObject;

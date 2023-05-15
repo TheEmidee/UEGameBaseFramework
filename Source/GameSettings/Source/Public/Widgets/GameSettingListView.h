@@ -3,9 +3,10 @@
 #pragma once
 
 #include "Components/ListView.h"
-#include "GameSettingListEntry.h"
 
 #include "GameSettingListView.generated.h"
+
+class STableViewBase;
 
 class UGameSettingCollection;
 class ULocalPlayer;

@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/ObjectMacros.h"
 #include "GameSetting.h"
 
 #include "GameSettingCollection.generated.h"
+
+struct FGameSettingFilterState;
 
 //--------------------------------------
 // UGameSettingCollection

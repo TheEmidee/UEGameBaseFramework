@@ -2,19 +2,9 @@
 
 #include "Widgets/GameSettingPanel.h"
 
-#include "CommonInputBaseTypes.h"
 #include "CommonInputSubsystem.h"
-#include "Containers/Ticker.h"
-#include "GameSetting.h"
+#include "CommonInputTypeEnum.h"
 #include "GameSettingRegistry.h"
-#include "HAL/Platform.h"
-#include "Misc/AssertionMacros.h"
-#include "Stats/Stats.h"
-#include "Stats/Stats2.h"
-#include "Templates/Casts.h"
-#include "Templates/SharedPointer.h"
-#include "UObject/Object.h"
-#include "UObject/UnrealNames.h"
 #include "Widgets/GameSettingDetailView.h"
 #include "Widgets/GameSettingListView.h"
 
@@ -26,7 +16,7 @@ struct FGeometry;
 
 UGameSettingPanel::UGameSettingPanel()
 {
-	bIsFocusable = true;
+	SetIsFocusable(true);
 }
 
 void UGameSettingPanel::NativeOnInitialized()

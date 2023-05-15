@@ -3,8 +3,6 @@
 #include "Widgets/GameSettingVisualData.h"
 
 #include "GameSetting.h"
-#include "Templates/TypeHash.h"
-#include "UObject/Class.h"
 #include "Widgets/GameSettingListEntry.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(GameSettingVisualData)

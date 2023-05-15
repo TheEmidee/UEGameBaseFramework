@@ -3,9 +3,6 @@
 #pragma once
 
 #include "GameSetting.h"
-#include "Misc/AssertionMacros.h"
-#include "Misc/CoreMiscDefines.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingValue.generated.h"
 

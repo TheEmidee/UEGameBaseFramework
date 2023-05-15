@@ -2,15 +2,8 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "CoreTypes.h"
-#include "Delegates/Delegate.h"
 #include "GameSetting.h"
-#include "Misc/AssertionMacros.h"
 #include "Templates/Casts.h"
-#include "UObject/NameTypes.h"
-#include "UObject/Object.h"
-#include "UObject/UObjectGlobals.h"
 
 #include "GameSettingRegistry.generated.h"
 

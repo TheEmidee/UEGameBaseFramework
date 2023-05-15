@@ -6,7 +6,6 @@ namespace UnrealBuildTool.Rules
             : base( Target )
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-            bEnforceIWYU = true;
 
             PublicIncludePathModuleNames.AddRange(
                 new string[] 

@@ -2,11 +2,10 @@
 
 #pragma once
 
-#include "Containers/Map.h"
-#include "GameSettingFilterState.h"
-#include "Templates/UnrealTemplate.h"
 #include "UObject/ObjectKey.h"
 #include "UObject/WeakObjectPtrTemplates.h"
+
+enum class EGameSettingChangeReason : uint8;
 
 class UGameSetting;
 class UGameSettingRegistry;
