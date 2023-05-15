@@ -5,7 +5,9 @@
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 1
 #include "InputKeyEventArgs.h"
+#endif
 #include "NativeGameplayTags.h"
 #include "TimerManager.h"
 
