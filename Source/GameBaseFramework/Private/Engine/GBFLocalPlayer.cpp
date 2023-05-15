@@ -1,6 +1,9 @@
 #include "Engine/GBFLocalPlayer.h"
 
-#include "AudioMixerBlueprintLibrary.h"
+#include "Settings/GBFGameUserSettings.h"
+
+#include <AudioMixerBlueprintLibrary.h>
+#include <GameFramework/PlayerController.h>
 
 UGBFLocalPlayer::UGBFLocalPlayer()
 {
@@ -10,11 +13,10 @@ void UGBFLocalPlayer::PostInitProperties()
 {
     Super::PostInitProperties();
 
-    // :TODO: Settings
-    /*if ( auto * local_settings = GetLocalSettings() )
+    if ( auto * local_settings = GetLocalSettings() )
     {
         local_settings->OnAudioOutputDeviceChanged.AddUObject( this, &ThisClass::OnAudioOutputDeviceChanged );
-    }*/
+    }
 }
 
 void UGBFLocalPlayer::SwitchController( APlayerController * pc )
@@ -37,6 +39,21 @@ void UGBFLocalPlayer::InitOnlineSession()
     OnPlayerControllerChanged( PlayerController );
 
     Super::InitOnlineSession();
+}
+
+UGBFGameUserSettings * UGBFLocalPlayer::GetLocalSettings() const
+{
+    return UGBFGameUserSettings::Get();
+}
+
+UGBFSaveGame * UGBFLocalPlayer::GetSharedSettings() const
+{
+    if ( SharedSettings == nullptr )
+    {
+        SharedSettings = UGBFSaveGame::LoadOrCreateSettings( this );
+    }
+
+    return SharedSettings;
 }
 
 void UGBFLocalPlayer::OnAudioOutputDeviceChanged( const FString & audio_output_device_id )
