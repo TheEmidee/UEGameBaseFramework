@@ -6,7 +6,6 @@ namespace UnrealBuildTool.Rules
             : base( Target )
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-            IWYUSupport = IWYUSupport.Full;
             PrivatePCHHeaderFile = "Private/GameBaseFrameworkPCH.h";
 
             PrivateIncludePaths.AddRange( 
