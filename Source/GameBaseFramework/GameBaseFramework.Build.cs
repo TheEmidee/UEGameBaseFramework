@@ -46,7 +46,10 @@ namespace UnrealBuildTool.Rules
                     "CommonUser",
                     "CommonLoadingScreen",
                     "AudioMixer",
-                    "NetCore"
+                    "GameSettings",
+                    "AudioModulation",
+                    "ApplicationCore",
+                    "RHI"
                 }
             );
         }
