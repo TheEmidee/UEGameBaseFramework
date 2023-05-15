@@ -41,21 +41,18 @@ FName FGBFGameEditorStyle::GetStyleSetName()
 
 TSharedRef< FSlateStyleSet > FGBFGameEditorStyle::Create()
 {
-    TSharedRef< FSlateStyleSet > StyleRef = MakeShareable( new FSlateStyleSet( GetStyleSetName() ) );
-    StyleRef->SetContentRoot( FPaths::EngineContentDir() / TEXT( "Editor/Slate" ) );
-    StyleRef->SetCoreContentRoot( FPaths::EngineContentDir() / TEXT( "Slate" ) );
+    TSharedRef< FSlateStyleSet > style_ref = MakeShareable( new FSlateStyleSet( GetStyleSetName() ) );
+    style_ref->SetContentRoot( FPaths::EngineContentDir() / TEXT( "Editor/Slate" ) );
+    style_ref->SetCoreContentRoot( FPaths::EngineContentDir() / TEXT( "Slate" ) );
 
-    FSlateStyleSet & Style = StyleRef.Get();
+    FSlateStyleSet & style = style_ref.Get();
 
-    const FVector2D Icon16x16( 16.0f, 16.0f );
     const FVector2D Icon20x20( 20.0f, 20.0f );
-    const FVector2D Icon40x40( 40.0f, 40.0f );
-    const FVector2D Icon64x64( 64.0f, 64.0f );
 
     // Toolbar
     {
-        Style.Set( "GameEditor.CheckContent", new GAME_IMAGE_BRUSH_SVG( "Icons/CheckContent", Icon20x20 ) );
+        style.Set( "GameEditor.CheckContent", new GAME_IMAGE_BRUSH_SVG( "Icons/CheckContent", Icon20x20 ) );
     }
 
-    return StyleRef;
+    return style_ref;
 }

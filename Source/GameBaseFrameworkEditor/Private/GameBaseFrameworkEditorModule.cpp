@@ -30,11 +30,11 @@ namespace
     {
         classes.Empty();
 
-        for ( auto * Class : TObjectRange< UClass >() )
+        for ( auto * object_class : TObjectRange< UClass >() )
         {
-            if ( Class->IsChildOf< AActor >() && Class->ImplementsInterface( UGameplayCueInterface::StaticClass() ) )
+            if ( object_class->IsChildOf< AActor >() && object_class->ImplementsInterface( UGameplayCueInterface::StaticClass() ) )
             {
-                classes.Add( Class );
+                classes.Add( object_class );
             }
         }
     }
@@ -42,31 +42,31 @@ namespace
     // This function tells the GameplayCue editor where to create the GameplayCue notifies based on their tag.
     FString GetGameplayCuePath( FString gameplay_cue_tag )
     {
-        FString Path = FString( TEXT( "/Game" ) );
+        auto path = FString( TEXT( "/Game" ) );
 
         //@TODO: Try plugins (e.g., GameplayCue.ShooterGame.Foo should be in ShooterCore or something)
 
         // Default path to the first entry in the UAbilitySystemGlobals::GameplayCueNotifyPaths.
         if ( IGameplayAbilitiesModule::IsAvailable() )
         {
-            if ( IGameplayAbilitiesModule & gameplay_abilities_module = IGameplayAbilitiesModule::Get();
+            if ( auto & gameplay_abilities_module = IGameplayAbilitiesModule::Get();
                  gameplay_abilities_module.IsAbilitySystemGlobalsAvailable() )
             {
                 auto * ability_system_globals = gameplay_abilities_module.GetAbilitySystemGlobals();
                 check( ability_system_globals != nullptr );
 
-                auto GetGameplayCueNotifyPaths = ability_system_globals->GetGameplayCueNotifyPaths();
+                auto gameplay_cue_notify_paths = ability_system_globals->GetGameplayCueNotifyPaths();
 
-                if ( GetGameplayCueNotifyPaths.Num() > 0 )
+                if ( gameplay_cue_notify_paths.Num() > 0 )
                 {
-                    Path = GetGameplayCueNotifyPaths[ 0 ];
+                    path = gameplay_cue_notify_paths[ 0 ];
                 }
             }
         }
 
         gameplay_cue_tag.RemoveFromStart( TEXT( "GameplayCue." ) );
 
-        auto new_default_path_name = FString::Printf( TEXT( "%s/GCN_%s" ), *Path, *gameplay_cue_tag );
+        auto new_default_path_name = FString::Printf( TEXT( "%s/GCN_%s" ), *path, *gameplay_cue_tag );
 
         return new_default_path_name;
     }

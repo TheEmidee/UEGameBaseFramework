@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Templates/SharedPointer.h"
-#include "UObject/NameTypes.h"
+#include <Templates/SharedPointer.h>
+#include <UObject/NameTypes.h>
 
 class ISlateStyle;
 
