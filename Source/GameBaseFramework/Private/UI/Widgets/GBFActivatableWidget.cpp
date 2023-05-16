@@ -49,3 +49,5 @@ void UGBFActivatableWidget::ValidateCompiledWidgetTree( const UWidgetTree & blue
     }
 }
 #endif
+
+#undef LOCTEXT_NAMESPACE

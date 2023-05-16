@@ -41,7 +41,10 @@ namespace UnrealBuildTool.Rules
                     "GameBaseFramework",
                     "MapCheckValidation",
                     "DataValidation",
-                    "DataValidationExtensions"
+                    "DataValidationExtensions",
+                    "GameplayAbilities",
+                    "GameplayAbilitiesEditor",
+                    "ToolMenus"
                 }
             );
         }
