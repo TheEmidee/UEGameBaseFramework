@@ -49,7 +49,8 @@ namespace UnrealBuildTool.Rules
                     "GameSettings",
                     "AudioModulation",
                     "ApplicationCore",
-                    "RHI"
+                    "RHI",
+                    "NetCore"
                 }
             );
         }
