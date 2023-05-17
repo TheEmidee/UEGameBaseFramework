@@ -2,13 +2,16 @@
 
 #include "Engine/GBFLocalPlayer.h"
 
+#include <Framework/Application/SlateApplication.h>
 #include <Internationalization/Culture.h>
 #include <Kismet/GameplayStatics.h>
+#include <Misc/App.h>
 #include <Misc/ConfigCacheIni.h>
+#include <Rendering/RenderingCommon.h>
 
 namespace
 {
-   const FString SharedSettingsSlotName = TEXT( "SharedGameSettings" );
+    const FString SharedSettingsSlotName = TEXT( "SharedGameSettings" );
 }
 
 namespace GBFSettingsSharedCVars

@@ -2,7 +2,9 @@
 
 #include "Widgets/GameSettingScreen.h"
 
+#include <DynamicRHI.h>
 #include <Engine/Engine.h>
+#include <Framework/Application/SlateApplication.h>
 #include <GameFramework/GameUserSettings.h>
 #include <UnrealEngine.h>
 
