@@ -11,8 +11,10 @@
 #include <DeviceProfiles/DeviceProfileManager.h>
 #include <Engine/Engine.h>
 #include <EnhancedInputSubsystems.h>
+#include <Framework/Application/SlateApplication.h>
 #include <HAL/PlatformFramePacer.h>
 #include <ICommonUIModule.h>
+#include <Misc/App.h>
 #include <NativeGameplayTags.h>
 #include <Widgets/Layout/SSafeZone.h>
 
