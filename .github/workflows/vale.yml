@@ -11,3 +11,4 @@ jobs:
         with:
           files: docs/
           fail_on_error: true
+          level: warning
