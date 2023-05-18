@@ -1,0 +1,61 @@
+[1mdiff --git a/Source/GameBaseFramework/Private/Engine/GBFLocalPlayer.cpp b/Source/GameBaseFramework/Private/Engine/GBFLocalPlayer.cpp[m
+[1mindex e246980..16f94ab 100644[m
+[1m--- a/Source/GameBaseFramework/Private/Engine/GBFLocalPlayer.cpp[m
+[1m+++ b/Source/GameBaseFramework/Private/Engine/GBFLocalPlayer.cpp[m
+[36m@@ -3,6 +3,7 @@[m
+ #include "Settings/GBFGameUserSettings.h"[m
+ [m
+ #include <AudioMixerBlueprintLibrary.h>[m
+[32m+[m[32m#include <GameFramework/PlayerController.h>[m[41m[m
+ [m
+ UGBFLocalPlayer::UGBFLocalPlayer()[m
+ {[m
+[1mdiff --git a/Source/GameBaseFramework/Private/Settings/GBFGameSettingRegistry_Video.cpp b/Source/GameBaseFramework/Private/Settings/GBFGameSettingRegistry_Video.cpp[m
+[1mindex 461fea6..29bd434 100644[m
+[1m--- a/Source/GameBaseFramework/Private/Settings/GBFGameSettingRegistry_Video.cpp[m
+[1m+++ b/Source/GameBaseFramework/Private/Settings/GBFGameSettingRegistry_Video.cpp[m
+[36m@@ -5,12 +5,14 @@[m
+ #include "GameSettingAction.h"[m
+ #include "GameSettingValueDiscreteDynamic.h"[m
+ #include "GameSettingValueScalarDynamic.h"[m
+[32m+[m[32m#include "Settings/CustomSettings/GBFSettingAction_SafeZoneEditor.h"[m
+ #include "Settings/CustomSettings/GBFSettingValueDiscrete_OverallQuality.h"[m
+ #include "Settings/CustomSettings/GBFSettingValueDiscrete_Resolution.h"[m
+ #include "Settings/GBFGameSettingRegistry.h"[m
+ #include "Settings/GBFGameUserSettings.h"[m
+ #include "Settings/GBFPerformanceSettings.h"[m
+ [m
+[32m+[m[32m#include <Framework/Application/SlateApplication.h>[m
+ #include <GameSettingCollection.h>[m
+ #include <NativeGameplayTags.h>[m
+ [m
+[36m@@ -210,7 +212,7 @@[m [mUGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL[m
+         }[m
+         //----------------------------------------------------------------------------------[m
+         {[m
+[31m-            /*ULyraSettingAction_SafeZoneEditor * Setting = NewObject< ULyraSettingAction_SafeZoneEditor >();[m
+[32m+[m[32m            auto * Setting = NewObject< UGBFSettingAction_SafeZoneEditor >();[m
+             Setting->SetDevName( TEXT( "SafeZone" ) );[m
+             Setting->SetDisplayName( LOCTEXT( "SafeZone_Name", "Safe Zone" ) );[m
+             Setting->SetDescriptionRichText( LOCTEXT( "SafeZone_Description", "Set the UI safe zone for the platform." ) );[m
+[36m@@ -227,7 +229,7 @@[m [mUGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL[m
+                 }[m
+             } ) );[m
+ [m
+[31m-            Graphics->AddSetting( Setting );*/[m
+[32m+[m[32m            graphics->AddSetting( Setting );[m
+         }[m
+         //----------------------------------------------------------------------------------[m
+     }[m
+[1mdiff --git a/Source/GameBaseFramework/Public/Engine/GBFLocalPlayer.h b/Source/GameBaseFramework/Public/Engine/GBFLocalPlayer.h[m
+[1mindex 876b35f..2a60173 100644[m
+[1m--- a/Source/GameBaseFramework/Public/Engine/GBFLocalPlayer.h[m
+[1m+++ b/Source/GameBaseFramework/Public/Engine/GBFLocalPlayer.h[m
+[36m@@ -6,6 +6,7 @@[m
+ [m
+ #include "GBFLocalPlayer.generated.h"[m
+ [m
+[32m+[m[32mstruct FSwapAudioOutputResult;[m[41m[m
+ class UGBFGameUserSettings;[m
+ class UGBFSaveGame;[m
+ [m

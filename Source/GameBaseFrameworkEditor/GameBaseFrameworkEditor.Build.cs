@@ -6,7 +6,6 @@ namespace UnrealBuildTool.Rules
             : base( Target )
         {
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
-            bEnforceIWYU = true;
 
             PublicIncludePathModuleNames.AddRange(
                 new string[] 
@@ -42,7 +41,10 @@ namespace UnrealBuildTool.Rules
                     "GameBaseFramework",
                     "MapCheckValidation",
                     "DataValidation",
-                    "DataValidationExtensions"
+                    "DataValidationExtensions",
+                    "GameplayAbilities",
+                    "GameplayAbilitiesEditor",
+                    "ToolMenus"
                 }
             );
         }

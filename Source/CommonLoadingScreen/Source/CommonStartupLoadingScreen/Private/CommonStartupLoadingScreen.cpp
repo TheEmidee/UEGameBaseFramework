@@ -1,14 +1,9 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "CommonPreLoadScreen.h"
-#include "CoreGlobals.h"
-#include "Delegates/Delegate.h"
 #include "Misc/App.h"
-#include "Misc/CoreMisc.h"
-#include "Modules/ModuleInterface.h"
 #include "Modules/ModuleManager.h"
 #include "PreLoadScreenManager.h"
-#include "Templates/SharedPointer.h"
 
 #define LOCTEXT_NAMESPACE "FCommonLoadingScreenModule"
 

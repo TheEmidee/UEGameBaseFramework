@@ -11,7 +11,7 @@ class UUserWidget;
 class UCommonGameDialog;
 class UGBFGameState;
 
-UCLASS( config = Game, defaultconfig, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
+UCLASS( config = EditorPerProjectUserSettings, MinimalAPI, meta = ( DisplayName = "GameBaseFramework" ) )
 class UGameBaseFrameworkSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
@@ -26,18 +26,7 @@ public:
     void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
     GAMEBASEFRAMEWORK_API void OnPlayInEditorStarted() const;
-
-    EDataValidationResult IsDataValid( TArray<FText> & validation_errors ) override;
 #endif
-
-    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
-    FString LevelPath;
-
-    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
-    FString MainLevelSuffix;
-
-    UPROPERTY( Config, EditDefaultsOnly, BlueprintReadOnly, Category = "Tools|LevelCreator" )
-    TArray< FString > SubLevelSuffixes;
 
     UPROPERTY( config, EditAnywhere, Category = "Cheats" )
     TArray< FGBFCheatToRun > CheatsToRun;
@@ -54,4 +43,10 @@ public:
 
     UPROPERTY( EditDefaultsOnly, config, Category = "UI" )
     TSoftClassPtr< UCommonGameDialog > ErrorDialogClass;
+
+#if WITH_EDITORONLY_DATA
+    /** A list of common maps that will be accessible via the editor toolbar */
+    UPROPERTY( config, EditAnywhere, BlueprintReadOnly, Category = Maps, meta = ( AllowedClasses = "/Script/Engine.World" ) )
+    TArray< FSoftObjectPath > CommonEditorMaps;
+#endif
 };

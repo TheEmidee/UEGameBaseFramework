@@ -1,96 +1,230 @@
 #include "GameFramework/GBFSaveGame.h"
 
+#include "Engine/GBFLocalPlayer.h"
+
+#include <Internationalization/Culture.h>
 #include <Kismet/GameplayStatics.h>
+#include <Misc/ConfigCacheIni.h>
 
-UGBFSaveGame::UGBFSaveGame() :
-    EnableForceFeedback( true ),
-    EnableSubtitles( true )
+namespace
 {
+   const FString SharedSettingsSlotName = TEXT( "SharedGameSettings" );
 }
 
-int UGBFSaveGame::GetAchievementCurrentCount( const FName & achievement_id ) const
+namespace GBFSettingsSharedCVars
 {
-    if ( const auto current_count = AchievementsCurrentCountMap.Find( achievement_id ) )
+    static float DefaultGamepadLeftStickInnerDeadZone = 0.25f;
+    static FAutoConsoleVariableRef CVarGamepadLeftStickInnerDeadZone(
+        TEXT( "gpad.DefaultLeftStickInnerDeadZone" ),
+        DefaultGamepadLeftStickInnerDeadZone,
+        TEXT( "Gamepad left stick inner deadzone" ) );
+
+    static float DefaultGamepadRightStickInnerDeadZone = 0.25f;
+    static FAutoConsoleVariableRef CVarGamepadRightStickInnerDeadZone(
+        TEXT( "gpad.DefaultRightStickInnerDeadZone" ),
+        DefaultGamepadRightStickInnerDeadZone,
+        TEXT( "Gamepad right stick inner deadzone" ) );
+}
+
+UGBFSaveGame::UGBFSaveGame()
+{
+    FInternationalization::Get().OnCultureChanged().AddUObject( this, &ThisClass::OnCultureChanged );
+
+    GamepadMoveStickDeadZone = GBFSettingsSharedCVars::DefaultGamepadLeftStickInnerDeadZone;
+    GamepadLookStickDeadZone = GBFSettingsSharedCVars::DefaultGamepadRightStickInnerDeadZone;
+}
+
+void UGBFSaveGame::Initialize( UGBFLocalPlayer * LocalPlayer )
+{
+    check( LocalPlayer );
+
+    OwningPlayer = LocalPlayer;
+}
+
+void UGBFSaveGame::SaveSettings()
+{
+    check( OwningPlayer );
+    UGameplayStatics::SaveGameToSlot( this, SharedSettingsSlotName, OwningPlayer->GetLocalPlayerIndex() );
+}
+
+/*static*/ UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * LocalPlayer )
+{
+    UGBFSaveGame * SharedSettings = nullptr;
+
+    // If the save game exists, load it.
+    if ( UGameplayStatics::DoesSaveGameExist( SharedSettingsSlotName, LocalPlayer->GetLocalPlayerIndex() ) )
     {
-        return *current_count;
+        USaveGame * Slot = UGameplayStatics::LoadGameFromSlot( SharedSettingsSlotName, LocalPlayer->GetLocalPlayerIndex() );
+        SharedSettings = Cast< UGBFSaveGame >( Slot );
     }
 
-    return 0;
-}
-
-void UGBFSaveGame::SetSlotNameAndIndex( const FString & slot_name, const int user_index )
-{
-    SlotName = slot_name;
-    UserIndex = user_index;
-}
-
-void UGBFSaveGame::UpdateAchievementCurrentCount( const FName achievement_id, const int current_count )
-{
-    AchievementsCurrentCountMap.FindOrAdd( achievement_id ) = current_count;
-    IsDirty = true;
-}
-
-void UGBFSaveGame::ResetAchievementsProgression()
-{
-#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
-    AchievementsCurrentCountMap.Reset();
-    IsDirty = true;
-#endif
-}
-
-void UGBFSaveGame::SetActiveCulture( const FString & active_culture )
-{
-    if ( ActiveCulture == active_culture )
+    if ( SharedSettings == nullptr )
     {
-        return;
+        SharedSettings = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( UGBFSaveGame::StaticClass() ) );
     }
 
-    ActiveCulture = active_culture;
-    IsDirty = true;
+    SharedSettings->Initialize( const_cast< UGBFLocalPlayer * >( LocalPlayer ) );
+    SharedSettings->ApplySettings();
+
+    return SharedSettings;
 }
 
-void UGBFSaveGame::SetEnableForceFeedback( const bool new_value )
+void UGBFSaveGame::ApplySettings()
 {
-    if ( EnableForceFeedback == new_value )
+    // :TODO: Subtitles
+    // ApplySubtitleOptions();
+    ApplyBackgroundAudioSettings();
+    ApplyCultureSettings();
+}
+
+void UGBFSaveGame::SetColorBlindStrength( int32 InColorBlindStrength )
+{
+    InColorBlindStrength = FMath::Clamp( InColorBlindStrength, 0, 10 );
+    if ( ColorBlindStrength != InColorBlindStrength )
     {
-        return;
+        ColorBlindStrength = InColorBlindStrength;
+        FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
+            ( EColorVisionDeficiency ) ( int32 ) ColorBlindMode,
+            ( int32 ) ColorBlindStrength,
+            true,
+            false );
     }
-
-    EnableForceFeedback = new_value;
-    IsDirty = true;
 }
 
-void UGBFSaveGame::SetEnableSubtitles( const bool new_value )
+int32 UGBFSaveGame::GetColorBlindStrength() const
 {
-    if ( EnableSubtitles == new_value )
+    return ColorBlindStrength;
+}
+
+void UGBFSaveGame::SetColorBlindMode( EGBFColorBlindMode InMode )
+{
+    if ( ColorBlindMode != InMode )
     {
-        return;
+        ColorBlindMode = InMode;
+        FSlateApplication::Get().GetRenderer()->SetColorVisionDeficiencyType(
+            ( EColorVisionDeficiency ) ( int32 ) ColorBlindMode,
+            ( int32 ) ColorBlindStrength,
+            true,
+            false );
     }
-
-    EnableSubtitles = new_value;
-    IsDirty = true;
 }
 
-bool UGBFSaveGame::Save()
+EGBFColorBlindMode UGBFSaveGame::GetColorBlindMode() const
 {
-    if ( GetIsDirty() )
+    return ColorBlindMode;
+}
+
+// void UGBFSaveGame::ApplySubtitleOptions()
+//{
+//     if ( USubtitleDisplaySubsystem * SubtitleSystem = USubtitleDisplaySubsystem::Get( OwningPlayer ) )
+//     {
+//         FSubtitleFormat SubtitleFormat;
+//         SubtitleFormat.SubtitleTextSize = SubtitleTextSize;
+//         SubtitleFormat.SubtitleTextColor = SubtitleTextColor;
+//         SubtitleFormat.SubtitleTextBorder = SubtitleTextBorder;
+//         SubtitleFormat.SubtitleBackgroundOpacity = SubtitleBackgroundOpacity;
+//
+//         SubtitleSystem->SetSubtitleDisplayOptions( SubtitleFormat );
+//     }
+// }
+
+//////////////////////////////////////////////////////////////////////
+
+void UGBFSaveGame::SetAllowAudioInBackgroundSetting( EGBFAllowBackgroundAudioSetting NewValue )
+{
+    if ( ChangeValueAndDirty( AllowAudioInBackground, NewValue ) )
     {
-        if ( !ensure( !SlotName.IsEmpty() ) )
+        ApplyBackgroundAudioSettings();
+    }
+}
+
+void UGBFSaveGame::ApplyBackgroundAudioSettings()
+{
+    if ( OwningPlayer && OwningPlayer->IsPrimaryPlayer() )
+    {
+        FApp::SetUnfocusedVolumeMultiplier( ( AllowAudioInBackground != EGBFAllowBackgroundAudioSetting::Off ) ? 1.0f : 0.0f );
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void UGBFSaveGame::ApplyCultureSettings()
+{
+    if ( bResetToDefaultCulture )
+    {
+        const FCulturePtr SystemDefaultCulture = FInternationalization::Get().GetDefaultCulture();
+        check( SystemDefaultCulture.IsValid() );
+
+        const FString CultureToApply = SystemDefaultCulture->GetName();
+        if ( FInternationalization::Get().SetCurrentCulture( CultureToApply ) )
         {
-            return false;
+            // Clear this string
+            GConfig->RemoveKey( TEXT( "Internationalization" ), TEXT( "Culture" ), GGameUserSettingsIni );
+            GConfig->Flush( false, GGameUserSettingsIni );
         }
-
-        OnSaveGameSavedEvent.Broadcast();
-
-        const auto save_to_slot_result = UGameplayStatics::SaveGameToSlot( this, SlotName, UserIndex );
-
-        if ( save_to_slot_result )
-        {
-            IsDirty = false;
-        }
-
-        return save_to_slot_result;
+        bResetToDefaultCulture = false;
     }
+    else if ( !PendingCulture.IsEmpty() )
+    {
+        // SetCurrentCulture may trigger PendingCulture to be cleared (if a culture change is broadcast) so we take a copy of it to work with
+        const FString CultureToApply = PendingCulture;
+        if ( FInternationalization::Get().SetCurrentCulture( CultureToApply ) )
+        {
+            // Note: This is intentionally saved to the users config
+            // We need to localize text before the player logs in and very early in the loading screen
+            GConfig->SetString( TEXT( "Internationalization" ), TEXT( "Culture" ), *CultureToApply, GGameUserSettingsIni );
+            GConfig->Flush( false, GGameUserSettingsIni );
+        }
+        ClearPendingCulture();
+    }
+}
 
-    return true;
+void UGBFSaveGame::ResetCultureToCurrentSettings()
+{
+    ClearPendingCulture();
+    bResetToDefaultCulture = false;
+}
+
+const FString & UGBFSaveGame::GetPendingCulture() const
+{
+    return PendingCulture;
+}
+
+void UGBFSaveGame::SetPendingCulture( const FString & NewCulture )
+{
+    PendingCulture = NewCulture;
+    bResetToDefaultCulture = false;
+    bIsDirty = true;
+}
+
+void UGBFSaveGame::OnCultureChanged()
+{
+    ClearPendingCulture();
+    bResetToDefaultCulture = false;
+}
+
+void UGBFSaveGame::ClearPendingCulture()
+{
+    PendingCulture.Reset();
+}
+
+bool UGBFSaveGame::IsUsingDefaultCulture() const
+{
+    FString Culture;
+    GConfig->GetString( TEXT( "Internationalization" ), TEXT( "Culture" ), Culture, GGameUserSettingsIni );
+
+    return Culture.IsEmpty();
+}
+
+void UGBFSaveGame::ResetToDefaultCulture()
+{
+    ClearPendingCulture();
+    bResetToDefaultCulture = true;
+    bIsDirty = true;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void UGBFSaveGame::ApplyInputSensitivity()
+{
 }

@@ -2,19 +2,13 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "Containers/UnrealString.h"
-#include "Delegates/Delegate.h"
-#include "HAL/Platform.h"
-#include "Stats/Stats2.h"
 #include "Subsystems/GameInstanceSubsystem.h"
-#include "Templates/SharedPointer.h"
 #include "Tickable.h"
-#include "UObject/ScriptInterface.h"
-#include "UObject/UObjectGlobals.h"
 #include "UObject/WeakInterfacePtr.h"
 
 #include "LoadingScreenManager.generated.h"
+
+template <typename InterfaceType> class TScriptInterface;
 
 class FSubsystemCollectionBase;
 class IInputProcessor;

@@ -16,8 +16,10 @@
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
 #include "Online/GBFGameSession.h"
 
+#include <AssetRegistry/AssetData.h>
 #include <Engine/World.h>
 #include <Kismet/GameplayStatics.h>
+#include <Misc/CommandLine.h>
 #include <TimerManager.h>
 
 AGBFGameMode::AGBFGameMode()

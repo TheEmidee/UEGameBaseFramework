@@ -3,6 +3,7 @@
 #include "Messaging/CommonGameDialog.h"
 
 #include <CoreMinimal.h>
+#include <Engine/DataTable.h>
 
 #include "GBFConfirmationDialog.generated.h"
 

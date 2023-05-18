@@ -6,7 +6,6 @@
 #include "GameFramework/PlayerController.h"
 #include "GameUIManagerSubsystem.h"
 #include "GameUIPolicy.h"
-#include "UObject/ObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonLocalPlayer)
 

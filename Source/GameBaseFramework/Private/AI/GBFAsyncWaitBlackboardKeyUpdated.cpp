@@ -18,7 +18,7 @@ void UGBFAsyncWaitBlackboardKeyUpdated::Activate()
     if ( auto * blackboard_component = BlackboardComponent.Get() )
     {
         const auto key_id = blackboard_component->GetKeyID( KeyName );
-        if ( key_id != INDEX_NONE )
+        if ( key_id != FBlackboard::InvalidKey )
         {
             const auto observer_delegate = FOnBlackboardChangeNotification::CreateUObject( this, &UGBFAsyncWaitBlackboardKeyUpdated::OnBlackboardKeyValueChange );
             RegisterObserverDelegateHandle = blackboard_component->RegisterObserver( key_id, this, observer_delegate );

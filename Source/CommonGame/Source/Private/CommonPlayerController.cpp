@@ -3,8 +3,6 @@
 #include "CommonPlayerController.h"
 
 #include "CommonLocalPlayer.h"
-#include "Templates/Casts.h"
-#include "UObject/ObjectPtr.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(CommonPlayerController)
 

@@ -2,17 +2,9 @@
 
 #include "Actions/AsyncAction_PushContentToLayerForPlayer.h"
 
-#include "CommonActivatableWidget.h"
 #include "Engine/Engine.h"
-#include "Engine/StreamableManager.h"
-#include "Engine/World.h"
-#include "GameFramework/PlayerController.h"
-#include "HAL/Platform.h"
-#include "Logging/LogVerbosity.h"
 #include "PrimaryGameLayout.h"
-#include "Templates/Casts.h"
 #include "UObject/Stack.h"
-#include "UObject/WeakObjectPtr.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(AsyncAction_PushContentToLayerForPlayer)

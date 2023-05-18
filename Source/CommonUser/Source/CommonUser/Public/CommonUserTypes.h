@@ -2,13 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 
 #if COMMONUSER_OSSV1
 
 // Online Subsystem (OSS v1) includes and forward declares
 #include "OnlineSubsystemTypes.h"
-#include "Interfaces/OnlineIdentityInterface.h"
 class IOnlineSubsystem;
 struct FOnlineError;
 using FOnlineErrorType = FOnlineError;

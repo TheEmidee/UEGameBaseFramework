@@ -3,6 +3,7 @@
 #include "DVEDataValidator.h"
 
 #include <GameFeatureAction.h>
+#include <UObject/Package.h>
 
 FPrimaryAssetId UGBFExperienceActionSet::GetPrimaryAssetId() const
 {
