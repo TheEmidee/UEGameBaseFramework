@@ -11,5 +11,5 @@ jobs:
         with:
           files: docs/
           fail_on_error: false
-          reporter: github-pr-review
+          reporter: github-pr-check
           level: warning
