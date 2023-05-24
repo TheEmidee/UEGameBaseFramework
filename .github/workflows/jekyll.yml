@@ -11,6 +11,7 @@ on:
   push:
     branches:
       - "develop"
+    # Dont use paths as we want to regenerate the doxygen documentation when we update the source
     # paths:
     #   - "docs/**"
 
