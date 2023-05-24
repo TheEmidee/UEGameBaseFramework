@@ -1,8 +1,13 @@
 title: Game Base Framework for Unreal Engine
 description: An Unreal Engine plugin to help you kickstart a new project or expand an existing one
 theme: just-the-docs
-
+keep_files: [ "api" ]
 url: https://theemidee.github.io/UEGameBaseFramework/
+
+nav_external_links:
+  - title: API Documentation
+    url: https://theemidee.github.io/UEGameBaseFramework/api/html
+    hide_icon: false # set to true to hide the external link icon - defaults to false
 
 aux_links:
   Template Repository: https://github.com/just-the-docs/just-the-docs-template

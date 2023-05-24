@@ -11,8 +11,9 @@ on:
   push:
     branches:
       - "develop"
-    paths:
-      - "docs/**"
+    # Dont use paths as we want to regenerate the doxygen documentation when we update the source
+    # paths:
+    #   - "docs/**"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -54,6 +55,8 @@ jobs:
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+      - name: Build Doxygen API documentation
+        uses: mattnotmitt/doxygen-action@v1.9.5
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v1
