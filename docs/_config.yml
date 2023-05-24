@@ -6,7 +6,7 @@ url: https://theemidee.github.io/UEGameBaseFramework/
 
 nav_external_links:
   - title: API Documentation
-    url: https://theemidee.github.io/UEGameBaseFramework/api/
+    url: https://theemidee.github.io/UEGameBaseFramework/api/html
     hide_icon: false # set to true to hide the external link icon - defaults to false
 
 aux_links:
