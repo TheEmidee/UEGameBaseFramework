@@ -154,6 +154,10 @@ void UGBFGameFeatureAction_AddMappableInputConfig::AddInputConfig( APawn * pawn,
                 {
                     subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
                 }
+                else
+                {
+                    subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous(), options );
+                }
             }
             active_data.PawnsAddedTo.AddUnique( pawn );
         }
