@@ -273,6 +273,10 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
                     {
                         enhanced_input_local_player_subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
                     }
+                    else
+                    {
+                        enhanced_input_local_player_subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous(), options );
+                    }
                 }
 
                 auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
