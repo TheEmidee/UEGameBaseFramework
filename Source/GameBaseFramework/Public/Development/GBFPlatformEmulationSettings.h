@@ -2,6 +2,7 @@
 
 #include <CoreMinimal.h>
 #include <Engine/DeveloperSettingsBackedByCVars.h>
+#include <GameplayTagContainer.h>
 
 #include "GBFPlatformEmulationSettings.generated.h"
 

@@ -6,6 +6,8 @@
 
 #include "GBFInputConfig.generated.h"
 
+class UInputAction;
+
 /**
  * FGBFInputAction
  *
@@ -20,7 +22,7 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Meta = ( Categories = "InputTag" ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Meta = ( Categories = "InputAction" ) )
     FGameplayTag InputTag;
 };
 
