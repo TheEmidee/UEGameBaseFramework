@@ -1,5 +1,6 @@
 #include "GameFramework/GBFPlayerController.h"
 
+#include "Camera/GBFPlayerCameraManager.h"
 #include "CommonInputSubsystem.h"
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "Engine/GBFLocalPlayer.h"
@@ -16,6 +17,7 @@
 
 AGBFPlayerController::AGBFPlayerController()
 {
+    PlayerCameraManagerClass = AGBFPlayerCameraManager::StaticClass();
 }
 
 UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const
