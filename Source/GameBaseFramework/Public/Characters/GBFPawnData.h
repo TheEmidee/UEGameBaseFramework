@@ -44,10 +44,6 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
     TObjectPtr< UGBFInputConfig > InputConfig;
 
-    //// Default camera mode used by player controlled pawns.
-    // UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
-    // TSubclassOf< ULyraCameraMode > DefaultCameraMode;
-
     // Camera modifiers to add to the player camera manager
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
     TArray< TSubclassOf< UCameraModifier > > CameraModifiers;
