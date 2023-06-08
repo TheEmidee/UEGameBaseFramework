@@ -50,14 +50,14 @@ void UGBFSaveGame::SaveSettings()
     UGameplayStatics::SaveGameToSlot( this, SharedSettingsSlotName, OwningPlayer->GetLocalPlayerIndex() );
 }
 
-/*static*/ UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * LocalPlayer )
+/*static*/ UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * local_player )
 {
     UGBFSaveGame * SharedSettings = nullptr;
 
     // If the save game exists, load it.
-    if ( UGameplayStatics::DoesSaveGameExist( SharedSettingsSlotName, LocalPlayer->GetLocalPlayerIndex() ) )
+    if ( UGameplayStatics::DoesSaveGameExist( SharedSettingsSlotName, local_player->GetLocalPlayerIndex() ) )
     {
-        USaveGame * Slot = UGameplayStatics::LoadGameFromSlot( SharedSettingsSlotName, LocalPlayer->GetLocalPlayerIndex() );
+        USaveGame * Slot = UGameplayStatics::LoadGameFromSlot( SharedSettingsSlotName, local_player->GetLocalPlayerIndex() );
         SharedSettings = Cast< UGBFSaveGame >( Slot );
     }
 
@@ -66,7 +66,7 @@ void UGBFSaveGame::SaveSettings()
         SharedSettings = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( UGBFSaveGame::StaticClass() ) );
     }
 
-    SharedSettings->Initialize( const_cast< UGBFLocalPlayer * >( LocalPlayer ) );
+    SharedSettings->Initialize( const_cast< UGBFLocalPlayer * >( local_player ) );
     SharedSettings->ApplySettings();
 
     return SharedSettings;

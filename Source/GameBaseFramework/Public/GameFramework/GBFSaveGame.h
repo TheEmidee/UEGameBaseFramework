@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameplayTagContainer.h"
+
 #include <GameFramework/SaveGame.h>
 
 #include "GBFSaveGame.generated.h"
@@ -69,7 +71,7 @@ public:
     }
 
     void SaveSettings();
-    static UGBFSaveGame * LoadOrCreateSettings( const UGBFLocalPlayer * LocalPlayer );
+    static UGBFSaveGame * LoadOrCreateSettings( const UGBFLocalPlayer * local_player );
 
     void ApplySettings();
 
@@ -432,37 +434,37 @@ private:
     ////////////////////////////////////////////////////////
     // Gamepad Sensitivity
 public:
-    UFUNCTION()
-    EGBFGamepadSensitivity GetGamepadLookSensitivityPreset() const
+
+    EGBFGamepadSensitivity GetGamepadSensitivityPreset( const FGameplayTag tag ) const
     {
-        return GamepadLookSensitivityPreset;
-    }
-    UFUNCTION()
-    void SetLookSensitivityPreset( EGBFGamepadSensitivity NewValue )
-    {
-        ChangeValueAndDirty( GamepadLookSensitivityPreset, NewValue );
-        ApplyInputSensitivity();
+        if ( auto * sensitivity = GamepadSensitivityMap.Find( tag ) )
+        {
+            return *sensitivity;
+        }
+
+        return EGBFGamepadSensitivity::Normal;
     }
 
-    UFUNCTION()
-    EGBFGamepadSensitivity GetGamepadTargetingSensitivityPreset() const
+    void SetGamepadSensitivityPreset( const FGameplayTag tag, const EGBFGamepadSensitivity sensitivity )
     {
-        return GamepadTargetingSensitivityPreset;
-    }
-    UFUNCTION()
-    void SetGamepadTargetingSensitivityPreset( EGBFGamepadSensitivity NewValue )
-    {
-        ChangeValueAndDirty( GamepadTargetingSensitivityPreset, NewValue );
+        if ( auto * value = GamepadSensitivityMap.Find( tag ) )
+        {
+            ChangeValueAndDirty( *value, sensitivity );
+        }
+        else
+        {
+            auto & new_value = GamepadSensitivityMap.FindOrAdd( tag, EGBFGamepadSensitivity::MAX );
+            ChangeValueAndDirty( new_value, sensitivity );
+        }
+        
         ApplyInputSensitivity();
     }
 
     void ApplyInputSensitivity();
 
-private:
+protected:
     UPROPERTY()
-    EGBFGamepadSensitivity GamepadLookSensitivityPreset = EGBFGamepadSensitivity::Normal;
-    UPROPERTY()
-    EGBFGamepadSensitivity GamepadTargetingSensitivityPreset = EGBFGamepadSensitivity::Normal;
+    TMap< FGameplayTag, EGBFGamepadSensitivity > GamepadSensitivityMap;
 
     ////////////////////////////////////////////////////////
     /// Dirty and Change Reporting
