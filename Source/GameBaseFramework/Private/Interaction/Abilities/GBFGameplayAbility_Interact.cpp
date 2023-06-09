@@ -179,29 +179,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
         }
     }
 
-    bool options_changed = false;
-    if ( new_options.Num() == CurrentOptions.Num() )
-    {
-        new_options.Sort();
-
-        for ( auto option_index = 0; option_index < new_options.Num(); option_index++ )
-        {
-            const auto & new_option = new_options[ option_index ];
-            const auto & current_option = CurrentOptions[ option_index ];
-
-            if ( new_option != current_option )
-            {
-                options_changed = true;
-                break;
-            }
-        }
-    }
-    else
-    {
-        options_changed = true;
-    }
-
-    if ( options_changed )
+    if ( new_options != CurrentOptions )
     {
         CurrentOptions = new_options;
     }

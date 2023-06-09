@@ -941,7 +941,7 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mappin
     // Tell the enhanced input subsystem for this local player that we should remap some input! Woo
     if ( auto * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        Subsystem->AddPlayerMappedKey( mapping_name, new_key );
+        Subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
     }
 }
 
@@ -949,7 +949,7 @@ void UGBFGameUserSettings::ResetKeybindingToDefault( const FName mapping_name, c
 {
     if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        subsystem->RemovePlayerMappedKey( mapping_name );
+        subsystem->RemovePlayerMappedKeyInSlot( mapping_name );
     }
 }
 
