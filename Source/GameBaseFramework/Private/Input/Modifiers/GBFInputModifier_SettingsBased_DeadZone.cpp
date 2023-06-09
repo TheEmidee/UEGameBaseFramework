@@ -26,7 +26,7 @@ FInputActionValue UGBFInputModifier_SettingsBased_DeadZone::ModifyRaw_Implementa
         return FMath::Min( 1.f, ( FMath::Max( 0.f, FMath::Abs( axis_val ) - lower_threshold ) / ( UpperThreshold - lower_threshold ) ) ) * FMath::Sign( axis_val );
     };
 
-    FVector new_value = current_value.Get< FVector >();
+    auto new_value = current_value.Get< FVector >();
     switch ( Type )
     {
         case EDeadZoneType::Axial:

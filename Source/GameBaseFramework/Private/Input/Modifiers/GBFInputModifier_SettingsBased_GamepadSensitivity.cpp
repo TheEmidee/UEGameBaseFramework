@@ -4,22 +4,20 @@
 #include "Input/GBFInputAimSensitivityData.h"
 #include "Input/Modifiers/GBFInputModifierHelpers.h"
 
-FInputActionValue UGBFInputModifier_SettingsBased_GamepadSensitivity::ModifyRaw_Implementation( const UEnhancedPlayerInput * PlayerInput, FInputActionValue CurrentValue, float DeltaTime )
+FInputActionValue UGBFInputModifier_SettingsBased_GamepadSensitivity::ModifyRaw_Implementation( const UEnhancedPlayerInput * player_input, const FInputActionValue current_value, float delta_time )
 {
     // You can't scale a boolean action type
-    const auto * local_player = GBFInputModifiersHelpers::GetLocalPlayer( PlayerInput );
-    if ( CurrentValue.GetValueType() == EInputActionValueType::Boolean || !local_player || !SensitivityLevelTable )
+    const auto * local_player = GBFInputModifiersHelpers::GetLocalPlayer( player_input );
+    if ( current_value.GetValueType() == EInputActionValueType::Boolean || !local_player || !SensitivityLevelTable )
     {
-        return CurrentValue;
+        return current_value;
     }
 
     const auto * settings = local_player->GetSharedSettings();
     ensure( settings != nullptr );
 
     const auto sensitivity = settings->GetGamepadSensitivityPreset( TargetingTypeTag );
-    //== ELyraTargetingType::Normal ) ? settings->GetGamepadLookSensitivityPreset() : settings->GetGamepadTargetingSensitivityPreset();
+    const auto scalar = SensitivityLevelTable->SensitivtyEnumToFloat( sensitivity );
 
-    const float Scalar = SensitivityLevelTable->SensitivtyEnumToFloat( sensitivity );
-
-    return CurrentValue.Get< FVector >() * Scalar;
+    return current_value.Get< FVector >() * scalar;
 }

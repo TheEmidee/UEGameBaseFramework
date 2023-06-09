@@ -8,8 +8,8 @@
 /*
  * Applies an inversion of axis values based on a setting in the shared game settings
  */
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFInputModifier_SettingsBased_AxisInversion final : public UInputModifier
+UCLASS( NotBlueprintable, MinimalAPI, meta = ( DisplayName = "Settings Based Aim Inversion" ) )
+class UGBFInputModifier_SettingsBased_AxisInversion final : public UInputModifier
 {
     GENERATED_BODY()
 

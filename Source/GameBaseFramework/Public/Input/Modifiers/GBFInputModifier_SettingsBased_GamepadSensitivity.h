@@ -12,8 +12,8 @@ class UGBFInputAimSensitivityData;
 /**
  * Applies a scalar modifier based on the current gamepad settings in the shared game settings
  */
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFInputModifier_SettingsBased_GamepadSensitivity : public UInputModifier
+UCLASS( NotBlueprintable, MinimalAPI, meta = ( DisplayName = "Settings Based Gamepad Sensitivity" ) )
+class UGBFInputModifier_SettingsBased_GamepadSensitivity : public UInputModifier
 {
     GENERATED_BODY()
 
@@ -27,5 +27,5 @@ public:
     TObjectPtr< const UGBFInputAimSensitivityData > SensitivityLevelTable;
 
 protected:
-    FInputActionValue ModifyRaw_Implementation( const UEnhancedPlayerInput * PlayerInput, FInputActionValue CurrentValue, float DeltaTime ) override;
+    FInputActionValue ModifyRaw_Implementation( const UEnhancedPlayerInput * player_input, FInputActionValue current_value, float delta_time ) override;
 };

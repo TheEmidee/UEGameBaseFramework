@@ -19,8 +19,8 @@ enum class EDeadzoneStick : uint8
 /**
  * Deadzone input modifier that will have it's thresholds driven by what is in the shared game settings.
  * */
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFInputModifier_SettingsBased_DeadZone final : public UInputModifier
+UCLASS( NotBlueprintable, MinimalAPI, meta = ( DisplayName = "Settings Based Dead Zone" ) )
+class UGBFInputModifier_SettingsBased_DeadZone final : public UInputModifier
 {
     GENERATED_BODY()
 
