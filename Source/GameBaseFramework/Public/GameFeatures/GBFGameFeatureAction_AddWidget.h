@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFeatures/GBFGameFeatureAction_WorldActionBase.h"
+#include "UIExtensionSystem.h"
 
 #include <CoreMinimal.h>
 
