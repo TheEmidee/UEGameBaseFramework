@@ -5,6 +5,7 @@
 #include "Characters/GBFCharacter.h"
 #include "Characters/GBFPawnDataSelector.h"
 #include "Engine/GBFAssetManager.h"
+#include "Engine/GBFHUD.h"
 #include "GBFLog.h"
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
@@ -29,6 +30,7 @@ AGBFGameMode::AGBFGameMode()
     PlayerControllerClass = AGBFPlayerController::StaticClass();
     PlayerStateClass = AGBFPlayerState::StaticClass();
     DefaultPawnClass = AGBFCharacter::StaticClass();
+    HUDClass = AGBFHUD::StaticClass();
 }
 
 const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController * controller ) const
