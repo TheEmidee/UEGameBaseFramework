@@ -70,8 +70,8 @@ struct FGBFGameFeatureAbilitiesEntry
     FGameplayTagContainer LooseGameplayTags;
 };
 
-UCLASS( meta = ( DisplayName = "Add Abilities" ) )
-class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_AddAbilities final : public UGBFGameFeatureAction_WorldActionBase
+UCLASS( MinimalAPI, meta = ( DisplayName = "Add Abilities" ) )
+class UGBFGameFeatureAction_AddAbilities final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
 
