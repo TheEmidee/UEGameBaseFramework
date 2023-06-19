@@ -28,7 +28,7 @@ public:
     UGBFGameUserSettings * GetLocalSettings() const;
 
     UFUNCTION()
-    UGBFSaveGame * GetSharedSettings() const;
+    virtual UGBFSaveGame * GetSharedSettings() const;
 
 protected:
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
@@ -36,11 +36,11 @@ protected:
     UFUNCTION()
     void OnCompletedAudioDeviceSwap( const FSwapAudioOutputResult & swap_result );
 
-private:
-    void OnPlayerControllerChanged( APlayerController * new_controller );
-
     UPROPERTY( Transient )
     mutable TObjectPtr< UGBFSaveGame > SharedSettings;
+
+private:
+    void OnPlayerControllerChanged( APlayerController * new_controller );
 
     UPROPERTY()
     TWeakObjectPtr< APlayerController > LastBoundPC;

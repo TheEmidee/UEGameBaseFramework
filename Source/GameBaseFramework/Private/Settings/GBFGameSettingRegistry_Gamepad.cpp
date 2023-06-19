@@ -113,58 +113,6 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
         //----------------------------------------------------------------------------------
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    {
-        auto * gamepad_binding = NewObject< UGameSettingCollection >();
-        gamepad_binding->SetDevName( TEXT( "GamepadBindingCollection" ) );
-        gamepad_binding->SetDisplayName( LOCTEXT( "GamepadBindingCollection_Name", "Controls" ) );
-        screen->AddSetting( gamepad_binding );
-    }
-
-    // Basic - Look Sensitivity
-    ////////////////////////////////////////////////////////////////////////////////////
-    {
-        auto * basic_sensitivity = NewObject< UGameSettingCollection >();
-        basic_sensitivity->SetDevName( TEXT( "BasicSensitivityCollection" ) );
-        basic_sensitivity->SetDisplayName( LOCTEXT( "BasicSensitivityCollection_Name", "Sensitivity" ) );
-        screen->AddSetting( basic_sensitivity );
-
-        const FText gamepad_sensitivity_text[] = {
-            FText::GetEmpty(),
-            LOCTEXT( "EFortGamepadSensitivity_Slow", "1 (Slow)" ),
-            LOCTEXT( "EFortGamepadSensitivity_SlowPlus", "2 (Slow+)" ),
-            LOCTEXT( "EFortGamepadSensitivity_SlowPlusPlus", "3 (Slow++)" ),
-            LOCTEXT( "EFortGamepadSensitivity_Normal", "4 (Normal)" ),
-            LOCTEXT( "EFortGamepadSensitivity_NormalPlus", "5 (Normal+)" ),
-            LOCTEXT( "EFortGamepadSensitivity_NormalPlusPlus", "6 (Normal++)" ),
-            LOCTEXT( "EFortGamepadSensitivity_Fast", "7 (Fast)" ),
-            LOCTEXT( "EFortGamepadSensitivity_FastPlus", "8 (Fast+)" ),
-            LOCTEXT( "EFortGamepadSensitivity_FastPlusPlus", "9 (Fast++)" ),
-            LOCTEXT( "EFortGamepadSensitivity_Insane", "10 (Insane)" ),
-        };
-
-        //----------------------------------------------------------------------------------
-        {
-            auto * setting = NewObject< UGameSettingValueDiscreteDynamic_Enum >();
-            setting->SetDevName( TEXT( "LookSensitivityPreset" ) );
-            setting->SetDisplayName( LOCTEXT( "LookSensitivityPreset_Name", "Look Sensitivity" ) );
-            setting->SetDescriptionRichText( LOCTEXT( "LookSensitivityPreset_Description", "How quickly your view rotates." ) );
-
-            setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetGamepadLookSensitivityPreset ) );
-            setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetLookSensitivityPreset ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetGamepadLookSensitivityPreset() );
-
-            for ( auto preset_index = 1; preset_index < static_cast< int32 >( EGBFGamepadSensitivity::MAX ); preset_index++ )
-            {
-                setting->AddEnumOption( static_cast< EGBFGamepadSensitivity >( preset_index ), gamepad_sensitivity_text[ preset_index ] );
-            }
-
-            basic_sensitivity->AddSetting( setting );
-        }
-
-        //----------------------------------------------------------------------------------
-    }
-
     // Dead Zone
     ////////////////////////////////////////////////////////////////////////////////////
     {
