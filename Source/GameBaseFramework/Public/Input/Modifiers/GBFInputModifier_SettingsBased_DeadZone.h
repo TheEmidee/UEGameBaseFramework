@@ -42,5 +42,5 @@ protected:
 
     // Visualize as black when unmodified. Red when blocked (with differing intensities to indicate axes)
     // Mirrors visualization in https://www.gamasutra.com/blogs/JoshSutphin/20130416/190541/Doing_Thumbstick_Dead_Zones_Right.php.
-    FLinearColor GetVisualizationColor_Implementation( FInputActionValue SampleValue, FInputActionValue FinalValue ) const override;
+    FLinearColor GetVisualizationColor_Implementation( FInputActionValue sample_value, FInputActionValue final_value ) const override;
 };

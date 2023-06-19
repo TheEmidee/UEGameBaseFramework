@@ -57,12 +57,12 @@ FInputActionValue UGBFInputModifier_SettingsBased_DeadZone::ModifyRaw_Implementa
     return new_value;
 }
 
-FLinearColor UGBFInputModifier_SettingsBased_DeadZone::GetVisualizationColor_Implementation( FInputActionValue SampleValue, FInputActionValue FinalValue ) const
+FLinearColor UGBFInputModifier_SettingsBased_DeadZone::GetVisualizationColor_Implementation( FInputActionValue sample_value, FInputActionValue final_value ) const
 {
     // Taken from UInputModifierDeadZone::GetVisualizationColor_Implementation
-    if ( FinalValue.GetValueType() == EInputActionValueType::Boolean || FinalValue.GetValueType() == EInputActionValueType::Axis1D )
+    if ( final_value.GetValueType() == EInputActionValueType::Boolean || final_value.GetValueType() == EInputActionValueType::Axis1D )
     {
-        return FLinearColor( FinalValue.Get< float >() == 0.f ? 1.f : 0.f, 0.f, 0.f );
+        return FLinearColor( final_value.Get< float >() == 0.f ? 1.f : 0.f, 0.f, 0.f );
     }
-    return FLinearColor( ( FinalValue.Get< FVector2D >().X == 0.f ? 0.5f : 0.f ) + ( FinalValue.Get< FVector2D >().Y == 0.f ? 0.5f : 0.f ), 0.f, 0.f );
+    return FLinearColor( ( final_value.Get< FVector2D >().X == 0.f ? 0.5f : 0.f ) + ( final_value.Get< FVector2D >().Y == 0.f ? 0.5f : 0.f ), 0.f, 0.f );
 }

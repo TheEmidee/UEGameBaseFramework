@@ -1,7 +1,6 @@
 #pragma once
 
-#include "GameplayTagContainer.h"
-
+#include <GameplayTagContainer.h>
 #include <GameFramework/SaveGame.h>
 
 #include "GBFSaveGame.generated.h"

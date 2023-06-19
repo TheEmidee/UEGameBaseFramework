@@ -11,7 +11,7 @@ FInputActionValue UGBFInputModifier_SettingsBased_Scalar3::ModifyRaw_Implementat
             const auto * settings_class = UGBFSaveGame::StaticClass();
             auto * shared_settings = local_player->GetSharedSettings();
 
-            const bool has_cached_property = PropertyCache.Num() == 3;
+            const auto has_cached_property = PropertyCache.Num() == 3;
 
             const auto * x_axis_value = has_cached_property ? PropertyCache[ 0 ] : settings_class->FindPropertyByName( XAxisScalarSettingName );
             const auto * y_axis_value = has_cached_property ? PropertyCache[ 1 ] : settings_class->FindPropertyByName( YAxisScalarSettingName );

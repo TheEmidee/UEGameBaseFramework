@@ -19,7 +19,7 @@ UGBFInputAimSensitivityData::UGBFInputAimSensitivityData( const FObjectInitializ
 
 float UGBFInputAimSensitivityData::SensitivtyEnumToFloat( const EGBFGamepadSensitivity gamepad_sensitivity ) const
 {
-    if ( const float * sensitivity = SensitivityMap.Find( gamepad_sensitivity ) )
+    if ( const auto * sensitivity = SensitivityMap.Find( gamepad_sensitivity ) )
     {
         return *sensitivity;
     }
