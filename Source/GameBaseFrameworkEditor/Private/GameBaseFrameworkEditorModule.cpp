@@ -1,5 +1,5 @@
 #include "GBFGameEditorStyle.h"
-#include "GameBaseFrameworkSettings.h"
+#include "GameBaseFrameworkDeveloperSettings.h"
 #include "IGameBaseFrameworkEditorModule.h"
 
 #include <AbilitySystemGlobals.h>
@@ -83,7 +83,7 @@ namespace
 
     bool CanShowCommonMaps()
     {
-        return HasNoPlayWorld() && !GetDefault< UGameBaseFrameworkSettings >()->CommonEditorMaps.IsEmpty();
+        return HasNoPlayWorld() && !GetDefault< UGameBaseFrameworkDeveloperSettings >()->CommonEditorMaps.IsEmpty();
     }
 
     void OpenCommonMap_Clicked( const FString map_path )
@@ -98,7 +98,7 @@ namespace
     {
         FMenuBuilder menu_builder( true, nullptr );
 
-        for ( const auto & path : GetDefault< UGameBaseFrameworkSettings >()->CommonEditorMaps )
+        for ( const auto & path : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CommonEditorMaps )
         {
             if ( !path.IsValid() )
             {

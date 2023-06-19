@@ -2,6 +2,7 @@
 
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFTags.h"
+#include "GameBaseFrameworkGameSettings.h"
 #include "Messaging/CommonGameDialog.h"
 #include "PrimaryGameLayout.h"
 
@@ -9,7 +10,7 @@ void UGBFUIMessagingSubsystem::Initialize( FSubsystemCollectionBase & collection
 {
     Super::Initialize( collection );
 
-    auto * settings = GetDefault< UGameBaseFrameworkSettings >();
+    auto * settings = GetDefault< UGameBaseFrameworkGameSettings >();
     ConfirmationDialogClassPtr = settings->ConfirmationDialogClass.LoadSynchronous();
     ErrorDialogClassPtr = settings->ErrorDialogClass.LoadSynchronous();
 }

@@ -189,7 +189,7 @@ void AGBFPlayerController::OnPossess( APawn * pawn )
 #if WITH_SERVER_CODE && WITH_EDITOR
     if ( GIsEditor && ( pawn != nullptr ) && ( GetPawn() == pawn ) )
     {
-        for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkSettings >()->CheatsToRun )
+        for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CheatsToRun )
         {
             if ( cheat_row.Phase == ECheatExecutionTime::OnPlayerPawnPossession )
             {

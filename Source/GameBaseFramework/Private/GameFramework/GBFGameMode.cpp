@@ -395,7 +395,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
 
     if ( !experience_id.IsValid() && world->IsPlayInEditor() )
     {
-        experience_id = GetDefault< UGameBaseFrameworkSettings >()->ExperienceOverride;
+        experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->ExperienceOverride;
         experience_id_source = TEXT( "DeveloperSettings" );
     }
 
@@ -432,7 +432,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     // Final fallback to the default experience
     if ( !experience_id.IsValid() )
     {
-        experience_id = GetDefault< UGameBaseFrameworkSettings >()->DefaultExperience;
+        experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->DefaultExperience;
         experience_id_source = TEXT( "Default" );
     }
 
