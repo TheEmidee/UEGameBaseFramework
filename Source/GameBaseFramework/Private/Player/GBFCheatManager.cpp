@@ -12,7 +12,7 @@ void UGBFCheatManager::InitCheatManager()
     if ( GIsEditor )
     {
         auto * pc = GetOuterAPlayerController();
-        for ( const auto & CheatRow : GetDefault< UGameBaseFrameworkSettings >()->CheatsToRun )
+        for ( const auto & CheatRow : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CheatsToRun )
         {
             if ( CheatRow.Phase == ECheatExecutionTime::OnCheatManagerCreated )
             {

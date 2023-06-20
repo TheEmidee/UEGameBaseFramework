@@ -49,6 +49,11 @@
 			"Name": "GameSettings",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+		},
+    {
+			"Name": "UIExtension",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
   ],
   "Plugins": [

@@ -5,6 +5,7 @@
 #include "Characters/GBFCharacter.h"
 #include "Characters/GBFPawnDataSelector.h"
 #include "Engine/GBFAssetManager.h"
+#include "Engine/GBFHUD.h"
 #include "GBFLog.h"
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
@@ -29,6 +30,7 @@ AGBFGameMode::AGBFGameMode()
     PlayerControllerClass = AGBFPlayerController::StaticClass();
     PlayerStateClass = AGBFPlayerState::StaticClass();
     DefaultPawnClass = AGBFCharacter::StaticClass();
+    HUDClass = AGBFHUD::StaticClass();
 }
 
 const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController * controller ) const
@@ -393,7 +395,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
 
     if ( !experience_id.IsValid() && world->IsPlayInEditor() )
     {
-        experience_id = GetDefault< UGameBaseFrameworkSettings >()->ExperienceOverride;
+        experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->ExperienceOverride;
         experience_id_source = TEXT( "DeveloperSettings" );
     }
 
@@ -430,7 +432,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     // Final fallback to the default experience
     if ( !experience_id.IsValid() )
     {
-        experience_id = GetDefault< UGameBaseFrameworkSettings >()->DefaultExperience;
+        experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->DefaultExperience;
         experience_id_source = TEXT( "Default" );
     }
 

@@ -50,7 +50,8 @@ namespace UnrealBuildTool.Rules
                     "AudioModulation",
                     "ApplicationCore",
                     "RHI",
-                    "NetCore"
+                    "NetCore",
+                    "UIExtension"
                 }
             );
         }

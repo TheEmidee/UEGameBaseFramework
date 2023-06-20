@@ -12,7 +12,7 @@ struct FWorldContext;
 
 // This is a copy / paste from the one you can find in the ValleyOfTheAncient UE5 sample
 UCLASS( Abstract )
-class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_WorldActionBase : public UGameFeatureAction
+class UGBFGameFeatureAction_WorldActionBase : public UGameFeatureAction
 {
     GENERATED_BODY()
 

@@ -1,6 +1,6 @@
 #include "GBFEditorEngine.h"
 
-#include "GameBaseFrameworkSettings.h"
+#include "GameBaseFrameworkDeveloperSettings.h"
 #include "GameFramework/GBFWorldSettings.h"
 
 #include <Framework/Notifications/NotificationManager.h>
@@ -37,7 +37,7 @@ FGameInstancePIEResult UGBFEditorEngine::PreCreatePIEInstances( const bool any_b
     }
 
     //@TODO: Should add delegates that a *non-editor* module could bind to for PIE start/stop instead of poking directly
-    GetDefault< UGameBaseFrameworkSettings >()->OnPlayInEditorStarted();
+    GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
 
     //: TODO: PlatformEmulationSettings
     // GetDefault< ULyraPlatformEmulationSettings >()->OnPlayInEditorStarted();
@@ -49,7 +49,7 @@ void UGBFEditorEngine::StartPlayInEditorSession( FRequestPlaySessionParams & in_
 {
     Super::StartPlayInEditorSession( in_request_params );
 
-    GetDefault< UGameBaseFrameworkSettings >()->OnPlayInEditorStarted();
+    GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
 }
 
 void UGBFEditorEngine::FirstTickSetup()
