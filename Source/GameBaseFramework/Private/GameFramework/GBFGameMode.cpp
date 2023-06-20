@@ -403,6 +403,12 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
         FString experience_from_command_line;
         if ( FParse::Value( FCommandLine::Get(), TEXT( "Experience=" ), experience_from_command_line ) )
         {
+            // This fixes an issue when we pass multiple arguments to the command line and the experience name is made of all the arguments that come after the real name
+            int char_position = INDEX_NONE;
+            if ( experience_from_command_line.FindChar( '?', char_position ) )
+            {
+                experience_from_command_line.RemoveAt( char_position, experience_from_command_line.Len() - char_position );
+            }
             experience_id = FPrimaryAssetId( UGBFExperienceDefinition::GetPrimaryAssetType(), FName( *experience_from_command_line ) );
             experience_id_source = TEXT( "CommandLine" );
         }
