@@ -46,4 +46,7 @@ public:
 
     UFUNCTION( exec )
     void CheatAll( const FString & message );
+
+    UFUNCTION( exec )
+    void SelfDestructLocalPlayer();
 };
