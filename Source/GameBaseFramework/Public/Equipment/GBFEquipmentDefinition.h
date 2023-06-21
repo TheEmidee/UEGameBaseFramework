@@ -30,7 +30,7 @@ struct FGBFEquipmentActorToSpawn
  * Definition of a piece of equipment that can be applied to a pawn
  */
 UCLASS( Blueprintable, Const, Abstract, BlueprintType )
-class GAMEBASEFRAMEWORK_API UGBFEquipmentDefinition : public UDataAsset
+class GAMEBASEFRAMEWORK_API UGBFEquipmentDefinition : public UObject
 {
     GENERATED_BODY()
 

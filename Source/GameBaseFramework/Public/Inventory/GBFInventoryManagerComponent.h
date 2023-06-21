@@ -1,7 +1,7 @@
 #pragma once
 
+#include <Components/ActorComponent.h>
 #include <CoreMinimal.h>
-#include <ModularPawnComponent.h>
 #include <Net/Serialization/FastArraySerializer.h>
 
 #include "GBFInventoryManagerComponent.generated.h"
@@ -92,7 +92,7 @@ struct TStructOpsTypeTraits< FGBFInventoryList > : TStructOpsTypeTraitsBase2< FG
 };
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFInventoryManagerComponent final : public UModularPawnComponent
+class GAMEBASEFRAMEWORK_API UGBFInventoryManagerComponent final : public UActorComponent
 {
     GENERATED_BODY()
 

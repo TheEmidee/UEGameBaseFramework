@@ -8,7 +8,7 @@
 class UGBFInventoryItemFragment;
 
 UCLASS( Blueprintable, Const, Abstract )
-class GAMEBASEFRAMEWORK_API UGBFInventoryItemDefinition final : public UDataAsset
+class GAMEBASEFRAMEWORK_API UGBFInventoryItemDefinition final : public UObject
 {
     GENERATED_BODY()
 

@@ -14,6 +14,6 @@ class GAMEBASEFRAMEWORK_API UGBFInventoryItemFragment_EquippableItem final : pub
     GENERATED_BODY()
 
 public:
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 };

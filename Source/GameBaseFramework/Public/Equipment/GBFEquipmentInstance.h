@@ -31,7 +31,7 @@ public:
     UFUNCTION( BlueprintPure, Category = Equipment )
     APawn * GetPawn() const;
 
-    UFUNCTION( BlueprintPure, Category = Equipment, meta = ( DeterminesOutputType = PawnType ) )
+    UFUNCTION( BlueprintPure, Category = Equipment, meta = ( DeterminesOutputType = pawn_type ) )
     APawn * GetTypedPawn( TSubclassOf< APawn > pawn_type ) const;
 
     virtual void SpawnEquipmentActors( const TArray< FGBFEquipmentActorToSpawn > & actors_to_spawn );

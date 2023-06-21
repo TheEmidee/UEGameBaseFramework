@@ -5,6 +5,7 @@
 #include "Inventory/GBFInventoryItemInstance.h"
 
 #include <Engine/ActorChannel.h>
+#include <GameFramework/Actor.h>
 #include <Net/UnrealNetwork.h>
 
 FString FGBFInventoryEntry::GetDebugString() const
@@ -138,7 +139,8 @@ void FGBFInventoryList::BroadcastChangeMessage( const FGBFInventoryEntry & entry
 }
 
 UGBFInventoryManagerComponent::UGBFInventoryManagerComponent( const FObjectInitializer & object_initializer ) :
-    Super( object_initializer )
+    Super( object_initializer ),
+    InventoryList( this )
 {
 }
 
