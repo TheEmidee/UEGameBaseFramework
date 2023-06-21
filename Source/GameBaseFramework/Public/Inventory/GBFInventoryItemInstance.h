@@ -6,6 +6,8 @@
 
 #include "GBFInventoryItemInstance.generated.h"
 
+class UGBFInventoryItemDefinition;
+
 UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFInventoryItemInstance : public UObject
 {
