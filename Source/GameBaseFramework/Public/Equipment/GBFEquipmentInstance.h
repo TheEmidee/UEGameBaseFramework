@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GBFEquipmentDefinition.h"
+
 #include <CoreMinimal.h>
 
 #include "GBFEquipmentInstance.generated.h"
