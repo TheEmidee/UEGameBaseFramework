@@ -1,12 +1,11 @@
 #include "Equipment/GBFGameplayAbility_FromEquipment.h"
 
+#if WITH_EDITOR
 #include "DVEDataValidator.h"
-#include "Equipment/GBFEquipmentInstance.h"
+#endif
 
-UGBFGameplayAbility_FromEquipment::UGBFGameplayAbility_FromEquipment( const FObjectInitializer & object_initializer ) :
-    Super( object_initializer )
-{
-}
+#include "Equipment/GBFEquipmentInstance.h"
+#include "Inventory/GBFInventoryItemInstance.h"
 
 UGBFEquipmentInstance * UGBFGameplayAbility_FromEquipment::GetAssociatedEquipment() const
 {
@@ -20,10 +19,10 @@ UGBFEquipmentInstance * UGBFGameplayAbility_FromEquipment::GetAssociatedEquipmen
 
 UGBFInventoryItemInstance * UGBFGameplayAbility_FromEquipment::GetAssociatedItem() const
 {
-    /*if ( const UGBFEquipmentInstance * equipment = GetAssociatedEquipment() )
+    if ( const UGBFEquipmentInstance * equipment = GetAssociatedEquipment() )
     {
         return Cast< UGBFInventoryItemInstance >( equipment->GetInstigator() );
-    }*/
+    }
     return nullptr;
 }
 

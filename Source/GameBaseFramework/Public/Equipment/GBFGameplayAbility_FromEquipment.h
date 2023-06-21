@@ -14,8 +14,6 @@ class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_FromEquipment : public UGASExtGa
 {
     GENERATED_BODY()
 
-    explicit UGBFGameplayAbility_FromEquipment( const FObjectInitializer & object_initializer = FObjectInitializer::Get() );
-
     UFUNCTION( BlueprintCallable, Category = "GameBaseFramework|Ability" )
     UGBFEquipmentInstance * GetAssociatedEquipment() const;
 
