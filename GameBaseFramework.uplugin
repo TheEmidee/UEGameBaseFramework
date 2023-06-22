@@ -51,11 +51,11 @@
 			"LoadingPhase": "Default"
 		},
     {
-<<<<<<< Updated upstream
 			"Name": "UIExtension",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
-=======
+    },
+    {
 			"Name": "GameplayMessageRuntime",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
@@ -64,7 +64,6 @@
 			"Name": "GameplayMessageNodes",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "Default"
->>>>>>> Stashed changes
 		}
   ],
   "Plugins": [
