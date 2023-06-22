@@ -64,6 +64,11 @@
 			"Name": "GameplayMessageNodes",
 			"Type": "UncookedOnly",
 			"LoadingPhase": "Default"
+		},
+    {
+			"Name": "ModularGameplayActors",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
   ],
   "Plugins": [
@@ -81,10 +86,6 @@
     },
     {
       "Name": "CoreExtensions",
-      "Enabled": true
-    },
-    {
-      "Name": "ModularGameplayActors",
       "Enabled": true
     },
     {
