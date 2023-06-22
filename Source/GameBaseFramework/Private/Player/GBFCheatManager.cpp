@@ -2,8 +2,8 @@
 
 #include "Characters/Components/GBFHealthComponent.h"
 #include "GameFramework/GBFPlayerController.h"
-#include "GameFramework/Pawn.h"
 
+#include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerController.h>
 
 void UGBFCheatManager::InitCheatManager()
