@@ -7,8 +7,10 @@ jobs:
     strategy:
       matrix:
         path:
-          - check: 'Source'
-            include: '(GameBaseFramework|GameBaseFrameworkEditor)'
+          - check: 'Source/GameBaseFramework'
+            exclude: ''
+          - check: 'Source/GameBaseFrameworkEditor'
+            exclude: ''
     steps:
     - uses: actions/checkout@v3
     - name: Run clang-format style check for C/C++/Protobuf programs.
@@ -16,4 +18,4 @@ jobs:
       with:
         clang-format-version: '15'
         check-path: ${{ matrix.path['check'] }}
-        include-regex: ${{ matrix.path['include'] }}
+        exclude-regex: ${{ matrix.path['exclude'] }}
