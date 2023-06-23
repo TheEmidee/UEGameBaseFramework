@@ -16,6 +16,7 @@
 #include <ICommonUIModule.h>
 #include <Misc/App.h>
 #include <NativeGameplayTags.h>
+#include <Runtime/Launch/Resources/Version.h>
 #include <Widgets/Layout/SSafeZone.h>
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Platform_Trait_BinauralSettingControlledByOS, "Platform.Trait.BinauralSettingControlledByOS" );
@@ -939,9 +940,13 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mappin
     }
 
     // Tell the enhanced input subsystem for this local player that we should remap some input! Woo
-    if ( auto * Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        Subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
+        subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
+#else
+        subsystem->AddPlayerMappedKey( mapping_name, new_key );
+#endif
     }
 }
 
@@ -949,7 +954,11 @@ void UGBFGameUserSettings::ResetKeybindingToDefault( const FName mapping_name, c
 {
     if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
+#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
         subsystem->RemovePlayerMappedKeyInSlot( mapping_name );
+#else
+        subsystem->RemovePlayerMappedKey( mapping_name );
+#endif
     }
 }
 
