@@ -54,6 +54,16 @@
 			"Name": "UIExtension",
 			"Type": "Runtime",
 			"LoadingPhase": "Default"
+    },
+    {
+			"Name": "GameplayMessageRuntime",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "GameplayMessageNodes",
+			"Type": "UncookedOnly",
+			"LoadingPhase": "Default"
 		}
   ],
   "Plugins": [
