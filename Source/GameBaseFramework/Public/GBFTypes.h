@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CoreMinimal.h>
+#include <Delegates/DelegateCombinations.h>
 
 #include "GBFTypes.generated.h"
 
@@ -11,7 +12,6 @@
 #else
 #define GBF_CONSOLE_UI 0
 #endif
-
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnWaitTriggerManagerTriggeredDelegate, AActor *, activator );
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnWaitTriggerManagerActorInsideCountChangedDelegate, int, actor_count );
