@@ -1,11 +1,11 @@
 #include "Development/GBFPlatformEmulationSettings.h"
 
-#include "CommonUIVisibilitySubsystem.h"
-#include "DeviceProfiles/DeviceProfile.h"
-#include "DeviceProfiles/DeviceProfileManager.h"
-#include "Engine/PlatformSettingsManager.h"
-
+#include <CommonUIVisibilitySubsystem.h>
+#include <DeviceProfiles/DeviceProfile.h>
+#include <DeviceProfiles/DeviceProfileManager.h>
+#include <Engine/PlatformSettingsManager.h>
 #include <Framework/Notifications/NotificationManager.h>
+#include <Misc/App.h>
 #include <Widgets/Notifications/SNotificationList.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkCheats"
@@ -167,8 +167,8 @@ void UGBFPlatformEmulationSettings::PickReasonableBaseDeviceProfile()
         {
             if ( profile->DeviceType == pretend_platform_str )
             {
-                if ( const auto test_name = profile->GetFName(); 
-                    shortest_matching_profile_name == NAME_None || test_name.GetStringLength() < shortest_matching_profile_name.GetStringLength() )
+                if ( const auto test_name = profile->GetFName();
+                     shortest_matching_profile_name == NAME_None || test_name.GetStringLength() < shortest_matching_profile_name.GetStringLength() )
                 {
                     shortest_matching_profile_name = test_name;
                 }

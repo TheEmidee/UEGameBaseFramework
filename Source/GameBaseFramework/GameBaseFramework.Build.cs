@@ -51,7 +51,8 @@ namespace UnrealBuildTool.Rules
                     "ApplicationCore",
                     "RHI",
                     "NetCore",
-                    "UIExtension"
+                    "UIExtension",
+                    "EngineSettings"
                 }
             );
         }

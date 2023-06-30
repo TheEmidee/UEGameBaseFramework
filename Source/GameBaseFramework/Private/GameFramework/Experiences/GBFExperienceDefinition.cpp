@@ -98,6 +98,7 @@ UGBFExperienceImplementation * UGBFExperienceDefinition::Resolve( UObject * owne
         array.Append( other_array );
     };
 
+    implementation->OriginalExperienceDefinition = GetClass();
     implementation->DefaultPawnData = DefaultPawnData;
     append_to_array( implementation->Actions, DefaultActions.Actions );
     append_to_array( implementation->ActionSets, DefaultActions.ActionSets );
