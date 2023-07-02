@@ -12,6 +12,19 @@ class UGBFEquipmentDefinition;
 class UGBFEquipmentInstance;
 struct FGBFEquipmentList;
 
+/** A message when an item is added to the inventory */
+USTRUCT( BlueprintType )
+struct FGBFEquipmentStateChangedMessage
+{
+    GENERATED_BODY()
+
+    UPROPERTY( BlueprintReadOnly, Category = Inventory )
+    TObjectPtr< UActorComponent > EquipmentOwner = nullptr;
+
+    UPROPERTY( BlueprintReadOnly, Category = Inventory )
+    TObjectPtr< UGBFEquipmentInstance > Instance = nullptr;
+};
+
 /** A single piece of applied equipment */
 USTRUCT( BlueprintType )
 struct FGBFAppliedEquipmentEntry : public FFastArraySerializerItem

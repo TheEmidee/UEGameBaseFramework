@@ -1,12 +1,19 @@
 #include "Inventory/GBFInventoryManagerComponent.h"
 
+#include "GameFramework/GameplayMessageSubsystem.h"
 #include "Inventory/GBFInventoryItemDefinition.h"
 #include "Inventory/GBFInventoryItemFragment.h"
 #include "Inventory/GBFInventoryItemInstance.h"
 
 #include <Engine/ActorChannel.h>
 #include <GameFramework/Actor.h>
+#include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
+
+namespace
+{
+    UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Gameplay_Inventory_Message_StackChanged, "Gameplay.Inventory.Message.StackChanged" );
+}
 
 FString FGBFInventoryEntry::GetDebugString() const
 {
@@ -127,15 +134,14 @@ void FGBFInventoryList::RemoveEntry( UGBFInventoryItemInstance * instance )
 
 void FGBFInventoryList::BroadcastChangeMessage( const FGBFInventoryEntry & entry, const int32 old_count, const int32 new_count )
 {
-    // :TODO: Uncomment when the gameplay message router plugin has been moved as a module of GBF
-    /*FGBFInventoryChangeMessage Message;
-    Message.InventoryOwner = OwnerComponent;
-    Message.Instance = entry.Instance;
-    Message.NewCount = new_count;
-    Message.Delta = new_count - old_count;
+    FGBFInventoryChangeMessage message;
+    message.InventoryOwner = OwnerComponent;
+    message.Instance = entry.Instance;
+    message.NewCount = new_count;
+    message.Delta = new_count - old_count;
 
-    UGameplayMessageSubsystem & MessageSystem = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
-    MessageSystem.BroadcastMessage( TAG_GBF_Inventory_Message_StackChanged, Message );*/
+    auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
+    message_system->BroadcastMessage( TAG_Gameplay_Inventory_Message_StackChanged, message );
 }
 
 UGBFInventoryManagerComponent::UGBFInventoryManagerComponent( const FObjectInitializer & object_initializer ) :

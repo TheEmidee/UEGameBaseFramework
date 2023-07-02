@@ -3,10 +3,18 @@
 #include "Components/GASExtAbilitySystemComponent.h"
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/ActorChannel.h>
+#include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
+
+namespace
+{
+    UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Gameplay_Equipment_Message_Equipped, "Gameplay.Equipment.Message.Equipped" );
+    UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Gameplay_Equipment_Message_UnEquipped, "Gameplay.Equipment.Message.UnEquipped" );
+}
 
 FString FGBFAppliedEquipmentEntry::GetDebugString() const
 {
@@ -87,6 +95,13 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
 
     MarkItemDirty( new_entry );
 
+    FGBFEquipmentStateChangedMessage message;
+    message.EquipmentOwner = OwnerComponent;
+    message.Instance = new_entry.Instance;
+
+    auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
+    message_system->BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
+
     return result;
 }
 
@@ -106,6 +121,13 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
 
             entry_it.RemoveCurrent();
             MarkArrayDirty();
+
+            FGBFEquipmentStateChangedMessage message;
+            message.EquipmentOwner = OwnerComponent;
+            message.Instance = entry.Instance;
+
+            auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
+            message_system->BroadcastMessage( TAG_Gameplay_Equipment_Message_UnEquipped, message );
         }
     }
 }
