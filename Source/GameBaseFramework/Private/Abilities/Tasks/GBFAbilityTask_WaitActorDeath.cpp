@@ -32,6 +32,7 @@ void UGBFAbilityTask_WaitActorDeath::Activate()
             {
                 HealthComponent->OnDeathFinished().AddDynamic( this, &ThisClass::OnDeathEvent );
             }
+            break;
             default:
             {
                 checkNoEntry();
@@ -57,6 +58,7 @@ void UGBFAbilityTask_WaitActorDeath::OnDestroy( bool ability_ended )
             {
                 HealthComponent->OnDeathFinished().RemoveDynamic( this, &ThisClass::OnDeathEvent );
             }
+            break;
             default:
             {
                 checkNoEntry();
