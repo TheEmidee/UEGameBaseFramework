@@ -9,6 +9,7 @@ class UGBFGamePhaseAbility;
 class UGBFPawnData;
 class UGBFExperienceActionSet;
 class UGameFeatureAction;
+class UGBFExperienceDefinition;
 
 USTRUCT()
 struct GAMEBASEFRAMEWORK_API FGBFExperienceDefinitionActions
@@ -87,7 +88,7 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceConditionalActions
     FGBFExperienceDefinitionActions Actions;
 };
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFExperienceImplementation final : public UObject
 {
     GENERATED_BODY()
@@ -109,6 +110,9 @@ public:
 
     UPROPERTY( Replicated )
     const UGBFPawnData * DefaultPawnData;
+
+    UPROPERTY( BlueprintReadOnly )
+    TSubclassOf< UGBFExperienceDefinition > OriginalExperienceDefinition;
 };
 
 UCLASS( BlueprintType, Const )

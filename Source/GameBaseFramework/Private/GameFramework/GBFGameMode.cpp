@@ -10,6 +10,7 @@
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "GameFramework/Experiences/GBFExperienceDefinition.h"
 #include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "GameFramework/Experiences/GBFUserFacingExperienceDefinition.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
@@ -18,7 +19,11 @@
 #include "Online/GBFGameSession.h"
 
 #include <AssetRegistry/AssetData.h>
+#include <CommonSessionSubsystem.h>
+#include <CommonUserSubsystem.h>
+#include <CommonUserTypes.h>
 #include <Engine/World.h>
+#include <GameMapsSettings.h>
 #include <Kismet/GameplayStatics.h>
 #include <Misc/CommandLine.h>
 #include <TimerManager.h>
@@ -275,6 +280,32 @@ bool AGBFGameMode::ReadyToStartMatch_Implementation()
     return Super::ReadyToStartMatch_Implementation();
 }
 
+bool AGBFGameMode::TryDedicatedServerLogin()
+{
+    // Some basic code to register as an active dedicated server, this would be heavily modified by the game
+    const auto default_map = UGameMapsSettings::GetGameDefaultMap();
+    const auto * world = GetWorld();
+    if ( const auto * game_instance = GetGameInstance();
+         game_instance != nullptr && world != nullptr && world->GetNetMode() == NM_DedicatedServer && world->URL.Map == default_map )
+    {
+        // Only register if this is the default map on a dedicated server
+        auto * user_subsystem = game_instance->GetSubsystem< UCommonUserSubsystem >();
+
+        // Dedicated servers may need to do an online login
+        user_subsystem->OnUserInitializeComplete.AddDynamic( this, &ThisClass::OnUserInitializedForDedicatedServer );
+
+        // There are no local users on dedicated server, but index 0 means the default platform user which is handled by the online login code
+        if ( !user_subsystem->TryToLoginForOnlinePlay( 0 ) )
+        {
+            OnUserInitializedForDedicatedServer( nullptr, false, FText(), ECommonUserPrivilege::CanPlayOnline, ECommonUserOnlineContext::Default );
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
 void AGBFGameMode::HandleMatchHasStarted()
 {
     Super::HandleMatchHasStarted();
@@ -438,6 +469,12 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     // Final fallback to the default experience
     if ( !experience_id.IsValid() )
     {
+        if ( TryDedicatedServerLogin() )
+        {
+            // This will start to host as a dedicated server
+            return;
+        }
+
         experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->DefaultExperience;
         experience_id_source = TEXT( "Default" );
     }
@@ -490,4 +527,108 @@ bool AGBFGameMode::IsExperienceLoaded() const
     check( experience_component );
 
     return experience_component->IsExperienceLoaded();
+}
+
+void AGBFGameMode::OnUserInitializedForDedicatedServer( const UCommonUserInfo * /*user_info*/, const bool is_successful, FText /*error*/, ECommonUserPrivilege /*requested_privilege*/, ECommonUserOnlineContext /*online_context*/ )
+{
+    if ( const auto * game_instance = GetGameInstance() )
+    {
+        // Unbind
+        auto * user_subsystem = game_instance->GetSubsystem< UCommonUserSubsystem >();
+        user_subsystem->OnUserInitializeComplete.RemoveDynamic( this, &ThisClass::OnUserInitializedForDedicatedServer );
+
+        if ( is_successful )
+        {
+            // Online login worked, start a full online game
+            UE_LOG( LogGBF_Experience, Log, TEXT( "Dedicated server online login succeeded, starting online server" ) );
+            HostDedicatedServerMatch( ECommonSessionOnlineMode::Online );
+        }
+        else
+        {
+            // Go ahead and try to host anyway, but without online support
+            // This behavior is fairly game specific, but this behavior provides the most flexibility for testing
+            UE_LOG( LogGBF_Experience, Log, TEXT( "Dedicated server online login failed, starting LAN-only server" ) );
+            HostDedicatedServerMatch( ECommonSessionOnlineMode::LAN );
+        }
+    }
+}
+
+void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mode )
+{
+    const FPrimaryAssetType user_experience_type = UGBFUserFacingExperienceDefinition::GetPrimaryAssetType();
+
+    // Figure out what UserFacingExperience to load
+    FPrimaryAssetId user_experience_id;
+    FString user_experience_from_command_line;
+
+    if ( FParse::Value( FCommandLine::Get(), TEXT( "UserExperience=" ), user_experience_from_command_line ) ||
+         FParse::Value( FCommandLine::Get(), TEXT( "Playlist=" ), user_experience_from_command_line ) )
+    {
+        int char_position = INDEX_NONE;
+        if ( user_experience_from_command_line.FindChar( '?', char_position ) )
+        {
+            user_experience_from_command_line.RemoveAt( char_position, user_experience_from_command_line.Len() - char_position );
+        }
+
+        user_experience_id = FPrimaryAssetId::ParseTypeAndName( user_experience_from_command_line );
+        if ( !user_experience_id.PrimaryAssetType.IsValid() )
+        {
+            user_experience_id = FPrimaryAssetId( FPrimaryAssetType( user_experience_type ), FName( *user_experience_from_command_line ) );
+        }
+    }
+
+    // Search for the matching experience, it's fine to force load them because we're in dedicated server startup
+    auto & asset_manager = UGBFAssetManager::Get();
+    if ( const TSharedPtr< FStreamableHandle > handle = asset_manager.LoadPrimaryAssetsWithType( user_experience_type );
+         ensure( handle.IsValid() ) )
+    {
+        handle->WaitUntilComplete();
+    }
+
+    TArray< UObject * > user_experiences;
+    asset_manager.GetPrimaryAssetObjectList( user_experience_type, user_experiences );
+    const UGBFUserFacingExperienceDefinition * found_experience = nullptr;
+    const UGBFUserFacingExperienceDefinition * default_experience = nullptr;
+
+    for ( auto * object : user_experiences )
+    {
+        if ( const auto * user_experience = Cast< UGBFUserFacingExperienceDefinition >( object );
+             ensure( user_experience != nullptr ) )
+        {
+            if ( user_experience->GetPrimaryAssetId() == user_experience_id )
+            {
+                found_experience = user_experience;
+                break;
+            }
+
+            if ( user_experience->bIsDefaultExperience && default_experience == nullptr )
+            {
+                default_experience = user_experience;
+            }
+        }
+    }
+
+    if ( found_experience == nullptr )
+    {
+        found_experience = default_experience;
+    }
+
+    if ( const auto * game_instance = GetGameInstance();
+         ensure( found_experience != nullptr && game_instance != nullptr ) )
+    {
+        // Actually host the game
+        if ( auto * host_request = found_experience->CreateHostingRequest();
+             ensure( host_request != nullptr ) )
+        {
+            // :TODO: MIKE The experience defines that already
+            //host_request->OnlineMode = online_mode;
+
+            // TODO override other parameters?
+
+            auto * session_subsystem = game_instance->GetSubsystem< UCommonSessionSubsystem >();
+            session_subsystem->HostSession( nullptr, host_request );
+
+            // This will handle the map travel
+        }
+    }
 }

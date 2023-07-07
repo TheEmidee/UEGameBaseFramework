@@ -292,7 +292,7 @@ void UGBFExperienceManagerComponent::OnExperienceLoadComplete()
     check( LoadState == EGBFExperienceLoadState::Loading );
     check( CurrentExperience != nullptr );
 
-    UE_LOG( LogGBF_Experience, Log, TEXT( "EXPERIENCE: OnExperienceLoadComplete(CurrentExperience = %s, %s)" ), *CurrentExperience->GetPrimaryAssetId().ToString(), *GetClientServerContextString( this ) );
+    UE_LOG( LogGBF_Experience, Log, TEXT( "EXPERIENCE: OnExperienceLoadComplete(CurrentExperience = %s, %s)" ), *GetNameSafe( CurrentExperience ), *GetClientServerContextString( this ) );
 
     // find the URLs for our GameFeaturePlugins - filtering out dupes and ones that don't have a valid mapping
     GameFeaturePluginURLs.Reset();

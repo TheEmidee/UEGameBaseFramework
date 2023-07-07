@@ -4,6 +4,7 @@
 
 #include <CommonInputTypeEnum.h>
 #include <CoreMinimal.h>
+#include <InputCoreTypes.h>
 
 #include "GBFGameUserSettings.generated.h"
 
