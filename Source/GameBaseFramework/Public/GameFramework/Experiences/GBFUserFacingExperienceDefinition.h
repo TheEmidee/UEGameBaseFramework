@@ -7,6 +7,8 @@
 
 #include "GBFUserFacingExperienceDefinition.generated.h"
 
+class UTexture2D;
+
 /** Description of settings used to display experiences in the UI and start a new session */
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFUserFacingExperienceDefinition : public UPrimaryDataAsset

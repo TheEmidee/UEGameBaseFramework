@@ -1,5 +1,7 @@
 #include "GameBaseFrameworkDeveloperSettings.h"
 
+#include <Misc/App.h>
+
 #if WITH_EDITOR
 #include <Framework/Notifications/NotificationManager.h>
 #include <Widgets/Notifications/SNotificationList.h>
