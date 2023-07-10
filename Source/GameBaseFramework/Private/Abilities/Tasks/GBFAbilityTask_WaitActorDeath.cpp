@@ -36,7 +36,8 @@ void UGBFAbilityTask_WaitActorDeath::Activate()
             default:
             {
                 checkNoEntry();
-            };
+            }
+            break;
         }
     }
 }
@@ -62,7 +63,8 @@ void UGBFAbilityTask_WaitActorDeath::OnDestroy( bool ability_ended )
             default:
             {
                 checkNoEntry();
-            };
+            }
+            break;
         }
     }
 }
