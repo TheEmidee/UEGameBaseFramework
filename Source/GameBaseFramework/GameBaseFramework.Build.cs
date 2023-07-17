@@ -52,7 +52,7 @@ namespace UnrealBuildTool.Rules
                     "RHI",
                     "NetCore",
                     "UIExtension",
-                    "EngineSettings"
+                    "EngineSettings",
                     "GameplayMessageRuntime"
                 }
             );
