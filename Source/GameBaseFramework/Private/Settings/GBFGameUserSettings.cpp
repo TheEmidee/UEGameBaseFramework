@@ -10,6 +10,7 @@
 #include <DeviceProfiles/DeviceProfile.h>
 #include <DeviceProfiles/DeviceProfileManager.h>
 #include <Engine/Engine.h>
+#include <EnhancedActionKeyMapping.h>
 #include <EnhancedInputSubsystems.h>
 #include <Framework/Application/SlateApplication.h>
 #include <HAL/PlatformFramePacer.h>

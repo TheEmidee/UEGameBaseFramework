@@ -1,11 +1,11 @@
 #include "GameFramework/Experiences/GBFUserFacingExperienceDefinition.h"
 
 #include "BlueprintLibraries/CoreExtHelperBlueprintLibrary.h"
-#include "Kismet/GameplayStatics.h"
 
 #include <CommonSessionSubsystem.h>
 #include <CommonUISettings.h>
 #include <ICommonUIModule.h>
+#include <Misc/CommandLine.h>
 #include <NativeGameplayTags.h>
 
 namespace GameBaseFramework::Experience
@@ -34,7 +34,7 @@ UCommonSession_HostSessionRequest * UGBFUserFacingExperienceDefinition::CreateHo
     result->MapID = MapID;
     result->ModeNameForAdvertisement = user_facing_experience_name;
     result->ExtraArgs = ExtraArgs;
-    
+
     UCoreExtHelperBlueprintLibrary::ParseOptionsFromString( result->ExtraArgs, FCommandLine::Get() );
 
     result->ExtraArgs.Add( TEXT( "Experience" ), experience_name );
