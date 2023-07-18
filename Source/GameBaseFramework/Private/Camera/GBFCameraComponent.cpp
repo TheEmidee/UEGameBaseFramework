@@ -20,6 +20,11 @@ UGBFCameraComponent * UGBFCameraComponent::FindCameraComponent( const AActor * a
     return actor ? actor->FindComponentByClass< UGBFCameraComponent >() : nullptr;
 }
 
+UGBFCameraMode * UGBFCameraComponent::GetCameraModeInstance( const TSubclassOf< UGBFCameraMode > camera_mode ) const
+{
+    return CameraModeStack->GetCameraModeInstance( camera_mode );
+}
+
 void UGBFCameraComponent::DrawDebug( UCanvas * canvas ) const
 {
     check( canvas != nullptr );
@@ -126,12 +131,16 @@ void UGBFCameraComponent::UpdateCameraModes()
 
     if ( CameraModeStack->IsStackActivate() )
     {
-        if ( DetermineCameraModeDelegate.IsBound() )
+        auto camera_mode = CameraModeOverride;
+
+        if ( camera_mode == nullptr && DetermineCameraModeDelegate.IsBound() )
         {
-            if ( const auto camera_mode = DetermineCameraModeDelegate.Execute() )
-            {
-                CameraModeStack->PushCameraMode( camera_mode );
-            }
+            camera_mode = DetermineCameraModeDelegate.Execute();
+        }
+
+        if ( camera_mode != nullptr )
+        {
+            CameraModeStack->PushCameraMode( camera_mode );
         }
     }
 }
