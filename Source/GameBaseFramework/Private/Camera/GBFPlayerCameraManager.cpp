@@ -4,6 +4,7 @@
 
 #include <Engine/Canvas.h>
 #include <Engine/Engine.h>
+#include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerController.h>
 
 void AGBFPlayerCameraManager::DisplayDebug( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos )

@@ -25,6 +25,12 @@ class GAMEBASEFRAMEWORK_API UGBFCameraComponent : public UCameraComponent
 public:
     UGBFCameraComponent( const FObjectInitializer & object_initializer );
 
+    UFUNCTION( BlueprintCallable, Category = "GBF|Camera" )
+    void OverrideCameraMode( TSubclassOf< UGBFCameraMode > camera_mode );
+
+    UFUNCTION( BlueprintCallable, Category = "GBF|Camera" )
+    void ClearCameraModeOverride();
+
     // Returns the target actor that the camera is looking at.
     virtual AActor * GetTargetActor() const;
 
@@ -33,6 +39,9 @@ public:
     // Returns the camera component if one exists on the specified actor.
     UFUNCTION( BlueprintPure, Category = "GBF|Camera" )
     static UGBFCameraComponent * FindCameraComponent( const AActor * actor );
+
+    UFUNCTION( BlueprintPure, Category = "GBF|Camera" )
+    UGBFCameraMode * GetCameraModeInstance( TSubclassOf< UGBFCameraMode > camera_mode ) const;
 
     virtual void DrawDebug( UCanvas * canvas ) const;
 
@@ -55,6 +64,9 @@ protected:
     UPROPERTY()
     TObjectPtr< UGBFCameraModeStack > CameraModeStack;
 
+    UPROPERTY()
+    TSubclassOf< UGBFCameraMode > CameraModeOverride;
+
     // Offset applied to the field of view.  The offset is only for one frame, it gets cleared once it is applied.
     float FieldOfViewOffset;
 
@@ -62,6 +74,16 @@ private:
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = CameraSettings, meta = ( AllowPrivateAccess = true ) )
     float PerspectiveNearClipPlane;
 };
+
+FORCEINLINE void UGBFCameraComponent::OverrideCameraMode( const TSubclassOf< UGBFCameraMode > camera_mode )
+{
+    CameraModeOverride = camera_mode;
+}
+
+FORCEINLINE void UGBFCameraComponent::ClearCameraModeOverride()
+{
+    CameraModeOverride = nullptr;
+}
 
 FORCEINLINE AActor * UGBFCameraComponent::GetTargetActor() const
 {

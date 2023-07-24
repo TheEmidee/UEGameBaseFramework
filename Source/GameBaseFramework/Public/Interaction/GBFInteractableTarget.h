@@ -28,7 +28,7 @@ class UGBFInteractableTarget : public UInterface
     GENERATED_BODY()
 };
 
-class IGBFInteractableTarget
+class GAMEBASEFRAMEWORK_API IGBFInteractableTarget
 {
     GENERATED_BODY()
 

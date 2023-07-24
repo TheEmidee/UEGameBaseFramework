@@ -201,9 +201,9 @@ public:
     // Gets the tag associated with the top layer and the blend weight of it
     void GetBlendInfo( float & out_weight_of_top_layer, FGameplayTag & out_tag_of_top_layer ) const;
 
-protected:
     UGBFCameraMode * GetCameraModeInstance( TSubclassOf< UGBFCameraMode > camera_mode_class );
 
+protected:
     void UpdateStack( float delta_time );
     void BlendStack( FGBFCameraModeView & out_camera_mode_view ) const;
 
