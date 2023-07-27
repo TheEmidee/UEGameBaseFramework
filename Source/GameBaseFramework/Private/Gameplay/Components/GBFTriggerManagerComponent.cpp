@@ -370,8 +370,9 @@ void UGBFTriggerManagerComponent::UpdateActorOverlapStatus( AActor * actor, cons
         ActorsInTrigger.Remove( actor );
     }
 
-    TryExecuteDelegate( actor );
     OnActorInsideTriggerCountChangedDelegate.Broadcast( ActorsInTrigger.Num() );
+
+    TryExecuteDelegate( actor );
 }
 
 void UGBFTriggerManagerComponent::OnObservedComponentBeginOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * /*other_component*/, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*sweep_hit_result*/ )
