@@ -7,7 +7,8 @@
 
 class UBoxComponent;
 class UGBFTriggerManagerComponent;
-UCLASS()
+
+UCLASS( meta = ( ChildCanTick ) )
 class GAMEBASEFRAMEWORK_API AGBFTriggerBox : public AActor
 {
     GENERATED_BODY()
