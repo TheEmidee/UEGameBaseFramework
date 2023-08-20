@@ -74,8 +74,6 @@ private:
     void UnequipItemInSlot();
     void EquipItemInSlot();
 
-    UGBFEquipmentManagerComponent * FindEquipmentManager() const;
-
     UFUNCTION()
     void OnRep_Slots();
 

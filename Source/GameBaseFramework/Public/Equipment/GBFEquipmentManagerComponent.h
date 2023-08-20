@@ -65,7 +65,6 @@ struct FGBFEquipmentList : public FFastArraySerializer
     bool NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params );
     UGBFEquipmentInstance * AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
     void RemoveEntry( UGBFEquipmentInstance * instance );
-
 private:
     UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
 
@@ -119,6 +118,8 @@ public:
     {
         return static_cast< T * >( GetFirstInstanceOfType( T::StaticClass() ) );
     }
+
+    static UGBFEquipmentManagerComponent * FindEquipmentManagerComponent( AActor * actor );
 
 private:
     UPROPERTY( Replicated )

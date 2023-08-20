@@ -7,6 +7,7 @@
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/ActorChannel.h>
+#include <GameFramework/Controller.h>
 #include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
 
@@ -269,4 +270,16 @@ TArray< UGBFEquipmentInstance * > UGBFEquipmentManagerComponent::GetEquipmentIns
         }
     }
     return results;
+}
+
+UGBFEquipmentManagerComponent * UGBFEquipmentManagerComponent::FindEquipmentManagerComponent( AActor * actor )
+{
+    if ( const auto * owner_controller = Cast< AController >( actor ) )
+    {
+        if ( const auto * pawn = owner_controller->GetPawn() )
+        {
+            return pawn->FindComponentByClass< UGBFEquipmentManagerComponent >();
+        }
+    }
+    return nullptr;
 }

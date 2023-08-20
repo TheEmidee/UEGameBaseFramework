@@ -135,7 +135,7 @@ void UGBFQuickBarComponent::BeginPlay()
 
 void UGBFQuickBarComponent::UnequipItemInSlot()
 {
-    if ( auto * equipment_manager = FindEquipmentManager() )
+    if ( auto * equipment_manager = UGBFEquipmentManagerComponent::FindEquipmentManagerComponent( GetOwner() ) )
     {
         if ( EquippedItem != nullptr )
         {
@@ -157,7 +157,7 @@ void UGBFQuickBarComponent::EquipItemInSlot()
             if ( const auto equipment_definition = equip_info->EquipmentDefinition;
                  equipment_definition != nullptr )
             {
-                if ( auto * equipment_manager = FindEquipmentManager() )
+                if ( auto * equipment_manager = UGBFEquipmentManagerComponent::FindEquipmentManagerComponent( GetOwner() ) )
                 {
                     EquippedItem = equipment_manager->EquipItem( equipment_definition );
                     if ( EquippedItem != nullptr )
@@ -168,18 +168,6 @@ void UGBFQuickBarComponent::EquipItemInSlot()
             }
         }
     }
-}
-
-UGBFEquipmentManagerComponent * UGBFQuickBarComponent::FindEquipmentManager() const
-{
-    if ( const auto * owner_controller = Cast< AController >( GetOwner() ) )
-    {
-        if ( const auto * pawn = owner_controller->GetPawn() )
-        {
-            return pawn->FindComponentByClass< UGBFEquipmentManagerComponent >();
-        }
-    }
-    return nullptr;
 }
 
 void UGBFQuickBarComponent::OnRep_Slots()
