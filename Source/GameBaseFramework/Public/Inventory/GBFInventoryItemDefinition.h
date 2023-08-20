@@ -16,6 +16,9 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Display )
     FText DisplayName;
 
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Display )
+    FGameplayTag ItemTypeTag;
+
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Display, Instanced )
     TArray< TObjectPtr< UGBFInventoryItemFragment > > Fragments;
 
