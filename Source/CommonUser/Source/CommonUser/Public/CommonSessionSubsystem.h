@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CommonUserTypes.h"
+#include "Runtime/Launch/Resources/Version.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UObject/ObjectPtr.h"
 #include "UObject/PrimaryAssetId.h"
 #include "UObject/StrongObjectPtr.h"
 #include "UObject/WeakObjectPtr.h"
-#include "Runtime/Launch/Resources/Version.h"
 
 class APlayerController;
 class ULocalPlayer;
@@ -27,7 +27,7 @@ struct FOnlineResultInformation;
 
 #if COMMONUSER_OSSV1
 #include "Interfaces/OnlineSessionInterface.h"
-#include "Public/OnlineSessionSettings.h"
+#include "OnlineSessionSettings.h"
 #else
 #include "Online/Lobbies.h"
 #endif // COMMONUSER_OSSV1
