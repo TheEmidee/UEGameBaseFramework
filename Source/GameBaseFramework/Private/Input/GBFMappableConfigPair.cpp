@@ -7,6 +7,8 @@
 #include <Engine/Engine.h>
 #include <Templates/Casts.h>
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 bool FGBFMappableConfigPair::CanBeActivated() const
 {
     const auto & platform_traits = GEngine->GetEngineSubsystem< UGBFPlatformInfosSubsystem >()->GetPlatformTraits();
@@ -55,3 +57,5 @@ void FGBFMappableConfigPair::UnregisterPair( const FGBFMappableConfigPair & pair
         }
     }
 }
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
