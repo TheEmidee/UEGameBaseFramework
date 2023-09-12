@@ -13,6 +13,8 @@
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddMappableInputConfig"
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureRegistering()
 {
     Super::OnGameFeatureRegistering();
@@ -182,5 +184,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::RemoveInputConfig( APawn * pa
     }
     active_data.PawnsAddedTo.Remove( pawn );
 }
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 #undef LOCTEXT_NAMESPACE

@@ -8,8 +8,10 @@
 
 #include "GBFGameFeatureAction_AddMappableInputConfig.generated.h"
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 UCLASS( MinimalAPI, DisplayName = "Add Mappable Input Config" )
-class UGBFGameFeatureAction_AddMappableInputConfig final : public UGBFGameFeatureAction_WorldActionBase
+class UE_DEPRECATED( 5.3, "UPlayerMappableInputConfig has been deprecated. Please use UEnhancedInputUserSettings instead." ) UGBFGameFeatureAction_AddMappableInputConfig final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
 
@@ -54,3 +56,5 @@ private:
     UPROPERTY( EditAnywhere )
     TArray< FGBFMappableConfigPair > InputConfigs;
 };
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
