@@ -63,17 +63,17 @@ void UGBFGameFeatureAction_AddMappableInputConfig::OnGameFeatureDeactivating( FG
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddMappableInputConfig::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_AddMappableInputConfig::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FGBFMappableConfigPair > >( InputConfigs, []( TArray< FText > & errors, TArray< FGBFMappableConfigPair > input_configs ) {
+    return FDVEDataValidator( context )
+        .CustomValidation< TArray< FGBFMappableConfigPair > >( InputConfigs, []( FDataValidationContext & context, TArray< FGBFMappableConfigPair > input_configs ) {
             auto entry_index = 0;
 
             for ( const auto & input_config : input_configs )
             {
                 if ( input_config.Config.IsNull() )
                 {
-                    errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
+                    context.AddError( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
                 }
 
                 ++entry_index;

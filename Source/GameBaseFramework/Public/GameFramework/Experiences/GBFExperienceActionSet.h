@@ -17,7 +17,7 @@ public:
     static FPrimaryAssetType GetPrimaryAssetType();
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
 #if WITH_EDITORONLY_DATA

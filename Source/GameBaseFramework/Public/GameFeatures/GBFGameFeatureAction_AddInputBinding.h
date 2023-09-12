@@ -19,7 +19,7 @@ public:
     void OnGameFeatureDeactivating( FGameFeatureDeactivatingContext & context ) override;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & ValidationErrors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
 private:

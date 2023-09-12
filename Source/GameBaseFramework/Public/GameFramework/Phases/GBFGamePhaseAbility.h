@@ -29,7 +29,7 @@ public:
     EGBFGamePhaseAbilityExactTagCancellationPolicy GetExactTagCancellationPolicy() const;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
     void ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data ) override;

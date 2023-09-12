@@ -52,17 +52,17 @@ void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FGBFInputMappingContextAndPriority > >( InputMappings, []( TArray< FText > & errors, TArray< FGBFInputMappingContextAndPriority > input_mappings ) {
+    return FDVEDataValidator( context )
+        .CustomValidation< TArray< FGBFInputMappingContextAndPriority > >( InputMappings, []( FDataValidationContext & context, TArray< FGBFInputMappingContextAndPriority > input_mappings ) {
             auto entry_index = 0;
 
             for ( const auto & input_mapping : input_mappings )
             {
                 if ( input_mapping.InputMapping.IsNull() )
                 {
-                    errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
+                    context.AddError( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
                 }
 
                 ++entry_index;

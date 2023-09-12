@@ -17,7 +17,7 @@ struct GAMEBASEFRAMEWORK_API FGBFExperienceDefinitionActions
     GENERATED_USTRUCT_BODY()
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) const;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const;
 #endif
 
     // List of Game Feature Plugins this experience wants to have active
@@ -94,10 +94,9 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceImplementation final : public UObject
     GENERATED_BODY()
 
 public:
-
     void DumpToLog() const;
     bool IsSupportedForNetworking() const override;
-    void GetLifetimeReplicatedProps( TArray<FLifetimeProperty> & OutLifetimeProps ) const override;
+    void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
     UPROPERTY( Replicated )
     TArray< FString > GameFeaturesToEnable;
@@ -125,7 +124,7 @@ public:
     UGBFExperienceImplementation * Resolve( UObject * owner ) const;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
 #if WITH_EDITORONLY_DATA

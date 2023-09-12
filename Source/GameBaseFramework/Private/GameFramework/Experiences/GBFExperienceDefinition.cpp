@@ -18,9 +18,9 @@
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkSystem"
 
 #if WITH_EDITOR
-EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( TArray< FText > & validation_errors ) const
+EDataValidationResult FGBFExperienceDefinitionActions::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NoEmptyItem( VALIDATOR_GET_PROPERTY( GameFeaturesToEnable ) )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Actions ) )
         .NoNullItem( VALIDATOR_GET_PROPERTY( ActionSets ) )
@@ -150,19 +150,19 @@ UGBFExperienceImplementation * UGBFExperienceDefinition::Resolve( UObject * owne
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFExperienceDefinition::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFExperienceDefinition::IsDataValid( FDataValidationContext & context ) const
 {
-    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), DefaultActions.IsDataValid( validation_errors ) );
+    auto result = CombineDataValidationResults( Super::IsDataValid( context ), DefaultActions.IsDataValid( context ) );
 
     for ( const auto & conditional_action : ConditionalActions )
     {
         if ( conditional_action.Condition == nullptr )
         {
-            validation_errors.Add( FText::FromString( TEXT( "You can't have a null conditional action." ) ) );
+            context.AddError( FText::FromString( TEXT( "You can't have a null conditional action." ) ) );
 
             result = EDataValidationResult::Invalid;
         }
-        result = CombineDataValidationResults( result, conditional_action.Actions.IsDataValid( validation_errors ) );
+        result = CombineDataValidationResults( result, conditional_action.Actions.IsDataValid( context ) );
     }
 
     // Make sure users didn't subclass from a BP of this (it's fine and expected to subclass once in BP, just not twice)
@@ -179,7 +179,7 @@ EDataValidationResult UGBFExperienceDefinition::IsDataValid( TArray< FText > & v
 
         if ( first_native_parent != parent_class )
         {
-            validation_errors.Add( FText::Format( LOCTEXT( "ExperienceInheritenceIsUnsupported", "Blueprint subclasses of Blueprint experiences is not currently supported (use composition via ActionSets instead). Parent class was {0} but should be {1}." ),
+            context.AddError( FText::Format( LOCTEXT( "ExperienceInheritenceIsUnsupported", "Blueprint subclasses of Blueprint experiences is not currently supported (use composition via ActionSets instead). Parent class was {0} but should be {1}." ),
                 FText::AsCultureInvariant( GetPathNameSafe( parent_class ) ),
                 FText::AsCultureInvariant( GetPathNameSafe( first_native_parent ) ) ) );
             result = EDataValidationResult::Invalid;

@@ -39,7 +39,7 @@ void UGBFGameFeatureAction_SpawnActors::OnGameFeatureDeactivating( FGameFeatureD
 #if WITH_EDITORONLY_DATA
 void UGBFGameFeatureAction_SpawnActors::AddAdditionalAssetBundleData( FAssetBundleData & asset_bundle_data )
 {
-    if ( UAssetManager::IsValid() )
+    if ( UAssetManager::IsInitialized() )
     {
         for ( const auto & entry : ActorsList )
         {
@@ -61,10 +61,10 @@ void UGBFGameFeatureAction_SpawnActors::AddAdditionalAssetBundleData( FAssetBund
 #endif
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_SpawnActors::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_SpawnActors::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FGBFSpawningWorldActorsEntry > >( ActorsList, []( TArray< FText > & errors, TArray< FGBFSpawningWorldActorsEntry > actors_list ) {
+    return FDVEDataValidator( context )
+        .CustomValidation< TArray< FGBFSpawningWorldActorsEntry > >( ActorsList, []( FDataValidationContext & context, TArray< FGBFSpawningWorldActorsEntry > actors_list ) {
             int32 entry_index = 0;
             for ( const auto & entry : actors_list )
             {
@@ -73,7 +73,7 @@ EDataValidationResult UGBFGameFeatureAction_SpawnActors::IsDataValid( TArray< FT
                 {
                     if ( actor_entry.ActorType == nullptr )
                     {
-                        errors.Emplace( FText::FromString( FString::Printf( TEXT( "Null ActorType for actor #%i at index %i in ActorsList." ), actor_index, entry_index ) ) );
+                        context.AddError( FText::FromString( FString::Printf( TEXT( "Null ActorType for actor #%i at index %i in ActorsList." ), actor_index, entry_index ) ) );
                     }
                     ++actor_index;
                 }

@@ -16,9 +16,9 @@ FPrimaryAssetId UGBFPawnData::GetPrimaryAssetId() const
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFPawnData::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFPawnData::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NotNull( VALIDATOR_GET_PROPERTY( PawnClass ) )
         .NotNull( VALIDATOR_GET_PROPERTY( TagRelationshipMapping ) )
         .Result();

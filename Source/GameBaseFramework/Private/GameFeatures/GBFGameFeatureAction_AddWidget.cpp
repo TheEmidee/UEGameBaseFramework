@@ -1,6 +1,7 @@
 #include "GameFeatures/GBFGameFeatureAction_AddWidget.h"
 
 #include "Engine/GBFHUD.h"
+#include "Misc/DataValidation.h"
 
 #include <CommonActivatableWidget.h>
 #include <CommonUIExtensions.h>
@@ -33,10 +34,9 @@ void UGBFGameFeatureAction_AddWidget::AddAdditionalAssetBundleData( FAssetBundle
 #endif
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( FDataValidationContext & context ) const
 {
-    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
-
+    auto result = CombineDataValidationResults( Super::IsDataValid( context ), EDataValidationResult::Valid );
     {
         auto entry_index = 0;
         for ( const auto & [ layout_class, layer_id ] : Layout )
@@ -44,13 +44,13 @@ EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( TArray< FTex
             if ( layout_class.IsNull() )
             {
                 result = EDataValidationResult::Invalid;
-                validation_errors.Add( FText::Format( LOCTEXT( "LayoutHasNullClass", "Null WidgetClass at index {0} in Layout" ), FText::AsNumber( entry_index ) ) );
+                context.AddError( FText::Format( LOCTEXT( "LayoutHasNullClass", "Null WidgetClass at index {0} in Layout" ), FText::AsNumber( entry_index ) ) );
             }
 
             if ( !layer_id.IsValid() )
             {
                 result = EDataValidationResult::Invalid;
-                validation_errors.Add( FText::Format( LOCTEXT( "LayoutHasNoTag", "LayerID is not set at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
+                context.AddError( FText::Format( LOCTEXT( "LayoutHasNoTag", "LayerID is not set at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
             }
 
             ++entry_index;
@@ -64,13 +64,13 @@ EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( TArray< FTex
             if ( widget_class.IsNull() )
             {
                 result = EDataValidationResult::Invalid;
-                validation_errors.Add( FText::Format( LOCTEXT( "EntryHasNullClass", "Null WidgetClass at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
+                context.AddError( FText::Format( LOCTEXT( "EntryHasNullClass", "Null WidgetClass at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
             }
 
             if ( !slot_id.IsValid() )
             {
                 result = EDataValidationResult::Invalid;
-                validation_errors.Add( FText::Format( LOCTEXT( "EntryHasNoTag", "SlotID is not set at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
+                context.AddError( FText::Format( LOCTEXT( "EntryHasNoTag", "SlotID is not set at index {0} in Widgets" ), FText::AsNumber( entry_index ) ) );
             }
             ++entry_index;
         }

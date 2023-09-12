@@ -22,11 +22,11 @@ void UGBFTimePassedTrigger::Deactivate()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFTimePassedTrigger::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFTimePassedTrigger::IsDataValid( FDataValidationContext & context ) const
 {
-    Super::IsDataValid( validation_errors );
+    Super::IsDataValid( context );
 
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .IsGreaterThan( VALIDATOR_GET_PROPERTY( Time ), 0.0f )
         .Result();
 }

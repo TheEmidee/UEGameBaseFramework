@@ -17,9 +17,9 @@ FPrimaryAssetType UGBFExperienceActionSet::GetPrimaryAssetType()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFExperienceActionSet::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFExperienceActionSet::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Actions ) )
         .Result();
 }

@@ -257,7 +257,7 @@ UObject * UGBFAssetManager::SynchronousLoadAsset( const FSoftObjectPath & asset_
             log_time_ptr = MakeUnique< FScopeLogTime >( *FString::Printf( TEXT( "Synchronously loaded asset [%s]" ), *asset_path.ToString() ), nullptr, FScopeLogTime::ScopeLog_Seconds );
         }
 
-        if ( UAssetManager::IsValid() )
+        if ( UAssetManager::IsInitialized() )
         {
             return UAssetManager::GetStreamableManager().LoadSynchronous( asset_path, false );
         }

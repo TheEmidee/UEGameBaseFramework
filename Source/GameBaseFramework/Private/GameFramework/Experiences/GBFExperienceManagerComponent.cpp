@@ -66,7 +66,10 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
         NumObservedPausers = 0;
 
         // Deactivate and unload the actions
-        FGameFeatureDeactivatingContext context( FSimpleDelegate::CreateUObject( this, &ThisClass::OnActionDeactivationCompleted ) );
+        FGameFeatureDeactivatingContext context( TEXTVIEW( "" ), [ this ]( FStringView /*pauser_tag*/ ) {
+            OnActionDeactivationCompleted();
+        } );
+
         if ( const FWorldContext * existing_world_context = GEngine->GetWorldContextFromWorld( GetWorld() ) )
         {
             context.SetRequiredWorldContextHandle( existing_world_context->ContextHandle );

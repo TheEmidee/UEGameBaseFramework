@@ -2,6 +2,7 @@
 
 #include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
+#include "Misc/DataValidation.h"
 
 #include <AbilitySystemComponent.h>
 #include <Engine/World.h>
@@ -17,16 +18,16 @@ UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGamePhaseAbility::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGamePhaseAbility::IsDataValid( FDataValidationContext & context ) const
 {
-    auto result = CombineDataValidationResults( Super::IsDataValid( validation_errors ), EDataValidationResult::Valid );
+    auto result = CombineDataValidationResults( Super::IsDataValid( context ), EDataValidationResult::Valid );
 
     if ( !GetClass()->HasAnyClassFlags( CLASS_Abstract ) )
     {
         if ( !GamePhaseTag.IsValid() )
         {
             result = EDataValidationResult::Invalid;
-            validation_errors.Add( FText::FromString( "GamePhaseTag must be set to a tag representing the current phase." ) );
+            context.AddError( FText::FromString( "GamePhaseTag must be set to a tag representing the current phase." ) );
         }
     }
 

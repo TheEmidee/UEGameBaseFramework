@@ -36,11 +36,11 @@ void UGBFTriggerBoxTrigger::Deactivate()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFTriggerBoxTrigger::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFTriggerBoxTrigger::IsDataValid( FDataValidationContext & context ) const
 {
-    Super::IsDataValid( validation_errors );
+    Super::IsDataValid( context );
 
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NotNull( VALIDATOR_GET_PROPERTY( TriggerBoxSoftObject ) )
         .Result();
 }

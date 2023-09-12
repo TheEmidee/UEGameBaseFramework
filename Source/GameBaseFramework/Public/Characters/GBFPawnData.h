@@ -25,7 +25,7 @@ public:
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
     // Class to instantiate for this pawn (should usually derive from ASWCharacterBase).

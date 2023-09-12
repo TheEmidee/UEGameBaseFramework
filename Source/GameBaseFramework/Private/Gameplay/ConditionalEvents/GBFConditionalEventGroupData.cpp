@@ -3,11 +3,11 @@
 #include "DVEDataValidator.h"
 
 #if WITH_EDITOR
-EDataValidationResult UGBFConditionalEventGroupData::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFConditionalEventGroupData::IsDataValid( FDataValidationContext & context ) const
 {
-    Super::IsDataValid( validation_errors );
+    Super::IsDataValid( context );
 
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Events ) )
         .NotEmpty( VALIDATOR_GET_PROPERTY( Events ) )
         .Result();
