@@ -40,10 +40,9 @@ public:
     UEnhancedInputUserSettings * GetUserSettings() const;
 
 protected:
-    /** ULyraSetting */
-    virtual void OnInitialized() override;
+    /** UGBFSetting */
+    void OnInitialized() override;
 
-protected:
     /** The name of this action's mappings */
     FName ActionMappingName;
 

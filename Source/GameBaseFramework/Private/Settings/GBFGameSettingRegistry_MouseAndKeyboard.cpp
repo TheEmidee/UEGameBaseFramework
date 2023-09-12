@@ -1,15 +1,14 @@
-#include "CommonInputBaseTypes.h"
 #include "DataSource/GameSettingDataSourceDynamic.h"
 #include "EditCondition/WhenCondition.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GameSettingCollection.h"
 #include "GameSettingValueDiscreteDynamic.h"
 #include "GameSettingValueScalarDynamic.h"
-#include "Input/GBFMappableConfigPair.h"
 #include "Settings/CustomSettings/GBFSettingValueKeyboardInput.h"
 #include "Settings/GBFGameSettingRegistry.h"
 
-#include <EnhancedActionKeyMapping.h>
+#include <CommonInputBaseTypes.h>
+#include <EnhancedInputSubsystems.h>
 
 #define LOCTEXT_NAMESPACE "GBF"
 
@@ -131,80 +130,72 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
         key_binding->SetDevName( TEXT( "KeyBindingCollection" ) );
         key_binding->SetDisplayName( LOCTEXT( "KeyBindingCollection_Name", "Keyboard & Mouse" ) );
         screen->AddSetting( key_binding );
-        static TSet< FName > AddedSettings;
-        AddedSettings.Reset();
 
-        //----------------------------------------------------------------------------------
-        {
-            const auto & registered_configs = local_player->GetLocalSettings()->GetAllRegisteredInputConfigs();
-            const auto & custom_key_map = local_player->GetLocalSettings()->GetCustomPlayerInputConfig();
+        const auto * ei_subsystem = local_player->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+        const auto * user_settings = ei_subsystem->GetUserSettings();
 
-            for ( const auto & input_config_pair : registered_configs )
+        // If you want to just get one profile pair, then you can do UserSettings->GetCurrentProfile
+
+        // A map of key bindings mapped to their display category
+        TMap< FString, UGameSettingCollection * > category_to_setting_collection;
+
+        // Returns an existing setting collection for the display category if there is one.
+        // If there isn't one, then it will create a new one and initialize it
+        auto GetOrCreateSettingCollection = [ &category_to_setting_collection, &screen ]( FText display_category ) -> UGameSettingCollection * {
+            static const auto default_dev_display_name = NSLOCTEXT( "GBFInputSettings", "GBFInputDefaults", "Default Experiences" );
+
+            if ( display_category.IsEmpty() )
             {
-                if ( input_config_pair.Type != ECommonInputType::MouseAndKeyboard )
+                display_category = default_dev_display_name;
+            }
+
+            const auto display_cat_string = display_category.ToString();
+
+            if ( auto ** existing_category = category_to_setting_collection.Find( display_cat_string ) )
+            {
+                return *existing_category;
+            }
+
+            auto * config_setting_collection = NewObject< UGameSettingCollection >();
+            config_setting_collection->SetDevName( FName( display_cat_string ) );
+            config_setting_collection->SetDisplayName( display_category );
+            screen->AddSetting( config_setting_collection );
+            category_to_setting_collection.Add( display_cat_string, config_setting_collection );
+
+            return config_setting_collection;
+        };
+
+        static TSet< FName > created_mapping_names;
+        created_mapping_names.Reset();
+
+        for ( const auto & [ tag, key_profile ] : user_settings->GetAllSavedKeyProfiles() )
+        {
+            for ( const auto & [ name, key_mapping_row ] : key_profile->GetPlayerMappingRows() )
+            {
+                // Create a setting row for anything with valid mappings and that we haven't created yet
+                if ( key_mapping_row.HasAnyMappings() /* && !CreatedMappingNames.Contains(RowPair.Key)*/ )
                 {
-                    continue;
-                }
+                    // We only want keyboard keys on this settings screen, so we will filter down by mappings
+                    // that are set to keyboard keys
+                    FPlayerMappableKeyQueryOptions options = {};
+                    options.KeyToMatch = EKeys::W;
+                    options.bMatchBasicKeyTypes = true;
 
-                auto config_mappings = input_config_pair.Config->GetPlayerMappableKeys();
-                if ( config_mappings.IsEmpty() )
-                {
-                    UE_LOG( LogGBFGameSettingRegistry, Warning, TEXT( "PlayerMappableInputConfig '%s' has no player mappable keys in it! Skipping it in the setting registry..." ), *input_config_pair.Config->GetConfigName().ToString() );
-                    continue;
-                }
+                    const auto & desired_display_category = key_mapping_row.Mappings.begin()->GetDisplayCategory();
 
-                auto * config_setting_collection = NewObject< UGameSettingCollection >();
-                config_setting_collection->SetDevName( input_config_pair.Config->GetConfigName() );
-                config_setting_collection->SetDisplayName( input_config_pair.Config->GetDisplayName() );
-                screen->AddSetting( config_setting_collection );
-
-                // Add each player mappable key to the settings screen!
-                for ( auto & mapping : config_mappings )
-                {
-                    UGBFSettingValueKeyboardInput * existing_setting = nullptr;
-
-                    // Make sure that we cannot add two settings with the same FName for saving purposes
-                    if ( AddedSettings.Contains( mapping.PlayerMappableOptions.Name ) )
-                    {
-                        UE_LOG( LogGBFGameSettingRegistry, Warning, TEXT( "A setting with the name '%s' from config '%s' has already been added! Please remove duplicate name." ), *mapping.PlayerMappableOptions.Name.ToString(), *input_config_pair.Config->GetConfigName().ToString() );
-                        continue;
-                    }
-
-                    for ( auto * setting : config_setting_collection->GetChildSettings() )
-                    {
-                        auto * keyboard_setting = Cast< UGBFSettingValueKeyboardInput >( setting );
-                        if ( keyboard_setting->GetSettingDisplayName().EqualToCaseIgnored( mapping.PlayerMappableOptions.DisplayName ) )
-                        {
-                            existing_setting = keyboard_setting;
-                            break;
-                        }
-                    }
-
-                    FEnhancedActionKeyMapping mapping_synthesized( mapping );
-                    // If the player has bound a custom key to this action, then set it to that
-                    if ( const auto * player_bound_key = custom_key_map.Find( mapping.PlayerMappableOptions.Name ) )
-                    {
-                        mapping_synthesized.Key = *player_bound_key;
-                    }
-
-                    if ( mapping_synthesized.PlayerMappableOptions.Name != NAME_None && !mapping_synthesized.PlayerMappableOptions.DisplayName.IsEmpty() )
+                    if ( auto * collection = GetOrCreateSettingCollection( desired_display_category ) )
                     {
                         // Create the settings widget and initialize it, adding it to this config's section
-                        auto * input_binding = existing_setting ? existing_setting : NewObject< UGBFSettingValueKeyboardInput >();
+                        auto * input_binding = NewObject< UGBFSettingValueKeyboardInput >();
 
-                        input_binding->SetInputData( mapping_synthesized, input_config_pair.Config, !existing_setting ? 0 : 1 );
+                        input_binding->InitializeInputData( key_profile, key_mapping_row, options );
                         input_binding->AddEditCondition( when_platform_supports_mouse_and_keyboard );
 
-                        if ( !existing_setting )
-                        {
-                            config_setting_collection->AddSetting( input_binding );
-                        }
-
-                        AddedSettings.Add( mapping_synthesized.PlayerMappableOptions.Name );
+                        collection->AddSetting( input_binding );
+                        created_mapping_names.Add( name );
                     }
                     else
                     {
-                        UE_LOG( LogGBFGameSettingRegistry, Warning, TEXT( "A setting with the name '%s' from config '%s' could not be added, one of its names is empty!" ), *mapping.PlayerMappableOptions.Name.ToString(), *input_config_pair.Config->GetConfigName().ToString() );
                         ensure( false );
                     }
                 }
