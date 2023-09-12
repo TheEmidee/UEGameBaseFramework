@@ -8,19 +8,19 @@
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
+#include "GameFeatures/GBFGameFeatureAction_AddInputContextMapping.h"
 #include "GameFramework/GBFPlayerController.h"
 #include "GameFramework/GBFPlayerState.h"
 #include "Input/GBFInputComponent.h"
-#include "Input/GBFMappableConfigPair.h"
 
 #include <AbilitySystemBlueprintLibrary.h>
 #include <Components/GameFrameworkComponentManager.h>
-#include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystemInterface.h>
 #include <EnhancedInputSubsystems.h>
 #include <GameFramework/Controller.h>
 #include <Logging/MessageLog.h>
 #include <Misc/UObjectToken.h>
+#include <UserSettings/EnhancedInputUserSettings.h>
 
 const FName UGBFHeroComponent::NAME_BindInputsNow( "BindInputsNow" );
 const FName UGBFHeroComponent::NAME_ActorFeatureName( "HeroComponent" );
@@ -267,15 +267,28 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
                 FModifyContextOptions options = {};
                 options.bIgnoreAllPressedKeysUntilRelease = false;
 
-                for ( const auto & pair : DefaultInputConfigs )
+                for ( const auto & mapping : DefaultInputMappings )
                 {
-                    if ( pair.bShouldActivateAutomatically && pair.CanBeActivated() )
+                    if ( const auto * imc = mapping.InputMapping.Get() )
                     {
-                        enhanced_input_local_player_subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
-                    }
-                    else
-                    {
-                        enhanced_input_local_player_subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous(), options );
+                        if ( mapping.bRegisterWithSettings )
+                        {
+                            if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                            {
+                                settings->RegisterInputMappingContext( imc );
+                            }
+
+                            enhanced_input_local_player_subsystem->AddMappingContext( imc, mapping.Priority, options );
+                        }
+                        else
+                        {
+                            if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                            {
+                                settings->UnregisterInputMappingContext( imc );
+                            }
+
+                            enhanced_input_local_player_subsystem->RemoveMappingContext( imc, options );
+                        }
                     }
                 }
 

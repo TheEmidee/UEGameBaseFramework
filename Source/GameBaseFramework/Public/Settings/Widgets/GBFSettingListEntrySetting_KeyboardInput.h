@@ -26,6 +26,7 @@ protected:
     void HandlePrimaryKeyClicked();
     void HandleSecondaryKeyClicked();
     void HandleClearClicked();
+    void HandleResetToDefaultClicked();
     void HandlePrimaryKeySelected( FKey key, UGameSettingPressAnyKey * press_any_key_panel );
     void HandleSecondaryKeySelected( FKey key, UGameSettingPressAnyKey * press_any_key_panel );
     void HandlePrimaryDuplicateKeySelected( FKey key, UKeyAlreadyBoundWarning * duplicate_key_press_any_key_panel ) const;
@@ -56,4 +57,7 @@ private:
 
     UPROPERTY( BlueprintReadOnly, meta = ( BindWidget, BlueprintProtected = true, AllowPrivateAccess = true ) )
     TObjectPtr< UGBFButtonBase > Button_Clear;
+
+    UPROPERTY( BlueprintReadOnly, meta = ( BindWidget, BlueprintProtected = true, AllowPrivateAccess = true ) )
+    TObjectPtr< UGBFButtonBase > Button_ResetToDefault;
 };
