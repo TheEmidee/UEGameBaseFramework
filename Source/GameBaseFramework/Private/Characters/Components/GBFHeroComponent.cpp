@@ -269,7 +269,7 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
 
                 for ( const auto & mapping : DefaultInputMappings )
                 {
-                    if ( const auto * imc = mapping.InputMapping.Get() )
+                    if ( const auto * imc = mapping.InputMapping.LoadSynchronous() )
                     {
                         if ( mapping.bRegisterWithSettings )
                         {
