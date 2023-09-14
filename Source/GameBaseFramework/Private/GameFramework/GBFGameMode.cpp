@@ -621,7 +621,7 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
              ensure( host_request != nullptr ) )
         {
             // :TODO: MIKE The experience defines that already
-            //host_request->OnlineMode = online_mode;
+            // host_request->OnlineMode = online_mode;
 
             // TODO override other parameters?
 
