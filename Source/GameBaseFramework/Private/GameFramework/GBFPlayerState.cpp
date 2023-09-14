@@ -96,26 +96,21 @@ void AGBFPlayerState::PostInitializeComponents()
 
 void AGBFPlayerState::OnPlayerInitialized()
 {
-    if ( GetNetMode() != NM_Client )
+    if ( const auto * world = GetWorld();
+         world->IsGameWorld() && world->GetNetMode() != NM_Client )
     {
-        if ( const auto * player_controller = GetGBFPlayerController() )
+        // :TODO:
+        // In games like Lyra or UT we want bots to have their pawn data the same way as human players
+        // There are games where each enemy has its own pawn data and we can't get it from the experience and let
+        // them call SetPawnData manually
+        // Could be nice to add a config flag to let each game decide what to do
+        if ( !IsABot() )
         {
-            // Player state is needed in OnExperienceLoaded to get the connection string
-            check( player_controller->GetPlayerState< AGBFPlayerState >() != nullptr );
-
-            // :TODO:
-            // In games like Lyra or UT we want bots to have their pawn data the same way as human players
-            // There are games where each enemy has its own pawn data and we can't get it from the experience and let
-            // them call SetPawnData manually
-            // Could be nice to add a config flag to let each game decide what to do
-            if ( !IsABot() )
-            {
-                const auto * game_state = GetWorld()->GetGameState< AGBFGameState >();
-                check( game_state );
-                auto * experience_component = game_state->GetExperienceManagerComponent();
-                check( experience_component );
-                experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
-            }
+            const auto * game_state = GetWorld()->GetGameState< AGBFGameState >();
+            check( game_state );
+            auto * experience_component = game_state->GetExperienceManagerComponent();
+            check( experience_component );
+            experience_component->CallOrRegister_OnExperienceLoaded( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
         }
     }
 }
@@ -128,6 +123,12 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
     {
         pawn_ext_comp->CheckDefaultInitialization();
     }
+}
+
+void AGBFPlayerState::SeamlessTravelTo( APlayerState * new_player_state )
+{
+    Super::SeamlessTravelTo( new_player_state );
+    OnPlayerInitialized();
 }
 
 void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
