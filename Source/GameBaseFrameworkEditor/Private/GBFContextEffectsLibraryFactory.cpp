@@ -2,7 +2,8 @@
 
 #include "Feedback/ContextEffects/GBFContextEffectsLibrary.h"
 
-UGBFContextEffectsLibraryFactory::UGBFContextEffectsLibraryFactory()
+UGBFContextEffectsLibraryFactory::UGBFContextEffectsLibraryFactory( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer )
 {
     SupportedClass = UGBFContextEffectsLibrary::StaticClass();
 

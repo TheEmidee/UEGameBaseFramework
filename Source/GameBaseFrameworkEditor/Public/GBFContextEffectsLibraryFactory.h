@@ -8,11 +8,9 @@
 UCLASS( hidecategories = Object, MinimalAPI )
 class UGBFContextEffectsLibraryFactory : public UFactory
 {
-    GENERATED_BODY()
+    GENERATED_UCLASS_BODY()
 
 public:
-    UGBFContextEffectsLibraryFactory();
-
     UObject * FactoryCreateNew( UClass * in_class,
         UObject * in_parent,
         FName in_name,
