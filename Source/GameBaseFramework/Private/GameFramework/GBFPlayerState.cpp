@@ -128,7 +128,8 @@ void AGBFPlayerState::ClientInitialize( AController * controller )
 void AGBFPlayerState::SeamlessTravelTo( APlayerState * new_player_state )
 {
     Super::SeamlessTravelTo( new_player_state );
-    OnPlayerInitialized();
+
+    CastChecked< AGBFPlayerState >( new_player_state )->OnPlayerInitialized();
 }
 
 void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
