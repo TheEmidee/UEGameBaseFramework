@@ -50,8 +50,6 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
         return pawn_data_selector;
     };
 
-    UE_LOG( LogGBF, Verbose, TEXT( "GetPawnDataForController for %s." ), *GetNameSafe( controller ) );
-
     // See if pawn data is already set on the player state
     if ( controller != nullptr )
     {
