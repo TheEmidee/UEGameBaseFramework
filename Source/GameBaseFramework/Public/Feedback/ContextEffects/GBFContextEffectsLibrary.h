@@ -51,7 +51,7 @@ public:
 
 DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFContextEffectLibraryLoadingComplete, TArray< UGBFActiveContextEffects * >, active_context_effects );
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFContextEffectsLibrary : public UObject
 {
     GENERATED_BODY()
