@@ -3,6 +3,7 @@
 #include "Widgets/GameSettingScreen.h"
 
 #include <CoreMinimal.h>
+#include <Engine/DataTable.h>
 
 #include "GBFGameSettingScreen.generated.h"
 
