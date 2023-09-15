@@ -53,7 +53,8 @@ namespace UnrealBuildTool.Rules
                     "NetCore",
                     "UIExtension",
                     "EngineSettings",
-                    "Niagara"
+                    "Niagara",
+                    "PhysicsCore"
                 }
             );
         }
