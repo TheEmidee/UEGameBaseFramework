@@ -10,7 +10,7 @@ class UAudioComponent;
 class UGBFContextEffectsLibrary;
 enum EPhysicalSurface : int;
 
-UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "LyraContextEffects" ) )
+UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "GBFContextEffects" ) )
 class GAMEBASEFRAMEWORK_API UGBFContextEffectsSettings : public UDeveloperSettings
 {
     GENERATED_BODY()
