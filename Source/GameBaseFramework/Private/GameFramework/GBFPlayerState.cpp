@@ -132,6 +132,16 @@ void AGBFPlayerState::SeamlessTravelTo( APlayerState * new_player_state )
     CastChecked< AGBFPlayerState >( new_player_state )->OnPlayerInitialized();
 }
 
+void AGBFPlayerState::OverrideWith( APlayerState * player_state )
+{
+    Super::OverrideWith( player_state );
+
+    if ( auto * gbf_ps = Cast< AGBFPlayerState >( player_state ) )
+    {
+        ConnectionOptions = gbf_ps->ConnectionOptions;
+    }
+}
+
 void AGBFPlayerState::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
 {
     if ( const auto * game_mode = GetWorld()->GetAuthGameMode< AGBFGameMode >() )
