@@ -62,6 +62,7 @@ public:
 
     UFUNCTION( BlueprintPure )
     const FString & GetConnectionOptions() const;
+    void SeamlessTravelTo( APlayerState * new_player_state ) override;
 
 protected:
     void OnExperienceLoaded( const UGBFExperienceImplementation * current_experience );
