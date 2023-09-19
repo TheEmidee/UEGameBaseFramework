@@ -6,6 +6,7 @@
 #include "GBFExperienceActionSet.generated.h"
 
 class UGameFeatureAction;
+
 UCLASS( BlueprintType, NotBlueprintable, Const )
 class GAMEBASEFRAMEWORK_API UGBFExperienceActionSet final : public UPrimaryDataAsset
 {
