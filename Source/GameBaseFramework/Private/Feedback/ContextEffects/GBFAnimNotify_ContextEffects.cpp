@@ -52,12 +52,15 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
     {
         // If trace is needed, set up Start Location to Attached
         auto trace_start = bAttached ? mesh_comp->GetSocketLocation( SocketName ) : mesh_comp->GetComponentLocation();
+        auto offset_rotation = bAttached ? mesh_comp->GetSocketRotation( SocketName ) : mesh_comp->GetComponentRotation();
+
+        auto trace_end = trace_start + offset_rotation.RotateVector( TraceProperties.EndTraceLocationOffset );
 
         // Make sure World is valid
         if ( auto * world = owning_actor->GetWorld() )
         {
             // Call Line Trace, Pass in relevant properties
-            hit_success = world->LineTraceSingleByChannel( hit_result, trace_start, ( trace_start + TraceProperties.EndTraceLocationOffset ), TraceProperties.TraceChannel, query_params, FCollisionResponseParams::DefaultResponseParam );
+            hit_success = world->LineTraceSingleByChannel( hit_result, trace_start, trace_end, TraceProperties.TraceChannel, query_params, FCollisionResponseParams::DefaultResponseParam );
         }
     }
 
