@@ -2,10 +2,10 @@
 
 #include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
-#include "Misc/DataValidation.h"
 
 #include <AbilitySystemComponent.h>
 #include <Engine/World.h>
+#include <Misc/DataValidation.h>
 
 UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 {

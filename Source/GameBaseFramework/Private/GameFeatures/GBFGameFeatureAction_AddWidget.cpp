@@ -1,7 +1,6 @@
 #include "GameFeatures/GBFGameFeatureAction_AddWidget.h"
 
 #include "Engine/GBFHUD.h"
-#include "Misc/DataValidation.h"
 
 #include <CommonActivatableWidget.h>
 #include <CommonUIExtensions.h>
@@ -9,6 +8,7 @@
 #include <Engine/LocalPlayer.h>
 #include <GameFeaturesSubsystemSettings.h>
 #include <GameFramework/PlayerController.h>
+#include <Misc/DataValidation.h>
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkGameFeatures"
 

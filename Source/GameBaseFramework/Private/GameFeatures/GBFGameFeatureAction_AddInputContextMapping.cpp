@@ -99,27 +99,29 @@ void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsF
 
 void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer( ULocalPlayer * local_player )
 {
-    if ( ensure( local_player ) )
+    if ( !ensure( local_player != nullptr ) )
     {
-        auto & asset_manager = UGBFAssetManager::Get();
+        return;
+    }
 
-        if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    auto & asset_manager = UGBFAssetManager::Get();
+
+    if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    {
+        if ( auto * settings = ei_subsystem->GetUserSettings() )
         {
-            if ( auto * settings = ei_subsystem->GetUserSettings() )
+            for ( const auto & entry : InputMappings )
             {
-                for ( const auto & entry : InputMappings )
+                // Skip entries that don't want to be registered
+                if ( !entry.bRegisterWithSettings )
                 {
-                    // Skip entries that don't want to be registered
-                    if ( !entry.bRegisterWithSettings )
-                    {
-                        continue;
-                    }
+                    continue;
+                }
 
-                    // Register this IMC with the settings!
-                    if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
-                    {
-                        settings->RegisterInputMappingContext( imc );
-                    }
+                // Register this IMC with the settings!
+                if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
+                {
+                    settings->RegisterInputMappingContext( imc );
                 }
             }
         }
@@ -154,25 +156,27 @@ void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputContextMapping
 
 void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer( ULocalPlayer * local_player )
 {
-    if ( ensure( local_player ) )
+    if ( !ensure( local_player != nullptr ) )
     {
-        if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
-        {
-            if ( auto * settings = ei_subsystem->GetUserSettings() )
-            {
-                for ( const auto & entry : InputMappings )
-                {
-                    // Skip entries that don't want to be registered
-                    if ( !entry.bRegisterWithSettings )
-                    {
-                        continue;
-                    }
+        return;
+    }
 
-                    // Register this IMC with the settings!
-                    if ( const auto * imc = entry.InputMapping.Get() )
-                    {
-                        settings->UnregisterInputMappingContext( imc );
-                    }
+    if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    {
+        if ( auto * settings = ei_subsystem->GetUserSettings() )
+        {
+            for ( const auto & entry : InputMappings )
+            {
+                // Skip entries that don't want to be registered
+                if ( !entry.bRegisterWithSettings )
+                {
+                    continue;
+                }
+
+                // Register this IMC with the settings!
+                if ( const auto * imc = entry.InputMapping.Get() )
+                {
+                    settings->UnregisterInputMappingContext( imc );
                 }
             }
         }
