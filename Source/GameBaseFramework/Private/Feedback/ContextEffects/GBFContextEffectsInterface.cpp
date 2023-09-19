@@ -1,18 +1,18 @@
 ﻿#include "Feedback/ContextEffects/GBFContextEffectsInterface.h"
 
 FGBFContextEffectInfos::FGBFContextEffectInfos() :
-    Bone( NAME_None ),
-    MotionEffect( FGameplayTag::EmptyTag ),
-    StaticMeshComponent( nullptr ),
-    LocationOffset( FVector::ZeroVector ),
-    RotationOffset( FRotator::ZeroRotator ),
-    AnimationSequence( nullptr ),
-    bHitSuccess( false ),
-    HitResult( FHitResult() ),
-    Contexts( FGameplayTagContainer::EmptyContainer ),
-    VfxScale( 1.0f ),
-    AudioVolume( 1.0f ),
-    AudioPitch( 1.0f )
+    FGBFContextEffectInfos( NAME_None,
+        FGameplayTag::EmptyTag,
+        nullptr,
+        FVector::ZeroVector,
+        FRotator::ZeroRotator,
+        nullptr,
+        false,
+        FHitResult(),
+        FGameplayTagContainer::EmptyContainer,
+        FVector( 1.0f ),
+        1.0f,
+        1.0f )
 {
 }
 
