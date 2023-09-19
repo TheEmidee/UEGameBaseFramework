@@ -23,18 +23,7 @@ public:
 
     // AnimMotionEffect Implementation
     UFUNCTION( BlueprintCallable )
-    void AnimMotionEffect_Implementation( const FName bone,
-        const FGameplayTag motion_effect,
-        USceneComponent * static_mesh_component,
-        const FVector location_offset,
-        const FRotator rotation_offset,
-        const UAnimSequenceBase * animation_sequence,
-        const bool hit_success,
-        const FHitResult hit_result,
-        FGameplayTagContainer contexts,
-        FVector vfx_scale = FVector( 1 ),
-        float audio_volume = 1,
-        float audio_pitch = 1 ) override;
+    void AnimMotionEffect_Implementation( const FGBFContextEffectInfos & context_effect_infos ) override;
 
     UFUNCTION( BlueprintCallable )
     void UpdateEffectContexts( FGameplayTagContainer new_effect_contexts );
@@ -46,6 +35,7 @@ public:
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     bool bConvertPhysicalSurfaceToContext = true;
 
+private:
     // Default Contexts
     UPROPERTY( EditAnywhere )
     FGameplayTagContainer DefaultEffectContexts;
@@ -54,7 +44,6 @@ public:
     UPROPERTY( EditAnywhere )
     TSet< TSoftObjectPtr< UGBFContextEffectsLibrary > > DefaultContextEffectsLibraries;
 
-private:
     UPROPERTY( Transient )
     FGameplayTagContainer CurrentContexts;
 

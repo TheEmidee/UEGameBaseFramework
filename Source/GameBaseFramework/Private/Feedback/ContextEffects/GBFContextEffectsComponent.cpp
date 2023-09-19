@@ -42,18 +42,7 @@ void UGBFContextEffectsComponent::EndPlay( const EEndPlayReason::Type end_play_r
     Super::EndPlay( end_play_reason );
 }
 
-void UGBFContextEffectsComponent::AnimMotionEffect_Implementation( const FName bone,
-    const FGameplayTag motion_effect,
-    USceneComponent * static_mesh_component,
-    const FVector location_offset,
-    const FRotator rotation_offset,
-    const UAnimSequenceBase * animation_sequence,
-    const bool hit_success,
-    const FHitResult hit_result,
-    FGameplayTagContainer contexts,
-    FVector vfx_scale,
-    float audio_volume,
-    float audio_pitch )
+void UGBFContextEffectsComponent::AnimMotionEffect_Implementation( const FGBFContextEffectInfos & context_effect_infos )
 {
     // Prep Components
     TArray< UAudioComponent * > audio_components_to_add;
@@ -62,14 +51,14 @@ void UGBFContextEffectsComponent::AnimMotionEffect_Implementation( const FName b
     FGameplayTagContainer total_contexts;
 
     // Aggregate contexts
-    total_contexts.AppendTags( contexts );
+    total_contexts.AppendTags( context_effect_infos.Contexts );
     total_contexts.AppendTags( CurrentContexts );
 
     // Check if converting Physical Surface Type to Context
     if ( bConvertPhysicalSurfaceToContext )
     {
         // Get Phys Mat Type Pointer
-        auto physical_surface_type_ptr = hit_result.PhysMaterial;
+        auto physical_surface_type_ptr = context_effect_infos.HitResult.PhysMaterial;
 
         // Check if pointer is okay
         if ( physical_surface_type_ptr.IsValid() )
@@ -119,7 +108,7 @@ void UGBFContextEffectsComponent::AnimMotionEffect_Implementation( const FName b
             TArray< UNiagaraComponent * > niagara_components;
 
             // Spawn effects
-            context_effects_subsystem->SpawnContextEffects( GetOwner(), static_mesh_component, bone, location_offset, rotation_offset, motion_effect, total_contexts, audio_components, niagara_components, vfx_scale, audio_volume, audio_pitch );
+            context_effects_subsystem->SpawnContextEffects( GetOwner(), context_effect_infos.StaticMeshComponent, context_effect_infos.Bone, context_effect_infos.LocationOffset, context_effect_infos.RotationOffset, context_effect_infos.MotionEffect, total_contexts, audio_components, niagara_components, context_effect_infos.VfxScale, context_effect_infos.AudioVolume, context_effect_infos.AudioPitch );
 
             // Append resultant effects
             audio_components_to_add.Append( audio_components );

@@ -72,7 +72,7 @@ void UGBFContextEffectsSubsystem::SpawnContextEffects( const AActor * spawning_a
     }
 }
 
-bool UGBFContextEffectsSubsystem::GetContextFromSurfaceType( const TEnumAsByte< EPhysicalSurface > physical_surface, FGameplayTag & context )
+bool UGBFContextEffectsSubsystem::GetContextFromSurfaceType( FGameplayTag & context, const TEnumAsByte< EPhysicalSurface > physical_surface )
 {
     // Get Project Settings
     if ( const auto * project_settings = GetDefault< UGBFContextEffectsSettings >() )

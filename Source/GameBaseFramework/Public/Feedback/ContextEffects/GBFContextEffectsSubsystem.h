@@ -53,7 +53,7 @@ public:
         float audio_pitch = 1 );
 
     UFUNCTION( BlueprintCallable, Category = "ContextEffects" )
-    bool GetContextFromSurfaceType( TEnumAsByte< EPhysicalSurface > physical_surface, FGameplayTag & context );
+    bool GetContextFromSurfaceType( FGameplayTag & context, TEnumAsByte< EPhysicalSurface > physical_surface );
 
     UFUNCTION( BlueprintCallable, Category = "ContextEffects" )
     void LoadAndAddContextEffectsLibraries( AActor * owning_actor, TSet< TSoftObjectPtr< UGBFContextEffectsLibrary > > context_effects_libraries );
