@@ -40,7 +40,7 @@ void UGBFContextEffectsSubsystem::SpawnContextEffects( const AActor * spawning_a
                     TArray< UNiagaraSystem * > niagara_systems;
 
                     // Get Sounds and Niagara Systems
-                    effect_library->GetEffects( effect, contexts, sounds, niagara_systems );
+                    effect_library->GetEffects( sounds, niagara_systems, effect, contexts );
 
                     // Append to accumulating array
                     total_sounds.Append( sounds );

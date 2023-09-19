@@ -3,7 +3,7 @@
 #include <NiagaraSystem.h>
 #include <Sound/SoundBase.h>
 
-void UGBFContextEffectsLibrary::GetEffects( const FGameplayTag effect, const FGameplayTagContainer context, TArray< USoundBase * > & sounds, TArray< UNiagaraSystem * > & niagara_systems )
+void UGBFContextEffectsLibrary::GetEffects( TArray< USoundBase * > & sounds, TArray< UNiagaraSystem * > & niagara_systems, const FGameplayTag effect, const FGameplayTagContainer context )
 {
     // Make sure Effect is valid and Library is loaded
     if ( effect.IsValid() && context.IsValid() && EffectsLoadState == EGBFContextEffectsLibraryLoadState::Loaded )

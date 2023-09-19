@@ -160,7 +160,7 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
                         TArray< UNiagaraSystem * > niagara_systems;
 
                         // Get the Effects
-                        effect_library->GetEffects( Effect, contexts, sounds, niagara_systems );
+                        effect_library->GetEffects( sounds, niagara_systems, Effect, contexts );
 
                         // Append to the accumulating arrays
                         total_sounds.Append( sounds );

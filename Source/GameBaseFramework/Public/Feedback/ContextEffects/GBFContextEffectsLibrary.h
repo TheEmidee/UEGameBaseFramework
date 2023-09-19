@@ -60,18 +60,18 @@ public:
     EGBFContextEffectsLibraryLoadState GetContextEffectsLibraryLoadState() const;
 
     UFUNCTION( BlueprintCallable )
-    void GetEffects( const FGameplayTag effect, const FGameplayTagContainer context, TArray< USoundBase * > & sounds, TArray< UNiagaraSystem * > & niagara_systems );
+    void GetEffects( TArray< USoundBase * > & sounds, TArray< UNiagaraSystem * > & niagara_systems, const FGameplayTag effect, const FGameplayTagContainer context );
 
     UFUNCTION( BlueprintCallable )
     void LoadEffects();
-
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    TArray< FGBFContextEffects > ContextEffects;
 
 private:
     void LoadEffectsInternal();
 
     void ContextEffectLibraryLoadingComplete( const TArray< UGBFActiveContextEffects * > & active_context_effects );
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    TArray< FGBFContextEffects > ContextEffects;
 
     UPROPERTY( Transient )
     TArray< TObjectPtr< UGBFActiveContextEffects > > ActiveContextEffects;
