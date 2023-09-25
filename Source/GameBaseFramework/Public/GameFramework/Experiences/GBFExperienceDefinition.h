@@ -94,10 +94,9 @@ class GAMEBASEFRAMEWORK_API UGBFExperienceImplementation final : public UObject
     GENERATED_BODY()
 
 public:
-
     void DumpToLog() const;
     bool IsSupportedForNetworking() const override;
-    void GetLifetimeReplicatedProps( TArray<FLifetimeProperty> & OutLifetimeProps ) const override;
+    void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
     UPROPERTY( Replicated )
     TArray< FString > GameFeaturesToEnable;
