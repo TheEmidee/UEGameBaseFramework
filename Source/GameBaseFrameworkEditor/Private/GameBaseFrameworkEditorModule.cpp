@@ -1,3 +1,5 @@
+#include "AssetToolsModule.h"
+#include "GBFAssetTypeActions_ContextEffectsLibrary.h"
 #include "GBFGameEditorStyle.h"
 #include "GameBaseFrameworkDeveloperSettings.h"
 #include "IGameBaseFrameworkEditorModule.h"
@@ -166,6 +168,14 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
             FEditorDelegates::BeginPIE.AddRaw( this, &ThisClass::OnBeginPIE );
             FEditorDelegates::EndPIE.AddRaw( this, &ThisClass::OnEndPIE );
         }
+
+        // Register the Context Effects Library asset type actions.
+        {
+            auto & asset_tools = FModuleManager::LoadModuleChecked< FAssetToolsModule >( "AssetTools" ).Get();
+            const auto asset_action = MakeShared< FGBFAssetTypeActions_ContextEffectsLibrary >();
+            ContextEffectsLibraryAssetAction = asset_action;
+            asset_tools.RegisterAssetTypeActions( asset_action );
+        }
     }
 
     void OnBeginPIE( bool bIsSimulating )
@@ -182,6 +192,14 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
 
     void ShutdownModule() override
     {
+        // Unregister the Context Effects Library asset type actions.
+        const auto * asset_tools_module = FModuleManager::GetModulePtr< FAssetToolsModule >( "AssetTools" );
+        const auto asset_action = ContextEffectsLibraryAssetAction.Pin();
+        if ( asset_tools_module && asset_action )
+        {
+            asset_tools_module->Get().UnregisterAssetTypeActions( asset_action.ToSharedRef() );
+        }
+
         FModuleManager::Get().OnModulesChanged().RemoveAll( this );
     }
 
@@ -202,6 +220,9 @@ protected:
             BindGameplayAbilitiesEditorDelegates();
         }
     }
+
+private:
+    TWeakPtr< IAssetTypeActions > ContextEffectsLibraryAssetAction;
 };
 
 IMPLEMENT_MODULE( FGameBaseFrameworkEditorModule, GBFEditorEngine );

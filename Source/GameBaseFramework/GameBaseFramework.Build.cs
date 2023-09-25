@@ -53,6 +53,8 @@ namespace UnrealBuildTool.Rules
                     "NetCore",
                     "UIExtension",
                     "EngineSettings",
+                    "Niagara",
+                    "PhysicsCore",
                     "GameplayMessageRuntime"
                 }
             );
