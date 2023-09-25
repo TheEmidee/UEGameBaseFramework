@@ -72,6 +72,8 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
                 const auto asset_path = UGBFAssetManager::Get().GetPrimaryAssetPath( pawn_data_selector_primary_id );
                 const auto * pawn_data_selector = get_pawn_data_selector( asset_path );
 
+                UE_LOG( LogGBF, Verbose, TEXT( "PawnDataSelector option found. Will use PawnData %s." ), *GetNameSafe( pawn_data_selector->PawnData ) );
+
                 return pawn_data_selector->PawnData;
             }
         }
@@ -97,6 +99,7 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
         {
             if ( pawn_data_selector->CanUsePawnDataForController( controller ) )
             {
+                UE_LOG( LogGBF, Verbose, TEXT( "CanUsePawnDataForController of %s returned true. Will use PawnData %s." ), *GetNameSafe( pawn_data_selector->GetClass() ), *GetNameSafe( pawn_data_selector->PawnData ) );
                 return pawn_data_selector->PawnData;
             }
         }
@@ -115,12 +118,19 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
         const auto * experience = experience_component->GetCurrentExperienceChecked();
         if ( experience->DefaultPawnData != nullptr )
         {
+            UE_LOG( LogGBF, Verbose, TEXT( "Experience %s is loaded. Will use PawnData %s." ), *GetNameSafe( experience ), *GetNameSafe( experience->DefaultPawnData ) );
             return experience->DefaultPawnData;
         }
 
+        const auto default_pawn_data = UGBFAssetManager::Get().GetDefaultPawnData();
+
+        UE_LOG( LogGBF, Verbose, TEXT( "Experience %s is loaded but no default pawn data. Will use PawnData %s." ), *GetNameSafe( experience ), *GetNameSafe( default_pawn_data ) );
+
         // Experience is loaded and there's still no pawn data, fall back to the default for now
-        return UGBFAssetManager::Get().GetDefaultPawnData();
+        return default_pawn_data;
     }
+
+    UE_LOG( LogGBF, Warning, TEXT( "No experience loaded. Return null." ) );
 
     // Experience not loaded yet, so there is no pawn data to be had
     return nullptr;
@@ -621,7 +631,7 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
              ensure( host_request != nullptr ) )
         {
             // :TODO: MIKE The experience defines that already
-            //host_request->OnlineMode = online_mode;
+            // host_request->OnlineMode = online_mode;
 
             // TODO override other parameters?
 

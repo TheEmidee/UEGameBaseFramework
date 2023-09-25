@@ -54,7 +54,8 @@ namespace UnrealBuildTool.Rules
                     "UIExtension",
                     "EngineSettings",
                     "Niagara",
-                    "PhysicsCore"
+                    "PhysicsCore",
+                    "GameplayMessageRuntime"
                 }
             );
         }

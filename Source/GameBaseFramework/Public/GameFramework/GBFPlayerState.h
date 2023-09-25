@@ -62,8 +62,10 @@ public:
 
     UFUNCTION( BlueprintPure )
     const FString & GetConnectionOptions() const;
+    void SeamlessTravelTo( APlayerState * new_player_state ) override;
 
 protected:
+    void OverrideWith( APlayerState * player_state ) override;
     void OnExperienceLoaded( const UGBFExperienceImplementation * current_experience );
     void GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const override;
 
