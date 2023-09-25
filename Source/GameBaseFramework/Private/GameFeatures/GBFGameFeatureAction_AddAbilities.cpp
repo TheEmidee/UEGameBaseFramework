@@ -38,7 +38,7 @@ void UGBFGameFeatureAction_AddAbilities::OnGameFeatureDeactivating( FGameFeature
 #if WITH_EDITORONLY_DATA
 void UGBFGameFeatureAction_AddAbilities::AddAdditionalAssetBundleData( FAssetBundleData & asset_bundle_data )
 {
-    if ( UAssetManager::IsValid() )
+    if ( UAssetManager::IsInitialized() )
     {
         auto add_bundle_asset = [ &asset_bundle_data ]( const FSoftObjectPath & SoftObjectPath ) {
             asset_bundle_data.AddBundleAsset( UGameFeaturesSubsystemSettings::LoadStateClient, SoftObjectPath.GetAssetPath() );
@@ -77,21 +77,21 @@ void UGBFGameFeatureAction_AddAbilities::AddAdditionalAssetBundleData( FAssetBun
 #endif
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FGBFGameFeatureAbilitiesEntry > >( AbilitiesList, []( TArray< FText > & errors, TArray< FGBFGameFeatureAbilitiesEntry > abilities_list ) {
+    return FDVEDataValidator( context )
+        .CustomValidation< TArray< FGBFGameFeatureAbilitiesEntry > >( AbilitiesList, []( FDataValidationContext & context, TArray< FGBFGameFeatureAbilitiesEntry > abilities_list ) {
             auto entry_index = 0;
             for ( const auto & entry : abilities_list )
             {
                 if ( entry.ActorClass == nullptr )
                 {
-                    errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullActor", "Null ActorClass at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
+                    context.AddError( FText::Format( LOCTEXT( "EntryHasNullActor", "Null ActorClass at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
                 }
 
                 if ( entry.GrantedAbilities.Num() == 0 && entry.GrantedAttributes.Num() == 0 && entry.GrantedEffects.Num() == 0 && entry.LooseGameplayTags.IsEmpty() )
                 {
-                    errors.Emplace( FText::Format( LOCTEXT( "EntryHasNoAddOns", "Empty item at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
+                    context.AddError( FText::Format( LOCTEXT( "EntryHasNoAddOns", "Empty item at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
                 }
 
                 auto ability_index = 0;
@@ -99,7 +99,7 @@ EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( TArray< F
                 {
                     if ( ability.AbilityType.IsNull() )
                     {
-                        errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullAbility", "Null AbilityType at index {0} in AbilitiesList[{1}].GrantedAbilities" ), FText::AsNumber( ability_index ), FText::AsNumber( entry_index ) ) );
+                        context.AddError( FText::Format( LOCTEXT( "EntryHasNullAbility", "Null AbilityType at index {0} in AbilitiesList[{1}].GrantedAbilities" ), FText::AsNumber( ability_index ), FText::AsNumber( entry_index ) ) );
                     }
                     ++ability_index;
                 }
@@ -109,7 +109,7 @@ EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( TArray< F
                 {
                     if ( attributes.AttributeSetType.IsNull() )
                     {
-                        errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullAttributeSet", "Null AttributeSetType at index {0} in AbilitiesList[{1}].GrantedAttributes" ), FText::AsNumber( attributes_index ), FText::AsNumber( entry_index ) ) );
+                        context.AddError( FText::Format( LOCTEXT( "EntryHasNullAttributeSet", "Null AttributeSetType at index {0} in AbilitiesList[{1}].GrantedAttributes" ), FText::AsNumber( attributes_index ), FText::AsNumber( entry_index ) ) );
                     }
                     ++attributes_index;
                 }
@@ -119,7 +119,7 @@ EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( TArray< F
                 {
                     if ( effect.IsNull() )
                     {
-                        errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullEffect", "Null Effect at index {0} in AbilitiesList[{1}].GrantedEffects" ), FText::AsNumber( effect_index ), FText::AsNumber( entry_index ) ) );
+                        context.AddError( FText::Format( LOCTEXT( "EntryHasNullEffect", "Null Effect at index {0} in AbilitiesList[{1}].GrantedEffects" ), FText::AsNumber( effect_index ), FText::AsNumber( entry_index ) ) );
                     }
                     ++effect_index;
                 }
@@ -129,7 +129,7 @@ EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( TArray< F
                 {
                     if ( attribute_set_ptr.IsNull() )
                     {
-                        errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullAttributeSet", "Null AbilitySet at index {0} in AbilitiesList[{1}].GrantedAbilitySets" ), FText::AsNumber( attribute_set_index ), FText::AsNumber( entry_index ) ) );
+                        context.AddError( FText::Format( LOCTEXT( "EntryHasNullAttributeSet", "Null AbilitySet at index {0} in AbilitiesList[{1}].GrantedAbilitySets" ), FText::AsNumber( attribute_set_index ), FText::AsNumber( entry_index ) ) );
                     }
                     ++attribute_set_index;
                 }

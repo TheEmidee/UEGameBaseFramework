@@ -35,9 +35,9 @@ void UGBFConditionalEventAbility::EndAbility( const FGameplayAbilitySpecHandle h
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFConditionalEventAbility::IsDataValid( FDataValidationContext & context ) const
 {
-    const auto result = Super::IsDataValid( validation_errors );
+    const auto result = Super::IsDataValid( context );
 
     if ( GetClass()->HasAllClassFlags( CLASS_Abstract ) )
     {
@@ -45,15 +45,15 @@ EDataValidationResult UGBFConditionalEventAbility::IsDataValid( TArray< FText > 
     }
 
     // Call IsDataValid on all triggers since they are created inline
-    for ( auto * trigger : Triggers )
+    for ( const auto * trigger : Triggers )
     {
         if ( trigger != nullptr )
         {
-            trigger->IsDataValid( validation_errors );
+            trigger->IsDataValid( context );
         }
     }
 
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NoNullItem( VALIDATOR_GET_PROPERTY( Triggers ) )
         .NotEmpty( VALIDATOR_GET_PROPERTY( Triggers ) )
         .Result();

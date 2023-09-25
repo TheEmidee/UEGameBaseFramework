@@ -171,7 +171,7 @@ void UGBFPlayerSpawningManagerComponent::OnLevelAdded( ULevel * level, UWorld * 
 {
     if ( world == GetWorld() )
     {
-        for ( auto * actor : level->Actors )
+        for ( auto & actor : level->Actors )
         {
             if ( auto * player_start = Cast< AGBFPlayerStart >( actor ) )
             {

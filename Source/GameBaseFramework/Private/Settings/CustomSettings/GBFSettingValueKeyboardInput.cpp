@@ -1,22 +1,15 @@
 #include "Settings/CustomSettings/GBFSettingValueKeyboardInput.h"
 
-#include "PlayerMappableInputConfig.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "Settings/GBFGameUserSettings.h"
 
+#include <EnhancedInputSubsystems.h>
+
 #define LOCTEXT_NAMESPACE "GBFSettings"
 
-void FKeyboardOption::ResetToDefault()
+namespace GBF::ErrorMessages
 {
-    if ( OwningConfig != nullptr )
-    {
-        InputMapping = OwningConfig->GetMappingByName( InputMapping.PlayerMappableOptions.Name );
-    }
-    // If we don't have an owning config, then there is no default binding for this and it can simply be removed
-    else
-    {
-        InputMapping = FEnhancedActionKeyMapping();
-    }
+    static const FText UnknownMappingName = LOCTEXT( "GBFErrors_UnknownMappingName", "Unknown Mapping" );
 }
 
 UGBFSettingValueKeyboardInput::UGBFSettingValueKeyboardInput()
@@ -24,125 +17,241 @@ UGBFSettingValueKeyboardInput::UGBFSettingValueKeyboardInput()
     bReportAnalytics = false;
 }
 
-void UGBFSettingValueKeyboardInput::SetInputData( const FEnhancedActionKeyMapping & base_mapping, const UPlayerMappableInputConfig * owning_config, int32 key_bind_slot )
+FText UGBFSettingValueKeyboardInput::GetSettingDisplayName() const
 {
-    if ( key_bind_slot == 0 )
+    if ( const auto * row = FindKeyMappingRow() )
     {
-        FirstMappableOption.InputMapping = base_mapping;
-        FirstMappableOption.OwningConfig = owning_config;
-        FirstMappableOption.SetInitialValue( base_mapping.Key );
-    }
-    else if ( key_bind_slot == 1 )
-    {
-        SecondaryMappableOption.InputMapping = base_mapping;
-        SecondaryMappableOption.OwningConfig = owning_config;
-        SecondaryMappableOption.SetInitialValue( base_mapping.Key );
-    }
-    else
-    {
-        ensureMsgf( false, TEXT( "Invalid key bind slot provided!" ) );
-    }
-
-    ensure( FirstMappableOption.InputMapping.PlayerMappableOptions.Name != NAME_None && !FirstMappableOption.InputMapping.PlayerMappableOptions.DisplayName.IsEmpty() );
-
-    const auto name_string = TEXT( "KBM_Input_" ) + FirstMappableOption.InputMapping.PlayerMappableOptions.Name.ToString();
-    SetDevName( *name_string );
-    SetDisplayName( FirstMappableOption.InputMapping.PlayerMappableOptions.DisplayName );
-}
-
-void UGBFSettingValueKeyboardInput::StoreInitial()
-{
-    FirstMappableOption.SetInitialValue( FirstMappableOption.InputMapping.Key );
-    SecondaryMappableOption.SetInitialValue( SecondaryMappableOption.InputMapping.Key );
-}
-
-void UGBFSettingValueKeyboardInput::ResetToDefault()
-{
-    // Find the UPlayerMappableInputConfig that this came from and reset it to the value in there
-    FirstMappableOption.ResetToDefault();
-    SecondaryMappableOption.ResetToDefault();
-}
-
-void UGBFSettingValueKeyboardInput::RestoreToInitial()
-{
-    ChangeBinding( 0, FirstMappableOption.GetInitialStoredValue() );
-    ChangeBinding( 1, SecondaryMappableOption.GetInitialStoredValue() );
-}
-
-bool UGBFSettingValueKeyboardInput::ChangeBinding( int32 key_bind_slot, FKey new_key )
-{
-    // Early out if they hit the same button that is already bound. This allows for them to exit binding if they made a mistake.
-    if ( ( key_bind_slot == 0 && FirstMappableOption.InputMapping.Key == new_key ) || ( key_bind_slot == 1 && SecondaryMappableOption.InputMapping.Key == new_key ) )
-    {
-        return false;
-    }
-
-    if ( new_key.IsGamepadKey() )
-    {
-        return false;
-    }
-
-    const auto * local_player = CastChecked< UGBFLocalPlayer >( LocalPlayer );
-    auto * local_settings = local_player->GetLocalSettings();
-
-    if ( key_bind_slot == 0 )
-    {
-        local_settings->AddOrUpdateCustomKeyboardBindings( FirstMappableOption.InputMapping.PlayerMappableOptions.Name, new_key, local_player );
-        FirstMappableOption.InputMapping.Key = new_key;
-    }
-    else if ( key_bind_slot == 1 )
-    {
-        // If there is no default secondary binding then we can create one based off of data from the primary binding
-        if ( SecondaryMappableOption.InputMapping.PlayerMappableOptions.Name == NAME_None )
+        if ( row->HasAnyMappings() )
         {
-            SecondaryMappableOption = FKeyboardOption( FirstMappableOption );
-        }
-
-        local_settings->AddOrUpdateCustomKeyboardBindings( SecondaryMappableOption.InputMapping.PlayerMappableOptions.Name, new_key, local_player );
-        SecondaryMappableOption.InputMapping.Key = new_key;
-    }
-    else
-    {
-        ensureMsgf( false, TEXT( "Invalid key bind slot provided!" ) );
-    }
-
-    // keybindings are never reset to default or initial
-    NotifySettingChanged( EGameSettingChangeReason::Change );
-
-    return true;
-}
-
-void UGBFSettingValueKeyboardInput::GetAllMappedActionsFromKey( int32 key_bind_slot, FKey key, TArray< FName > & action_names ) const
-{
-    if ( key_bind_slot == 1 )
-    {
-        if ( SecondaryMappableOption.InputMapping.Key == key )
-        {
-            return;
-        }
-    }
-    else
-    {
-        if ( FirstMappableOption.InputMapping.Key == key )
-        {
-            return;
+            return row->Mappings.begin()->GetDisplayName();
         }
     }
 
-    if ( const auto * local_player = CastChecked< UGBFLocalPlayer >( LocalPlayer ) )
+    return GBF::ErrorMessages::UnknownMappingName;
+}
+
+FText UGBFSettingValueKeyboardInput::GetSettingDisplayCategory() const
+{
+    if ( const auto * row = FindKeyMappingRow() )
     {
-        auto * local_settings = local_player->GetLocalSettings();
-        local_settings->GetAllMappingNamesFromKey( action_names, key );
+        if ( row->HasAnyMappings() )
+        {
+            return row->Mappings.begin()->GetDisplayCategory();
+        }
     }
+
+    return GBF::ErrorMessages::UnknownMappingName;
+}
+
+const FKeyMappingRow * UGBFSettingValueKeyboardInput::FindKeyMappingRow() const
+{
+    if ( const auto * profile = FindMappableKeyProfile() )
+    {
+        return profile->FindKeyMappingRow( ActionMappingName );
+    }
+
+    ensure( false );
+    return nullptr;
+}
+
+UEnhancedPlayerMappableKeyProfile * UGBFSettingValueKeyboardInput::FindMappableKeyProfile() const
+{
+    if ( const auto * settings = GetUserSettings() )
+    {
+        return settings->GetKeyProfileWithIdentifier( ProfileIdentifier );
+    }
+
+    ensure( false );
+    return nullptr;
+}
+
+UEnhancedInputUserSettings * UGBFSettingValueKeyboardInput::GetUserSettings() const
+{
+    if ( const auto * local_player = Cast< UGBFLocalPlayer >( LocalPlayer ) )
+    {
+        // Map the key to the player key profile
+        if ( const auto * system = local_player->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
+        {
+            return system->GetUserSettings();
+        }
+    }
+
+    return nullptr;
 }
 
 void UGBFSettingValueKeyboardInput::OnInitialized()
 {
     DynamicDetails = FGetGameSettingsDetails::CreateLambda( [ this ]( ULocalPlayer & ) {
-        return FText::Format( LOCTEXT( "DynamicDetails_KeyboardInputAction", "Bindings for {0}" ), FirstMappableOption.InputMapping.PlayerMappableOptions.DisplayName );
+        if ( const auto * row = FindKeyMappingRow() )
+        {
+            if ( row->HasAnyMappings() )
+            {
+                return FText::Format( LOCTEXT( "DynamicDetails_KeyboardInputAction", "Bindings for {0}" ), row->Mappings.begin()->GetDisplayName() );
+            }
+        }
+        return FText::GetEmpty();
     } );
 
     Super::OnInitialized();
+}
+
+void UGBFSettingValueKeyboardInput::InitializeInputData( const UEnhancedPlayerMappableKeyProfile * key_profile, const FKeyMappingRow & mapping_data, const FPlayerMappableKeyQueryOptions & InQueryOptions )
+{
+    check( key_profile );
+
+    ProfileIdentifier = key_profile->GetProfileIdentifer();
+    QueryOptions = InQueryOptions;
+
+    for ( const auto & mapping : mapping_data.Mappings )
+    {
+        // Only add mappings that pass the query filters that have been provided upon creation
+        if ( !key_profile->DoesMappingPassQueryOptions( mapping, QueryOptions ) )
+        {
+            continue;
+        }
+
+        ActionMappingName = mapping.GetMappingName();
+        InitialKeyMappings.Add( mapping.GetSlot(), mapping.GetCurrentKey() );
+        const auto & mapping_display_name = mapping.GetDisplayName();
+
+        if ( !mapping_display_name.IsEmpty() )
+        {
+            SetDisplayName( mapping_display_name );
+        }
+    }
+
+    const auto name_string = TEXT( "KBM_Input_" ) + ActionMappingName.ToString();
+    SetDevName( *name_string );
+}
+
+FText UGBFSettingValueKeyboardInput::GetKeyTextFromSlot( const EPlayerMappableKeySlot slot ) const
+{
+    if ( const auto * profile = FindMappableKeyProfile() )
+    {
+        auto query_options_for_slot = QueryOptions;
+        query_options_for_slot.SlotToMatch = slot;
+
+        if ( const auto * row = FindKeyMappingRow() )
+        {
+            for ( const auto & mapping : row->Mappings )
+            {
+                if ( profile->DoesMappingPassQueryOptions( mapping, query_options_for_slot ) )
+                {
+                    return mapping.GetCurrentKey().GetDisplayName();
+                }
+            }
+        }
+    }
+
+    return EKeys::Invalid.GetDisplayName();
+}
+
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+FText UGBFSettingValueKeyboardInput::GetPrimaryKeyText() const
+{
+    return GetKeyTextFromSlot( EPlayerMappableKeySlot::First );
+}
+
+FText UGBFSettingValueKeyboardInput::GetSecondaryKeyText() const
+{
+    return GetKeyTextFromSlot( EPlayerMappableKeySlot::Second );
+}
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+void UGBFSettingValueKeyboardInput::ResetToDefault()
+{
+    if ( auto * settings = GetUserSettings() )
+    {
+        FMapPlayerKeyArgs args = {};
+        args.MappingName = ActionMappingName;
+
+        FGameplayTagContainer failure_reason;
+        settings->ResetAllPlayerKeysInRow( args, failure_reason );
+
+        NotifySettingChanged( EGameSettingChangeReason::Change );
+    }
+}
+
+void UGBFSettingValueKeyboardInput::StoreInitial()
+{
+    if ( const auto * profile = FindMappableKeyProfile() )
+    {
+        if ( const auto * row = FindKeyMappingRow() )
+        {
+            for ( const auto & mapping : row->Mappings )
+            {
+                if ( profile->DoesMappingPassQueryOptions( mapping, QueryOptions ) )
+                {
+                    ActionMappingName = mapping.GetMappingName();
+                    InitialKeyMappings.Add( mapping.GetSlot(), mapping.GetCurrentKey() );
+                }
+            }
+        }
+    }
+}
+
+void UGBFSettingValueKeyboardInput::RestoreToInitial()
+{
+    for ( auto & [ key_slot, key ] : InitialKeyMappings )
+    {
+        ChangeBinding( static_cast< int32 >( key_slot ), key );
+    }
+}
+
+bool UGBFSettingValueKeyboardInput::ChangeBinding( const int32 key_bind_slot, const FKey & new_key )
+{
+    if ( !new_key.IsGamepadKey() )
+    {
+        FMapPlayerKeyArgs args = {};
+        args.MappingName = ActionMappingName;
+        args.Slot = static_cast< EPlayerMappableKeySlot >( static_cast< uint8 >( key_bind_slot ) );
+        args.NewKey = new_key;
+        // If you want to, you can additionally specify this mapping to only be applied to a certain hardware device or key profile
+        // Args.ProfileId =
+        // Args.HardwareDeviceId =
+
+        if ( auto * settings = GetUserSettings() )
+        {
+            FGameplayTagContainer failure_reason;
+            settings->MapPlayerKey( args, failure_reason );
+            NotifySettingChanged( EGameSettingChangeReason::Change );
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+void UGBFSettingValueKeyboardInput::GetAllMappedActionsFromKey( int32 /*key_bind_slot*/, const FKey & key, TArray< FName > & out_action_names ) const
+{
+    if ( const auto * profile = FindMappableKeyProfile() )
+    {
+        profile->GetMappingNamesForKey( key, out_action_names );
+    }
+}
+
+bool UGBFSettingValueKeyboardInput::IsMappingCustomized() const
+{
+    bool result = false;
+
+    if ( const auto * profile = FindMappableKeyProfile() )
+    {
+        const auto query_options_for_slot = QueryOptions;
+
+        if ( const auto * row = FindKeyMappingRow() )
+        {
+            for ( const auto & mapping : row->Mappings )
+            {
+                if ( profile->DoesMappingPassQueryOptions( mapping, query_options_for_slot ) )
+                {
+                    result |= mapping.IsCustomized();
+                }
+            }
+        }
+    }
+
+    return result;
 }
 
 #undef LOCTEXT_NAMESPACE

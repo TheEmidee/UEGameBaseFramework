@@ -35,9 +35,9 @@ void UGBFGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating( FGameFeat
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddInputBinding::IsDataValid( TArray< FText > & ValidationErrors )
+EDataValidationResult UGBFGameFeatureAction_AddInputBinding::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( ValidationErrors )
+    return FDVEDataValidator( context )
         .NoNullItem( VALIDATOR_GET_PROPERTY( InputConfigs ) )
         .Result();
 }

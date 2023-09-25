@@ -35,9 +35,9 @@ void UGBFFrontEndStateComponent::BeginPlay()
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFFrontEndStateComponent::IsDataValid( TArray< FText > & validation_errors )
+EDataValidationResult UGBFFrontEndStateComponent::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( validation_errors )
+    return FDVEDataValidator( context )
         .NotNull( VALIDATOR_GET_PROPERTY( PressStartScreenClass ) )
         .NotNull( VALIDATOR_GET_PROPERTY( MainScreenClass ) )
         .Result();

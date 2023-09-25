@@ -7,9 +7,11 @@
 
 #include "GBFMappableConfigPair.generated.h"
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
 /** A container to organize loaded player mappable configs to their CommonUI input type */
 USTRUCT( BlueprintType )
-struct FGBFLoadedMappableConfigPair
+struct UE_DEPRECATED( 5.3, "FGBFLoadedMappableConfigPair has been deprecated. Please use FInputMappingContextAndPriority instead." ) FGBFLoadedMappableConfigPair
 {
     GENERATED_BODY()
 
@@ -35,7 +37,7 @@ struct FGBFLoadedMappableConfigPair
 
 /** A container to organize potentially unloaded player mappable configs to their CommonUI input type */
 USTRUCT()
-struct FGBFMappableConfigPair
+struct UE_DEPRECATED( 5.3, "FGBFMappableConfigPair has been deprecated. Please use FInputMappingContextAndPriority instead." ) FGBFMappableConfigPair
 {
     GENERATED_BODY()
 
@@ -86,3 +88,5 @@ struct FGBFMappableConfigPair
      */
     static void UnregisterPair( const FGBFMappableConfigPair & pair );
 };
+
+PRAGMA_ENABLE_DEPRECATION_WARNINGS

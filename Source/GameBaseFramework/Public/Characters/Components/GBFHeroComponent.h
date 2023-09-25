@@ -7,6 +7,7 @@
 
 #include "GBFHeroComponent.generated.h"
 
+struct FGBFInputMappingContextAndPriority;
 struct FGBFMappableConfigPair;
 class UGBFInputComponent;
 class UGBFInputConfig;
@@ -70,8 +71,14 @@ private:
      * NOTE: You should only add to this if you do not have a game feature plugin accessible to you.
      * If you do, then use the GameFeatureAction_AddInputConfig instead.
      */
-    UPROPERTY( EditDefaultsOnly )
+
+    PRAGMA_DISABLE_DEPRECATION_WARNINGS
+    UE_DEPRECATED( 5.3, "DefaultInputConfigs have been deprecated, use DefaultInputMappings instead" )
     TArray< FGBFMappableConfigPair > DefaultInputConfigs;
+    PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+    UPROPERTY( EditAnywhere )
+    TArray< FGBFInputMappingContextAndPriority > DefaultInputMappings;
 
     /** Camera mode set by an ability. */
     UPROPERTY()

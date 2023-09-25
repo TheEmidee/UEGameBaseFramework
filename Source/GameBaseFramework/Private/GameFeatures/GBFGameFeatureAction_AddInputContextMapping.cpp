@@ -5,13 +5,22 @@
 #endif
 
 #include "Characters/Components/GBFHeroComponent.h"
+#include "Engine/GBFAssetManager.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/LocalPlayer.h>
 #include <EnhancedInputSubsystems.h>
 #include <GameFramework/PlayerController.h>
+#include <UserSettings/EnhancedInputUserSettings.h>
 
 #define LOCTEXT_NAMESPACE "UGFEGameFeatureAction_AddInputContextMapping"
+
+void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering()
+{
+    Super::OnGameFeatureRegistering();
+
+    RegisterInputMappingContexts();
+}
 
 void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
@@ -35,18 +44,25 @@ void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FG
     }
 }
 
-#if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid( TArray< FText > & validation_errors )
+void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureUnregistering()
 {
-    return FDVEDataValidator( validation_errors )
-        .CustomValidation< TArray< FGBFInputMappingContextAndPriority > >( InputMappings, []( TArray< FText > & errors, TArray< FGBFInputMappingContextAndPriority > input_mappings ) {
+    Super::OnGameFeatureUnregistering();
+
+    UnregisterInputMappingContexts();
+}
+
+#if WITH_EDITOR
+EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid( FDataValidationContext & context ) const
+{
+    return FDVEDataValidator( context )
+        .CustomValidation< TArray< FGBFInputMappingContextAndPriority > >( InputMappings, []( FDataValidationContext & context, TArray< FGBFInputMappingContextAndPriority > input_mappings ) {
             auto entry_index = 0;
 
             for ( const auto & input_mapping : input_mappings )
             {
                 if ( input_mapping.InputMapping.IsNull() )
                 {
-                    errors.Emplace( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
+                    context.AddError( FText::Format( LOCTEXT( "EntryHasNullInputMapping", "Null InputMapping at index {0} in InputMappings" ), FText::AsNumber( entry_index ) ) );
                 }
 
                 ++entry_index;
@@ -55,6 +71,117 @@ EDataValidationResult UGBFGameFeatureAction_AddInputContextMapping::IsDataValid(
         .Result();
 }
 #endif
+
+void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContexts()
+{
+    RegisterInputContextMappingsForGameInstanceHandle = FWorldDelegates::OnStartGameInstance.AddUObject( this, &UGBFGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance );
+
+    const auto & world_contexts = GEngine->GetWorldContexts();
+    for ( auto world_context_iterator = world_contexts.CreateConstIterator(); world_context_iterator; ++world_context_iterator )
+    {
+        RegisterInputContextMappingsForGameInstance( world_context_iterator->OwningGameInstance );
+    }
+}
+
+void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputContextMappingsForGameInstance( UGameInstance * game_instance )
+{
+    if ( game_instance != nullptr && !game_instance->OnLocalPlayerAddedEvent.IsBoundToObject( this ) )
+    {
+        game_instance->OnLocalPlayerAddedEvent.AddUObject( this, &UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer );
+        game_instance->OnLocalPlayerRemovedEvent.AddUObject( this, &UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer );
+
+        for ( auto local_player_iterator = game_instance->GetLocalPlayerIterator(); local_player_iterator; ++local_player_iterator )
+        {
+            RegisterInputMappingContextsForLocalPlayer( *local_player_iterator );
+        }
+    }
+}
+
+void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsForLocalPlayer( ULocalPlayer * local_player )
+{
+    if ( !ensure( local_player != nullptr ) )
+    {
+        return;
+    }
+
+    auto & asset_manager = UGBFAssetManager::Get();
+
+    if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    {
+        if ( auto * settings = ei_subsystem->GetUserSettings() )
+        {
+            for ( const auto & entry : InputMappings )
+            {
+                // Skip entries that don't want to be registered
+                if ( !entry.bRegisterWithSettings )
+                {
+                    continue;
+                }
+
+                // Register this IMC with the settings!
+                if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
+                {
+                    settings->RegisterInputMappingContext( imc );
+                }
+            }
+        }
+    }
+}
+
+void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContexts()
+{
+    FWorldDelegates::OnStartGameInstance.Remove( RegisterInputContextMappingsForGameInstanceHandle );
+    RegisterInputContextMappingsForGameInstanceHandle.Reset();
+
+    const auto & world_contexts = GEngine->GetWorldContexts();
+    for ( auto world_context_iterator = world_contexts.CreateConstIterator(); world_context_iterator; ++world_context_iterator )
+    {
+        UnregisterInputContextMappingsForGameInstance( world_context_iterator->OwningGameInstance );
+    }
+}
+
+void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputContextMappingsForGameInstance( UGameInstance * game_instance )
+{
+    if ( game_instance != nullptr )
+    {
+        game_instance->OnLocalPlayerAddedEvent.RemoveAll( this );
+        game_instance->OnLocalPlayerRemovedEvent.RemoveAll( this );
+
+        for ( auto local_player_iterator = game_instance->GetLocalPlayerIterator(); local_player_iterator; ++local_player_iterator )
+        {
+            UnregisterInputMappingContextsForLocalPlayer( *local_player_iterator );
+        }
+    }
+}
+
+void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContextsForLocalPlayer( ULocalPlayer * local_player )
+{
+    if ( !ensure( local_player != nullptr ) )
+    {
+        return;
+    }
+
+    if ( const auto * ei_subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
+    {
+        if ( auto * settings = ei_subsystem->GetUserSettings() )
+        {
+            for ( const auto & entry : InputMappings )
+            {
+                // Skip entries that don't want to be registered
+                if ( !entry.bRegisterWithSettings )
+                {
+                    continue;
+                }
+
+                // Register this IMC with the settings!
+                if ( const auto * imc = entry.InputMapping.Get() )
+                {
+                    settings->UnregisterInputMappingContext( imc );
+                }
+            }
+        }
+    }
+}
 
 void UGBFGameFeatureAction_AddInputContextMapping::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
 {

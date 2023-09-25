@@ -340,6 +340,7 @@ namespace LyraSettingsHelpers
 
 //////////////////////////////////////////////////////////////////////
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
 UGBFGameUserSettings::UGBFGameUserSettings()
 {
     if ( !HasAnyFlags( RF_ClassDefaultObject ) && FSlateApplication::IsInitialized() )
@@ -349,6 +350,7 @@ UGBFGameUserSettings::UGBFGameUserSettings()
 
     SetToDefaults();
 }
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 void UGBFGameUserSettings::SetToDefaults()
 {
@@ -801,6 +803,7 @@ FName UGBFGameUserSettings::GetControllerPlatform() const
     return ControllerPlatform;
 }
 
+PRAGMA_DISABLE_DEPRECATION_WARNINGS
 void UGBFGameUserSettings::RegisterInputConfig( const ECommonInputType type, const UPlayerMappableInputConfig * new_config, const bool is_active )
 {
     if ( new_config )
@@ -970,6 +973,7 @@ void UGBFGameUserSettings::ResetKeybindingsToDefault( const UGBFLocalPlayer * lo
         subsystem->RemoveAllPlayerMappedKeys();
     }
 }
+PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 void UGBFGameUserSettings::LoadUserControlBusMix()
 {

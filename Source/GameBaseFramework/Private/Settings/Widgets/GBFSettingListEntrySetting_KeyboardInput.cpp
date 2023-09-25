@@ -28,6 +28,7 @@ void UGBFSettingListEntrySetting_KeyboardInput::NativeOnInitialized()
     Button_PrimaryKey->OnClicked().AddUObject( this, &ThisClass::HandlePrimaryKeyClicked );
     Button_SecondaryKey->OnClicked().AddUObject( this, &ThisClass::HandleSecondaryKeyClicked );
     Button_Clear->OnClicked().AddUObject( this, &ThisClass::HandleClearClicked );
+    Button_ResetToDefault->OnClicked().AddUObject( this, &ThisClass::HandleResetToDefaultClicked );
 }
 
 void UGBFSettingListEntrySetting_KeyboardInput::NativeOnEntryReleased()
@@ -58,6 +59,11 @@ void UGBFSettingListEntrySetting_KeyboardInput::HandleClearClicked()
 {
     KeyboardInputSetting->ChangeBinding( 0, EKeys::Invalid );
     KeyboardInputSetting->ChangeBinding( 1, EKeys::Invalid );
+}
+
+void UGBFSettingListEntrySetting_KeyboardInput::HandleResetToDefaultClicked()
+{
+    KeyboardInputSetting->ResetToDefault();
 }
 
 void UGBFSettingListEntrySetting_KeyboardInput::HandlePrimaryKeySelected( FKey /*key*/, UGameSettingPressAnyKey * press_any_key_panel )
@@ -135,8 +141,21 @@ void UGBFSettingListEntrySetting_KeyboardInput::Refresh()
 {
     if ( ensure( KeyboardInputSetting ) )
     {
-        Button_PrimaryKey->SetButtonText( KeyboardInputSetting->GetPrimaryKeyText() );
-        Button_SecondaryKey->SetButtonText( KeyboardInputSetting->GetSecondaryKeyText() );
+        Button_PrimaryKey->SetButtonText( KeyboardInputSetting->GetKeyTextFromSlot( EPlayerMappableKeySlot::First ) );
+        Button_SecondaryKey->SetButtonText( KeyboardInputSetting->GetKeyTextFromSlot( EPlayerMappableKeySlot::Second ) );
+
+        // Only display the reset to default button if a mapping is customized
+        if ( ensure( Button_ResetToDefault ) )
+        {
+            if ( KeyboardInputSetting->IsMappingCustomized() )
+            {
+                Button_ResetToDefault->SetVisibility( ESlateVisibility::Visible );
+            }
+            else
+            {
+                Button_ResetToDefault->SetVisibility( ESlateVisibility::Hidden );
+            }
+        }
     }
 }
 

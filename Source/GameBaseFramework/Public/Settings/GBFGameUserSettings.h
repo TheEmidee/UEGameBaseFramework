@@ -222,21 +222,29 @@ public:
     UFUNCTION()
     FName GetControllerPlatform() const;
 
+    PRAGMA_DISABLE_DEPRECATION_WARNINGS
+
+    class UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" ) FInputConfigDelegate;
     DECLARE_EVENT_OneParam( UGBFGameUserSettings, FInputConfigDelegate, const FGBFLoadedMappableConfigPair & /*Config*/ );
 
     /** Delegate called when a new input config has been registered */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     FInputConfigDelegate OnInputConfigRegistered;
 
     /** Delegate called when a registered input config has been activated */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     FInputConfigDelegate OnInputConfigActivated;
 
     /** Delegate called when a registered input config has been deactivate */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     FInputConfigDelegate OnInputConfigDeactivated;
 
     /** Register the given input config with the settings to make it available to the player. */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void RegisterInputConfig( ECommonInputType type, const UPlayerMappableInputConfig * new_config, const bool is_active );
 
     /** Unregister the given input config. Returns the number of configs removed. */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     int32 UnregisterInputConfig( const UPlayerMappableInputConfig * config_to_remove );
 
     /** Get an input config with a certain name. If the config doesn't exist then nullptr will be returned. */
@@ -244,6 +252,7 @@ public:
     const UPlayerMappableInputConfig * GetInputConfigByName( FName config_name ) const;
 
     /** Get all currently registered input configs */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     const TArray< FGBFLoadedMappableConfigPair > & GetAllRegisteredInputConfigs() const
     {
         return RegisteredInputConfigs;
@@ -255,6 +264,7 @@ public:
      * @param type		The type of config to get, ECommonInputType::Count will include all configs.
      * @param result	Array to be populated with the current registered input configs that match the type
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void GetRegisteredInputConfigsOfType( OUT TArray< FGBFLoadedMappableConfigPair > & result, ECommonInputType type ) const;
 
     /**
@@ -263,6 +273,7 @@ public:
      * @param key The key to check for current mappings of
      * @param result Array to store display names of actions of bound keys
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void GetAllMappingNamesFromKey( TArray< FName > & result, const FKey key );
 
     /**
@@ -272,6 +283,7 @@ public:
      * @param new_key		The new key to bind this option to
      * @param local_player   local player to reset the keybinding on
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void AddOrUpdateCustomKeyboardBindings( const FName mapping_name, const FKey new_key, const UGBFLocalPlayer * local_player );
 
     /**
@@ -280,17 +292,22 @@ public:
      * @param mapping_name	The name of the FPlayerMappableKeyOptions that you would like to change
      * @param local_player   local player to reset the keybinding on
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void ResetKeybindingToDefault( const FName mapping_name, const UGBFLocalPlayer * local_player );
 
     /** Resets all keybindings to their default value in their input mapping context
      * @param local_player   local player to reset the keybinding on
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     void ResetKeybindingsToDefault( const UGBFLocalPlayer * local_player );
 
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     const TMap< FName, FKey > & GetCustomPlayerInputConfig() const
     {
         return CustomKeyboardConfig;
     }
+
+    PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 private:
     void LoadUserControlBusMix();
@@ -339,17 +356,22 @@ private:
     UPROPERTY( Config )
     FName InputConfigName = TEXT( "Default" );
 
+    PRAGMA_DISABLE_DEPRECATION_WARNINGS
     /**
      * Array of currently registered input configs. This is populated by game feature plugins
      *
      * @see UGameFeatureAction_AddInputConfig
      */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     UPROPERTY( VisibleAnywhere )
     TArray< FGBFLoadedMappableConfigPair > RegisteredInputConfigs;
 
     /** Array of custom key mappings that have been set by the player. Empty by default. */
+    UE_DEPRECATED( 5.3, "Input registration has been deprecated in favor of Enhanced Input User Settings" )
     UPROPERTY( Config )
     TMap< FName, FKey > CustomKeyboardConfig;
+
+    PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
     FDelegateHandle OnApplicationActivationStateChangedHandle;
     bool bSettingOverallQualityGuard = false;

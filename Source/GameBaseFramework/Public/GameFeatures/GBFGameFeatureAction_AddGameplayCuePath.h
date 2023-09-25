@@ -17,7 +17,7 @@ public:
     const TArray< FDirectoryPath > & GetDirectoryPathsToAdd() const;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 private:
     /** List of paths to register to the gameplay cue manager. These are relative tot he game content directory */

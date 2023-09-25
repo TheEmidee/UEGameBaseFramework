@@ -16,7 +16,7 @@ public:
     const TArray< TSubclassOf< UGBFConditionalEventAbility > > & GetEvents() const;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
 private:
