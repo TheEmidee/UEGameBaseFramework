@@ -1,7 +1,7 @@
 #include "Settings/CustomSettings/GBFSettingValueKeyboardInput.h"
 
-#include "PlayerMappableInputConfig.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "PlayerMappableInputConfig.h"
 #include "Settings/GBFGameUserSettings.h"
 
 #define LOCTEXT_NAMESPACE "GBFSettings"

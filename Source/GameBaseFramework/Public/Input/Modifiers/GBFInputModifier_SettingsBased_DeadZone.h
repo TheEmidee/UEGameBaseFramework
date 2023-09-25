@@ -25,7 +25,6 @@ class UGBFInputModifier_SettingsBased_DeadZone final : public UInputModifier
     GENERATED_BODY()
 
 public:
-
     UPROPERTY( EditInstanceOnly, BlueprintReadWrite, Category = Settings, Config )
     EDeadZoneType Type = EDeadZoneType::Radial;
 

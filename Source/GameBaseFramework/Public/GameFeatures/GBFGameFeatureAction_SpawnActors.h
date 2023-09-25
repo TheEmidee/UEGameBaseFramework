@@ -67,5 +67,5 @@ private:
     UPROPERTY( EditAnywhere, Category = "Actor" )
     TArray< FGBFSpawningWorldActorsEntry > ActorsList;
 
-    TMap < FGameFeatureStateChangeContext, TArray< TWeakObjectPtr< AActor > > > SpawnedActorsMap;
+    TMap< FGameFeatureStateChangeContext, TArray< TWeakObjectPtr< AActor > > > SpawnedActorsMap;
 };
