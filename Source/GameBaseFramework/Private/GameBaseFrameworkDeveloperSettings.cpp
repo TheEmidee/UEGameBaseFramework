@@ -12,8 +12,6 @@
 UGameBaseFrameworkDeveloperSettings::UGameBaseFrameworkDeveloperSettings()
 {}
 
-
-
 FName UGameBaseFrameworkDeveloperSettings::GetCategoryName() const
 {
     return FApp::GetProjectName();

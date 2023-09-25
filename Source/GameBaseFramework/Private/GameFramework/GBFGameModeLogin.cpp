@@ -2,7 +2,6 @@
 
 #include <Engine/GameInstance.h>
 #include <Engine/LocalPlayer.h>
-#include <OnlineSubsystemTypes.h>
 
 void AGBFGameModeLogin::StartPlay()
 {
@@ -12,7 +11,7 @@ void AGBFGameModeLogin::StartPlay()
 
     for ( auto i = 0; i < MAX_LOCAL_PLAYERS; ++i )
     {
-        //GetGameInstance()->CreateLocalPlayer( i, error_reason, true );
+        // GetGameInstance()->CreateLocalPlayer( i, error_reason, true );
     }
 }
 

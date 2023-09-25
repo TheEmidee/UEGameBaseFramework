@@ -13,7 +13,6 @@ class GAMEBASEFRAMEWORK_API UGBFLocalPlayerPresenceSystem : public ULocalPlayerS
     GENERATED_BODY()
 
 public:
-
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void Deinitialize() override;
 
@@ -21,7 +20,6 @@ public:
     void SetPresenceForLocalPlayer( const FText & status ) const;
 
 private:
-
     /*UFUNCTION()
     void OnGameStateChanged( FName state_name, const UGBFGameState * new_state );*/
 };

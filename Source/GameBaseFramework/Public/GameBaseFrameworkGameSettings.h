@@ -11,7 +11,6 @@ class UGameBaseFrameworkGameSettings final : public UDeveloperSettingsBackedByCV
     GENERATED_BODY()
 
 public:
-
     FName GetCategoryName() const override;
 
     UPROPERTY( EditDefaultsOnly, config, Category = "UI" )

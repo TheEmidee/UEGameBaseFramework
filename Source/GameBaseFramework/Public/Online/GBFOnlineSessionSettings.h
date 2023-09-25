@@ -12,8 +12,8 @@ public:
 };
 
 /**
-* General search setting for an online game
-*/
+ * General search setting for an online game
+ */
 class FGBFOnlineSearchSettings : public FOnlineSessionSearch
 {
 public:
@@ -24,8 +24,8 @@ public:
 };
 
 /**
-* Search settings for an empty dedicated server to host a match
-*/
+ * Search settings for an empty dedicated server to host a match
+ */
 // ReSharper disable once CppClassCanBeFinal
 class FGBFOnlineSearchSettingsEmptyDedicated : public FGBFOnlineSearchSettings
 {

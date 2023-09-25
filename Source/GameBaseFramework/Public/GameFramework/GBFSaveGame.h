@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameplayTagContainer.h>
 #include <GameFramework/SaveGame.h>
+#include <GameplayTagContainer.h>
 
 #include "GBFSaveGame.generated.h"
 
@@ -433,7 +433,6 @@ private:
     ////////////////////////////////////////////////////////
     // Gamepad Sensitivity
 public:
-
     EGBFGamepadSensitivity GetGamepadSensitivityPreset( const FGameplayTag tag ) const
     {
         if ( auto * sensitivity = GamepadSensitivityMap.Find( tag ) )
@@ -455,7 +454,7 @@ public:
             auto & new_value = GamepadSensitivityMap.FindOrAdd( tag, EGBFGamepadSensitivity::MAX );
             ChangeValueAndDirty( new_value, sensitivity );
         }
-        
+
         ApplyInputSensitivity();
     }
 
