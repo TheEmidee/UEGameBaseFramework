@@ -278,7 +278,10 @@ void UGBFPawnExtensionComponent::OnRegister()
     Super::OnRegister();
 
     const auto * pawn = GetPawn< APawn >();
-    ensureAlwaysMsgf( ( pawn != nullptr ), TEXT( "GBFPawnExtensionComponent on [%s] can only be added to Pawn actors." ), *GetNameSafe( GetOwner() ) );
+    if ( !ensureAlwaysMsgf( ( pawn != nullptr ), TEXT( "GBFPawnExtensionComponent on [%s] can only be added to Pawn actors." ), *GetNameSafe( GetOwner() ) ) )
+    {
+        return;
+    }
 
     TArray< UActorComponent * > pawn_extension_components;
     pawn->GetComponents( UGBFPawnExtensionComponent::StaticClass(), pawn_extension_components );

@@ -13,7 +13,10 @@ FInputActionValue UGBFInputModifier_SettingsBased_DeadZone::ModifyRaw_Implementa
     }
 
     const auto * settings = local_player->GetSharedSettings();
-    ensure( settings != nullptr );
+    if ( !ensure( settings != nullptr ) )
+    {
+        return current_value;
+    }
 
     auto lower_threshold = DeadZoneStick == EDeadzoneStick::MoveStick
                                ? settings->GetGamepadMoveStickDeadZone()

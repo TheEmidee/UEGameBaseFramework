@@ -31,7 +31,10 @@ void UGBFGameFeatureAction_SpawnActors::OnGameFeatureDeactivating( FGameFeatureD
 
     auto * spawned_actors = SpawnedActorsMap.Find( context );
 
-    ensure( spawned_actors != nullptr );
+    if ( !ensure( spawned_actors != nullptr ) )
+    {
+        return;
+    }
 
     Reset( *spawned_actors );
 }

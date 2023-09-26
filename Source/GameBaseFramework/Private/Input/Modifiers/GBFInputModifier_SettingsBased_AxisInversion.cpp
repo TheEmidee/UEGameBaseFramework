@@ -14,7 +14,10 @@ FInputActionValue UGBFInputModifier_SettingsBased_AxisInversion::ModifyRaw_Imple
     }
 
     const auto * settings = local_player->GetSharedSettings();
-    ensure( settings != nullptr );
+    if ( !ensure( settings != nullptr ) )
+    {
+        return current_value;
+    }
 
     auto new_value = current_value.Get< FVector >();
 

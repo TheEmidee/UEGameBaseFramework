@@ -14,7 +14,10 @@ FInputActionValue UGBFInputModifier_SettingsBased_GamepadSensitivity::ModifyRaw_
     }
 
     const auto * settings = local_player->GetSharedSettings();
-    ensure( settings != nullptr );
+    if ( !ensure( settings != nullptr ) )
+    {
+        return current_value;
+    }
 
     const auto sensitivity = settings->GetGamepadSensitivityPreset( TargetingTypeTag );
     const auto scalar = SensitivityLevelTable->SensitivtyEnumToFloat( sensitivity );
