@@ -27,10 +27,10 @@ void UAsyncAction_ListenForGameplayMessage::Activate()
 {
     if ( const auto * world = WorldPtr.Get() )
     {
-        if ( auto * router = UGameplayMessageSubsystem::Get( world ) )
+        auto & router = UGameplayMessageSubsystem::Get( world );
         {
             TWeakObjectPtr< UAsyncAction_ListenForGameplayMessage > WeakThis( this );
-            ListenerHandle = router->RegisterListenerInternal(
+            ListenerHandle = router.RegisterListenerInternal(
                 ChannelToRegister,
                 [ WeakThis ]( FGameplayTag Channel, const UScriptStruct * StructType, const void * Payload ) {
                     if ( UAsyncAction_ListenForGameplayMessage * StrongThis = WeakThis.Get() )
