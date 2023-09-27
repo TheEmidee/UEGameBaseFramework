@@ -166,7 +166,10 @@ void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_
     }
 
     auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-    check( input_component != nullptr );
+    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    {
+        return;
+    }
 
     const auto * pc = GetController< APlayerController >();
     check( pc != nullptr );
@@ -280,12 +283,16 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
                 }
 
                 auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
-                input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
 
-                TArray< uint32 > bind_handles;
-                input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+                if ( ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+                {
+                    input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
 
-                BindNativeActions( input_component, input_config );
+                    TArray< uint32 > bind_handles;
+                    input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+
+                    BindNativeActions( input_component, input_config );
+                }
             }
         }
     }
