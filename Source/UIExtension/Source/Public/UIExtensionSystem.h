@@ -2,23 +2,15 @@
 
 #pragma once
 
-#include "Containers/Array.h"
-#include "Containers/Map.h"
-#include "CoreTypes.h"
-#include "Delegates/Delegate.h"
 #include "GameplayTagContainer.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Subsystems/WorldSubsystem.h"
-#include "Templates/SharedPointer.h"
-#include "Templates/SubclassOf.h"
-#include "Templates/TypeHash.h"
-#include "UObject/Class.h"
-#include "UObject/Object.h"
-#include "UObject/UObjectGlobals.h"
-#include "UObject/WeakObjectPtr.h"
-#include "UObject/WeakObjectPtrTemplates.h"
 
 #include "UIExtensionSystem.generated.h"
+
+class UUIExtensionSubsystem;
+struct FUIExtensionRequest;
+template <typename T> class TSubclassOf;
 
 class FSubsystemCollectionBase;
 class UUserWidget;

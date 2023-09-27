@@ -2,17 +2,17 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Engine/World.h"
 #include "GameFramework/GameplayMessageTypes2.h"
 #include "GameplayTagContainer.h"
-#include "Logging/LogMacros.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "UObject/WeakObjectPtr.h"
 
 #include "GameplayMessageSubsystem.generated.h"
 
 class UGameplayMessageSubsystem;
-GAMEPLAYMESSAGERUNTIME_API DECLARE_LOG_CATEGORY_EXTERN( LogGameplayMessageSubsystem, Log, All );
+struct FFrame;
+
+GAMEPLAYMESSAGERUNTIME_API DECLARE_LOG_CATEGORY_EXTERN(LogGameplayMessageSubsystem, Log, All);
 
 class UAsyncAction_ListenForGameplayMessage;
 
@@ -20,41 +20,33 @@ class UAsyncAction_ListenForGameplayMessage;
  * An opaque handle that can be used to remove a previously registered message listener
  * @see UGameplayMessageSubsystem::RegisterListener and UGameplayMessageSubsystem::UnregisterListener
  */
-USTRUCT( BlueprintType )
+USTRUCT(BlueprintType)
 struct GAMEPLAYMESSAGERUNTIME_API FGameplayMessageListenerHandle
 {
 public:
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    FGameplayMessageListenerHandle()
-    {}
+	FGameplayMessageListenerHandle() {}
 
-    void Unregister();
+	void Unregister();
 
-    bool IsValid() const
-    {
-        return ID != 0;
-    }
+	bool IsValid() const { return ID != 0; }
 
 private:
-    UPROPERTY( Transient )
-    TWeakObjectPtr< UGameplayMessageSubsystem > Subsystem;
+	UPROPERTY(Transient)
+	TWeakObjectPtr<UGameplayMessageSubsystem> Subsystem;
 
-    UPROPERTY( Transient )
-    FGameplayTag Channel;
+	UPROPERTY(Transient)
+	FGameplayTag Channel;
 
-    UPROPERTY( Transient )
-    int32 ID = 0;
+	UPROPERTY(Transient)
+	int32 ID = 0;
 
-    FDelegateHandle StateClearedHandle;
+	FDelegateHandle StateClearedHandle;
 
-    friend UGameplayMessageSubsystem;
+	friend UGameplayMessageSubsystem;
 
-    FGameplayMessageListenerHandle( UGameplayMessageSubsystem * InSubsystem, FGameplayTag InChannel, int32 InID ) :
-        Subsystem( InSubsystem ),
-        Channel( InChannel ),
-        ID( InID )
-    {}
+	FGameplayMessageListenerHandle(UGameplayMessageSubsystem* InSubsystem, FGameplayTag InChannel, int32 InID) : Subsystem(InSubsystem), Channel(InChannel), ID(InID) {}
 };
 
 /** 
@@ -63,17 +55,17 @@ private:
 USTRUCT()
 struct FGameplayMessageListenerData
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    // Callback for when a message has been received
-    TFunction< void( FGameplayTag, const UScriptStruct *, const void * ) > ReceivedCallback;
+	// Callback for when a message has been received
+	TFunction<void(FGameplayTag, const UScriptStruct*, const void*)> ReceivedCallback;
 
-    int32 HandleID;
-    EGameplayMessageMatch MatchType;
+	int32 HandleID;
+	EGameplayMessageMatch MatchType;
 
-    // Adding some logging and extra variables around some potential problems with this
-    TWeakObjectPtr< const UScriptStruct > ListenerStructType = nullptr;
-    bool bHadValidType = false;
+	// Adding some logging and extra variables around some potential problems with this
+	TWeakObjectPtr<const UScriptStruct> ListenerStructType = nullptr;
+	bool bHadValidType = false;
 };
 
 /**
@@ -93,48 +85,40 @@ struct FGameplayMessageListenerData
 UCLASS()
 class GAMEPLAYMESSAGERUNTIME_API UGameplayMessageSubsystem : public UGameInstanceSubsystem
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
-    friend UAsyncAction_ListenForGameplayMessage;
+	friend UAsyncAction_ListenForGameplayMessage;
 
 public:
-    /**
+
+	/**
 	 * @return the message router for the game instance associated with the world of the specified object
 	 */
-    static UGameplayMessageSubsystem * Get( const UObject * WorldContextObject );
+	static UGameplayMessageSubsystem& Get(const UObject* WorldContextObject);
 
-    template < typename FMessageStructType >
-    static void TryBroadcastMessage( const UObject * WorldContextObject, FGameplayTag Channel, const FMessageStructType & Message )
-    {
-        if ( auto * router = Get( WorldContextObject ) )
-        {
-            router->BroadcastMessage( Channel, Message );
-        }
-    }
-
-    /**
+	/**
 	 * @return true if a valid GameplayMessageRouter subsystem if active in the provided world
 	 */
-    static bool HasInstance( const UObject * WorldContextObject );
+	static bool HasInstance(const UObject* WorldContextObject);
 
-    //~USubsystem interface
-    virtual void Deinitialize() override;
-    //~End of USubsystem interface
+	//~USubsystem interface
+	virtual void Deinitialize() override;
+	//~End of USubsystem interface
 
-    /**
+	/**
 	 * Broadcast a message on the specified channel
 	 *
 	 * @param Channel			The message channel to broadcast on
 	 * @param Message			The message to send (must be the same type of UScriptStruct expected by the listeners for this channel, otherwise an error will be logged)
 	 */
-    template < typename FMessageStructType >
-    void BroadcastMessage( FGameplayTag Channel, const FMessageStructType & Message )
-    {
-        const UScriptStruct * StructType = TBaseStructure< FMessageStructType >::Get();
-        BroadcastMessageInternal( Channel, StructType, &Message );
-    }
+	template <typename FMessageStructType>
+	void BroadcastMessage(FGameplayTag Channel, const FMessageStructType& Message)
+	{
+		const UScriptStruct* StructType = TBaseStructure<FMessageStructType>::Get();
+		BroadcastMessageInternal(Channel, StructType, &Message);
+	}
 
-    /**
+	/**
 	 * Register to receive messages on a specified channel
 	 *
 	 * @param Channel			The message channel to listen to
@@ -142,18 +126,19 @@ public:
 	 *
 	 * @return a handle that can be used to unregister this listener (either by calling Unregister() on the handle or calling UnregisterListener on the router)
 	 */
-    template < typename FMessageStructType >
-    FGameplayMessageListenerHandle RegisterListener( FGameplayTag Channel, TFunction< void( FGameplayTag, const FMessageStructType & ) > && Callback, EGameplayMessageMatch MatchType = EGameplayMessageMatch::ExactMatch )
-    {
-        auto ThunkCallback = [ InnerCallback = MoveTemp( Callback ) ]( FGameplayTag ActualTag, const UScriptStruct * SenderStructType, const void * SenderPayload ) {
-            InnerCallback( ActualTag, *reinterpret_cast< const FMessageStructType * >( SenderPayload ) );
-        };
+	template <typename FMessageStructType>
+	FGameplayMessageListenerHandle RegisterListener(FGameplayTag Channel, TFunction<void(FGameplayTag, const FMessageStructType&)>&& Callback, EGameplayMessageMatch MatchType = EGameplayMessageMatch::ExactMatch)
+	{
+		auto ThunkCallback = [InnerCallback = MoveTemp(Callback)](FGameplayTag ActualTag, const UScriptStruct* SenderStructType, const void* SenderPayload)
+		{
+			InnerCallback(ActualTag, *reinterpret_cast<const FMessageStructType*>(SenderPayload));
+		};
 
-        const UScriptStruct * StructType = TBaseStructure< FMessageStructType >::Get();
-        return RegisterListenerInternal( Channel, ThunkCallback, StructType, MatchType );
-    }
+		const UScriptStruct* StructType = TBaseStructure<FMessageStructType>::Get();
+		return RegisterListenerInternal(Channel, ThunkCallback, StructType, MatchType);
+	}
 
-    /**
+	/**
 	 * Register to receive messages on a specified channel and handle it with a specified member function
 	 * Executes a weak object validity check to ensure the object registering the function still exists before triggering the callback
 	 *
@@ -163,20 +148,21 @@ public:
 	 *
 	 * @return a handle that can be used to unregister this listener (either by calling Unregister() on the handle or calling UnregisterListener on the router)
 	 */
-    template < typename FMessageStructType, typename TOwner = UObject >
-    FGameplayMessageListenerHandle RegisterListener( FGameplayTag Channel, TOwner * Object, void ( TOwner::*Function )( FGameplayTag, const FMessageStructType & ) )
-    {
-        TWeakObjectPtr< TOwner > WeakObject( Object );
-        return RegisterListener< FMessageStructType >( Channel,
-            [ WeakObject, Function ]( FGameplayTag Channel, const FMessageStructType & Payload ) {
-                if ( TOwner * StrongObject = WeakObject.Get() )
-                {
-                    ( StrongObject->*Function )( Channel, Payload );
-                }
-            } );
-    }
+	template <typename FMessageStructType, typename TOwner = UObject>
+	FGameplayMessageListenerHandle RegisterListener(FGameplayTag Channel, TOwner* Object, void(TOwner::* Function)(FGameplayTag, const FMessageStructType&))
+	{
+		TWeakObjectPtr<TOwner> WeakObject(Object);
+		return RegisterListener<FMessageStructType>(Channel,
+			[WeakObject, Function](FGameplayTag Channel, const FMessageStructType& Payload)
+			{
+				if (TOwner* StrongObject = WeakObject.Get())
+				{
+					(StrongObject->*Function)(Channel, Payload);
+				}
+			});
+	}
 
-    /**
+	/**
 	 * Register to receive messages on a specified channel with extra parameters to support advanced behavior
 	 * The stateful part of this logic should probably be separated out to a separate system
 	 *
@@ -185,65 +171,66 @@ public:
 	 *
 	 * @return a handle that can be used to unregister this listener (either by calling Unregister() on the handle or calling UnregisterListener on the router)
 	 */
-    template < typename FMessageStructType >
-    FGameplayMessageListenerHandle RegisterListener( FGameplayTag Channel, FGameplayMessageListenerParams< FMessageStructType > & Params )
-    {
-        FGameplayMessageListenerHandle Handle;
+	template <typename FMessageStructType>
+	FGameplayMessageListenerHandle RegisterListener(FGameplayTag Channel, FGameplayMessageListenerParams<FMessageStructType>& Params)
+	{
+		FGameplayMessageListenerHandle Handle;
 
-        // Register to receive any future messages broadcast on this channel
-        if ( Params.OnMessageReceivedCallback )
-        {
-            auto ThunkCallback = [ InnerCallback = Params.OnMessageReceivedCallback ]( FGameplayTag ActualTag, const UScriptStruct * SenderStructType, const void * SenderPayload ) {
-                InnerCallback( ActualTag, *reinterpret_cast< const FMessageStructType * >( SenderPayload ) );
-            };
+		// Register to receive any future messages broadcast on this channel
+		if (Params.OnMessageReceivedCallback)
+		{
+			auto ThunkCallback = [InnerCallback = Params.OnMessageReceivedCallback](FGameplayTag ActualTag, const UScriptStruct* SenderStructType, const void* SenderPayload)
+			{
+				InnerCallback(ActualTag, *reinterpret_cast<const FMessageStructType*>(SenderPayload));
+			};
 
-            const UScriptStruct * StructType = TBaseStructure< FMessageStructType >::Get();
-            Handle = RegisterListenerInternal( Channel, ThunkCallback, StructType, Params.MatchType );
-        }
+			const UScriptStruct* StructType = TBaseStructure<FMessageStructType>::Get();
+			Handle = RegisterListenerInternal(Channel, ThunkCallback, StructType, Params.MatchType);
+		}
 
-        return Handle;
-    }
+		return Handle;
+	}
 
-    /**
+	/**
 	 * Remove a message listener previously registered by RegisterListener
 	 *
 	 * @param Handle	The handle returned by RegisterListener
 	 */
-    void UnregisterListener( FGameplayMessageListenerHandle Handle );
+	void UnregisterListener(FGameplayMessageListenerHandle Handle);
 
 protected:
-    /**
+	/**
 	 * Broadcast a message on the specified channel
 	 *
 	 * @param Channel			The message channel to broadcast on
 	 * @param Message			The message to send (must be the same type of UScriptStruct expected by the listeners for this channel, otherwise an error will be logged)
 	 */
-    UFUNCTION( BlueprintCallable, CustomThunk, Category = Messaging, meta = ( CustomStructureParam = "Message", AllowAbstract = "false", DisplayName = "Broadcast Message" ) )
-    void K2_BroadcastMessage( FGameplayTag Channel, const int32 & Message );
+	UFUNCTION(BlueprintCallable, CustomThunk, Category=Messaging, meta=(CustomStructureParam="Message", AllowAbstract="false", DisplayName="Broadcast Message"))
+	void K2_BroadcastMessage(FGameplayTag Channel, const int32& Message);
 
-    DECLARE_FUNCTION( execK2_BroadcastMessage );
-
-private:
-    // Internal helper for broadcasting a message
-    void BroadcastMessageInternal( FGameplayTag Channel, const UScriptStruct * StructType, const void * MessageBytes );
-
-    // Internal helper for registering a message listener
-    FGameplayMessageListenerHandle RegisterListenerInternal(
-        FGameplayTag Channel,
-        TFunction< void( FGameplayTag, const UScriptStruct *, const void * ) > && Callback,
-        const UScriptStruct * StructType,
-        EGameplayMessageMatch MatchType );
-
-    void UnregisterListenerInternal( FGameplayTag Channel, int32 HandleID );
+	DECLARE_FUNCTION(execK2_BroadcastMessage);
 
 private:
-    // List of all entries for a given channel
-    struct FChannelListenerList
-    {
-        TArray< FGameplayMessageListenerData > Listeners;
-        int32 HandleID = 0;
-    };
+	// Internal helper for broadcasting a message
+	void BroadcastMessageInternal(FGameplayTag Channel, const UScriptStruct* StructType, const void* MessageBytes);
+
+	// Internal helper for registering a message listener
+	FGameplayMessageListenerHandle RegisterListenerInternal(
+		FGameplayTag Channel, 
+		TFunction<void(FGameplayTag, const UScriptStruct*, const void*)>&& Callback,
+		const UScriptStruct* StructType,
+		EGameplayMessageMatch MatchType);
+
+	void UnregisterListenerInternal(FGameplayTag Channel, int32 HandleID);
 
 private:
-    TMap< FGameplayTag, FChannelListenerList > ListenerMap;
+	// List of all entries for a given channel
+	struct FChannelListenerList
+	{
+		TArray<FGameplayMessageListenerData> Listeners;
+		int32 HandleID = 0;
+	};
+
+private:
+	TMap<FGameplayTag, FChannelListenerList> ListenerMap;
 };
