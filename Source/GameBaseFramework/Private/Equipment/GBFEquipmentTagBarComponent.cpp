@@ -9,6 +9,7 @@
 #include "Inventory/GBFInventoryItemInstance.h"
 
 #include <Engine/ActorChannel.h>
+#include <Engine/World.h>
 #include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
 
@@ -130,8 +131,7 @@ void FGBFTagBarEquipmentList::BroadcastMessage( const FGBFEquipmentTagBarInvento
     message.TypeTag = item.TypeTag;
     message.InventoryItemInstance = item.InventoryItemInstance;
 
-    auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
-    message_system->BroadcastMessage( TAG_GBF_EquipmentTagBar_Message_ItemChanged, message );
+    UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_GBF_EquipmentTagBar_Message_ItemChanged, message );
 }
 
 UGBFEquipmentTagBarComponent::UGBFEquipmentTagBarComponent( const FObjectInitializer & object_initializer ) :

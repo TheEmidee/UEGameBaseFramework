@@ -176,8 +176,7 @@ void UGBFQuickBarComponent::OnRep_Slots()
     Message.Owner = GetOwner();
     Message.Slots = Slots;
 
-    auto * message_system = UGameplayMessageSubsystem::Get( this );
-    message_system->BroadcastMessage( TAG_GBF_QuickBar_Message_SlotsChanged, Message );
+    UGameplayMessageSubsystem::Get( this ).BroadcastMessage( TAG_GBF_QuickBar_Message_SlotsChanged, Message );
 }
 
 void UGBFQuickBarComponent::OnRep_ActiveSlotIndex()
@@ -186,8 +185,7 @@ void UGBFQuickBarComponent::OnRep_ActiveSlotIndex()
     Message.Owner = GetOwner();
     Message.ActiveIndex = ActiveSlotIndex;
 
-    auto * message_system = UGameplayMessageSubsystem::Get( this );
-    message_system->BroadcastMessage( TAG_GBF_QuickBar_Message_ActiveIndexChanged, Message );
+    UGameplayMessageSubsystem::Get( this ).BroadcastMessage( TAG_GBF_QuickBar_Message_ActiveIndexChanged, Message );
 }
 
 void UGBFQuickBarComponent::SetActiveSlotIndex_Implementation( const int32 new_index )

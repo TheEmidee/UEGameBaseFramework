@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CoreMinimal.h"
 #include "CommonUserTypes.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "UObject/ObjectPtr.h"
