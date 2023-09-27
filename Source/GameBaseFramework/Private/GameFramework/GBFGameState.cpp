@@ -3,6 +3,7 @@
 #include "Components/GASExtAbilitySystemComponent.h"
 
 #include <AbilitySystemComponent.h>
+#include <GameFramework/PlayerState.h>
 #include <Net/UnrealNetwork.h>
 
 extern ENGINE_API float GAverageFPS;
@@ -39,6 +40,19 @@ void AGBFGameState::Tick( float delta_seconds )
     if ( GetLocalRole() == ROLE_Authority )
     {
         ServerFPS = GAverageFPS;
+    }
+}
+
+void AGBFGameState::SeamlessTravelTransitionCheckpoint( bool to_transition )
+{
+    // Remove inactive and bots
+    for ( auto i = PlayerArray.Num() - 1; i >= 0; i-- )
+    {
+        const auto ps = PlayerArray[ i ];
+        if ( ps != nullptr && ( ps->IsABot() || ps->IsInactive() ) )
+        {
+            RemovePlayerState( ps );
+        }
     }
 }
 
