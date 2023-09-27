@@ -59,11 +59,16 @@ public:
 #endif
 
 private:
+    struct FPerActorData
+    {
+        TArray< TWeakObjectPtr< UCommonActivatableWidget > > LayoutsAdded;
+        TArray< FUIExtensionHandle > ExtensionHandles;
+    };
+
     struct FPerContextData
     {
         TArray< TSharedPtr< FComponentRequestHandle > > ComponentRequests;
-        TArray< TWeakObjectPtr< UCommonActivatableWidget > > LayoutsAdded;
-        TArray< FUIExtensionHandle > ExtensionHandles;
+        TMap< FObjectKey, FPerActorData > ActorData;
     };
 
     void AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context ) override;
