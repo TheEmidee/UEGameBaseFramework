@@ -92,6 +92,9 @@ public:
     float GetBlendWeight() const;
     FGameplayTag GetCameraTypeTag() const;
 
+    UFUNCTION( BlueprintCallable )
+    void SetBlendWeight( float weight );
+
     UWorld * GetWorld() const override;
 
     // Called when this camera mode is activated on the camera mode stack.
@@ -104,7 +107,6 @@ public:
 
     AActor * GetTargetActor() const;
     void UpdateCameraMode( float delta_time );
-    void SetBlendWeight( float weight );
 
 protected:
     virtual FVector GetPivotLocation() const;
