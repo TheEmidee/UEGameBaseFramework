@@ -1,10 +1,10 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "Widgets/UIExtensionPointWidget.h"
+#include "Widgets/SOverlay.h"
 #include "Widgets/Text/STextBlock.h"
 #include "Editor/WidgetCompilerLog.h"
 #include "Misc/UObjectToken.h"
-#include "UIExtensionSystem.h"
 #include "CommonLocalPlayer.h"
 #include "GameFramework/PlayerState.h"
 

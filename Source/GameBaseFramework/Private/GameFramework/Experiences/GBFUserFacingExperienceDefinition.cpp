@@ -7,6 +7,7 @@
 #include <ICommonUIModule.h>
 #include <Misc/CommandLine.h>
 #include <NativeGameplayTags.h>
+#include <UObject/Package.h>
 
 namespace GameBaseFramework::Experience
 {
@@ -32,6 +33,7 @@ UCommonSession_HostSessionRequest * UGBFUserFacingExperienceDefinition::CreateHo
     result->OnlineMode = OnlineMode;
     result->bUseLobbies = true;
     result->MapID = MapID;
+    result->ModeNameForAdvertisement = user_facing_experience_name;
     result->ModeNameForAdvertisement = user_facing_experience_name;
     result->ExtraArgs = ExtraArgs;
 

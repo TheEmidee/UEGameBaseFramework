@@ -33,9 +33,7 @@ public:
 
     void EndPlay( const EEndPlayReason::Type EndPlayReason ) override;
 
-#if WITH_SERVER_CODE
-    void ServerSetCurrentExperience( FPrimaryAssetId ExperienceId );
-#endif
+    void SetCurrentExperience( FPrimaryAssetId ExperienceId );
 
     // Ensures the delegate is called once the experience has been loaded,
     // before others are called.

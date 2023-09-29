@@ -3,18 +3,8 @@
 #include "UIExtensionSystem.h"
 
 #include "Blueprint/UserWidget.h"
-#include "Containers/UnrealString.h"
-#include "HAL/Platform.h"
 #include "LogUIExtension.h"
-#include "Logging/LogCategory.h"
-#include "Logging/LogMacros.h"
-#include "Logging/LogVerbosity.h"
-#include "Misc/AssertionMacros.h"
-#include "Templates/Casts.h"
-#include "Templates/UnrealTemplate.h"
-#include "Trace/Detail/Channel.h"
 #include "UObject/Stack.h"
-#include "UObject/UObjectBaseUtility.h"
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(UIExtensionSystem)
 

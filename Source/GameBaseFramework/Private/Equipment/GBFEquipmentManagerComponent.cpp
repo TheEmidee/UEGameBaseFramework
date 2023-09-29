@@ -7,6 +7,7 @@
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/ActorChannel.h>
+#include <Engine/World.h>
 #include <GameFramework/Controller.h>
 #include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
@@ -100,8 +101,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
     message.EquipmentOwner = OwnerComponent;
     message.Instance = new_entry.Instance;
 
-    auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
-    message_system->BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
+    UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
 
     return result;
 }
@@ -127,8 +127,7 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
             message.EquipmentOwner = OwnerComponent;
             message.Instance = entry.Instance;
 
-            auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
-            message_system->BroadcastMessage( TAG_Gameplay_Equipment_Message_UnEquipped, message );
+            UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_UnEquipped, message );
         }
     }
 }

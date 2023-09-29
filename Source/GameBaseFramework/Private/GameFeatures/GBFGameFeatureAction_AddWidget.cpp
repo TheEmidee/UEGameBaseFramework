@@ -5,7 +5,9 @@
 #include <CommonActivatableWidget.h>
 #include <CommonUIExtensions.h>
 #include <Components/GameFrameworkComponentManager.h>
+#include <Engine/GameInstance.h>
 #include <Engine/LocalPlayer.h>
+#include <Engine/World.h>
 #include <GameFeaturesSubsystemSettings.h>
 #include <GameFramework/PlayerController.h>
 #include <Misc/DataValidation.h>
@@ -105,13 +107,15 @@ void UGBFGameFeatureAction_AddWidget::AddToWorld( const FWorldContext & world_co
 void UGBFGameFeatureAction_AddWidget::Reset( FPerContextData & active_data )
 {
     active_data.ComponentRequests.Empty();
-    active_data.LayoutsAdded.Empty();
 
-    for ( FUIExtensionHandle & Handle : active_data.ExtensionHandles )
+    for ( auto & pair : active_data.ActorData )
     {
-        Handle.Unregister();
+        for ( auto & handle : pair.Value.ExtensionHandles )
+        {
+            handle.Unregister();
+        }
     }
-    active_data.ExtensionHandles.Reset();
+    active_data.ActorData.Empty();
 }
 
 void UGBFGameFeatureAction_AddWidget::HandleActorExtension( AActor * actor, const FName event_name, const FGameFeatureStateChangeContext change_context )
@@ -133,18 +137,20 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
 
     if ( auto * local_player = Cast< ULocalPlayer >( hud->GetOwningPlayerController()->Player ) )
     {
+        auto & per_actor_data = active_data.ActorData.FindOrAdd( hud );
+
         for ( const auto & entry : Layout )
         {
             if ( const auto concrete_widget_class = entry.LayoutClass.Get() )
             {
-                active_data.LayoutsAdded.Add( UCommonUIExtensions::PushContentToLayer_ForPlayer( local_player, entry.LayerID, concrete_widget_class ) );
+                per_actor_data.LayoutsAdded.Add( UCommonUIExtensions::PushContentToLayer_ForPlayer( local_player, entry.LayerID, concrete_widget_class ) );
             }
         }
 
         auto * extension_subsystem = hud->GetWorld()->GetSubsystem< UUIExtensionSubsystem >();
         for ( const auto & entry : Widgets )
         {
-            active_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, entry.WidgetClass.Get(), -1 ) );
+            per_actor_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, entry.WidgetClass.Get(), -1 ) );
         }
     }
 }
@@ -153,20 +159,23 @@ void UGBFGameFeatureAction_AddWidget::RemoveWidgets( AActor * actor, FPerContext
 {
     const auto * hud = CastChecked< AGBFHUD >( actor );
 
-    for ( auto & added_layout : active_data.LayoutsAdded )
-    {
-        if ( added_layout.IsValid() )
-        {
-            added_layout->DeactivateWidget();
-        }
-    }
-    active_data.LayoutsAdded.Reset();
+    // Only unregister if this is the same HUD actor that was registered, there can be multiple active at once on the client
 
-    for ( auto & handle : active_data.ExtensionHandles )
+    if ( auto * actor_data = active_data.ActorData.Find( hud ) )
     {
-        handle.Unregister();
+        for ( auto & added_layout : actor_data->LayoutsAdded )
+        {
+            if ( added_layout.IsValid() )
+            {
+                added_layout->DeactivateWidget();
+            }
+        }
+        for ( auto & handle : actor_data->ExtensionHandles )
+        {
+            handle.Unregister();
+        }
+        active_data.ActorData.Remove( hud );
     }
-    active_data.ExtensionHandles.Reset();
 }
 
 #undef LOCTEXT_NAMESPACE

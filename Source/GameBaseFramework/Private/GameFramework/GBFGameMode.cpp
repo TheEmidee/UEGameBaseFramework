@@ -405,11 +405,11 @@ void AGBFGameMode::FailedToRestartPlayer( AController * new_player )
     }
 }
 
-void AGBFGameMode::OnPostLogin( AController * new_player )
+void AGBFGameMode::GenericPlayerInitialization( AController * new_player )
 {
-    Super::OnPostLogin( new_player );
+    Super::GenericPlayerInitialization( new_player );
 
-    OnControllerPostLoginDelegate.Broadcast( this, new_player );
+    OnPlayerInitializedDelegate.Broadcast( this, new_player );
 }
 
 void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
@@ -423,6 +423,7 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
     //  - Developer Settings (PIE only)
     //  - Command Line override
     //  - World Settings
+    //  - Dedicated Server
     //  - Default experience
 
     auto * world = GetWorld();
@@ -494,20 +495,18 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
 
 void AGBFGameMode::OnExperienceDefined( FPrimaryAssetId experience_id, const FString & experience_id_source )
 {
-#if WITH_SERVER_CODE
     if ( experience_id.IsValid() )
     {
         UE_LOG( LogGBF_Experience, Log, TEXT( "Identified experience %s (Source: %s)" ), *experience_id.ToString(), *experience_id_source );
 
         auto * experience_component = GetGameState< AGBFGameState >()->GetExperienceManagerComponent();
         check( experience_component != nullptr );
-        experience_component->ServerSetCurrentExperience( experience_id );
+        experience_component->SetCurrentExperience( experience_id );
     }
     else
     {
         UE_LOG( LogGBF_Experience, Error, TEXT( "Failed to identify experience, loading screen will stay up forever" ) );
     }
-#endif
 }
 
 void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )

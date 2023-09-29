@@ -10,7 +10,7 @@ class UGBFExperienceImplementation;
 class UGBFPawnData;
 enum class ECommonSessionOnlineMode : uint8;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModeControllerLogEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
+DECLARE_MULTICAST_DELEGATE_TwoParams( FOnGameModePlayerInitializedEventDelegate, AGameModeBase * /*GameMode*/, AController * /*NewPlayer*/ );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameMode : public AModularGameMode
@@ -18,8 +18,8 @@ class GAMEBASEFRAMEWORK_API AGBFGameMode : public AModularGameMode
     GENERATED_BODY()
 
 public:
-    FOnGameModeControllerLogEventDelegate & OnControllerPostLogin();
-    FOnGameModeControllerLogEventDelegate & OnControllerLogout();
+    FOnGameModePlayerInitializedEventDelegate & OnControllerPostLogin();
+    FOnGameModePlayerInitializedEventDelegate & OnControllerLogout();
 
     AGBFGameMode();
 
@@ -48,7 +48,7 @@ protected:
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
     bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
     void FailedToRestartPlayer( AController * new_player ) override;
-    void OnPostLogin( AController * new_player ) override;
+    void GenericPlayerInitialization( AController * new_player ) override;
     virtual void HostDedicatedServerMatch( ECommonSessionOnlineMode online_mode );
 
 private:
@@ -60,16 +60,16 @@ private:
     UFUNCTION()
     void OnUserInitializedForDedicatedServer( const UCommonUserInfo * user_info, bool is_successful, FText error, ECommonUserPrivilege requested_privilege, ECommonUserOnlineContext online_context );
 
-    FOnGameModeControllerLogEventDelegate OnControllerPostLoginDelegate;
-    FOnGameModeControllerLogEventDelegate OnControllerLogoutDelegate;
+    FOnGameModePlayerInitializedEventDelegate OnPlayerInitializedDelegate;
+    FOnGameModePlayerInitializedEventDelegate OnControllerLogoutDelegate;
 };
 
-FORCEINLINE FOnGameModeControllerLogEventDelegate & AGBFGameMode::OnControllerPostLogin()
+FORCEINLINE FOnGameModePlayerInitializedEventDelegate & AGBFGameMode::OnControllerPostLogin()
 {
-    return OnControllerPostLoginDelegate;
+    return OnPlayerInitializedDelegate;
 }
 
-FORCEINLINE FOnGameModeControllerLogEventDelegate & AGBFGameMode::OnControllerLogout()
+FORCEINLINE FOnGameModePlayerInitializedEventDelegate & AGBFGameMode::OnControllerLogout()
 {
     return OnControllerLogoutDelegate;
 }

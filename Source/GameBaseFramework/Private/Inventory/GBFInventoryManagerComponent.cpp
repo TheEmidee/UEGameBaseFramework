@@ -6,6 +6,7 @@
 #include "Inventory/GBFInventoryItemInstance.h"
 
 #include <Engine/ActorChannel.h>
+#include <Engine/World.h>
 #include <GameFramework/Actor.h>
 #include <NativeGameplayTags.h>
 #include <Net/UnrealNetwork.h>
@@ -140,8 +141,7 @@ void FGBFInventoryList::BroadcastChangeMessage( const FGBFInventoryEntry & entry
     message.NewCount = new_count;
     message.Delta = new_count - old_count;
 
-    auto * message_system = UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() );
-    message_system->BroadcastMessage( TAG_Gameplay_Inventory_Message_StackChanged, message );
+    UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Inventory_Message_StackChanged, message );
 }
 
 UGBFInventoryManagerComponent::UGBFInventoryManagerComponent( const FObjectInitializer & object_initializer ) :

@@ -100,8 +100,7 @@ void UGBFExperienceManagerComponent::EndPlay( const EEndPlayReason::Type EndPlay
     }
 }
 
-#if WITH_SERVER_CODE
-void UGBFExperienceManagerComponent::ServerSetCurrentExperience( FPrimaryAssetId ExperienceId )
+void UGBFExperienceManagerComponent::SetCurrentExperience( FPrimaryAssetId ExperienceId )
 {
     const UAssetManager & asset_manager = UAssetManager::Get();
     const auto asset_path = asset_manager.GetPrimaryAssetPath( ExperienceId );
@@ -119,7 +118,6 @@ void UGBFExperienceManagerComponent::ServerSetCurrentExperience( FPrimaryAssetId
     CurrentExperience = experience;
     StartExperienceLoad();
 }
-#endif
 
 void UGBFExperienceManagerComponent::CallOrRegister_OnExperienceLoaded_HighPriority( FOnGBFExperienceLoaded::FDelegate && delegate )
 {
@@ -252,8 +250,16 @@ void UGBFExperienceManagerComponent::StartExperienceLoad()
         bundles_to_load.Add( UGameFeaturesSubsystemSettings::LoadStateServer );
     }
 
-    const auto bundle_load_handle = asset_manager.ChangeBundleStateForPrimaryAssets( bundle_asset_list.Array(), bundles_to_load, {}, false, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority );
-    const auto raw_load_handle = asset_manager.LoadAssetList( raw_asset_list.Array(), FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, TEXT( "StartExperienceLoad()" ) );
+    TSharedPtr< FStreamableHandle > bundle_load_handle = nullptr;
+    if ( bundle_asset_list.Num() > 0 )
+    {
+        bundle_load_handle = asset_manager.ChangeBundleStateForPrimaryAssets( bundle_asset_list.Array(), bundles_to_load, {}, false, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority );
+    }
+    TSharedPtr< FStreamableHandle > raw_load_handle = nullptr;
+    if ( raw_asset_list.Num() > 0 )
+    {
+        raw_load_handle = asset_manager.LoadAssetList( raw_asset_list.Array(), FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, TEXT( "StartExperienceLoad()" ) );
+    }
 
     // If both async loads are running, combine them
     TSharedPtr< FStreamableHandle > handle = nullptr;

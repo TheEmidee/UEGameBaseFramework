@@ -16,11 +16,7 @@ struct FGeometry;
 
 UGameSettingPanel::UGameSettingPanel()
 {
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION > 1
-    SetIsFocusable(true);
-#else
-    bIsFocusable = true;
-#endif
+	SetIsFocusable(true);
 }
 
 void UGameSettingPanel::NativeOnInitialized()
