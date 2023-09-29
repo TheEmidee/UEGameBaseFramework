@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Characters/Components/GBFPawnComponent.h"
+#include "Input/GBFMappableConfigPair.h"
 
 #include <CoreMinimal.h>
 #include <GameplayAbilitySpecHandle.h>
@@ -8,7 +9,6 @@
 #include "GBFHeroComponent.generated.h"
 
 struct FGBFInputMappingContextAndPriority;
-struct FGBFMappableConfigPair;
 class UGBFInputComponent;
 class UGBFInputConfig;
 class UGBFCameraMode;
