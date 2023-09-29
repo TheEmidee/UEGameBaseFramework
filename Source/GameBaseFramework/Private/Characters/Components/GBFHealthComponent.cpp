@@ -10,20 +10,6 @@
 #include <GameplayEffectTypes.h>
 #include <Net/UnrealNetwork.h>
 
-namespace
-{
-    AActor * GetInstigatorFromAttrChangeData( const FOnAttributeChangeData & change_data )
-    {
-        if ( change_data.GEModData != nullptr )
-        {
-            const FGameplayEffectContextHandle & EffectContext = change_data.GEModData->EffectSpec.GetEffectContext();
-            return EffectContext.GetOriginalInstigator();
-        }
-
-        return nullptr;
-    }
-}
-
 UGBFHealthComponent::UGBFHealthComponent()
 {
     PrimaryComponentTick.bCanEverTick = false;
@@ -64,9 +50,8 @@ void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemCompo
     }
 
     // Register to listen for attribute changes.
-    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate( UGBFHealthAttributeSet::GetHealthAttribute() ).AddUObject( this, &ThisClass::HandleHealthChanged );
-    AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate( UGBFHealthAttributeSet::GetMaxHealthAttribute() ).AddUObject( this, &ThisClass::HandleMaxHealthChanged );
-
+    HealthAttributeSet->OnHealthChanged().AddUObject( this, &ThisClass::HandleHealthChanged );
+    HealthAttributeSet->OnMaxHealthChanged().AddUObject( this, &ThisClass::HandleMaxHealthChanged );
     HealthAttributeSet->OnOutOfHealth().AddUObject( this, &ThisClass::HandleOutOfHealth );
     HealthAttributeSet->OnShieldAbsorbedDamage().AddUObject( this, &ThisClass::HandleShieldAbsorbedDamage );
     HealthAttributeSet->OnDamaged().AddUObject( this, &ThisClass::HandleOnDamaged );
@@ -80,7 +65,11 @@ void UGBFHealthComponent::UninitializeFromAbilitySystem()
 
     if ( HealthAttributeSet != nullptr )
     {
+        HealthAttributeSet->OnHealthChanged().RemoveAll( this );
+        HealthAttributeSet->OnMaxHealthChanged().RemoveAll( this );
         HealthAttributeSet->OnOutOfHealth().RemoveAll( this );
+        HealthAttributeSet->OnShieldAbsorbedDamage().RemoveAll( this );
+        HealthAttributeSet->OnDamaged().RemoveAll( this );
     }
 
     HealthAttributeSet = nullptr;
@@ -199,7 +188,7 @@ void UGBFHealthComponent::OnFinishDeath()
 {
 }
 
-void UGBFHealthComponent::HandleOutOfHealth( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude )
+void UGBFHealthComponent::HandleOutOfHealth( AActor * /*damage_instigator*/, AActor * /*damage_causer*/, const FGameplayEffectSpec * /*damage_effect_spec*/, float /*damage_magnitude*/, const float /*old_value*/, const float /*new_value*/ )
 {
     ensureAlwaysMsgf( false, TEXT( "Implement this function in your own implementation" ) );
 }
@@ -208,33 +197,33 @@ void UGBFHealthComponent::ClearGameplayTags()
 {
 }
 
-void UGBFHealthComponent::HandleHealthChanged( const FOnAttributeChangeData & change_data )
+void UGBFHealthComponent::HandleHealthChanged( AActor * damage_instigator, AActor * /*damage_causer*/, const FGameplayEffectSpec * /*damage_effect_spec*/, float /*damage_magnitude*/, const float old_value, const float new_value )
 {
-    OnHealthChangedDelegate.Broadcast( this, change_data.OldValue, change_data.NewValue, GetInstigatorFromAttrChangeData( change_data ) );
+    OnHealthChangedDelegate.Broadcast( this, old_value, new_value, damage_instigator );
 }
 
-void UGBFHealthComponent::HandleMaxHealthChanged( const FOnAttributeChangeData & change_data )
+void UGBFHealthComponent::HandleMaxHealthChanged( AActor * damage_instigator, AActor * /*damage_causer*/, const FGameplayEffectSpec * /*damage_effect_spec*/, float /*damage_magnitude*/, const float old_value, const float new_value )
 {
-    OnMaxHealthChangedDelegate.Broadcast( this, change_data.OldValue, change_data.NewValue, GetInstigatorFromAttrChangeData( change_data ) );
+    OnMaxHealthChangedDelegate.Broadcast( this, old_value, new_value, damage_instigator );
 }
 
-void UGBFHealthComponent::HandleShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude )
+void UGBFHealthComponent::HandleShieldAbsorbedDamage( AActor * /*damage_instigator*/, AActor * /*damage_causer*/, const FGameplayEffectSpec * damage_effect_spec, float /*damage_magnitude*/, const float /*old_value*/, const float /*new_value*/ )
 {
 #if WITH_SERVER_CODE
     if ( AbilitySystemComponent != nullptr && OnShieldAbsorbedDamagedGameplayCueTag.IsValid() )
     {
-        const FGameplayCueParameters parameters( damage_effect_spec.GetContext() );
+        const FGameplayCueParameters parameters( damage_effect_spec->GetContext() );
         AbilitySystemComponent->ExecuteGameplayCue( OnShieldAbsorbedDamagedGameplayCueTag.GameplayCueTag, parameters );
     }
 #endif
 }
 
-void UGBFHealthComponent::HandleOnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude )
+void UGBFHealthComponent::HandleOnDamaged( AActor * /*damage_instigator*/, AActor * /*damage_causer*/, const FGameplayEffectSpec * damage_effect_spec, float /*damage_magnitude*/, const float /*old_value*/, const float /*new_value*/ )
 {
 #if WITH_SERVER_CODE
     if ( AbilitySystemComponent != nullptr && OnDamagedGameplayCueTag.IsValid() )
     {
-        const FGameplayCueParameters parameters( damage_effect_spec.GetContext() );
+        const FGameplayCueParameters parameters( damage_effect_spec->GetContext() );
         AbilitySystemComponent->ExecuteGameplayCue( OnDamagedGameplayCueTag.GameplayCueTag, parameters );
     }
 #endif

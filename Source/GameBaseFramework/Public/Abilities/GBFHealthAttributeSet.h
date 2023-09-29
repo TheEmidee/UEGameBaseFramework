@@ -18,7 +18,12 @@ public:
     FGBFAttributeEvent & OnOutOfShield() const;
     FGBFAttributeEvent & OnShieldAbsorbedDamage() const;
     FGBFAttributeEvent & OnDamaged() const;
+    FGBFAttributeEvent & OnHealthChanged() const;
+    FGBFAttributeEvent & OnMaxHealthChanged() const;
+    FGBFAttributeEvent & OnShieldChanged() const;
+    FGBFAttributeEvent & OnMaxShieldChanged() const;
 
+    bool PreGameplayEffectExecute( FGameplayEffectModCallbackData & data ) override;
     void PreAttributeChange( const FGameplayAttribute & attribute, float & new_value ) override;
     void PreAttributeBaseChange( const FGameplayAttribute & attribute, float & new_value ) const override;
     void PostAttributeChange( const FGameplayAttribute & attribute, float old_value, float new_value ) override;
@@ -61,9 +66,18 @@ protected:
     mutable FGBFAttributeEvent OnOutOfShieldEvent;
     mutable FGBFAttributeEvent OnShieldAbsorbedDamageEvent;
     mutable FGBFAttributeEvent OnDamageEvent;
+    mutable FGBFAttributeEvent OnHealthChangedEvent;
+    mutable FGBFAttributeEvent OnMaxHealthChangedEvent;
+    mutable FGBFAttributeEvent OnShieldChangedEvent;
+    mutable FGBFAttributeEvent OnMaxShieldChangedEvent;
 
     bool bOutOfHealth;
     bool bOutOfShield;
+
+    float MaxHealthBeforeAttributeChange;
+    float HealthBeforeAttributeChange;
+    float MaxShieldBeforeAttributeChange;
+    float ShieldBeforeAttributeChange;
 };
 
 FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnOutOfHealth() const
@@ -84,4 +98,24 @@ FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnShieldAbsorbedDamage(
 FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnDamaged() const
 {
     return OnDamageEvent;
+}
+
+FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnHealthChanged() const
+{
+    return OnHealthChangedEvent;
+}
+
+FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnMaxHealthChanged() const
+{
+    return OnMaxHealthChangedEvent;
+}
+
+FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnShieldChanged() const
+{
+    return OnShieldChangedEvent;
+}
+
+FORCEINLINE FGBFAttributeEvent & UGBFHealthAttributeSet::OnMaxShieldChanged() const
+{
+    return OnMaxShieldChangedEvent;
 }

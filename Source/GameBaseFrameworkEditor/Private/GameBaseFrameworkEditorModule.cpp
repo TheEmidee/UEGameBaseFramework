@@ -162,7 +162,7 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
 
             if ( FSlateApplication::IsInitialized() )
             {
-                UToolMenus::RegisterStartupCallback( FSimpleMulticastDelegate::FDelegate::CreateStatic( &RegisterGameEditorMenus ) );
+                ToolMenusHandle = UToolMenus::RegisterStartupCallback( FSimpleMulticastDelegate::FDelegate::CreateStatic( &RegisterGameEditorMenus ) );
             }
 
             FEditorDelegates::BeginPIE.AddRaw( this, &ThisClass::OnBeginPIE );
@@ -200,7 +200,18 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
             asset_tools_module->Get().UnregisterAssetTypeActions( asset_action.ToSharedRef() );
         }
 
+        FEditorDelegates::BeginPIE.RemoveAll( this );
+        FEditorDelegates::EndPIE.RemoveAll( this );
+
+        // Undo UToolMenus
+        if ( UObjectInitialized() && ToolMenusHandle.IsValid() )
+        {
+            UToolMenus::UnRegisterStartupCallback( ToolMenusHandle );
+        }
+
+        UnbindGameplayAbilitiesEditorDelegates();
         FModuleManager::Get().OnModulesChanged().RemoveAll( this );
+        FGBFGameEditorStyle::Shutdown();
     }
 
 protected:
@@ -213,6 +224,17 @@ protected:
         gameplay_abilities_editor_module.GetGameplayCueNotifyPathDelegate().BindStatic( &GetGameplayCuePath );
     }
 
+    static void UnbindGameplayAbilitiesEditorDelegates()
+    {
+        if ( IGameplayAbilitiesEditorModule::IsAvailable() )
+        {
+            auto & gameplay_abilities_editor_module = IGameplayAbilitiesEditorModule::Get();
+            gameplay_abilities_editor_module.GetGameplayCueNotifyClassesDelegate().Unbind();
+            gameplay_abilities_editor_module.GetGameplayCueInterfaceClassesDelegate().Unbind();
+            gameplay_abilities_editor_module.GetGameplayCueNotifyPathDelegate().Unbind();
+        }
+    }
+
     void ModulesChangedCallback( const FName module_that_changed, const EModuleChangeReason reason_for_change )
     {
         if ( reason_for_change == EModuleChangeReason::ModuleLoaded && module_that_changed.ToString() == TEXT( "GameplayAbilitiesEditor" ) )
@@ -223,6 +245,7 @@ protected:
 
 private:
     TWeakPtr< IAssetTypeActions > ContextEffectsLibraryAssetAction;
+    FDelegateHandle ToolMenusHandle;
 };
 
 IMPLEMENT_MODULE( FGameBaseFrameworkEditorModule, GBFEditorEngine );
