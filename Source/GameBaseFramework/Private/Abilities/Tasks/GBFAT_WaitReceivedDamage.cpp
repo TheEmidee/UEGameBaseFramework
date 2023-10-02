@@ -45,11 +45,11 @@ void UGBFAT_WaitReceivedDamage::Activate()
     }
 }
 
-void UGBFAT_WaitReceivedDamage::OnShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude )
+void UGBFAT_WaitReceivedDamage::OnShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, const float damage_magnitude, float /*old_value*/, float /*new_value*/ )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
-        OnReceivedDamageDelegate.Broadcast( damage_instigator, damage_causer, damage_effect_spec, -damage_magnitude, true );
+        OnReceivedDamageDelegate.Broadcast( damage_instigator, damage_causer, *damage_effect_spec, -damage_magnitude, true );
     }
 
     if ( bItTriggersOnce )
@@ -58,11 +58,11 @@ void UGBFAT_WaitReceivedDamage::OnShieldAbsorbedDamage( AActor * damage_instigat
     }
 }
 
-void UGBFAT_WaitReceivedDamage::OnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude )
+void UGBFAT_WaitReceivedDamage::OnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, const float damage_magnitude, float /*old_value*/, float /*new_value*/ )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
-        OnReceivedDamageDelegate.Broadcast( damage_instigator, damage_causer, damage_effect_spec, -damage_magnitude, false );
+        OnReceivedDamageDelegate.Broadcast( damage_instigator, damage_causer, *damage_effect_spec, -damage_magnitude, false );
     }
 
     if ( bItTriggersOnce )

@@ -10,7 +10,10 @@
 #include <Engine/World.h>
 #include <GameFeaturesSubsystemSettings.h>
 #include <GameFramework/PlayerController.h>
+
+#if WITH_EDITOR
 #include <Misc/DataValidation.h>
+#endif
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkGameFeatures"
 

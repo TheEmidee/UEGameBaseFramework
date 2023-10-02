@@ -1,12 +1,15 @@
 #include "GameFeatures/GBFGameFeatureAction_AddGameplayCuePath.h"
 
 #include "GameplayCues/GASExtGameplayCueManager.h"
-#include "Misc/DataValidation.h"
 
 #include <AbilitySystemGlobals.h>
 #include <GameFeatureData.h>
 #include <GameFeaturesSubsystem.h>
 #include <GameplayCueSet.h>
+
+#if WITH_EDITOR
+#include <Misc/DataValidation.h>
+#endif
 
 #define LOCTEXT_NAMESPACE "GameFeatures"
 
@@ -16,11 +19,11 @@ EDataValidationResult UGBFGameFeatureAction_AddGameplayCuePath::IsDataValid( FDa
     auto result = Super::IsDataValid( context );
 
     const auto error_reason = FText::GetEmpty();
-    for ( const FDirectoryPath & Directory : DirectoryPathsToAdd )
+    for ( const auto & directory : DirectoryPathsToAdd )
     {
-        if ( Directory.Path.IsEmpty() )
+        if ( directory.Path.IsEmpty() )
         {
-            const auto invalid_cue_path_error = FText::Format( LOCTEXT( "invalid_cue_path_error", "'{0}' is not a valid path!" ), FText::FromString( Directory.Path ) );
+            const auto invalid_cue_path_error = FText::Format( LOCTEXT( "invalid_cue_path_error", "'{0}' is not a valid path!" ), FText::FromString( directory.Path ) );
             context.AddError( invalid_cue_path_error );
             context.AddError( error_reason );
             result = CombineDataValidationResults( result, EDataValidationResult::Invalid );

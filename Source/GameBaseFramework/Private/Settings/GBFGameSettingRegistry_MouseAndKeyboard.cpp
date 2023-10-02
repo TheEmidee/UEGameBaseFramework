@@ -169,7 +169,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
         created_mapping_names.Reset();
 
         for ( const auto & [ tag, key_profile ] : user_settings->GetAllSavedKeyProfiles() )
-        {
+        {            
             for ( const auto & [ name, key_mapping_row ] : key_profile->GetPlayerMappingRows() )
             {
                 // Create a setting row for anything with valid mappings and that we haven't created yet

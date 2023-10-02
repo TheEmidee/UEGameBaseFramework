@@ -36,8 +36,7 @@ protected:
     virtual void LoadGameData();
     void StartInitialLoading() override;
 
-private:    
-    void InitializeAbilitySystem();
+private:
     void InitializeGameplayCueManager();
     void DoAllStartupJobs();
     void UpdateInitialGameContentLoadPercent( float game_content_percent );

@@ -21,8 +21,8 @@ public:
     void Activate() override;
 
 private:
-    void OnShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
-    void OnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
+    void OnShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
+    void OnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
 
     void OnDestroy( bool it_has_finished_owner ) override;
 

@@ -3,6 +3,7 @@
 #include "Settings/GBFGameUserSettings.h"
 
 #include <AudioMixerBlueprintLibrary.h>
+#include <Engine/World.h>
 #include <GameFramework/PlayerController.h>
 
 UGBFLocalPlayer::UGBFLocalPlayer()
@@ -50,10 +51,45 @@ UGBFSaveGame * UGBFLocalPlayer::GetSharedSettings() const
 {
     if ( SharedSettings == nullptr )
     {
-        SharedSettings = UGBFSaveGame::LoadOrCreateSettings( this );
+        // On PC it's okay to use the sync load because it only checks the disk
+        // This could use a platform tag to check for proper save support instead
+
+        if ( PLATFORM_DESKTOP )
+        {
+            SharedSettings = UGBFSaveGame::LoadOrCreateSettings( this );
+        }
+        else
+        {
+            // We need to wait for user login to get the real settings so return temp ones
+            SharedSettings = UGBFSaveGame::CreateTemporarySettings( this );
+        }
     }
 
     return SharedSettings;
+}
+
+void UGBFLocalPlayer::LoadSharedSettingsFromDisk( bool force_load )
+{
+    const auto current_net_id = GetCachedUniqueNetId();
+    if ( !force_load && SharedSettings && current_net_id == NetIdForSharedSettings )
+    {
+        // Already loaded once, don't reload
+        return;
+    }
+
+    ensure( UGBFSaveGame::AsyncLoadOrCreateSettings( this, UGBFSaveGame::FGBFOnSettingsLoadedEvent::CreateUObject( this, &UGBFLocalPlayer::OnSharedSettingsLoaded ) ) );
+}
+
+void UGBFLocalPlayer::OnSharedSettingsLoaded( UGBFSaveGame * loaded_or_created_settings )
+{
+    // The settings are applied before it gets here
+    if ( ensure( loaded_or_created_settings ) )
+    {
+        // This will replace the temporary or previously loaded object which will GC out normally
+        SharedSettings = loaded_or_created_settings;
+
+        NetIdForSharedSettings = GetCachedUniqueNetId();
+    }
 }
 
 void UGBFLocalPlayer::OnAudioOutputDeviceChanged( const FString & audio_output_device_id )
