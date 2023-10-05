@@ -30,12 +30,20 @@ UGameUIPolicy* UGameUIPolicy::GetGameUIPolicy(const UObject* WorldContextObject)
 
 UGameUIManagerSubsystem* UGameUIPolicy::GetOwningUIManager() const
 {
-	return CastChecked<UGameUIManagerSubsystem>(GetOuter());
+	return Cast<UGameUIManagerSubsystem>(GetOuter());
 }
 
 UWorld* UGameUIPolicy::GetWorld() const
 {
-	return GetOwningUIManager()->GetGameInstance()->GetWorld();
+    if ( const auto * owning_ui_manager = GetOwningUIManager())
+    {
+        if ( const auto * game_instance = owning_ui_manager->GetGameInstance())
+        {
+            return game_instance->GetWorld();
+        }
+    }
+    
+	return nullptr;
 }
 
 UPrimaryGameLayout* UGameUIPolicy::GetRootLayout(const UCommonLocalPlayer* LocalPlayer) const
