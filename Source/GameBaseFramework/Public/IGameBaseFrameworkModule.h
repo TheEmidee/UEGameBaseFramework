@@ -8,7 +8,6 @@ class UTexture2D;
 class IGameBaseFrameworkModule : public IModuleInterface
 {
 public:
-
     void StartupModule() override;
     void ShutdownModule() override;
 
@@ -29,7 +28,6 @@ public:
     }
 
 private:
-
     void LoadAllPlatformInputTextures();
     void LoadPlatformInputTextures( const FString & platform_input_name );
 

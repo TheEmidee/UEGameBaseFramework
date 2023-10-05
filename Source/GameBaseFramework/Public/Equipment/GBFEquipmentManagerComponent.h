@@ -65,6 +65,7 @@ struct FGBFEquipmentList : public FFastArraySerializer
     bool NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params );
     UGBFEquipmentInstance * AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
     void RemoveEntry( UGBFEquipmentInstance * instance );
+
 private:
     UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
 

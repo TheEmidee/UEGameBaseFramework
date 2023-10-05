@@ -10,7 +10,7 @@ void UGBFNetworkFailureHandlerComponent::BeginPlay()
     HandleNetworkFailureDelegateHandle = GEngine->OnNetworkFailure().AddUObject( this, &ThisClass::HandleNetworkFailure );
 }
 
-void UGBFNetworkFailureHandlerComponent::EndPlay( const EEndPlayReason::Type end_play_reason  )
+void UGBFNetworkFailureHandlerComponent::EndPlay( const EEndPlayReason::Type end_play_reason )
 {
     Super::EndPlay( end_play_reason );
 
@@ -32,5 +32,5 @@ void UGBFNetworkFailureHandlerComponent::HandleNetworkFailure( UWorld * world, U
         return;
     }
 
-    OnReceiveNetworkFailure( failure_type, error_string );    
+    OnReceiveNetworkFailure( failure_type, error_string );
 }
