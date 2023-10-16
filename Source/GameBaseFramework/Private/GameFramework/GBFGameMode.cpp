@@ -79,28 +79,31 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
         }
     }
 
-    TArray< FSoftObjectPath > object_paths;
-    if ( UGBFAssetManager::Get().GetPrimaryAssetPathList( UGBFPawnDataSelector::GetPrimaryAssetType(), object_paths ) )
+    if ( const auto * player_state = controller->GetPlayerState< AGBFPlayerState >() )
     {
-        TArray< const UGBFPawnDataSelector * > pawn_data_selectors;
-        pawn_data_selectors.Reserve( object_paths.Num() );
-
-        for ( const auto & object_path : object_paths )
+        TArray< FSoftObjectPath > object_paths;
+        if ( UGBFAssetManager::Get().GetPrimaryAssetPathList( UGBFPawnDataSelector::GetPrimaryAssetType(), object_paths ) )
         {
-            const auto * pawn_data_selector = get_pawn_data_selector( object_path );
-            pawn_data_selectors.Add( pawn_data_selector );
-        }
+            TArray< const UGBFPawnDataSelector * > pawn_data_selectors;
+            pawn_data_selectors.Reserve( object_paths.Num() );
 
-        pawn_data_selectors.Sort( []( auto & left, auto & right ) {
-            return left.Priority > right.Priority;
-        } );
-
-        for ( const auto * pawn_data_selector : pawn_data_selectors )
-        {
-            if ( pawn_data_selector->CanUsePawnDataForController( controller ) )
+            for ( const auto & object_path : object_paths )
             {
-                UE_LOG( LogGBF, Verbose, TEXT( "CanUsePawnDataForController of %s returned true. Will use PawnData %s." ), *GetNameSafe( pawn_data_selector->GetClass() ), *GetNameSafe( pawn_data_selector->PawnData ) );
-                return pawn_data_selector->PawnData;
+                const auto * pawn_data_selector = get_pawn_data_selector( object_path );
+                pawn_data_selectors.Add( pawn_data_selector );
+            }
+
+            pawn_data_selectors.Sort( []( auto & left, auto & right ) {
+                return left.Priority > right.Priority;
+            } );
+
+            for ( const auto * pawn_data_selector : pawn_data_selectors )
+            {
+                if ( pawn_data_selector->CanUsePawnDataForController( controller ) )
+                {
+                    UE_LOG( LogGBF, Verbose, TEXT( "CanUsePawnDataForController of %s returned true. Will use PawnData %s." ), *GetNameSafe( pawn_data_selector->GetClass() ), *GetNameSafe( pawn_data_selector->PawnData ) );
+                    return pawn_data_selector->PawnData;
+                }
             }
         }
     }
