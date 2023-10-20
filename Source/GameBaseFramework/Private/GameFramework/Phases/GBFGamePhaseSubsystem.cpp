@@ -161,7 +161,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
     if ( ensure( game_state_asc != nullptr ) )
     {
         TArray< FGameplayAbilitySpec * > active_phases;
-        GetActivePhases( active_phases, game_state_asc );        
+        GetActivePhases( active_phases, game_state_asc );
 
         for ( const auto * active_phase : active_phases )
         {
