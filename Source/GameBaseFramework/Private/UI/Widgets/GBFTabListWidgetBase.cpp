@@ -1,7 +1,7 @@
 #include "UI/Widgets/GBFTabListWidgetBase.h"
 
-#include "CommonButtonBase.h"
 #include "CommonAnimatedSwitcher.h"
+#include "CommonButtonBase.h"
 
 bool UGBFTabListWidgetBase::GetPreregisteredTabInfo( const FName tab_name_id, FGBFTabDescriptor & out_tab_info )
 {

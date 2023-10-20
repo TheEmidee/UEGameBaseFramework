@@ -36,7 +36,7 @@ protected:
     virtual void LoadGameData();
     void StartInitialLoading() override;
 
-private:    
+private:
     void InitializeAbilitySystem();
     void InitializeGameplayCueManager();
     void DoAllStartupJobs();
