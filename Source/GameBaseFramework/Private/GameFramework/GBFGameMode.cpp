@@ -77,10 +77,7 @@ const UGBFPawnData * AGBFGameMode::GetPawnDataForController( const AController *
                 return pawn_data_selector->PawnData;
             }
         }
-    }
 
-    if ( const auto * player_state = controller->GetPlayerState< AGBFPlayerState >() )
-    {
         TArray< FSoftObjectPath > object_paths;
         if ( UGBFAssetManager::Get().GetPrimaryAssetPathList( UGBFPawnDataSelector::GetPrimaryAssetType(), object_paths ) )
         {
