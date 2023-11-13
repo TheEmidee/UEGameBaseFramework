@@ -53,6 +53,13 @@ void UGBFPawnExtensionComponent::SetPawnData( const UGBFPawnData * pawn_data )
     CheckDefaultInitialization();
 }
 
+void UGBFPawnExtensionComponent::K2_OnAbilitySystemInitialized_RegisterAndCall( FGBFDynamicDelegate delegate )
+{
+    OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate::CreateLambda( [ delegate ]() {
+        delegate.Execute();
+    } ) );
+}
+
 void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor )
 {
     check( asc != nullptr );
