@@ -10,6 +10,7 @@ class UGASExtAbilitySystemComponent;
 class UGBFPawnData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFDynamicMulticastDelegate );
+DECLARE_DYNAMIC_DELEGATE( FGBFDynamicDelegate );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFPawnExtensionComponent : public UGBFPawnComponent
@@ -27,6 +28,9 @@ public:
 
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
     UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+
+    UFUNCTION( BlueprintCallable, Category = "GameBaseFramework|Pawn", meta = ( DisplayName = "OnAbilitySystemInitialized RegisterAndCall" ) )
+    void K2_OnAbilitySystemInitialized_RegisterAndCall( FGBFDynamicDelegate delegate );
 
     // Should be called by the owning pawn to become the avatar of the ability system.
     void InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor );
