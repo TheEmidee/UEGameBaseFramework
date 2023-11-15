@@ -64,7 +64,7 @@ protected:
     void OnUnregister() override;
     virtual void OnStartDeath();
     virtual void OnFinishDeath();
-    virtual void HandleOutOfHealth( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
+    virtual void HandleOutOfHealth( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, const float old_value, const float new_value );
     virtual void ClearGameplayTags();
 
     UPROPERTY( ReplicatedUsing = OnRep_DeathState )
@@ -74,10 +74,10 @@ protected:
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
 
 private:
-    void HandleHealthChanged( const FOnAttributeChangeData & change_data );
-    void HandleMaxHealthChanged( const FOnAttributeChangeData & change_data );
-    void HandleShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
-    void HandleOnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec & damage_effect_spec, float damage_magnitude );
+    void HandleHealthChanged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
+    void HandleMaxHealthChanged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
+    void HandleShieldAbsorbedDamage( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
+    void HandleOnDamaged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );
 
     UFUNCTION()
     virtual void OnRep_DeathState( EGBFDeathState old_death_state );

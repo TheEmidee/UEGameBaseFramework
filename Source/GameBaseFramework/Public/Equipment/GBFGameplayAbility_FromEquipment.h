@@ -21,6 +21,6 @@ class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_FromEquipment : public UGASExtGa
     UGBFInventoryItemInstance * GetAssociatedItem() const;
 
 #if WITH_EDITOR
-    EDataValidationResult IsDataValid( TArray< FText > & validation_errors ) override;
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 };

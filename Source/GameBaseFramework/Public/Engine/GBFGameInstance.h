@@ -6,6 +6,8 @@
 
 #include "GBFGameInstance.generated.h"
 
+enum class ECommonUserOnlineContext : uint8;
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UCommonGameInstance
 {
@@ -13,4 +15,5 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UCommonGameInstance
 
 public:
     void Init() override;
+    void HandlerUserInitialized( const UCommonUserInfo * user_info, bool success, FText error, ECommonUserPrivilege requested_privilege, ECommonUserOnlineContext online_context ) override;
 };

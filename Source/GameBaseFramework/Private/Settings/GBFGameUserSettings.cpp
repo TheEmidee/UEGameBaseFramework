@@ -884,8 +884,8 @@ void UGBFGameUserSettings::GetAllMappingNamesFromKey( TArray< FName > & result, 
         {
             for ( const auto & mapping : pair.Config->GetPlayerMappableKeys() )
             {
-                FName mapping_name( mapping.PlayerMappableOptions.DisplayName.ToString() );
-                FName action_name = mapping.PlayerMappableOptions.Name;
+                FName mapping_name( mapping.GetDisplayName().ToString() );
+                FName action_name = mapping.GetMappingName();
 
                 // make sure it isn't custom bound as well
                 if ( const auto * mapping_key = CustomKeyboardConfig.Find( action_name ) )
@@ -923,9 +923,9 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mappin
             {
                 // Make sure that the mapping has a valid name, its possible to have an empty name
                 // if someone has marked a mapping as "Player Mappable" but deleted the default field value
-                if ( mapping.PlayerMappableOptions.Name != NAME_None )
+                if ( mapping.GetMappingName() != NAME_None )
                 {
-                    CustomKeyboardConfig.Add( mapping.PlayerMappableOptions.Name, mapping.Key );
+                    CustomKeyboardConfig.Add( mapping.GetMappingName(), mapping.Key );
                 }
             }
         }

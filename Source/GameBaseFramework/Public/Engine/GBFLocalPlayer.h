@@ -24,13 +24,20 @@ public:
     bool SpawnPlayActor( const FString & url, FString & error, UWorld * world ) override;
     void InitOnlineSession() override;
 
+    /** Gets the local settings for this player, this is read from config files at process startup and is always valid */
     UFUNCTION()
     UGBFGameUserSettings * GetLocalSettings() const;
 
+    /** Gets the shared setting for this player, this is read using the save game system so may not be correct until after user login */
     UFUNCTION()
     virtual UGBFSaveGame * GetSharedSettings() const;
 
+    /** Starts an async request to load the shared settings, this will call OnSharedSettingsLoaded after loading or creating new ones */
+    void LoadSharedSettingsFromDisk( bool force_load = false );
+
 protected:
+    void OnSharedSettingsLoaded( UGBFSaveGame * loaded_or_created_settings );
+
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
 
     UFUNCTION()
@@ -38,6 +45,8 @@ protected:
 
     UPROPERTY( Transient )
     mutable TObjectPtr< UGBFSaveGame > SharedSettings;
+
+    FUniqueNetIdRepl NetIdForSharedSettings;
 
 private:
     void OnPlayerControllerChanged( APlayerController * new_controller );

@@ -16,21 +16,7 @@ void UGBFInputComponent::AddInputMappings( const UGBFInputConfig * input_config,
     check( input_config != nullptr );
     check( input_system != nullptr );
 
-    const auto * local_player = input_system->GetLocalPlayer< UGBFLocalPlayer >();
-    check( local_player != nullptr );
-
-    // Add any registered input mappings from the settings!
-    if ( const auto * local_settings = UGBFGameUserSettings::Get() )
-    {
-        // Tell enhanced input about any custom keymappings that the player may have customized
-        for ( const TPair< FName, FKey > & pair : local_settings->GetCustomPlayerInputConfig() )
-        {
-            if ( pair.Key != NAME_None && pair.Value.IsValid() )
-            {
-                input_system->AddPlayerMappedKeyInSlot( pair.Key, pair.Value );
-            }
-        }
-    }
+    // Here you can handle any custom logic to add something from your input config if required
 }
 
 void UGBFInputComponent::RemoveInputMappings( const UGBFInputConfig * input_config, UEnhancedInputLocalPlayerSubsystem * input_system ) const
@@ -38,25 +24,7 @@ void UGBFInputComponent::RemoveInputMappings( const UGBFInputConfig * input_conf
     check( input_config != nullptr );
     check( input_system != nullptr );
 
-    const auto * local_player = input_system->GetLocalPlayer< UGBFLocalPlayer >();
-    check( local_player != nullptr );
-
-    // Add any registered input mappings from the settings!
-    if ( const auto * local_settings = UGBFGameUserSettings::Get() )
-    {
-        // Remove any registered input contexts
-        const auto & configs = local_settings->GetAllRegisteredInputConfigs();
-        for ( const auto & pair : configs )
-        {
-            input_system->RemovePlayerMappableConfig( pair.Config );
-        }
-
-        // Clear any player mapped keys from enhanced input
-        for ( const TPair< FName, FKey > & pair : local_settings->GetCustomPlayerInputConfig() )
-        {
-            input_system->RemovePlayerMappedKeyInSlot( pair.Key );
-        }
-    }
+    // Here you can handle any custom logic to remove input mappings that you may have added above
 }
 
 void UGBFInputComponent::RemoveBinds( TArray< uint32 > & bind_handles )

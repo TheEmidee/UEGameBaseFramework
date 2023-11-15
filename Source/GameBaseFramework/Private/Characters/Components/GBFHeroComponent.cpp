@@ -106,8 +106,6 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
             return;
         }
 
-        const auto is_locally_controlled = pawn->IsLocallyControlled();
-
         const UGBFPawnData * pawn_data = nullptr;
 
         if ( auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
@@ -126,7 +124,8 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
                 InitializePlayerInput( pawn->InputComponent );
             }
 
-            if ( is_locally_controlled && pawn_data != nullptr )
+            // Hook up the delegate for all pawns, in case we spectate later
+            if ( pawn_data != nullptr )
             {
                 if ( auto * player_camera_manager = pc->PlayerCameraManager.Get() )
                 {

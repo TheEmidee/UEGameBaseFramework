@@ -17,6 +17,7 @@
 #else
 #include "Online/Auth.h"
 #include "Online/ExternalUI.h"
+#include "Online/OnlineResult.h"
 #include "Online/OnlineServices.h"
 #include "Online/OnlineServicesEngineUtils.h"
 #include "Online/Privileges.h"
@@ -1606,6 +1607,14 @@ void UCommonUserSubsystem::ProcessLoginRequest(TSharedRef<FUserLoginRequest> Req
 	{
 		Request->OverallLoginState = ECommonUserAsyncTaskState::Failed;
 	}
+	else if (Request->OverallLoginState == ECommonUserAsyncTaskState::InProgress &&
+	    Request->LoginUIState != ECommonUserAsyncTaskState::InProgress &&
+	    Request->AutoLoginState != ECommonUserAsyncTaskState::InProgress &&
+	    Request->TransferPlatformAuthState != ECommonUserAsyncTaskState::InProgress)
+    {
+	    // If none of the substates are still in progress but we haven't successfully logged in, mark this as a failure to avoid stalling forever
+	    Request->OverallLoginState = ECommonUserAsyncTaskState::Failed;
+    }
 
 	if (Request->OverallLoginState == ECommonUserAsyncTaskState::Done)
 	{
@@ -1703,7 +1712,7 @@ void UCommonUserSubsystem::HandleUserLoginCompleted(int32 PlatformUserIndex, boo
 		PlatformUserIndex,
 		(int32)bWasSuccessful,
 		ELoginStatus::ToString(NewStatus),
-		*NetId.ToString(),
+		*NewId.ToString(),
 		*ErrorString);
 
 	// Update any waiting login requests
@@ -2541,7 +2550,7 @@ void UCommonUserSubsystem::HandleControllerPairingChanged(int32 PlatformUserInde
 	ULocalPlayer* ControlledLocalPlayer = GameInstance->FindLocalPlayerFromPlatformUserId(PlatformUser);
 	ULocalPlayer* NewLocalPlayer = GameInstance->FindLocalPlayerFromUniqueNetId(NewUser.User);
 	const UCommonUserInfo* NewUserInfo = GetUserInfoForUniqueNetId(FUniqueNetIdRepl(NewUser.User));
-	const UCommonUserInfo* PreviousUserInfo = GetUserInfoForUniqueNetId(FUniqueNetIdRepl(NewUser.User));
+	const UCommonUserInfo* PreviousUserInfo = GetUserInfoForUniqueNetId(FUniqueNetIdRepl(PreviousUser.User));
 
 	// See if we think this is already bound to an existing player	
 	if (PreviousUser.ControllersRemaining == 0 && PreviousUserInfo && PreviousUserInfo != NewUserInfo)

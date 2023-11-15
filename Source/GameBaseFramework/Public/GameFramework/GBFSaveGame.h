@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameplayTagContainer.h>
 #include <GameFramework/SaveGame.h>
+#include <GameplayTagContainer.h>
 
 #include "GBFSaveGame.generated.h"
 
@@ -48,7 +48,7 @@ enum class EGBFGamepadSensitivity : uint8
 };
 
 UCLASS( BlueprintType )
-class GAMEBASEFRAMEWORK_API UGBFSaveGame : public USaveGame
+class GAMEBASEFRAMEWORK_API UGBFSaveGame : public ULocalPlayerSaveGame
 {
     GENERATED_BODY()
 
@@ -58,7 +58,7 @@ public:
 
     UGBFSaveGame();
 
-    void Initialize( UGBFLocalPlayer * LocalPlayer );
+    int32 GetLatestDataVersion() const override;
 
     bool IsDirty() const
     {
@@ -69,9 +69,21 @@ public:
         bIsDirty = false;
     }
 
-    void SaveSettings();
+    /** Creates a temporary settings object, this will be replaced by one loaded from the user's save game */
+    static UGBFSaveGame * CreateTemporarySettings( const UGBFLocalPlayer * local_player );
+
+    /** Synchronously loads a settings object, this is not valid to call before login */
     static UGBFSaveGame * LoadOrCreateSettings( const UGBFLocalPlayer * local_player );
 
+    DECLARE_DELEGATE_OneParam( FGBFOnSettingsLoadedEvent, UGBFSaveGame * Settings );
+
+    /** Starts an async load of the settings object, calls Delegate on completion */
+    static bool AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, FGBFOnSettingsLoadedEvent delegate );
+
+    /** Saves the settings to disk */
+    void SaveSettings();
+
+    /** Applies the current settings to the player */
     void ApplySettings();
 
     ////////////////////////////////////////////////////////
@@ -433,7 +445,6 @@ private:
     ////////////////////////////////////////////////////////
     // Gamepad Sensitivity
 public:
-
     EGBFGamepadSensitivity GetGamepadSensitivityPreset( const FGameplayTag tag ) const
     {
         if ( auto * sensitivity = GamepadSensitivityMap.Find( tag ) )
@@ -455,7 +466,7 @@ public:
             auto & new_value = GamepadSensitivityMap.FindOrAdd( tag, EGBFGamepadSensitivity::MAX );
             ChangeValueAndDirty( new_value, sensitivity );
         }
-        
+
         ApplyInputSensitivity();
     }
 
@@ -484,7 +495,4 @@ private:
     }
 
     bool bIsDirty = false;
-
-    UPROPERTY( Transient )
-    TObjectPtr< UGBFLocalPlayer > OwningPlayer = nullptr;
 };

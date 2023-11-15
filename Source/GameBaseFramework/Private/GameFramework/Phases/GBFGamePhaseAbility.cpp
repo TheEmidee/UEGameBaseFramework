@@ -5,7 +5,10 @@
 
 #include <AbilitySystemComponent.h>
 #include <Engine/World.h>
+
+#if WITH_EDITOR
 #include <Misc/DataValidation.h>
+#endif
 
 UGBFGamePhaseAbility::UGBFGamePhaseAbility()
 {

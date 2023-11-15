@@ -70,13 +70,6 @@ void UGBFAssetManager::StartInitialLoading()
     Super::StartInitialLoading();
 
     AddStartupJob(
-        "InitializeAbilitySystem",
-        [ this ]() {
-            InitializeAbilitySystem();
-        },
-        1.0f );
-
-    AddStartupJob(
         "InitializeGameplayCueManager",
         [ this ]() {
             InitializeGameplayCueManager();
@@ -85,13 +78,6 @@ void UGBFAssetManager::StartInitialLoading()
 
     // Run all the queued up startup jobs
     DoAllStartupJobs();
-}
-
-void UGBFAssetManager::InitializeAbilitySystem()
-{
-    SCOPED_BOOT_TIMING( "UGBFAssetManager::InitializeAbilitySystem" );
-
-    UAbilitySystemGlobals::Get().InitGlobalData();
 }
 
 void UGBFAssetManager::InitializeGameplayCueManager()

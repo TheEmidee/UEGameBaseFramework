@@ -2,12 +2,13 @@
 
 #include "Engine/GBFLocalPlayer.h"
 
+#include <EnhancedInputSubsystems.h>
 #include <Framework/Application/SlateApplication.h>
 #include <Internationalization/Culture.h>
-#include <Kismet/GameplayStatics.h>
 #include <Misc/App.h>
 #include <Misc/ConfigCacheIni.h>
 #include <Rendering/RenderingCommon.h>
+#include <UserSettings/EnhancedInputUserSettings.h>
 
 namespace
 {
@@ -37,39 +38,56 @@ UGBFSaveGame::UGBFSaveGame()
     GamepadLookStickDeadZone = GBFSettingsSharedCVars::DefaultGamepadRightStickInnerDeadZone;
 }
 
-void UGBFSaveGame::Initialize( UGBFLocalPlayer * LocalPlayer )
+int32 UGBFSaveGame::GetLatestDataVersion() const
 {
-    check( LocalPlayer );
+    // 0 = before subclassing ULocalPlayerSaveGame
+    // 1 = first proper version
+    return 1;
+}
 
-    OwningPlayer = LocalPlayer;
+UGBFSaveGame * UGBFSaveGame::CreateTemporarySettings( const UGBFLocalPlayer * local_player )
+{
+    // This is not loaded from disk but should be set up to save
+    auto * shared_settings = Cast< UGBFSaveGame >( CreateNewSaveGameForLocalPlayer( StaticClass(), local_player, SharedSettingsSlotName ) );
+    shared_settings->ApplySettings();
+
+    return shared_settings;
+}
+
+UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * local_player )
+{
+    // This will stall the main thread while it loads
+    auto * shared_settings = Cast< UGBFSaveGame >( LoadOrCreateSaveGameForLocalPlayer( StaticClass(), local_player, SharedSettingsSlotName ) );
+    shared_settings->ApplySettings();
+
+    return shared_settings;
+}
+
+bool UGBFSaveGame::AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, FGBFOnSettingsLoadedEvent delegate )
+{
+    const auto lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda( [ delegate ]( ULocalPlayerSaveGame * loaded_save ) {
+        auto * loaded_settings = CastChecked< UGBFSaveGame >( loaded_save );
+        loaded_settings->ApplySettings();
+
+        delegate.ExecuteIfBound( loaded_settings );
+    } );
+
+    return AsyncLoadOrCreateSaveGameForLocalPlayer( StaticClass(), local_player, SharedSettingsSlotName, lambda );
 }
 
 void UGBFSaveGame::SaveSettings()
 {
-    check( OwningPlayer );
-    UGameplayStatics::SaveGameToSlot( this, SharedSettingsSlotName, OwningPlayer->GetLocalPlayerIndex() );
-}
+    // Schedule an async save because it's okay if it fails
+    AsyncSaveGameToSlotForLocalPlayer();
 
-/*static*/ UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * local_player )
-{
-    UGBFSaveGame * SharedSettings = nullptr;
-
-    // If the save game exists, load it.
-    if ( UGameplayStatics::DoesSaveGameExist( SharedSettingsSlotName, local_player->GetLocalPlayerIndex() ) )
+    // TODO_BH: Move this to the serialize function instead with a bumped version number
+    if ( const auto * system = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( OwningPlayer ) )
     {
-        USaveGame * Slot = UGameplayStatics::LoadGameFromSlot( SharedSettingsSlotName, local_player->GetLocalPlayerIndex() );
-        SharedSettings = Cast< UGBFSaveGame >( Slot );
+        if ( auto * input_settings = system->GetUserSettings() )
+        {
+            input_settings->AsyncSaveSettings();
+        }
     }
-
-    if ( SharedSettings == nullptr )
-    {
-        SharedSettings = Cast< UGBFSaveGame >( UGameplayStatics::CreateSaveGameObject( UGBFSaveGame::StaticClass() ) );
-    }
-
-    SharedSettings->Initialize( const_cast< UGBFLocalPlayer * >( local_player ) );
-    SharedSettings->ApplySettings();
-
-    return SharedSettings;
 }
 
 void UGBFSaveGame::ApplySettings()
@@ -78,6 +96,14 @@ void UGBFSaveGame::ApplySettings()
     // ApplySubtitleOptions();
     ApplyBackgroundAudioSettings();
     ApplyCultureSettings();
+
+    if ( const auto * system = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( OwningPlayer ) )
+    {
+        if ( auto * input_settings = system->GetUserSettings() )
+        {
+            input_settings->ApplySettings();
+        }
+    }
 }
 
 void UGBFSaveGame::SetColorBlindStrength( int32 InColorBlindStrength )

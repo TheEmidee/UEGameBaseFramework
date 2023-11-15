@@ -87,8 +87,7 @@ public:
 #if WITH_EDITOR
     void PostEditChangeProperty( FPropertyChangedEvent & property_change_event ) override;
 
-    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnPlatformInputTexturesChanged, const FString &, const UGBFPlatformInputTextures * )
-    static FOnPlatformInputTexturesChanged & OnPlatformInputTexturesChanged();
+    DECLARE_MULTICAST_DELEGATE_TwoParams( FOnPlatformInputTexturesChanged, const FString &, const UGBFPlatformInputTextures * ) static FOnPlatformInputTexturesChanged & OnPlatformInputTexturesChanged();
 #endif
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )

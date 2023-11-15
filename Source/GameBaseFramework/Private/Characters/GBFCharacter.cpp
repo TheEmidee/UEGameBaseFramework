@@ -41,6 +41,11 @@ UGASExtAbilitySystemComponent * AGBFCharacter::GetGASExtAbilitySystemComponent()
 
 UAbilitySystemComponent * AGBFCharacter::GetAbilitySystemComponent() const
 {
+    if ( PawnExtComponent == nullptr )
+    {
+        return nullptr;
+    }
+
     return PawnExtComponent->GetGASExtAbilitySystemComponent();
 }
 
