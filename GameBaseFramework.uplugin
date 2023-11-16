@@ -40,6 +40,10 @@
       "Enabled": true
     },
     {
+      "Name": "DataValidationExtensions",
+      "Enabled": true
+    },
+    {
       "Name": "CoreExtensions",
       "Enabled": true
     },
