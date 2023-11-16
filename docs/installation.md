@@ -19,6 +19,6 @@ This plugin has dependencies with other plugins. You will need to install those 
 
 * ModularGameplayActors : https://github.com/TheEmidee/UEModularGameplayActors
 * GameplayMessageRouter : https://github.com/TheEmidee/UEGameplayMessageRouter
-
+* CommonGame : https://github.com/TheEmidee/UECommonGame
 
 {: .fs-6 .fw-300 }
