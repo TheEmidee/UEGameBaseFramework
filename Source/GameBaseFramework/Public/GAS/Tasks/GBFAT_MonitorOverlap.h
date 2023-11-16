@@ -15,7 +15,6 @@ class GAMEBASEFRAMEWORK_API UGBFAT_MonitorOverlap final : public UAbilityTask
     GENERATED_BODY()
 
 public:
-
     /*
      * If PrimitiveComponent is null, the task will try to find one on the Avatar Actor of the gameplay ability
      */

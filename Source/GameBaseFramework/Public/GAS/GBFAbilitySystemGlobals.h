@@ -11,4 +11,3 @@ class GAMEBASEFRAMEWORK_API UGBFAbilitySystemGlobals : public UAbilitySystemGlob
 
     FGameplayEffectContext * AllocGameplayEffectContext() const override;
 };
-

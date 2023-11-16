@@ -62,7 +62,7 @@ void UGBFTargetingHelperLibrary::SphereTraceWithFilter( TArray< FHitResult > & h
     ShapeTraceWithFilter( hit_results, world, target_data_filter_handle, trace_start, trace_end, collision_info, collision_query_params, FCollisionShape::MakeSphere( sphere_radius ) );
 }
 
-void UGBFTargetingHelperLibrary::BoxTraceWithFilter( TArray<FHitResult> & hit_results, UWorld * world, const FGameplayTargetDataFilterHandle & target_data_filter_handle, const FVector & trace_start, const FVector & trace_end, const FVector & box_half_extent, const FGBFCollisionDetectionInfo & collision_info, const FCollisionQueryParams & collision_query_params )
+void UGBFTargetingHelperLibrary::BoxTraceWithFilter( TArray< FHitResult > & hit_results, UWorld * world, const FGameplayTargetDataFilterHandle & target_data_filter_handle, const FVector & trace_start, const FVector & trace_end, const FVector & box_half_extent, const FGBFCollisionDetectionInfo & collision_info, const FCollisionQueryParams & collision_query_params )
 {
     ShapeTraceWithFilter( hit_results, world, target_data_filter_handle, trace_start, trace_end, collision_info, collision_query_params, FCollisionShape::MakeBox( FVector( box_half_extent ) ) );
 }
@@ -220,7 +220,7 @@ void UGBFTargetingHelperLibrary::ComputeTraceEndWithSpread( FVector & trace_end,
     trace_end = spread_infos.TraceStart + ( shoot_direction * spread_infos.MaxRange );
 }
 
-void UGBFTargetingHelperLibrary::ShapeTraceWithFilter( TArray<FHitResult> & hit_results, const UWorld * world, const FGameplayTargetDataFilterHandle & target_data_filter_handle, const FVector & trace_start, const FVector & trace_end, const FGBFCollisionDetectionInfo & collision_info, const FCollisionQueryParams & collision_query_params, const FCollisionShape & collision_shape )
+void UGBFTargetingHelperLibrary::ShapeTraceWithFilter( TArray< FHitResult > & hit_results, const UWorld * world, const FGameplayTargetDataFilterHandle & target_data_filter_handle, const FVector & trace_start, const FVector & trace_end, const FGBFCollisionDetectionInfo & collision_info, const FCollisionQueryParams & collision_query_params, const FCollisionShape & collision_shape )
 {
     check( world != nullptr );
 

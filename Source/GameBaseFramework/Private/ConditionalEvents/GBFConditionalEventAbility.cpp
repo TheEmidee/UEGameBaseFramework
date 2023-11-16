@@ -1,7 +1,7 @@
 #include "ConditionalEvents/GBFConditionalEventAbility.h"
 
-#include "DVEDataValidator.h"
 #include "ConditionalEvents/GBFConditionalTrigger.h"
+#include "DVEDataValidator.h"
 
 UGBFConditionalEventAbility::UGBFConditionalEventAbility()
 {

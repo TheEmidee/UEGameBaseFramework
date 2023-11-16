@@ -2,10 +2,10 @@
 
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
+#include "Experiences/GBFExperienceManagerComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
-#include "Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"

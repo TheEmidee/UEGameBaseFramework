@@ -44,7 +44,6 @@ private:
     UFUNCTION()
     void OnComponentEndOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 other_body_index );
 
-
     UPROPERTY()
     UPrimitiveComponent * PrimitiveComponent;
 

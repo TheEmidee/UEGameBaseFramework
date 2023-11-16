@@ -18,12 +18,11 @@ class GAMEBASEFRAMEWORK_API UGBFAsyncTaskGameplayTagAddedOrRemoved final : publi
     GENERATED_BODY()
 
 public:
-
     /**
-	 * 	Listen when the specified gameplay tag is Added or Removed. 
-	 *  If BroadcastEventOnActivation is true, it will immediately broadcast the event.
-	 *  It will keep listening as long as OnlyTriggerOnce = false.
-	 */
+     * 	Listen when the specified gameplay tag is Added or Removed.
+     *  If BroadcastEventOnActivation is true, it will immediately broadcast the event.
+     *  It will keep listening as long as OnlyTriggerOnce = false.
+     */
 
     UFUNCTION( BlueprintCallable, meta = ( BlueprintInternalUseOnly = true ) )
     static UGBFAsyncTaskGameplayTagAddedOrRemoved * ListenForGameplayTagAddedOrRemoved( UAbilitySystemComponent * ability_system_component, FGameplayTag gameplay_tag, bool only_trigger_once = false, bool broadcast_event_on_activation = true );
@@ -46,6 +45,6 @@ private:
     FGameplayTag GameplayTagToListenFor;
     EGameplayTagEventType::Type TagEventType;
     FDelegateHandle ListenForGameplayTagChangeDelegateHandle;
-    uint8 bTriggerOnce : 1;
+    uint8 bTriggerOnce                : 1;
     uint8 bBroadcastEventOnActivation : 1;
 };

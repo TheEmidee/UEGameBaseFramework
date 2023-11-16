@@ -10,11 +10,11 @@ class AGameplayAbilityTargetActor;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnWaitTargetDataUsingActorDelegate, const FGameplayAbilityTargetDataHandle &, data );
 
 /**
-* Waits for TargetData from an already spawned TargetActor and does *NOT* destroy it when it receives data.
-*
-* The original WaitTargetData's comments expects us to subclass it heavily, but the majority of its functions
-* are not virtual. Therefore this is a total rewrite of it to add bCreateKeyIfNotValidForMorePredicting functionality.
-*/
+ * Waits for TargetData from an already spawned TargetActor and does *NOT* destroy it when it receives data.
+ *
+ * The original WaitTargetData's comments expects us to subclass it heavily, but the majority of its functions
+ * are not virtual. Therefore this is a total rewrite of it to add bCreateKeyIfNotValidForMorePredicting functionality.
+ */
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAT_WaitTargetDataUsingActor final : public UAbilityTask
@@ -29,12 +29,12 @@ public:
     FSWOnWaitTargetDataUsingActorDelegate Cancelled;
 
     /**
-	* Uses specified spawned TargetActor and waits for it to return valid data or to be canceled. The TargetActor is *NOT* destroyed.
-	*
-	* @param create_key_if_not_valid_for_more_predicting Will create a new scoped prediction key if the current scoped prediction key is not valid for more predicting.
-	* If false, it will always create a new scoped prediction key. We would want to set this to true if we want to use a potentially existing valid scoped prediction
-	* key like the ability's activation key in a batched ability.
-	*/
+     * Uses specified spawned TargetActor and waits for it to return valid data or to be canceled. The TargetActor is *NOT* destroyed.
+     *
+     * @param create_key_if_not_valid_for_more_predicting Will create a new scoped prediction key if the current scoped prediction key is not valid for more predicting.
+     * If false, it will always create a new scoped prediction key. We would want to set this to true if we want to use a potentially existing valid scoped prediction
+     * key like the ability's activation key in a batched ability.
+     */
     UFUNCTION( BlueprintCallable, meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "true", HideSpawnParms = "Instigator" ), Category = "Ability|Tasks" )
     static UGBFAT_WaitTargetDataUsingActor * WaitTargetDataWithReusableActor(
         UGameplayAbility * owning_ability,

@@ -29,7 +29,7 @@ public:
     static FGBFGameplayEffectContainerSpec MakeEffectContainerSpecFromEffectContainer( const UGameplayAbility * ability, const FGBFGameplayEffectContainer & effect_container, const FGameplayAbilityTargetDataHandle & target_data, const FGameplayEventData & event_data, int level = 1 );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Ability|GameplayEffects", meta = ( DefaultToSelf = "ability", AutoCreateRefTerm = "event_data, target_data" ) )
-    static TArray < FActiveGameplayEffectHandle > MakeAndApplyEffectContainerSpecFromEffectContainer( const UGameplayAbility * ability, const FGBFGameplayEffectContainer & effect_container, const FGameplayAbilityTargetDataHandle & target_data, const FGameplayEventData & event_data, int level = 1 );
+    static TArray< FActiveGameplayEffectHandle > MakeAndApplyEffectContainerSpecFromEffectContainer( const UGameplayAbility * ability, const FGBFGameplayEffectContainer & effect_container, const FGameplayAbilityTargetDataHandle & target_data, const FGameplayEventData & event_data, int level = 1 );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Ability|GameplayEffects" )
     static TArray< FActiveGameplayEffectHandle > ApplyGameplayEffectContainerSpec( UPARAM( ref ) FGBFGameplayEffectContainerSpec & effect_container_spec );

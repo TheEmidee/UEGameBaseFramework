@@ -1,7 +1,7 @@
 #pragma once
 
-#include "GBFAT_WaitTargetData.h"
 #include "GAS/GBFAbilityTypesBase.h"
+#include "GBFAT_WaitTargetData.h"
 
 #include <Abilities/GameplayAbilityTargetDataFilter.h>
 #include <CoreMinimal.h>

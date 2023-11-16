@@ -24,18 +24,18 @@ public:
     void OnDestroy( bool ability_ended ) override;
 
     /**
-	 * Play a montage and wait for it end. If a gameplay event happens that matches EventTags (or EventTags is empty), the EventReceived delegate will fire with a tag and event data.
-	 * If StopWhenAbilityEnds is true, this montage will be aborted if the ability ends normally. It is always stopped when the ability is explicitly cancelled.
-	 * On normal execution, OnBlendOut is called when the montage is blending out, and OnCompleted when it is completely done playing
-	 * OnInterrupted is called if another montage overwrites this, and OnCancelled is called if the ability or task is cancelled
-	 *
-	 * @param task_instance_name Set to override the name of this task, for later querying
-	 * @param montage_to_play The montage to play on the character
-	 * @param event_tags Any gameplay events matching this tag will activate the EventReceived callback. If empty, all events will trigger callback
-	 * @param rate Change to play the montage faster or slower
-	 * @param stop_when_ability_ends If true, this montage will be aborted if the ability ends normally. It is always stopped when the ability is explicitly cancelled
-	 * @param anim_root_motion_translation_scale Change to modify size of root motion or set to 0 to block it entirely
-	 */
+     * Play a montage and wait for it end. If a gameplay event happens that matches EventTags (or EventTags is empty), the EventReceived delegate will fire with a tag and event data.
+     * If StopWhenAbilityEnds is true, this montage will be aborted if the ability ends normally. It is always stopped when the ability is explicitly cancelled.
+     * On normal execution, OnBlendOut is called when the montage is blending out, and OnCompleted when it is completely done playing
+     * OnInterrupted is called if another montage overwrites this, and OnCancelled is called if the ability or task is cancelled
+     *
+     * @param task_instance_name Set to override the name of this task, for later querying
+     * @param montage_to_play The montage to play on the character
+     * @param event_tags Any gameplay events matching this tag will activate the EventReceived callback. If empty, all events will trigger callback
+     * @param rate Change to play the montage faster or slower
+     * @param stop_when_ability_ends If true, this montage will be aborted if the ability ends normally. It is always stopped when the ability is explicitly cancelled
+     * @param anim_root_motion_translation_scale Change to modify size of root motion or set to 0 to block it entirely
+     */
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
     static UGBFAT_PlayMontageForMeshAndWaitForEvent * PlayMontageForMeshAndWaitForEvent(
         UGameplayAbility * owning_ability,
