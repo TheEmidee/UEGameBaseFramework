@@ -1,4 +1,4 @@
-#include "GAS/GBFHealthAttributeSet.h"
+#include "GAS/Attributes/GBFHealthAttributeSet.h"
 
 #include "GAS/Components/GASExtAbilitySystemComponent.h"
 

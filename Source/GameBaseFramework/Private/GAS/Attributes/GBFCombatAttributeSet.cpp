@@ -1,4 +1,4 @@
-#include "GAS/GBFCombatAttributeSet.h"
+#include "GAS/Attributes/GBFCombatAttributeSet.h"
 
 #include <GameplayEffectExtension.h>
 #include <Net/UnrealNetwork.h>

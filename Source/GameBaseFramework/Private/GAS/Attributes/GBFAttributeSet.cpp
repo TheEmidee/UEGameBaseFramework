@@ -1,4 +1,4 @@
-#include "GAS/GBFAttributeSet.h"
+#include "GAS/Attributes/GBFAttributeSet.h"
 
 #include "GAS/Components/GASExtAbilitySystemComponent.h"
 

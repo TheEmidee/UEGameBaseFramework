@@ -1,4 +1,4 @@
-﻿#include "GAS/GBFGameplayAbility.h"
+﻿#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFHeroComponent.h"
@@ -49,3 +49,5 @@ void UGBFGameplayAbility::ClearCameraMode()
         ActiveCameraMode = nullptr;
     }
 }
+
+#undef ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN

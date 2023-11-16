@@ -1,4 +1,4 @@
-#include "GAS/GBFGameplayAbility_Death.h"
+#include "GAS/Abilities/GBFGameplayAbility_Death.h"
 
 #include "Characters/Components/GBFHealthComponent.h"
 #include "GBFLog.h"

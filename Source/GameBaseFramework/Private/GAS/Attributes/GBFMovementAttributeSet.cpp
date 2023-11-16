@@ -1,4 +1,4 @@
-#include "GAS/GBFMovementAttributeSet.h"
+#include "GAS/Attributes/GBFMovementAttributeSet.h"
 
 #include <Net/UnrealNetwork.h>
 

@@ -34,7 +34,6 @@ namespace UnrealBuildTool.Rules
                     "ModularGameplayActors",
                     "GameplayAbilities",
                     "GameplayTasks",
-                    "GASExtensions",
                     "DataValidationExtensions",
                     "ModularGameplay",
                     "GameFeatures",

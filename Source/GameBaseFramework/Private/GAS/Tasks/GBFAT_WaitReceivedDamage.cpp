@@ -1,7 +1,7 @@
 #include "GAS/Tasks/GBFAT_WaitReceivedDamage.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "GAS/GBFHealthAttributeSet.h"
+#include "GAS/Attributes/GBFHealthAttributeSet.h"
 
 UGBFAT_WaitReceivedDamage * UGBFAT_WaitReceivedDamage::WaitReceivedDamage( UGameplayAbility * owning_ability, AActor * damaged_character, const bool observe_shield_absorption, const bool observe_damage_to_health, const bool triggers_once )
 {

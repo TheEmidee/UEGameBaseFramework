@@ -476,3 +476,5 @@ void UGASExtGameplayAbility::MontageStopForAllMeshes( const float override_blend
         }
     }
 }
+
+#undef ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN

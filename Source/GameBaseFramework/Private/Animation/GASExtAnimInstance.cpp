@@ -1,4 +1,4 @@
-#include "GAS/Animation/GASExtAnimInstance.h"
+#include "Animation/GASExtAnimInstance.h"
 
 #include <AbilitySystemGlobals.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Animations/GBFAnimLayerSelectionSet.h"
+#include "Animation/GBFAnimLayerSelectionSet.h"
 #include "Equipment/GBFEquipmentInstance.h"
 
 #include <CoreMinimal.h>
@@ -8,6 +8,7 @@
 
 #include "GBFEquipmentInstance_Weapon.generated.h"
 
+class UAnimInstance;
 class UInputDeviceProperty;
 
 UCLASS()
