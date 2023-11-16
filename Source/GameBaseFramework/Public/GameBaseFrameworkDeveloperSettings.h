@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Player/GBFCheatManager.h"
+#include "GameFramework/GBFCheatManager.h"
 
 #include <CoreMinimal.h>
 #include <Engine/DeveloperSettings.h>

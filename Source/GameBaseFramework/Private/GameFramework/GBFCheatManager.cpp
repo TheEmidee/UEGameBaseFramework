@@ -1,4 +1,4 @@
-#include "Player/GBFCheatManager.h"
+#include "GameFramework/GBFCheatManager.h"
 
 #include "Characters/Components/GBFHealthComponent.h"
 #include "GameFramework/GBFPlayerController.h"
