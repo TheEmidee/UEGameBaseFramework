@@ -21,5 +21,6 @@ This plugin has dependencies with other plugins. You will need to install those 
 * GameplayMessageRouter : https://github.com/TheEmidee/UEGameplayMessageRouter
 * CommonGame : https://github.com/TheEmidee/UECommonGame
 * CommonLoadingScreen : https://github.com/TheEmidee/UECommonLoadingScreen
+* CommonUser : https://github.com/TheEmidee/UECommonUser
 
 {: .fs-6 .fw-300 }
