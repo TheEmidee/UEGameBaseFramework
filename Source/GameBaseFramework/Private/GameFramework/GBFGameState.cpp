@@ -1,6 +1,6 @@
 #include "GameFramework/GBFGameState.h"
 
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 
 #include <AbilitySystemComponent.h>
 #include <GameFramework/PlayerState.h>

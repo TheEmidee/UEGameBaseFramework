@@ -2,7 +2,7 @@
 
 #include "Characters/Components/GBFHealthComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Components/CapsuleComponent.h>

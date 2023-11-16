@@ -1,7 +1,7 @@
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 
 #include "Characters/GBFPawnData.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 

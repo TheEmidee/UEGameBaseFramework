@@ -1,13 +1,19 @@
 #pragma once
 
-#include "Abilities/GASExtAbilitySet.h"
+#include "GAS/Abilities/GASExtAbilitySet.h"
 #include "GBFGameFeatureAction_WorldActionBase.h"
 
+#include <ActiveGameplayEffectHandle.h>
 #include <Components/GameFrameworkComponentManager.h>
 #include <CoreMinimal.h>
+#include <GameplayAbilitySpecHandle.h>
 
 #include "GBFGameFeatureAction_AddAbilities.generated.h"
 
+class UGameplayEffect;
+class UDataTable;
+class UAttributeSet;
+class UGameplayAbility;
 struct FGameFeatureActivatingContext;
 class UGASExtAbilitySet;
 struct FGameFeatureDeactivatingContext;

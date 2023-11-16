@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Abilities/GASExtAbilitySet.h"
+#include "GAS/Abilities/GASExtAbilitySet.h"
 
 #include <CoreMinimal.h>
 #include <ModularPawnComponent.h>
@@ -11,6 +11,7 @@
 class UGBFEquipmentDefinition;
 class UGBFEquipmentInstance;
 struct FGBFEquipmentList;
+class UGBFEquipmentManagerComponent;
 
 /** A message when an item is added to the inventory */
 USTRUCT( BlueprintType )

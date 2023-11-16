@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Tasks/GASExtAT_WaitTargetDataHitScan.h"
+#include "GAS/Tasks/GASExtAT_WaitTargetDataHitScan.h"
 
 #include "GBFAT_WaitForInteractableTargets_HitScan.generated.h"
 

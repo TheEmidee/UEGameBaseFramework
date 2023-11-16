@@ -1,6 +1,6 @@
 #include "GameFeatures/GBFGameFeatureAction_AddGameplayCuePath.h"
 
-#include "GameplayCues/GASExtGameplayCueManager.h"
+#include "GAS/GameplayCues/GASExtGameplayCueManager.h"
 
 #include <AbilitySystemGlobals.h>
 #include <GameFeatureData.h>

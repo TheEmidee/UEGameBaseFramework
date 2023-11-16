@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Tags/GASExtGameplayTagStack.h"
+#include "GAS/Tags/GASExtGameplayTagStack.h"
 
 #include <CoreMinimal.h>
 
 #include "GBFInventoryItemInstance.generated.h"
 
+class UGBFInventoryItemFragment;
 class UGBFInventoryItemDefinition;
 
 UCLASS( BlueprintType )

@@ -1,8 +1,8 @@
 #include "Equipment/GBFEquipmentManagerComponent.h"
 
-#include "Components/GASExtAbilitySystemComponent.h"
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <AbilitySystemGlobals.h>

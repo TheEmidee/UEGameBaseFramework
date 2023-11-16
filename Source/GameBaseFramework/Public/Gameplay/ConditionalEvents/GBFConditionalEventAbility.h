@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Abilities/GASExtGameplayAbility.h"
+#include "GAS/Abilities/GASExtGameplayAbility.h"
 
 #include <CoreMinimal.h>
 

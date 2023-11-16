@@ -1,8 +1,8 @@
 #include "Engine/GBFAssetManager.h"
 
 #include "Characters/GBFPawnData.h"
+#include "GAS/GameplayCues/GASExtGameplayCueManager.h"
 #include "GBFLog.h"
-#include "GameplayCues/GASExtGameplayCueManager.h"
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/Engine.h>

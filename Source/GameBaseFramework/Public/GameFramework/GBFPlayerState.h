@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ModularPlayerState.h"
-#include "Tags/GASExtGameplayTagStack.h"
+#include "GAS/Tags/GASExtGameplayTagStack.h"
 
 #include <AbilitySystemInterface.h>
 #include <CoreMinimal.h>
 #include <GameplayTagContainer.h>
+#include <ModularPlayerState.h>
 
 #include "GBFPlayerState.generated.h"
 

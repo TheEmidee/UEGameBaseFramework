@@ -2,7 +2,7 @@
 
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 #include "GameFramework/Experiences/GBFExperienceManagerComponent.h"

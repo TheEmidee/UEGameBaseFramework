@@ -1,6 +1,6 @@
 #include "GameFramework/GBFGlobalAbilitySystem.h"
 
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 
 void FGlobalAppliedAbilityList::AddToASC( const TSubclassOf< UGameplayAbility > ability, UGASExtAbilitySystemComponent * asc )
 {

@@ -2,7 +2,7 @@
 
 #include "Camera/GBFPlayerCameraManager.h"
 #include "CommonInputSubsystem.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerState.h"

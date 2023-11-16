@@ -1,7 +1,7 @@
 ﻿#include "Characters/Components/GBFHealthComponent.h"
 
-#include "Abilities/GBFHealthAttributeSet.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/GBFHealthAttributeSet.h"
+#include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "Log/CoreExtLog.h"
 
