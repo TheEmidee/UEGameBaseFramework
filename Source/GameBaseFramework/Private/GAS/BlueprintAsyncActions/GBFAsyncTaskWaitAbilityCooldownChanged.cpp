@@ -1,10 +1,10 @@
-#include "GAS/Tasks/GBFWaitAbilityCooldownChangedTask.h"
+#include "GAS/BlueprintAsyncActions/GBFAsyncTaskWaitAbilityCooldownChanged.h"
 
 #include <AbilitySystemComponent.h>
 
-UGBFWaitAbilityCooldownChangedTask * UGBFWaitAbilityCooldownChangedTask::ListenForCooldownChange( UAbilitySystemComponent * ability_system_component, FGameplayTagContainer cooldown_tags, bool use_server_cooldown )
+UGBFAsyncTaskWaitAbilityCooldownChanged * UGBFAsyncTaskWaitAbilityCooldownChanged::ListenForCooldownChange( UAbilitySystemComponent * ability_system_component, FGameplayTagContainer cooldown_tags, bool use_server_cooldown )
 {
-    auto * listen_for_cooldown_change = NewObject< UGBFWaitAbilityCooldownChangedTask >();
+    auto * listen_for_cooldown_change = NewObject< UGBFAsyncTaskWaitAbilityCooldownChanged >();
     listen_for_cooldown_change->ASC = ability_system_component;
     listen_for_cooldown_change->CooldownTags = cooldown_tags;
     listen_for_cooldown_change->bUseServerCooldown = use_server_cooldown;
@@ -28,7 +28,7 @@ UGBFWaitAbilityCooldownChangedTask * UGBFWaitAbilityCooldownChangedTask::ListenF
     return listen_for_cooldown_change;
 }
 
-void UGBFWaitAbilityCooldownChangedTask::EndTask()
+void UGBFAsyncTaskWaitAbilityCooldownChanged::EndTask()
 {
     if ( IsValid( ASC ) )
     {
@@ -47,7 +47,7 @@ void UGBFWaitAbilityCooldownChangedTask::EndTask()
     MarkAsGarbage();
 }
 
-void UGBFWaitAbilityCooldownChangedTask::OnActiveGameplayEffectAddedCallback( UAbilitySystemComponent * target, const FGameplayEffectSpec & spec_applied, FActiveGameplayEffectHandle active_handle )
+void UGBFAsyncTaskWaitAbilityCooldownChanged::OnActiveGameplayEffectAddedCallback( UAbilitySystemComponent * target, const FGameplayEffectSpec & spec_applied, FActiveGameplayEffectHandle active_handle )
 {
     FGameplayTagContainer asset_tags;
     spec_applied.GetAllAssetTags( asset_tags );
@@ -93,7 +93,7 @@ void UGBFWaitAbilityCooldownChangedTask::OnActiveGameplayEffectAddedCallback( UA
     }
 }
 
-void UGBFWaitAbilityCooldownChangedTask::CooldownTagChanged( const FGameplayTag cooldown_tag, const int32 new_count )
+void UGBFAsyncTaskWaitAbilityCooldownChanged::CooldownTagChanged( const FGameplayTag cooldown_tag, const int32 new_count )
 {
     if ( new_count == 0 )
     {
@@ -101,7 +101,7 @@ void UGBFWaitAbilityCooldownChangedTask::CooldownTagChanged( const FGameplayTag 
     }
 }
 
-bool UGBFWaitAbilityCooldownChangedTask::GetCooldownRemainingForTag( FGameplayTagContainer cooldown_tags, float & time_remaining, float & cooldown_duration ) const
+bool UGBFAsyncTaskWaitAbilityCooldownChanged::GetCooldownRemainingForTag( FGameplayTagContainer cooldown_tags, float & time_remaining, float & cooldown_duration ) const
 {
     if ( IsValid( ASC ) && cooldown_tags.Num() > 0 )
     {

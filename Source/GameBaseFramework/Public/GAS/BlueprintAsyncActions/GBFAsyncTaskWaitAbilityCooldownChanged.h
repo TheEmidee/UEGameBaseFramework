@@ -4,7 +4,7 @@
 #include <CoreMinimal.h>
 #include <Kismet/BlueprintAsyncActionBase.h>
 
-#include "GBFWaitAbilityCooldownChangedTask.generated.h"
+#include "GBFAsyncTaskWaitAbilityCooldownChanged.generated.h"
 
 class UAbilitySystemComponent;
 struct FGameplayEffectSpec;
@@ -12,13 +12,13 @@ struct FGameplayEffectSpec;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FGBFOnAbilityCooldownChanged, FGameplayTag, CooldownTag, float, TimeRemaining, float, Duration );
 
 UCLASS( BlueprintType, meta = ( ExposedAsyncProxy = AsyncTask ) )
-class GAMEBASEFRAMEWORK_API UGBFWaitAbilityCooldownChangedTask final : public UBlueprintAsyncActionBase
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskWaitAbilityCooldownChanged final : public UBlueprintAsyncActionBase
 {
     GENERATED_BODY()
 
 public:
     UFUNCTION( BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true" ) )
-    static UGBFWaitAbilityCooldownChangedTask * ListenForCooldownChange( UAbilitySystemComponent * ability_system_component, FGameplayTagContainer cooldown_tags, bool use_server_cooldown );
+    static UGBFAsyncTaskWaitAbilityCooldownChanged * ListenForCooldownChange( UAbilitySystemComponent * ability_system_component, FGameplayTagContainer cooldown_tags, bool use_server_cooldown );
 
     UFUNCTION( BlueprintCallable )
     void EndTask();
