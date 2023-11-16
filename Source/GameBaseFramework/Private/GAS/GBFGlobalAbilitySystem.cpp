@@ -1,4 +1,4 @@
-#include "GameFramework/GBFGlobalAbilitySystem.h"
+#include "GAS/GBFGlobalAbilitySystem.h"
 
 #include "GAS/Components/GASExtAbilitySystemComponent.h"
 
