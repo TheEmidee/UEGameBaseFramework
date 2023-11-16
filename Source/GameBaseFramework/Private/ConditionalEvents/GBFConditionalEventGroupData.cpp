@@ -1,4 +1,4 @@
-#include "Gameplay/ConditionalEvents/GBFConditionalEventGroupData.h"
+#include "ConditionalEvents/GBFConditionalEventGroupData.h"
 
 #include "DVEDataValidator.h"
 

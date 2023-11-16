@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gameplay/GBFTriggerBox.h"
+#include "Triggers/GBFTriggerBox.h"
 
 #include <CoreMinimal.h>
 #include <UObject/Object.h>

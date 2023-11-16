@@ -1,4 +1,4 @@
-#include "Gameplay/ConditionalEvents/Triggers/GBFTimePassedTrigger.h"
+#include "ConditionalEvents/Triggers/GBFTimePassedTrigger.h"
 
 #include "DVEDataValidator.h"
 

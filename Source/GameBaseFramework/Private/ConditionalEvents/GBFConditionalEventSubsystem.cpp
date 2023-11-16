@@ -1,8 +1,8 @@
-#include "Gameplay/ConditionalEvents/GBFConditionalEventSubsystem.h"
+#include "ConditionalEvents/GBFConditionalEventSubsystem.h"
 
+#include "ConditionalEvents/GBFConditionalEventAbility.h"
+#include "ConditionalEvents/GBFConditionalEventGroupData.h"
 #include "GameFramework/GBFGameState.h"
-#include "Gameplay/ConditionalEvents/GBFConditionalEventAbility.h"
-#include "Gameplay/ConditionalEvents/GBFConditionalEventGroupData.h"
 
 #include <AbilitySystemComponent.h>
 #include <Engine/World.h>

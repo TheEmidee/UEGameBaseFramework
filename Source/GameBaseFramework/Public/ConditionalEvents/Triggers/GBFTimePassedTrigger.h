@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Gameplay/ConditionalEvents/GBFConditionalTrigger.h"
+#include "ConditionalEvents/GBFConditionalTrigger.h"
 
 #include <CoreMinimal.h>
 

@@ -1,6 +1,6 @@
 #include "Tasks/GBFWaitTriggerManagerEventTask.h"
 
-#include "Gameplay/Components/GBFTriggerManagerComponent.h"
+#include "Triggers/Components/GBFTriggerManagerComponent.h"
 
 void UGBFWaitTriggerManagerEventTaskBase::Activate()
 {

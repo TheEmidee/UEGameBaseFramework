@@ -1,6 +1,6 @@
-#include "Gameplay/GBFTriggerBox.h"
+#include "Triggers/GBFTriggerBox.h"
 
-#include "Gameplay/Components/GBFTriggerManagerComponent.h"
+#include "Triggers/Components/GBFTriggerManagerComponent.h"
 
 #include <Components/BoxComponent.h>
 #include <UObject/ConstructorHelpers.h>

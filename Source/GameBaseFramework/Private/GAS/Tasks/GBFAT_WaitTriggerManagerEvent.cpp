@@ -1,6 +1,6 @@
 #include "GAS/Tasks/GBFAT_WaitTriggerManagerEvent.h"
 
-#include "Gameplay/Components/GBFTriggerManagerComponent.h"
+#include "Triggers/Components/GBFTriggerManagerComponent.h"
 
 UGBFAT_WaitTriggerManagerTriggered * UGBFAT_WaitTriggerManagerTriggered::WaitTriggerManagerTriggered( UGameplayAbility * owning_ability, UGBFTriggerManagerComponent * trigger_manager_component, bool trigger_on_activation, bool trigger_once )
 {

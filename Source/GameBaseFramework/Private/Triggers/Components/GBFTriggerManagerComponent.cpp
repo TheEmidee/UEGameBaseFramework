@@ -1,4 +1,4 @@
-#include "Gameplay/Components/GBFTriggerManagerComponent.h"
+#include "Triggers/Components/GBFTriggerManagerComponent.h"
 
 #include <Components/ShapeComponent.h>
 #include <Engine/Engine.h>

@@ -1,7 +1,7 @@
-#include "Gameplay/ConditionalEvents/Triggers/GBFTriggerBoxTrigger.h"
+#include "ConditionalEvents/Triggers/GBFTriggerBoxTrigger.h"
 
 #include "DVEDataValidator.h"
-#include "Gameplay/Components/GBFTriggerManagerComponent.h"
+#include "Triggers/Components/GBFTriggerManagerComponent.h"
 
 void UGBFTriggerBoxTrigger::Activate()
 {

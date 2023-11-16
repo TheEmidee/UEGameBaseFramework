@@ -1,7 +1,7 @@
-#include "Gameplay/ConditionalEvents/GBFConditionalEventAbility.h"
+#include "ConditionalEvents/GBFConditionalEventAbility.h"
 
 #include "DVEDataValidator.h"
-#include "Gameplay/ConditionalEvents/GBFConditionalTrigger.h"
+#include "ConditionalEvents/GBFConditionalTrigger.h"
 
 UGBFConditionalEventAbility::UGBFConditionalEventAbility()
 {
