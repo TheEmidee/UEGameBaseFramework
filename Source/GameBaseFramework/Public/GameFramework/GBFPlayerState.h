@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Tags/GASExtGameplayTagStack.h"
+#include "GAS/Tags/GBFGameplayTagStack.h"
 
 #include <AbilitySystemInterface.h>
 #include <CoreMinimal.h>
@@ -12,7 +12,7 @@
 class UGBFExperienceImplementation;
 class UAbilitySystemComponent;
 class AGBFPlayerController;
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 class UGBFPawnData;
 
 UCLASS()
@@ -27,7 +27,7 @@ public:
     AGBFPlayerController * GetGBFPlayerController() const;
 
     UFUNCTION( BlueprintCallable, Category = "PlayerState" )
-    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetGBFAbilitySystemComponent() const;
 
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
 
@@ -75,10 +75,10 @@ protected:
     void CopyProperties( APlayerState * PlayerState ) override;
 
     UPROPERTY( VisibleAnywhere, Category = "PlayerState" )
-    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+    UGBFAbilitySystemComponent * AbilitySystemComponent;
 
     UPROPERTY( Replicated )
-    FGASExtGameplayTagStackContainer StatTags;
+    FGBFGameplayTagStackContainer StatTags;
 
     UPROPERTY( ReplicatedUsing = OnRep_PawnData )
     const UGBFPawnData * PawnData;
@@ -86,7 +86,7 @@ protected:
     FString ConnectionOptions;
 };
 
-FORCEINLINE UGASExtAbilitySystemComponent * AGBFPlayerState::GetGASExtAbilitySystemComponent() const
+FORCEINLINE UGBFAbilitySystemComponent * AGBFPlayerState::GetGBFAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
 }

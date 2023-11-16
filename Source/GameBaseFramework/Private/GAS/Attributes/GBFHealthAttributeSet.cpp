@@ -1,6 +1,6 @@
 #include "GAS/Attributes/GBFHealthAttributeSet.h"
 
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 
 #include <GameplayEffectExtension.h>
 #include <Net/UnrealNetwork.h>

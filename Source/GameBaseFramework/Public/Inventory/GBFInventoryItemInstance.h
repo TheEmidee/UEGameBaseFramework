@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Tags/GASExtGameplayTagStack.h"
+#include "GAS/Tags/GBFGameplayTagStack.h"
 
 #include <CoreMinimal.h>
 
@@ -50,7 +50,7 @@ private:
     friend struct FGBFInventoryList;
 
     UPROPERTY( Replicated )
-    FGASExtGameplayTagStackContainer StatTags;
+    FGBFGameplayTagStackContainer StatTags;
 
     // The item definition
     UPROPERTY( Replicated )

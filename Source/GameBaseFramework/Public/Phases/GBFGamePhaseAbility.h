@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Abilities/GASExtGameplayAbility.h"
+#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include <CoreMinimal.h>
 
@@ -18,7 +18,7 @@ enum class EGBFGamePhaseAbilityExactTagCancellationPolicy : uint8
 };
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFGamePhaseAbility final : public UGASExtGameplayAbility
+class GAMEBASEFRAMEWORK_API UGBFGamePhaseAbility final : public UGBFGameplayAbility
 {
     GENERATED_BODY()
 

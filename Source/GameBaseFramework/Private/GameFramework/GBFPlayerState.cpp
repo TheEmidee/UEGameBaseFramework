@@ -2,7 +2,7 @@
 
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
 #include "Experiences/GBFExperienceManagerComponent.h"
@@ -17,7 +17,7 @@
 AGBFPlayerState::AGBFPlayerState( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
 {
-    AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
+    AbilitySystemComponent = CreateDefaultSubobject< UGBFAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
 

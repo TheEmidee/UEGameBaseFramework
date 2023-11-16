@@ -1,6 +1,6 @@
 #include "GameFramework/GBFGameState.h"
 
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 
 #include <AbilitySystemComponent.h>
 #include <GameFramework/PlayerState.h>
@@ -15,7 +15,7 @@ AGBFGameState::AGBFGameState()
 
     ExperienceManagerComponent = CreateDefaultSubobject< UGBFExperienceManagerComponent >( TEXT( "ExperienceManagerComponent" ) );
 
-    AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
+    AbilitySystemComponent = CreateDefaultSubobject< UGBFAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
 

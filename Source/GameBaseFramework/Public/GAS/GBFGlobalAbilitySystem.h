@@ -8,20 +8,20 @@
 #include "GBFGlobalAbilitySystem.generated.h"
 
 class UGameplayEffect;
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 
 USTRUCT()
 struct FGlobalAppliedAbilityList
 {
     GENERATED_BODY()
 
-    void AddToASC( TSubclassOf< UGameplayAbility > ability, UGASExtAbilitySystemComponent * asc );
-    void RemoveFromASC( UGASExtAbilitySystemComponent * asc );
+    void AddToASC( TSubclassOf< UGameplayAbility > ability, UGBFAbilitySystemComponent * asc );
+    void RemoveFromASC( UGBFAbilitySystemComponent * asc );
     void RemoveFromAll();
 
 private:
     UPROPERTY()
-    TMap< UGASExtAbilitySystemComponent *, FGameplayAbilitySpecHandle > Handles;
+    TMap< UGBFAbilitySystemComponent *, FGameplayAbilitySpecHandle > Handles;
 };
 
 USTRUCT()
@@ -29,16 +29,16 @@ struct FGlobalAppliedEffectList
 {
     GENERATED_BODY()
 
-    void AddToASC( TSubclassOf< UGameplayEffect > effect, UGASExtAbilitySystemComponent * asc );
-    void RemoveFromASC( UGASExtAbilitySystemComponent * asc );
+    void AddToASC( TSubclassOf< UGameplayEffect > effect, UGBFAbilitySystemComponent * asc );
+    void RemoveFromASC( UGBFAbilitySystemComponent * asc );
     void RemoveFromAll();
 
 private:
     UPROPERTY()
-    TMap< UGASExtAbilitySystemComponent *, FActiveGameplayEffectHandle > Handles;
+    TMap< UGBFAbilitySystemComponent *, FActiveGameplayEffectHandle > Handles;
 };
 
-DECLARE_DELEGATE_OneParam( FGBFGlobalAbilitySystemOnASCUpdateDelegate, UGASExtAbilitySystemComponent * ASC );
+DECLARE_DELEGATE_OneParam( FGBFGlobalAbilitySystemOnASCUpdateDelegate, UGBFAbilitySystemComponent * ASC );
 
 /**
  * Imported from Lyra
@@ -68,10 +68,10 @@ public:
     void CancelAbilitiesByTagFromAll( FGameplayTag tag );
 
     /** Register an ASC with global system and apply any active global effects/abilities. */
-    void RegisterASC( UGASExtAbilitySystemComponent * asc );
+    void RegisterASC( UGBFAbilitySystemComponent * asc );
 
     /** Removes an ASC from the global system, along with any active global effects/abilities. */
-    void UnregisterASC( UGASExtAbilitySystemComponent * asc );
+    void UnregisterASC( UGBFAbilitySystemComponent * asc );
 
 protected:
     bool DoesSupportWorldType( EWorldType::Type world_type ) const override;
@@ -84,7 +84,7 @@ private:
     TMap< TSubclassOf< UGameplayEffect >, FGlobalAppliedEffectList > AppliedEffects;
 
     UPROPERTY()
-    TArray< UGASExtAbilitySystemComponent * > RegisteredASCs;
+    TArray< UGBFAbilitySystemComponent * > RegisteredASCs;
 
     FGBFGlobalAbilitySystemOnASCUpdateDelegate OnASCRegisteredDelegate;
     FGBFGlobalAbilitySystemOnASCUpdateDelegate OnASCUnregisteredDelegate;

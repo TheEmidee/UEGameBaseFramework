@@ -2,7 +2,7 @@
 
 #include "Characters/Components/GBFHealthComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Components/CapsuleComponent.h>
@@ -34,9 +34,9 @@ AGBFPlayerState * AGBFCharacter::GetGBFPlayerState() const
     return CastChecked< AGBFPlayerState >( GetPlayerState(), ECastCheckedType::NullAllowed );
 }
 
-UGASExtAbilitySystemComponent * AGBFCharacter::GetGASExtAbilitySystemComponent() const
+UGBFAbilitySystemComponent * AGBFCharacter::GetGBFAbilitySystemComponent() const
 {
-    return PawnExtComponent->GetGASExtAbilitySystemComponent();
+    return PawnExtComponent->GetGBFAbilitySystemComponent();
 }
 
 UAbilitySystemComponent * AGBFCharacter::GetAbilitySystemComponent() const
@@ -46,12 +46,12 @@ UAbilitySystemComponent * AGBFCharacter::GetAbilitySystemComponent() const
         return nullptr;
     }
 
-    return PawnExtComponent->GetGASExtAbilitySystemComponent();
+    return PawnExtComponent->GetGBFAbilitySystemComponent();
 }
 
 void AGBFCharacter::GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const
 {
-    if ( const auto * asc = GetGASExtAbilitySystemComponent() )
+    if ( const auto * asc = GetGBFAbilitySystemComponent() )
     {
         asc->GetOwnedGameplayTags( tag_container );
     }
@@ -59,7 +59,7 @@ void AGBFCharacter::GetOwnedGameplayTags( FGameplayTagContainer & tag_container 
 
 bool AGBFCharacter::HasMatchingGameplayTag( const FGameplayTag tag_to_check ) const
 {
-    if ( const auto * gas_ext_asc = GetGASExtAbilitySystemComponent() )
+    if ( const auto * gas_ext_asc = GetGBFAbilitySystemComponent() )
     {
         return gas_ext_asc->HasMatchingGameplayTag( tag_to_check );
     }
@@ -69,7 +69,7 @@ bool AGBFCharacter::HasMatchingGameplayTag( const FGameplayTag tag_to_check ) co
 
 bool AGBFCharacter::HasAllMatchingGameplayTags( const FGameplayTagContainer & tag_container ) const
 {
-    if ( const auto * gas_ext_asc = GetGASExtAbilitySystemComponent() )
+    if ( const auto * gas_ext_asc = GetGBFAbilitySystemComponent() )
     {
         return gas_ext_asc->HasAllMatchingGameplayTags( tag_container );
     }
@@ -79,7 +79,7 @@ bool AGBFCharacter::HasAllMatchingGameplayTags( const FGameplayTagContainer & ta
 
 bool AGBFCharacter::HasAnyMatchingGameplayTags( const FGameplayTagContainer & tag_container ) const
 {
-    if ( const auto * gas_ext_asc = GetGASExtAbilitySystemComponent() )
+    if ( const auto * gas_ext_asc = GetGBFAbilitySystemComponent() )
     {
         return gas_ext_asc->HasAnyMatchingGameplayTags( tag_container );
     }
@@ -119,7 +119,7 @@ void AGBFCharacter::SetupPlayerInputComponent( UInputComponent * player_input_co
 
 void AGBFCharacter::OnAbilitySystemInitialized()
 {
-    auto * asc = GetGASExtAbilitySystemComponent();
+    auto * asc = GetGBFAbilitySystemComponent();
     check( asc );
 
     HealthComponent->InitializeWithAbilitySystem( asc );
@@ -175,7 +175,7 @@ void AGBFCharacter::UninitAndDestroy()
     }
 
     // Uninitialize the ASC if we're still the avatar actor (otherwise another pawn already did it when they became the avatar actor)
-    if ( const auto * gas_ext_asc = GetGASExtAbilitySystemComponent() )
+    if ( const auto * gas_ext_asc = GetGBFAbilitySystemComponent() )
     {
         if ( gas_ext_asc->GetAvatarActor() == this )
         {

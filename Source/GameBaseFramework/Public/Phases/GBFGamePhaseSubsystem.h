@@ -7,7 +7,7 @@
 
 #include "GBFGamePhaseSubsystem.generated.h"
 
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 class UGBFGamePhaseAbility;
 
 DECLARE_LOG_CATEGORY_EXTERN( LogGBFGamePhase, Log, All );
@@ -70,7 +70,7 @@ protected:
     void OnEndPhase( const UGBFGamePhaseAbility * phase_ability, const FGameplayAbilitySpecHandle phase_ability_handle );
 
 private:
-    void GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGASExtAbilitySystemComponent * asc ) const;
+    void GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const;
 
     struct FGBFGamePhaseEntry
     {

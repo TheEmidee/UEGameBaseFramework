@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Abilities/GASExtGameplayAbility.h"
+#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include <CoreMinimal.h>
 
@@ -9,7 +9,7 @@
 class UGBFConditionalTrigger;
 
 UCLASS( HideDropdown )
-class GAMEBASEFRAMEWORK_API UGBFConditionalEventAbility : public UGASExtGameplayAbility
+class GAMEBASEFRAMEWORK_API UGBFConditionalEventAbility : public UGBFGameplayAbility
 {
     GENERATED_BODY()
 

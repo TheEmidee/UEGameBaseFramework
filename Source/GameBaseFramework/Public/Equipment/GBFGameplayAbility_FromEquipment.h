@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Abilities/GASExtGameplayAbility.h"
+#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include <CoreMinimal.h>
 
@@ -10,7 +10,7 @@ class UGBFEquipmentInstance;
 class UGBFInventoryItemInstance;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_FromEquipment : public UGASExtGameplayAbility
+class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_FromEquipment : public UGBFGameplayAbility
 {
     GENERATED_BODY()
 

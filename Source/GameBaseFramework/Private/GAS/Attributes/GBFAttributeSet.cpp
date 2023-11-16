@@ -1,6 +1,6 @@
 #include "GAS/Attributes/GBFAttributeSet.h"
 
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 
 UWorld * UGBFAttributeSet::GetWorld() const
 {
@@ -10,7 +10,7 @@ UWorld * UGBFAttributeSet::GetWorld() const
     return outer->GetWorld();
 }
 
-UGASExtAbilitySystemComponent * UGBFAttributeSet::GetAbilitySystemComponent() const
+UGBFAbilitySystemComponent * UGBFAttributeSet::GetAbilitySystemComponent() const
 {
-    return Cast< UGASExtAbilitySystemComponent >( GetOwningAbilitySystemComponent() );
+    return Cast< UGBFAbilitySystemComponent >( GetOwningAbilitySystemComponent() );
 }

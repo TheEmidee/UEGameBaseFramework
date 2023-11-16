@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GAS/Abilities/GASExtAbilitySet.h"
+#include "GAS/Abilities/GBFAbilitySet.h"
 
 #include <CoreMinimal.h>
 #include <ModularPawnComponent.h>
@@ -49,7 +49,7 @@ private:
 
     // Authority-only list of granted handles
     UPROPERTY( NotReplicated )
-    FGASExtAbilitySet_GrantedHandles GrantedHandles;
+    FGBFAbilitySet_GrantedHandles GrantedHandles;
 };
 
 /** List of applied equipment */
@@ -68,7 +68,7 @@ struct FGBFEquipmentList : public FFastArraySerializer
     void RemoveEntry( UGBFEquipmentInstance * instance );
 
 private:
-    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
 
     friend UGBFEquipmentManagerComponent;
 

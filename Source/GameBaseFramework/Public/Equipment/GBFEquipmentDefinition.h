@@ -6,7 +6,7 @@
 #include "GBFEquipmentDefinition.generated.h"
 
 class AActor;
-class UGASExtAbilitySet;
+class UGBFAbilitySet;
 class UGBFEquipmentInstance;
 
 USTRUCT()
@@ -43,7 +43,7 @@ public:
 
     // Gameplay ability sets to grant when this is equipped
     UPROPERTY( EditDefaultsOnly, Category = Equipment )
-    TArray< TObjectPtr< const UGASExtAbilitySet > > AbilitySetsToGrant;
+    TArray< TObjectPtr< const UGBFAbilitySet > > AbilitySetsToGrant;
 
     // Actors to spawn on the pawn when this is equipped
     UPROPERTY( EditDefaultsOnly, Category = Equipment )

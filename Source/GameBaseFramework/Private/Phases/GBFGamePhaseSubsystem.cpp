@@ -1,6 +1,6 @@
 #include "Phases/GBFGamePhaseSubsystem.h"
 
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "Phases/GBFGamePhaseAbility.h"
 
 #include <Engine/World.h>
@@ -24,7 +24,7 @@ static FAutoConsoleCommand ListActivePhasesCommand(
 void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDelegate phase_ended_callback )
 {
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
     const auto incoming_phase_tag = phase_ability.GetDefaultObject()->GetGamePhaseTag();
 
     if ( ensure( game_state_asc != nullptr ) )
@@ -157,7 +157,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
     UE_LOG( LogGBFGamePhase, Log, TEXT( "Beginning Phase '%s' (%s)" ), *incoming_phase_tag.ToString(), *GetNameSafe( phase_ability ) );
 
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
     if ( ensure( game_state_asc != nullptr ) )
     {
         TArray< FGameplayAbilitySpec * > active_phases;
@@ -228,7 +228,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
                 UE_LOG( LogGBFGamePhase, Log, TEXT( "\tEnding Phase '%s' (%s)" ), *active_phase_tag.ToString(), *GetNameSafe( active_phase_ability ) );
 
                 auto handle_to_end = active_phase->Handle;
-                game_state_asc->CancelAbilitiesByFunc( [ handle_to_end ]( const UGASExtGameplayAbility * ability, const FGameplayAbilitySpecHandle handle ) {
+                game_state_asc->CancelAbilitiesByFunc( [ handle_to_end ]( const UGBFGameplayAbility * ability, const FGameplayAbilitySpecHandle handle ) {
                     return handle == handle_to_end;
                 },
                     true );
@@ -269,7 +269,7 @@ void UGBFGamePhaseSubsystem::OnEndPhase( const UGBFGamePhaseAbility * phase_abil
     }
 }
 
-void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGASExtAbilitySystemComponent * asc ) const
+void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const
 {
     for ( const auto & kvp : ActivePhaseMap )
     {

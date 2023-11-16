@@ -11,7 +11,7 @@
 #include "GBFCharacter.generated.h"
 
 class UGBFHealthComponent;
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 class AGBFPlayerState;
 
 UCLASS()
@@ -26,7 +26,7 @@ public:
     AGBFPlayerState * GetGBFPlayerState() const;
 
     UFUNCTION( BlueprintPure, Category = "Character" )
-    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetGBFAbilitySystemComponent() const;
 
     UFUNCTION( BlueprintPure, Category = "Character" )
     UGBFHealthComponent * GetHealthComponent() const;

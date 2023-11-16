@@ -1,8 +1,8 @@
 #include "GAS/GBFGlobalAbilitySystem.h"
 
-#include "GAS/Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 
-void FGlobalAppliedAbilityList::AddToASC( const TSubclassOf< UGameplayAbility > ability, UGASExtAbilitySystemComponent * asc )
+void FGlobalAppliedAbilityList::AddToASC( const TSubclassOf< UGameplayAbility > ability, UGBFAbilitySystemComponent * asc )
 {
     if ( Handles.Find( asc ) != nullptr )
     {
@@ -15,7 +15,7 @@ void FGlobalAppliedAbilityList::AddToASC( const TSubclassOf< UGameplayAbility > 
     Handles.Add( asc, ability_spec_handle );
 }
 
-void FGlobalAppliedAbilityList::RemoveFromASC( UGASExtAbilitySystemComponent * asc )
+void FGlobalAppliedAbilityList::RemoveFromASC( UGBFAbilitySystemComponent * asc )
 {
     if ( const auto * spec_handle = Handles.Find( asc ) )
     {
@@ -36,7 +36,7 @@ void FGlobalAppliedAbilityList::RemoveFromAll()
     Handles.Empty();
 }
 
-void FGlobalAppliedEffectList::AddToASC( const TSubclassOf< UGameplayEffect > effect, UGASExtAbilitySystemComponent * asc )
+void FGlobalAppliedEffectList::AddToASC( const TSubclassOf< UGameplayEffect > effect, UGBFAbilitySystemComponent * asc )
 {
     if ( Handles.Find( asc ) != nullptr )
     {
@@ -48,7 +48,7 @@ void FGlobalAppliedEffectList::AddToASC( const TSubclassOf< UGameplayEffect > ef
     Handles.Add( asc, gameplay_effect_handle );
 }
 
-void FGlobalAppliedEffectList::RemoveFromASC( UGASExtAbilitySystemComponent * asc )
+void FGlobalAppliedEffectList::RemoveFromASC( UGBFAbilitySystemComponent * asc )
 {
     if ( const auto * effect_handle = Handles.Find( asc ) )
     {
@@ -126,7 +126,7 @@ void UGBFGlobalAbilitySystem::CancelAbilitiesByTagFromAll( const FGameplayTag ta
     }
 }
 
-void UGBFGlobalAbilitySystem::RegisterASC( UGASExtAbilitySystemComponent * asc )
+void UGBFGlobalAbilitySystem::RegisterASC( UGBFAbilitySystemComponent * asc )
 {
     check( asc != nullptr );
 
@@ -149,7 +149,7 @@ void UGBFGlobalAbilitySystem::RegisterASC( UGASExtAbilitySystemComponent * asc )
     OnASCRegisteredDelegate.ExecuteIfBound( asc );
 }
 
-void UGBFGlobalAbilitySystem::UnregisterASC( UGASExtAbilitySystemComponent * asc )
+void UGBFGlobalAbilitySystem::UnregisterASC( UGBFAbilitySystemComponent * asc )
 {
     check( asc != nullptr );
     for ( auto & entry : AppliedAbilities )

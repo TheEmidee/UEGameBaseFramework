@@ -39,7 +39,7 @@ void UGBFGameplayAbility_Death::ActivateAbility( const FGameplayAbilitySpecHandl
 
     SetCanBeCanceled( false );
 
-    if ( !ChangeActivationGroup( EGASExtAbilityActivationGroup::ExclusiveBlocking ) )
+    if ( !ChangeActivationGroup( EGBFAbilityActivationGroup::ExclusiveBlocking ) )
     {
         UE_LOG( LogGBF, Error, TEXT( "UGBFGameplayAbility_Death::ActivateAbility: Ability [%s] failed to change activation group to blocking." ), *GetName() );
     }

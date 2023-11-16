@@ -23,7 +23,7 @@
  */
 DECLARE_MULTICAST_DELEGATE_SixParams( FGBFAttributeEvent, AActor * /*EffectInstigator*/, AActor * /*EffectCauser*/, const FGameplayEffectSpec * /*EffectSpec*/, float /*EffectMagnitude*/, float /*OldValue*/, float /*NewValue*/ );
 
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAttributeSet : public UAttributeSet
@@ -32,5 +32,5 @@ class GAMEBASEFRAMEWORK_API UGBFAttributeSet : public UAttributeSet
 
 public:
     UWorld * GetWorld() const override;
-    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
 };

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "GAS/Abilities/GASExtGameplayAbility.h"
+#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include <CoreMinimal.h>
 
 #include "GBFGameplayAbility_Death.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_Death : public UGASExtGameplayAbility
+class GAMEBASEFRAMEWORK_API UGBFGameplayAbility_Death : public UGBFGameplayAbility
 {
     GENERATED_BODY()
 
