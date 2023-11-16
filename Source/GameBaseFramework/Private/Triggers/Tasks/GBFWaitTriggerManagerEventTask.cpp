@@ -1,4 +1,4 @@
-#include "Tasks/GBFWaitTriggerManagerEventTask.h"
+#include "Triggers/Tasks/GBFWaitTriggerManagerEventTask.h"
 
 #include "Triggers/Components/GBFTriggerManagerComponent.h"
 
