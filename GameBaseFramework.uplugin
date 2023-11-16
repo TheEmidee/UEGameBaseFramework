@@ -25,51 +25,6 @@
       "Type": "Editor",
       "LoadingPhase": "Default"
     },
-    {
-			"Name": "CommonUser",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-    {
-			"Name": "CommonLoadingScreen",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "CommonStartupLoadingScreen",
-			"Type": "ClientOnly",
-			"LoadingPhase": "PreLoadingScreen"
-		},
-    {
-			"Name": "CommonGame",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-    {
-			"Name": "GameSettings",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-    {
-			"Name": "UIExtension",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-    },
-    {
-			"Name": "GameplayMessageRuntime",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		},
-		{
-			"Name": "GameplayMessageNodes",
-			"Type": "UncookedOnly",
-			"LoadingPhase": "Default"
-		},
-    {
-			"Name": "ModularGameplayActors",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
   ],
   "Plugins": [
     {
@@ -118,6 +73,34 @@
     },
     {
       "Name": "AudioModulation",
+      "Enabled": true
+    },
+    {
+      "Name": "CommonGame",
+      "Enabled": true
+    },
+    {
+      "Name": "CommonLoadingScreen",
+      "Enabled": true
+    },
+    {
+      "Name": "CommonUser",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayMessageRouter",
+      "Enabled": true
+    },
+    {
+      "Name": "GameSettings",
+      "Enabled": true
+    },
+    {
+      "Name": "ModularGameplayActors",
+      "Enabled": true
+    },
+    {
+      "Name": "UIExtension",
       "Enabled": true
     }
   ]
