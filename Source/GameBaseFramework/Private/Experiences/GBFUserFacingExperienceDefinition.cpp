@@ -1,4 +1,4 @@
-#include "GameFramework/Experiences/GBFUserFacingExperienceDefinition.h"
+#include "Experiences/GBFUserFacingExperienceDefinition.h"
 
 #include "BlueprintLibraries/CoreExtHelperBlueprintLibrary.h"
 

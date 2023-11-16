@@ -1,10 +1,10 @@
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "Experiences/GBFExperienceManagerComponent.h"
 
 #include "GBFLog.h"
 #include "GBFTypes.h"
-#include "GameFramework/Experiences/GBFExperienceActionSet.h"
-#include "GameFramework/Experiences/GBFExperienceDefinition.h"
-#include "GameFramework/Experiences/GBFExperienceSubsystem.h"
+#include "Experiences/GBFExperienceActionSet.h"
+#include "Experiences/GBFExperienceDefinition.h"
+#include "Experiences/GBFExperienceSubsystem.h"
 
 #include <Engine/ActorChannel.h>
 #include <Engine/AssetManager.h>

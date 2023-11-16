@@ -1,7 +1,7 @@
-#include "GameFramework/Phases/GBFGamePhaseAbility.h"
+#include "Phases/GBFGamePhaseAbility.h"
 
 #include "GameFramework/GBFWorldSettings.h"
-#include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
+#include "Phases/GBFGamePhaseSubsystem.h"
 
 #include <AbilitySystemComponent.h>
 #include <Engine/World.h>

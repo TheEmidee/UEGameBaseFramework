@@ -1,11 +1,11 @@
-#include "GameFramework/Experiences/GBFExperienceDefinition.h"
+#include "Experiences/GBFExperienceDefinition.h"
 
 #if WITH_EDITOR
 #include "DVEDataValidator.h"
 #endif
 
 #include "GBFLog.h"
-#include "GameFramework/Experiences/GBFExperienceActionSet.h"
+#include "Experiences/GBFExperienceActionSet.h"
 
 #include <Engine/Engine.h>
 #include <Engine/World.h>

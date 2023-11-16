@@ -1,7 +1,7 @@
-#include "GameFramework/Phases/GBFGamePhaseSubsystem.h"
+#include "Phases/GBFGamePhaseSubsystem.h"
 
 #include "GAS/Components/GASExtAbilitySystemComponent.h"
-#include "GameFramework/Phases/GBFGamePhaseAbility.h"
+#include "Phases/GBFGamePhaseAbility.h"
 
 #include <Engine/World.h>
 #include <GameFramework/GameStateBase.h>

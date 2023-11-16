@@ -1,4 +1,4 @@
-#include "Tasks/GBFWaitAbilityCooldownChangedTask.h"
+#include "GAS/Tasks/GBFWaitAbilityCooldownChangedTask.h"
 
 #include <AbilitySystemComponent.h>
 

@@ -1,6 +1,6 @@
-#include "GameFramework/Experiences/GBFAsyncActionWaitExperienceReady.h"
+#include "Experiences/GBFAsyncActionWaitExperienceReady.h"
 
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "Experiences/GBFExperienceManagerComponent.h"
 
 #include <Engine/Engine.h>
 #include <TimerManager.h>

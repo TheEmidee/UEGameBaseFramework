@@ -5,7 +5,7 @@
 #include "GAS/Components/GASExtAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFeatures/GBFGameFeatureAction_AddAbilities.h"
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "Experiences/GBFExperienceManagerComponent.h"
 #include "GameFramework/GBFGameMode.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
