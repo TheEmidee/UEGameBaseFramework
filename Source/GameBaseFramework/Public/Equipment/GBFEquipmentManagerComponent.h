@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Abilities/GASExtAbilitySet.h"
+#include "GAS/Abilities/GBFAbilitySet.h"
 
 #include <CoreMinimal.h>
 #include <ModularPawnComponent.h>
@@ -11,6 +11,7 @@
 class UGBFEquipmentDefinition;
 class UGBFEquipmentInstance;
 struct FGBFEquipmentList;
+class UGBFEquipmentManagerComponent;
 
 /** A message when an item is added to the inventory */
 USTRUCT( BlueprintType )
@@ -48,7 +49,7 @@ private:
 
     // Authority-only list of granted handles
     UPROPERTY( NotReplicated )
-    FGASExtAbilitySet_GrantedHandles GrantedHandles;
+    FGBFAbilitySet_GrantedHandles GrantedHandles;
 };
 
 /** List of applied equipment */
@@ -67,7 +68,7 @@ struct FGBFEquipmentList : public FFastArraySerializer
     void RemoveEntry( UGBFEquipmentInstance * instance );
 
 private:
-    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
 
     friend UGBFEquipmentManagerComponent;
 

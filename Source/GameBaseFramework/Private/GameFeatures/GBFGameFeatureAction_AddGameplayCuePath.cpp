@@ -1,6 +1,6 @@
 #include "GameFeatures/GBFGameFeatureAction_AddGameplayCuePath.h"
 
-#include "GameplayCues/GASExtGameplayCueManager.h"
+#include "GAS/GameplayCues/GBFGameplayCueManager.h"
 
 #include <AbilitySystemGlobals.h>
 #include <GameFeatureData.h>
@@ -45,7 +45,7 @@ void UGBFGameFeatureObserver_AddGameplayCuePath::OnGameFeatureRegistering( const
         {
             const auto & dirs_to_add = game_feature_action_add_gameplay_cue_path->GetDirectoryPathsToAdd();
 
-            if ( auto * gameplay_cue_manager = UGASExtGameplayCueManager::Get() )
+            if ( auto * gameplay_cue_manager = UGBFGameplayCueManager::Get() )
             {
                 const auto * runtime_gameplay_cue_set = gameplay_cue_manager->GetRuntimeCueSet();
                 const auto pre_initialize_num_cues = runtime_gameplay_cue_set ? runtime_gameplay_cue_set->GameplayCueData.Num() : 0;

@@ -2,11 +2,10 @@
 
 #include "Camera/GBFPlayerCameraManager.h"
 #include "CommonInputSubsystem.h"
-#include "Components/GASExtAbilitySystemComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerState.h"
-#include "GameFramework/GBFSaveGame.h"
 
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
@@ -176,10 +175,10 @@ void AGBFPlayerController::AddCheats( bool force )
 #endif //
 }
 
-UGASExtAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
+UGBFAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
 {
     const auto * ps = GetPlayerState< AGBFPlayerState >();
-    return ( ps ? ps->GetGASExtAbilitySystemComponent() : nullptr );
+    return ( ps ? ps->GetGBFAbilitySystemComponent() : nullptr );
 }
 
 void AGBFPlayerController::OnPossess( APawn * pawn )

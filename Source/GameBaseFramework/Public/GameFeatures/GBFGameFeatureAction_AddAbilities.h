@@ -1,15 +1,21 @@
 #pragma once
 
-#include "Abilities/GASExtAbilitySet.h"
+#include "GAS/Abilities/GBFAbilitySet.h"
 #include "GBFGameFeatureAction_WorldActionBase.h"
 
+#include <ActiveGameplayEffectHandle.h>
 #include <Components/GameFrameworkComponentManager.h>
 #include <CoreMinimal.h>
+#include <GameplayAbilitySpecHandle.h>
 
 #include "GBFGameFeatureAction_AddAbilities.generated.h"
 
+class UGameplayEffect;
+class UDataTable;
+class UAttributeSet;
+class UGameplayAbility;
 struct FGameFeatureActivatingContext;
-class UGASExtAbilitySet;
+class UGBFAbilitySet;
 struct FGameFeatureDeactivatingContext;
 
 // This comes from the sample ValleyOfTheAncient
@@ -64,7 +70,7 @@ struct FGBFGameFeatureAbilitiesEntry
     TArray< FGBFGameFeatureAttributesMapping > GrantedAttributes;
 
     UPROPERTY( EditAnywhere, Category = "Attributes", meta = ( AssetBundles = "Client,Server" ) )
-    TArray< TSoftObjectPtr< const UGASExtAbilitySet > > GrantedAbilitySets;
+    TArray< TSoftObjectPtr< const UGBFAbilitySet > > GrantedAbilitySets;
 
     UPROPERTY( EditAnywhere, Category = "Tags" )
     FGameplayTagContainer LooseGameplayTags;
@@ -95,7 +101,7 @@ private:
         TArray< FGameplayAbilitySpecHandle > Abilities;
         TArray< UAttributeSet * > Attributes;
         TArray< FActiveGameplayEffectHandle > Effects;
-        TArray< FGASExtAbilitySet_GrantedHandles > AbilitySetHandles;
+        TArray< FGBFAbilitySet_GrantedHandles > AbilitySetHandles;
         FGameplayTagContainer Tags;
     };
 

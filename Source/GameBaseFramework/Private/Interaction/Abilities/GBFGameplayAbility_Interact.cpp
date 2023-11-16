@@ -13,7 +13,7 @@ UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Ability_Interaction_Activate, "Ability.Intera
 
 UGBFGameplayAbility_Interact::UGBFGameplayAbility_Interact()
 {
-    ActivationPolicy = EGASExtAbilityActivationPolicy::OnSpawn;
+    ActivationPolicy = EGBFAbilityActivationPolicy::OnSpawn;
     InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
     NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalPredicted;
 

@@ -6,7 +6,7 @@
 #include "GBFPlayerController.generated.h"
 
 class UGBFLocalPlayer;
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerController
@@ -41,7 +41,7 @@ public:
 
     void AddCheats( bool force ) override;
 
-    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
 
 protected:
     void OnPossess( APawn * pawn ) override;

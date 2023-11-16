@@ -8,8 +8,8 @@
 
 #include "GBFPawnData.generated.h"
 
-class UGASExtAbilityTagRelationshipMapping;
-class UGASExtAbilitySet;
+class UGBFAbilityTagRelationshipMapping;
+class UGBFAbilitySet;
 class UCameraModifier;
 class UGBFInputConfig;
 class UGBFCameraMode;
@@ -34,11 +34,11 @@ public:
 
     // Ability sets to grant to this pawn's ability system.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
-    TArray< TObjectPtr< UGASExtAbilitySet > > AbilitySets;
+    TArray< TObjectPtr< UGBFAbilitySet > > AbilitySets;
 
     // What mapping of ability tags to use for actions taking by this pawn
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
-    TObjectPtr< UGASExtAbilityTagRelationshipMapping > TagRelationshipMapping;
+    TObjectPtr< UGBFAbilityTagRelationshipMapping > TagRelationshipMapping;
 
     // Input configuration used by player controlled pawns to create input mappings and bind input actions.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )

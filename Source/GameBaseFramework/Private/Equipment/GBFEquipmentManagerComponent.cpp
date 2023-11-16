@@ -1,8 +1,8 @@
 #include "Equipment/GBFEquipmentManagerComponent.h"
 
-#include "Components/GASExtAbilitySystemComponent.h"
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <AbilitySystemGlobals.h>
@@ -132,11 +132,11 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
     }
 }
 
-UGASExtAbilitySystemComponent * FGBFEquipmentList::GetAbilitySystemComponent() const
+UGBFAbilitySystemComponent * FGBFEquipmentList::GetAbilitySystemComponent() const
 {
     check( OwnerComponent != nullptr );
     const auto * owning_actor = OwnerComponent->GetOwner();
-    return Cast< UGASExtAbilitySystemComponent >( UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor ) );
+    return Cast< UGBFAbilitySystemComponent >( UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor ) );
 }
 
 UGBFEquipmentManagerComponent::UGBFEquipmentManagerComponent( const FObjectInitializer & object_initializer ) :

@@ -7,7 +7,7 @@
 #include "GBFHealthComponent.generated.h"
 
 class UGBFHealthAttributeSet;
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 class UGBFHealthComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnDeathDelegate, AActor *, owning_actor );
@@ -45,7 +45,7 @@ public:
     FGameplayCueTag GetOnDamagedGameplayCueTag() const;
 #endif
 
-    void InitializeWithAbilitySystem( UGASExtAbilitySystemComponent * asc );
+    void InitializeWithAbilitySystem( UGBFAbilitySystemComponent * asc );
     void UninitializeFromAbilitySystem();
     float GetHealth() const;
     float GetMaxHealth() const;
@@ -71,7 +71,7 @@ protected:
     EGBFDeathState DeathState;
 
     UPROPERTY()
-    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+    UGBFAbilitySystemComponent * AbilitySystemComponent;
 
 private:
     void HandleHealthChanged( AActor * damage_instigator, AActor * damage_causer, const FGameplayEffectSpec * damage_effect_spec, float damage_magnitude, float old_value, float new_value );

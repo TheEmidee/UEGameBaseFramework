@@ -3,7 +3,7 @@
 #include "CommonGameInstance.h"
 #include "CommonSessionSubsystem.h"
 #include "CommonUserSubsystem.h"
-#include "GameFramework/Experiences/GBFExperienceManagerComponent.h"
+#include "Experiences/GBFExperienceManagerComponent.h"
 #include "PrimaryGameLayout.h"
 
 #include <ControlFlowManager.h>

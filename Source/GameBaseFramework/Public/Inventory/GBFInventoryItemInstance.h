@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Tags/GASExtGameplayTagStack.h"
+#include "GAS/Tags/GBFGameplayTagStack.h"
 
 #include <CoreMinimal.h>
 
 #include "GBFInventoryItemInstance.generated.h"
 
+class UGBFInventoryItemFragment;
 class UGBFInventoryItemDefinition;
 
 UCLASS( BlueprintType )
@@ -49,7 +50,7 @@ private:
     friend struct FGBFInventoryList;
 
     UPROPERTY( Replicated )
-    FGASExtGameplayTagStackContainer StatTags;
+    FGBFGameplayTagStackContainer StatTags;
 
     // The item definition
     UPROPERTY( Replicated )

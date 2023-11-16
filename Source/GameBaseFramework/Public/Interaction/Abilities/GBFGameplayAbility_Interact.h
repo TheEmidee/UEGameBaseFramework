@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Abilities/GBFGameplayAbility.h"
+#include "GAS/Abilities/GBFGameplayAbility.h"
 
 #include "GBFGameplayAbility_Interact.generated.h"
 

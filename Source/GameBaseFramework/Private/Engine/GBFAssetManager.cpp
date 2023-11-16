@@ -1,8 +1,8 @@
 #include "Engine/GBFAssetManager.h"
 
 #include "Characters/GBFPawnData.h"
+#include "GAS/GameplayCues/GBFGameplayCueManager.h"
 #include "GBFLog.h"
-#include "GameplayCues/GASExtGameplayCueManager.h"
 
 #include <AbilitySystemGlobals.h>
 #include <Engine/Engine.h>
@@ -84,7 +84,7 @@ void UGBFAssetManager::InitializeGameplayCueManager()
 {
     SCOPED_BOOT_TIMING( "UGBFAssetManager::InitializeGameplayCueManager" );
 
-    auto * gameplay_cue_manager = UGASExtGameplayCueManager::Get();
+    auto * gameplay_cue_manager = UGBFGameplayCueManager::Get();
     check( gameplay_cue_manager );
 
     gameplay_cue_manager->LoadAlwaysLoadedCues();

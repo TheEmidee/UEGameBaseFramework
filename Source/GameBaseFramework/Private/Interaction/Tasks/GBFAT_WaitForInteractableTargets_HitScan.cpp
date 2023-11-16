@@ -10,8 +10,8 @@ UGBFAT_WaitForInteractableTargets_HitScan * UGBFAT_WaitForInteractableTargets_Hi
     UGameplayAbility * owning_ability,
     const FName task_instance_name,
     const FGameplayAbilityTargetingLocationInfo & start_trace_location_infos,
-    const FGASExtWaitTargetDataReplicationOptions & replication_options,
-    const FGASExtWaitTargetDataHitScanOptions & hit_scan_options,
+    const FGBFWaitTargetDataReplicationOptions & replication_options,
+    const FGBFWaitTargetDataHitScanOptions & hit_scan_options,
     const float interaction_scan_rate /*= 1.0f*/ )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitForInteractableTargets_HitScan >( owning_ability, task_instance_name );

@@ -6,7 +6,7 @@
 
 #include "GBFPawnExtensionComponent.generated.h"
 
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 class UGBFPawnData;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFDynamicMulticastDelegate );
@@ -26,10 +26,10 @@ public:
     void SetPawnData( const UGBFPawnData * pawn_data );
 
     UFUNCTION( BlueprintPure, Category = "GameBaseFramework|Pawn" )
-    UGASExtAbilitySystemComponent * GetGASExtAbilitySystemComponent() const;
+    UGBFAbilitySystemComponent * GetGBFAbilitySystemComponent() const;
 
     // Should be called by the owning pawn to become the avatar of the ability system.
-    void InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor );
+    void InitializeAbilitySystem( UGBFAbilitySystemComponent * asc, AActor * owner_actor );
 
     // Should be called by the owning pawn to remove itself as the avatar of the ability system.
     void UninitializeAbilitySystem();
@@ -91,7 +91,7 @@ protected:
     const UGBFPawnData * PawnData;
 
     UPROPERTY()
-    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+    UGBFAbilitySystemComponent * AbilitySystemComponent;
 };
 
 template < class T >
@@ -100,7 +100,7 @@ const T * UGBFPawnExtensionComponent::GetPawnData() const
     return Cast< T >( PawnData );
 }
 
-FORCEINLINE UGASExtAbilitySystemComponent * UGBFPawnExtensionComponent::GetGASExtAbilitySystemComponent() const
+FORCEINLINE UGBFAbilitySystemComponent * UGBFPawnExtensionComponent::GetGBFAbilitySystemComponent() const
 {
     return AbilitySystemComponent;
 }

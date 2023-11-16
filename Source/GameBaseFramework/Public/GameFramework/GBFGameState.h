@@ -8,7 +8,7 @@
 
 #include "GBFGameState.generated.h"
 
-class UGASExtAbilitySystemComponent;
+class UGBFAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFGameState : public AModularGameState, public IAbilitySystemInterface
@@ -29,7 +29,7 @@ private:
     UGBFExperienceManagerComponent * ExperienceManagerComponent;
 
     UPROPERTY( VisibleAnywhere )
-    UGASExtAbilitySystemComponent * AbilitySystemComponent;
+    UGBFAbilitySystemComponent * AbilitySystemComponent;
 
     UPROPERTY( Replicated )
     float ServerFPS;

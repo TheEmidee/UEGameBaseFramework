@@ -1,7 +1,7 @@
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 
 #include "Characters/GBFPawnData.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 
@@ -53,7 +53,7 @@ void UGBFPawnExtensionComponent::SetPawnData( const UGBFPawnData * pawn_data )
     CheckDefaultInitialization();
 }
 
-void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGASExtAbilitySystemComponent * asc, AActor * owner_actor )
+void UGBFPawnExtensionComponent::InitializeAbilitySystem( UGBFAbilitySystemComponent * asc, AActor * owner_actor )
 {
     check( asc != nullptr );
     check( owner_actor != nullptr );

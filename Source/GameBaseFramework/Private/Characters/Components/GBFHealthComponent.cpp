@@ -1,7 +1,7 @@
 ﻿#include "Characters/Components/GBFHealthComponent.h"
 
-#include "Abilities/GBFHealthAttributeSet.h"
-#include "Components/GASExtAbilitySystemComponent.h"
+#include "GAS/Attributes/GBFHealthAttributeSet.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "Log/CoreExtLog.h"
 
@@ -24,7 +24,7 @@ UGBFHealthComponent::UGBFHealthComponent()
     DeathState = EGBFDeathState::NotDead;
 }
 
-void UGBFHealthComponent::InitializeWithAbilitySystem( UGASExtAbilitySystemComponent * asc )
+void UGBFHealthComponent::InitializeWithAbilitySystem( UGBFAbilitySystemComponent * asc )
 {
     const auto * owner = GetOwner();
     check( owner );

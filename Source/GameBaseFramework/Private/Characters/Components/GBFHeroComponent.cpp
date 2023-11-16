@@ -4,8 +4,8 @@
 #include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
-#include "Components/GASExtAbilitySystemComponent.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GBFTags.h"
 #include "GameFeatures/GBFGameFeatureAction_AddInputContextMapping.h"
@@ -114,7 +114,7 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
 
             // The player state holds the persistent data for this player (state that persists across deaths and multiple pawns).
             // The ability system component and attribute sets live on the player state.
-            pawn_ext_comp->InitializeAbilitySystem( player_state->GetGASExtAbilitySystemComponent(), player_state );
+            pawn_ext_comp->InitializeAbilitySystem( player_state->GetGBFAbilitySystemComponent(), player_state );
         }
 
         if ( const auto * pc = GetController< AGBFPlayerController >() )
@@ -324,7 +324,7 @@ void UGBFHeroComponent::Input_AbilityInputTagPressed( FGameplayTag input_tag )
     {
         if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
         {
-            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
             {
                 asc->AbilityInputTagPressed( input_tag );
             }
@@ -338,7 +338,7 @@ void UGBFHeroComponent::Input_AbilityInputTagReleased( FGameplayTag input_tag )
     {
         if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
         {
-            if ( auto * asc = pawn_ext_comp->GetGASExtAbilitySystemComponent() )
+            if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
             {
                 asc->AbilityInputTagReleased( input_tag );
             }
