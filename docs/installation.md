@@ -20,5 +20,6 @@ This plugin has dependencies with other plugins. You will need to install those 
 * ModularGameplayActors : https://github.com/TheEmidee/UEModularGameplayActors
 * GameplayMessageRouter : https://github.com/TheEmidee/UEGameplayMessageRouter
 * CommonGame : https://github.com/TheEmidee/UECommonGame
+* CommonLoadingScreen : https://github.com/TheEmidee/UECommonLoadingScreen
 
 {: .fs-6 .fw-300 }
