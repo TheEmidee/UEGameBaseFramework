@@ -1,4 +1,4 @@
-#include "GAS/AI/GASExtBTTask_TryActivateAbility.h"
+#include "AI/GASExtBTTask_TryActivateAbility.h"
 
 #include <AIController.h>
 #include <AbilitySystemBlueprintLibrary.h>

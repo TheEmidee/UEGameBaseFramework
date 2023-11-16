@@ -1,4 +1,4 @@
-#include "GAS/AI/GASExtEnvQueryTest_GameplayAttribute.h"
+#include "AI/GASExtEnvQueryTest_GameplayAttribute.h"
 
 #include <AbilitySystemBlueprintLibrary.h>
 #include <EnvironmentQuery/Items/EnvQueryItemType_ActorBase.h>
