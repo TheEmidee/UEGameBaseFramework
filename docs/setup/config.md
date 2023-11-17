@@ -20,7 +20,7 @@ nav_order: 3
 
 Default Classes:
 
-```
+```ini
 [/Script/Engine.Engine]
 WorldSettingsClassName=/Script/GameBaseFramework.GBFWorldSettings
 LocalPlayerClassName=/Script/GameBaseFramework.GBFLocalPlayer
@@ -39,7 +39,7 @@ LogGBF=Verbose
 
 Asset Manager:
 
-```
+```ini
 [/Script/Engine.AssetManagerSettings]
 -PrimaryAssetTypesToScan=(PrimaryAssetType="Map",AssetBaseClass=/Script/Engine.World,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game/Maps")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
 -PrimaryAssetTypesToScan=(PrimaryAssetType="PrimaryAssetLabel",AssetBaseClass=/Script/Engine.PrimaryAssetLabel,bHasBlueprintClasses=False,bIsEditorOnly=True,Directories=((Path="/Game")),SpecificAssets=,Rules=(Priority=-1,ChunkId=-1,bApplyRecursively=True,CookRule=Unknown))
@@ -61,7 +61,7 @@ MetaDataTagsForAssetRegistry=()
 
 Gameplay Ability System:
 
-```
+```ini
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 AbilitySystemGlobalsClassName="/Script/GASExtensions.GASExtAbilitySystemGlobals"
 GlobalGameplayCueManagerClass="/Script/GASExtensions.GASExtGameplayCueManager"

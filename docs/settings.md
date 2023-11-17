@@ -6,6 +6,15 @@ has_children: true
 permalink: /docs/settings
 ---
 
+# Setup
+
+Create a class that inherits from `GBFGameUserSettings` and register it in `DefaultEngine.ini`:
+
+```ini
+[/Script/Engine.Engine]
+GameUserSettingsClassName=/Script/YOURGAME.GameUserSettings
+```
+
 # Game Settings Screen
 
 Use the class `GBFGameSettingScreen` as the parent for your own C++ widget, then create a widget our this class

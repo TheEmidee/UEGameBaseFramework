@@ -18,17 +18,33 @@ It is recommend you create child classes from the following classes of the plugi
 * GBFCharacter
 * GBFPlayerController
 * GBFGameMode
+* GBFGameUserSettings
 * GBFHUD
-* GBFGameSession
 
 You can update your game mode class constructor to use your classes by default:
 
+```c++
+GameSessionClass = AYourGameGameSession::StaticClass();
+GameStateClass = AYourGameGameState::StaticClass();
+GameSessionClass = AYourGameGameSession::StaticClass();
+PlayerControllerClass = AYourGamePlayerController::StaticClass();
+PlayerStateClass = AYourGamePlayerState::StaticClass();
+DefaultPawnClass = AYourGameCharacter::StaticClass();
+HUDClass = AYourGameHUD::StaticClass();
 ```
-GameSessionClass = AGBFGameSession::StaticClass();
-GameStateClass = AGBFGameState::StaticClass();
-GameSessionClass = AGBFGameSession::StaticClass();
-PlayerControllerClass = AGBFPlayerController::StaticClass();
-PlayerStateClass = AGBFPlayerState::StaticClass();
-DefaultPawnClass = AGBFCharacter::StaticClass();
-HUDClass = AGBFHUD::StaticClass();
+
+And update your `DefaultEngine.ini` to register the other:
+
+```ini
+[/Script/Engine.Engine]
+LocalPlayerClassName=/Script/YOURGAME.LocalPlayer
+GameUserSettingsClassName=/Script/YOURGAME.SettingsLocal
+```
+
+You will also have to register the world settings and asset manager classes with those from the GameBaseFramework plugin, unless you want to subclass those in your project:
+
+```ini
+[/Script/Engine.Engine]
+WorldSettingsClassName=/Script/GameBaseFramework.GBFWorldSettings
+AssetManagerClassName=/Script/GameBaseFramework.GBFAssetManager
 ```
