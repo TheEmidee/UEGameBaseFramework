@@ -78,7 +78,7 @@ public:
     DECLARE_DELEGATE_OneParam( FGBFOnSettingsLoadedEvent, UGBFSaveGame * Settings );
 
     /** Starts an async load of the settings object, calls Delegate on completion */
-    static bool AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, FGBFOnSettingsLoadedEvent delegate );
+    static bool AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, const TSubclassOf< UGBFSaveGame > & save_game_class, FGBFOnSettingsLoadedEvent delegate );
 
     /** Saves the settings to disk */
     void SaveSettings();

@@ -63,7 +63,7 @@ UGBFSaveGame * UGBFSaveGame::LoadOrCreateSettings( const UGBFLocalPlayer * local
     return shared_settings;
 }
 
-bool UGBFSaveGame::AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, FGBFOnSettingsLoadedEvent delegate )
+bool UGBFSaveGame::AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_player, const TSubclassOf< UGBFSaveGame > & save_game_class, FGBFOnSettingsLoadedEvent delegate )
 {
     const auto lambda = FOnLocalPlayerSaveGameLoadedNative::CreateLambda( [ delegate ]( ULocalPlayerSaveGame * loaded_save ) {
         auto * loaded_settings = CastChecked< UGBFSaveGame >( loaded_save );
@@ -72,7 +72,7 @@ bool UGBFSaveGame::AsyncLoadOrCreateSettings( const UGBFLocalPlayer * local_play
         delegate.ExecuteIfBound( loaded_settings );
     } );
 
-    return AsyncLoadOrCreateSaveGameForLocalPlayer( StaticClass(), local_player, SharedSettingsSlotName, lambda );
+    return AsyncLoadOrCreateSaveGameForLocalPlayer( save_game_class, local_player, SharedSettingsSlotName, lambda );
 }
 
 void UGBFSaveGame::SaveSettings()
