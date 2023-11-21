@@ -93,9 +93,9 @@ void UGBFCameraMode_ThirdPerson::UpdatePreventPenetration( const float delta_tim
         return;
     }
 
-    const AActor * target_actor = GetTargetActor();
+    const auto * target_actor = GetTargetActor();
 
-    if ( const UPrimitiveComponent * actor_root_component = Cast< UPrimitiveComponent >( target_actor->GetRootComponent() ) )
+    if ( const auto * actor_root_component = Cast< UPrimitiveComponent >( target_actor->GetRootComponent() ) )
     {
         // Attempt at picking SafeLocation automatically, so we reduce camera translation when aiming.
         // Our camera is our reticle, so we want to preserve our aim and keep that as steady and smooth as possible.
@@ -184,10 +184,10 @@ void UGBFCameraMode_ThirdPerson::PreventCameraPenetration( FVector & camera_loca
 #endif
             feeler.FramesUntilNextTrace = feeler.TraceInterval;
 
-            if ( const AActor * hit_actor = hit_result.GetActor();
+            if ( const auto * hit_actor = hit_result.GetActor();
                  has_hit && hit_actor != nullptr )
             {
-                bool ignore_hit = false;
+                auto ignore_hit = false;
 
                 if ( hit_actor->ActorHasTag( Private::NAME_IgnoreCameraCollision ) )
                 {
@@ -302,7 +302,7 @@ void UGBFCameraMode_ThirdPerson::DrawDebug( UCanvas * canvas ) const
     Super::DrawDebug( canvas );
 
 #if ENABLE_DRAW_DEBUG
-    FDisplayDebugManager & display_debug_manager = canvas->DisplayDebugManager;
+    auto & display_debug_manager = canvas->DisplayDebugManager;
     for ( int index = 0; index < DebugActorsHitDuringCameraPenetration.Num(); index++ )
     {
         display_debug_manager.DrawString( FString::Printf( TEXT( "HitActorDuringPenetration[%d]: %s" ), index, *DebugActorsHitDuringCameraPenetration[ index ]->GetName() ) );
