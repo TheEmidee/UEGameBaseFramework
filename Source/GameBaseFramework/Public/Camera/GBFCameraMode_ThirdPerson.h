@@ -66,7 +66,7 @@ struct FGBFCameraPenetrationAvoidanceFeeler
     }
 };
 
-UCLASS()
+UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFCameraMode_ThirdPerson : public UGBFCameraMode
 {
     GENERATED_BODY()
