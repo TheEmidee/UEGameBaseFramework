@@ -66,8 +66,7 @@ protected:
     void OnRep_PlayerState() override;
 
 private:
-
-	void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
+    void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFPawnExtensionComponent * PawnExtComponent;

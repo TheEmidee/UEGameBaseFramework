@@ -1,9 +1,9 @@
 #include "Characters/GBFCharacter.h"
 
-#include "GBFTags.h"
 #include "Characters/Components/GBFHealthComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "GBFTags.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Components/CapsuleComponent.h>
