@@ -10,7 +10,7 @@ struct FSwapAudioOutputResult;
 class UGBFGameUserSettings;
 class UGBFSaveGame;
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public UCommonLocalPlayer
 {
     GENERATED_BODY()
@@ -29,7 +29,7 @@ public:
     UGBFGameUserSettings * GetLocalSettings() const;
 
     /** Gets the shared setting for this player, this is read using the save game system so may not be correct until after user login */
-    UFUNCTION()
+    UFUNCTION( BlueprintPure )
     virtual UGBFSaveGame * GetSharedSettings() const;
 
     /** Starts an async request to load the shared settings, this will call OnSharedSettingsLoaded after loading or creating new ones */
@@ -37,8 +37,8 @@ public:
 
 protected:
     void OnSharedSettingsLoaded( UGBFSaveGame * loaded_or_created_settings );
-
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
+    virtual TSubclassOf< UGBFSaveGame > GetSaveGameClass() const;
 
     UFUNCTION()
     void OnCompletedAudioDeviceSwap( const FSwapAudioOutputResult & swap_result );
