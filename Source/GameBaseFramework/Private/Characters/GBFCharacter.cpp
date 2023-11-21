@@ -1,5 +1,6 @@
 #include "Characters/GBFCharacter.h"
 
+#include "GBFTags.h"
 #include "Characters/Components/GBFHealthComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
@@ -117,6 +118,16 @@ void AGBFCharacter::SetupPlayerInputComponent( UInputComponent * player_input_co
     PawnExtComponent->SetupPlayerInputComponent();
 }
 
+void AGBFCharacter::OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode )
+{
+    Super::OnMovementModeChanged( prev_movement_mode, previous_custom_mode );
+
+    auto * character_movement_component = GetCharacterMovement();
+
+    SetMovementModeTag( prev_movement_mode, previous_custom_mode, false );
+    SetMovementModeTag( character_movement_component->MovementMode, character_movement_component->CustomMovementMode, true );
+}
+
 void AGBFCharacter::OnAbilitySystemInitialized()
 {
     auto * asc = GetGBFAbilitySystemComponent();
@@ -198,4 +209,26 @@ void AGBFCharacter::OnRep_PlayerState()
     Super::OnRep_PlayerState();
 
     PawnExtComponent->HandlePlayerStateReplicated();
+}
+
+// ReSharper disable once CppMemberFunctionMayBeConst
+void AGBFCharacter::SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled )
+{
+    if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        const FGameplayTag * movement_mode_tag = nullptr;
+        if ( movement_mode == MOVE_Custom )
+        {
+            movement_mode_tag = CustomMovementModeTagMap.Find( custom_movement_mode );
+        }
+        else
+        {
+            movement_mode_tag = MovementModeTagMap.Find( movement_mode );
+        }
+
+        if ( movement_mode_tag && movement_mode_tag->IsValid() )
+        {
+            asc->SetLooseGameplayTagCount( *movement_mode_tag, ( is_tag_enabled ? 1 : 0 ) );
+        }
+    }
 }

@@ -43,6 +43,7 @@ public:
     void PossessedBy( AController * new_controller ) override;
     void UnPossessed() override;
     void SetupPlayerInputComponent( UInputComponent * player_input_component ) override;
+    void OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode ) override;
 
 protected:
     virtual void OnAbilitySystemInitialized();
@@ -63,6 +64,10 @@ protected:
 
     void OnRep_Controller() override;
     void OnRep_PlayerState() override;
+
+private:
+
+	void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
 
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, Category = "Character", Meta = ( AllowPrivateAccess = "true" ) )
     UGBFPawnExtensionComponent * PawnExtComponent;
