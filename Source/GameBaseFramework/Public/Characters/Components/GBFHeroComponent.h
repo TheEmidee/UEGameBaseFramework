@@ -13,7 +13,7 @@ class UGBFInputComponent;
 class UGBFInputConfig;
 class UGBFCameraMode;
 
-UCLASS()
+UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
 {
     GENERATED_BODY()
