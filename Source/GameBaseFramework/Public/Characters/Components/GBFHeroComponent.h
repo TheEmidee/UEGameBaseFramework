@@ -72,11 +72,6 @@ private:
      * If you do, then use the GameFeatureAction_AddInputConfig instead.
      */
 
-    PRAGMA_DISABLE_DEPRECATION_WARNINGS
-    UE_DEPRECATED( 5.3, "DefaultInputConfigs have been deprecated, use DefaultInputMappings instead" )
-    TArray< FGBFMappableConfigPair > DefaultInputConfigs;
-    PRAGMA_ENABLE_DEPRECATION_WARNINGS
-
     UPROPERTY( EditAnywhere )
     TArray< FGBFInputMappingContextAndPriority > DefaultInputMappings;
 
