@@ -48,6 +48,7 @@ public:
 protected:
     virtual void OnAbilitySystemInitialized();
     virtual void OnAbilitySystemUninitialized();
+    virtual void InitializeGameplayTags();
 
     UFUNCTION()
     virtual void OnDeathStarted( AActor * owning_actor );
