@@ -135,12 +135,38 @@ void AGBFCharacter::OnAbilitySystemInitialized()
 
     HealthComponent->InitializeWithAbilitySystem( asc );
 
-    // InitializeGameplayTags();
+    InitializeGameplayTags();
 }
 
 void AGBFCharacter::OnAbilitySystemUninitialized()
 {
     HealthComponent->UninitializeFromAbilitySystem();
+}
+
+void AGBFCharacter::InitializeGameplayTags()
+{
+    // Clear tags that may be lingering on the ability system from the previous pawn.
+    if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        for ( const auto & tag_mapping : MovementModeTagMap )
+        {
+            if ( tag_mapping.Value.IsValid() )
+            {
+                asc->SetLooseGameplayTagCount( tag_mapping.Value, 0 );
+            }
+        }
+
+        for ( const auto & tag_mapping : CustomMovementModeTagMap )
+        {
+            if ( tag_mapping.Value.IsValid() )
+            {
+                asc->SetLooseGameplayTagCount( tag_mapping.Value, 0 );
+            }
+        }
+
+        const auto * movement_component = CastChecked< UCharacterMovementComponent >( GetCharacterMovement() );
+        SetMovementModeTag( movement_component->MovementMode, movement_component->CustomMovementMode, true );
+    }
 }
 
 void AGBFCharacter::OnDeathStarted( AActor * owning_actor )
