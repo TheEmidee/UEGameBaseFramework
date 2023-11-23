@@ -29,9 +29,11 @@ public:
     void OnActorInitStateChanged( const FActorInitStateChangedParams & params ) override;
 
     /** Adds mode-specific input config */
+    UFUNCTION( BlueprintCallable )
     void AddAdditionalInputConfig( const UGBFInputConfig * input_config );
 
     /** Removes a mode-specific input config if it has been added */
+    UFUNCTION( BlueprintCallable )
     void RemoveAdditionalInputConfig( const UGBFInputConfig * input_config );
 
     static const FName NAME_BindInputsNow;
