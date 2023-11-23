@@ -66,6 +66,8 @@ protected:
     void OnRep_Controller() override;
     void OnRep_PlayerState() override;
 
+    TMap< uint8, FGameplayTag > CustomMovementModeTagMap;
+
 private:
     void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
 
