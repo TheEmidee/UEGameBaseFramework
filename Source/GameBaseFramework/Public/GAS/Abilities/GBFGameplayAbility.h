@@ -8,6 +8,8 @@
 
 #include "GBFGameplayAbility.generated.h"
 
+class UGBFCameraMode;
+class UGBFHeroComponent;
 class UGBFAbilitySystemComponent;
 class ASWCharacterPlayerBase;
 class ASWCharacterBase;
