@@ -80,6 +80,8 @@ private:
 
     /** Spec handle for the last ability to set a camera mode. */
     FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
+
+    TMap< const UGBFInputConfig *, TArray< uint32 > > BoundActionsByInputConfig;
 };
 
 FORCEINLINE bool UGBFHeroComponent::IsReadyToBindInputs() const
