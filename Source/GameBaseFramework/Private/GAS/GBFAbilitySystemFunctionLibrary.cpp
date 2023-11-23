@@ -222,6 +222,7 @@ void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToCon
         return;
     }
 
+    // :TODO: Investigate how to fix this deprecation issue
     for ( auto handle : gameplay_effect_spec->TargetEffectSpecs )
     {
         if ( !handle.Data.IsValid() )
