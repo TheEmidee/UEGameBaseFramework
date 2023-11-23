@@ -1,8 +1,6 @@
 #include "Input/GBFInputComponent.h"
 
 #include "Engine/GBFLocalPlayer.h"
-#include "Input/GBFMappableConfigPair.h"
-#include "Settings/GBFGameSettingRegistry.h"
 
 #include <EnhancedInputSubsystems.h>
 

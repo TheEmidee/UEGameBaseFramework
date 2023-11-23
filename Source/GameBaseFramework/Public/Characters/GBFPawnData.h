@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Input/GBFMappableConfigPair.h"
-
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 #include <GameFramework/Pawn.h>
