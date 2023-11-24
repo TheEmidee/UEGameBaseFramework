@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Characters/Components/GBFPawnComponent.h"
-#include "Input/GBFMappableConfigPair.h"
 
 #include <CoreMinimal.h>
 #include <GameplayAbilitySpecHandle.h>

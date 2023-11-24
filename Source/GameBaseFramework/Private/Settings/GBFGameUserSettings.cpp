@@ -2,7 +2,6 @@
 
 #include "Development/GBFPlatformEmulationSettings.h"
 #include "Engine/GBFLocalPlayer.h"
-#include "Input/GBFMappableConfigPair.h"
 #include "Settings/GBFPerformanceSettings.h"
 
 #include <CommonInputSubsystem.h>
@@ -510,7 +509,7 @@ void UGBFGameUserSettings::SetHeadphoneModeEnabled( bool is_enabled )
 {
     if ( CanModifyHeadphoneModeEnabled() )
     {
-        if ( static auto * binaural_spatialization_disabled_c_var = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) ) )
+        if ( auto * binaural_spatialization_disabled_c_var = IConsoleManager::Get().FindConsoleVariable( TEXT( "au.DisableBinauralSpatialization" ) ) )
         {
             binaural_spatialization_disabled_c_var->Set( !is_enabled, ECVF_SetByGameSetting );
 
@@ -802,178 +801,6 @@ FName UGBFGameUserSettings::GetControllerPlatform() const
 {
     return ControllerPlatform;
 }
-
-PRAGMA_DISABLE_DEPRECATION_WARNINGS
-void UGBFGameUserSettings::RegisterInputConfig( const ECommonInputType type, const UPlayerMappableInputConfig * new_config, const bool is_active )
-{
-    if ( new_config )
-    {
-        if ( const int32 existing_config_idx = RegisteredInputConfigs.IndexOfByPredicate( [ &new_config ]( const FGBFLoadedMappableConfigPair & pair ) {
-                 return pair.Config == new_config;
-             } );
-             existing_config_idx == INDEX_NONE )
-        {
-            if ( const int32 num_added = RegisteredInputConfigs.Add( FGBFLoadedMappableConfigPair( new_config, type, is_active ) );
-                 num_added != INDEX_NONE )
-            {
-                OnInputConfigRegistered.Broadcast( RegisteredInputConfigs[ num_added ] );
-            }
-        }
-    }
-}
-
-int32 UGBFGameUserSettings::UnregisterInputConfig( const UPlayerMappableInputConfig * config_to_remove )
-{
-    if ( config_to_remove )
-    {
-        if ( const int32 index = RegisteredInputConfigs.IndexOfByPredicate( [ &config_to_remove ]( const FGBFLoadedMappableConfigPair & pair ) {
-                 return pair.Config == config_to_remove;
-             } );
-             index != INDEX_NONE )
-        {
-            RegisteredInputConfigs.RemoveAt( index );
-            return 1;
-        }
-    }
-    return INDEX_NONE;
-}
-
-const UPlayerMappableInputConfig * UGBFGameUserSettings::GetInputConfigByName( const FName config_name ) const
-{
-    for ( const auto & pair : RegisteredInputConfigs )
-    {
-        if ( pair.Config->GetConfigName() == config_name )
-        {
-            return pair.Config;
-        }
-    }
-    return nullptr;
-}
-
-void UGBFGameUserSettings::GetRegisteredInputConfigsOfType( TArray< FGBFLoadedMappableConfigPair > & result, const ECommonInputType type ) const
-{
-    result.Empty();
-
-    // If "Count" is passed in then
-    if ( type == ECommonInputType::Count )
-    {
-        result = RegisteredInputConfigs;
-        return;
-    }
-
-    for ( const auto & pair : RegisteredInputConfigs )
-    {
-        if ( pair.Type == type )
-        {
-            result.Emplace( pair );
-        }
-    }
-}
-
-void UGBFGameUserSettings::GetAllMappingNamesFromKey( TArray< FName > & result, const FKey key )
-{
-    if ( key == EKeys::Invalid )
-    {
-        return;
-    }
-
-    // adding any names of actions that are bound to that key
-    for ( const auto & pair : RegisteredInputConfigs )
-    {
-        if ( pair.Type == ECommonInputType::MouseAndKeyboard )
-        {
-            for ( const auto & mapping : pair.Config->GetPlayerMappableKeys() )
-            {
-                FName mapping_name( mapping.GetDisplayName().ToString() );
-                FName action_name = mapping.GetMappingName();
-
-                // make sure it isn't custom bound as well
-                if ( const auto * mapping_key = CustomKeyboardConfig.Find( action_name ) )
-                {
-                    if ( *mapping_key == key )
-                    {
-                        result.Add( mapping_name );
-                    }
-                }
-                else
-                {
-                    if ( mapping.Key == key )
-                    {
-                        result.Add( mapping_name );
-                    }
-                }
-            }
-        }
-    }
-}
-
-void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mapping_name, const FKey new_key, const UGBFLocalPlayer * local_player )
-{
-    if ( mapping_name == NAME_None )
-    {
-        return;
-    }
-
-    if ( InputConfigName != TEXT( "Custom" ) )
-    {
-        // Copy Presets.
-        if ( const auto * default_config = GetInputConfigByName( TEXT( "Default" ) ) )
-        {
-            for ( const auto & mapping : default_config->GetPlayerMappableKeys() )
-            {
-                // Make sure that the mapping has a valid name, its possible to have an empty name
-                // if someone has marked a mapping as "Player Mappable" but deleted the default field value
-                if ( mapping.GetMappingName() != NAME_None )
-                {
-                    CustomKeyboardConfig.Add( mapping.GetMappingName(), mapping.Key );
-                }
-            }
-        }
-
-        InputConfigName = TEXT( "Custom" );
-    }
-
-    if ( CustomKeyboardConfig.Find( mapping_name ) )
-    {
-        // Change the key to the new one
-        CustomKeyboardConfig[ mapping_name ] = new_key;
-    }
-    else
-    {
-        CustomKeyboardConfig.Add( mapping_name, new_key );
-    }
-
-    // Tell the enhanced input subsystem for this local player that we should remap some input! Woo
-    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
-    {
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
-        subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
-#else
-        subsystem->AddPlayerMappedKey( mapping_name, new_key );
-#endif
-    }
-}
-
-void UGBFGameUserSettings::ResetKeybindingToDefault( const FName mapping_name, const UGBFLocalPlayer * local_player )
-{
-    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
-    {
-#if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
-        subsystem->RemovePlayerMappedKeyInSlot( mapping_name );
-#else
-        subsystem->RemovePlayerMappedKey( mapping_name );
-#endif
-    }
-}
-
-void UGBFGameUserSettings::ResetKeybindingsToDefault( const UGBFLocalPlayer * local_player )
-{
-    if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
-    {
-        subsystem->RemoveAllPlayerMappedKeys();
-    }
-}
-PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
 void UGBFGameUserSettings::LoadUserControlBusMix()
 {
