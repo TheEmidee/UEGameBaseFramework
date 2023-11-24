@@ -30,4 +30,4 @@ UPROPERTY( EditDefaultsOnly, meta = ( RowType = "/Script/CommonUI.CommonInputAct
 FDataTableRowHandle CancelAction
 ```
 
-Look at Lyra for an example
+You need to register a confirmation dialog class, and an error dialog class, in the `Project Settings > GameBaseFramework - Settings` section
