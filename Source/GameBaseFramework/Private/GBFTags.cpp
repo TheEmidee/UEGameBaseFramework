@@ -24,9 +24,3 @@ const TMap< uint8, FGameplayTag > MovementModeTagMap = {
     { MOVE_Flying, GBFTag_Gameplay_Movement_Mode_Flying },
     { MOVE_Custom, GBFTag_Gameplay_Movement_Mode_Custom }
 };
-
-// :TODO: Should move this code to the game project
-// Custom Movement Modes
-const TMap< uint8, FGameplayTag > CustomMovementModeTagMap = {
-    // Fill these in with your custom modes
-};

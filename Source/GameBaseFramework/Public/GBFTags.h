@@ -20,4 +20,3 @@ GAMEBASEFRAMEWORK_API UE_DECLARE_GAMEPLAY_TAG_EXTERN( GBFTag_Gameplay_Movement_M
 
 // These are mappings from MovementMode enums to GameplayTags associated with those enums (below)
 GAMEBASEFRAMEWORK_API extern const TMap< uint8, FGameplayTag > MovementModeTagMap;
-GAMEBASEFRAMEWORK_API extern const TMap< uint8, FGameplayTag > CustomMovementModeTagMap;
