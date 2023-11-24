@@ -22,6 +22,9 @@ public:
     UFUNCTION( BlueprintCallable, Category = "Ability|Abilities" )
     static void CancelAllAbilities( UAbilitySystemComponent * ability_system_component, UGameplayAbility * ignore_ability = nullptr );
 
+    UFUNCTION( BlueprintCallable, Category = "Ability|Abilities", meta = ( AutoCreateRefTerm = "with_tags, without_tags" ) )
+    static void CancelAbilities( UAbilitySystemComponent * ability_system_component, const FGameplayTagContainer & with_tags, const FGameplayTagContainer & without_tags, UGameplayAbility * ignore_ability = nullptr );
+
     UFUNCTION( BlueprintCallable, Category = "Ability|Abilities" )
     static void CancelAllAbilitiesForActor( AActor * actor, UGameplayAbility * ignore_ability = nullptr );
 
