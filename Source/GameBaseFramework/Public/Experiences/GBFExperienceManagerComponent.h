@@ -7,6 +7,7 @@
 
 #include "GBFExperienceManagerComponent.generated.h"
 
+class UGBFExperienceImplementation;
 class UGBFExperienceDefinition;
 class UGameFeatureAction;
 
