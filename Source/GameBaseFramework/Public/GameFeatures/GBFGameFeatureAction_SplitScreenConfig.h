@@ -7,7 +7,7 @@
 #include "GBFGameFeatureAction_SplitScreenConfig.generated.h"
 
 UCLASS( MinimalAPI, meta = ( DisplayName = "SplitScreen Config" ) )
-class GAMEBASEFRAMEWORK_API UGBFGameFeatureAction_SplitScreenConfig final : public UGBFGameFeatureAction_WorldActionBase
+class UGBFGameFeatureAction_SplitScreenConfig final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
 
