@@ -77,7 +77,7 @@ struct GAMEBASEFRAMEWORK_API FGBFCameraModeView
  *
  *	Base class for all camera modes.
  */
-UCLASS( Abstract, NotBlueprintable )
+UCLASS( Abstract, NotBlueprintable, BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFCameraMode : public UObject
 {
     GENERATED_BODY()
@@ -119,7 +119,7 @@ protected:
     FGameplayTag CameraTypeTag;
 
     // The horizontal field of view (in degrees).
-    UPROPERTY( EditDefaultsOnly, Category = "View", Meta = ( UIMin = "5.0", UIMax = "170", ClampMin = "5.0", ClampMax = "170.0" ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "View", Meta = ( UIMin = "5.0", UIMax = "170", ClampMin = "5.0", ClampMax = "170.0" ) )
     float FieldOfView;
 
     // Minimum view pitch (in degrees).
