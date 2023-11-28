@@ -4,6 +4,8 @@
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionQuery.h"
 #include "Interaction/GBFInteractionStatics.h"
+#include "UI/IndicatorSystem/GBFIndicatorDescriptor.h"
+#include "UI/IndicatorSystem/GBFIndicatorManagerComponent.h"
 
 #include <AbilitySystemComponent.h>
 #include <GameFramework/Controller.h>
@@ -37,37 +39,34 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
     UpdateInteractableOptions( interactable_targets );
 
     // :TODO: Implement indicator system and allow to display widget in different ways
-    // if ( ALyraPlayerController * PC = GetLyraPlayerControllerFromActorInfo() )
-    // {
-    //     if ( ULyraIndicatorManagerComponent * IndicatorManager = ULyraIndicatorManagerComponent::GetComponent( PC ) )
-    //     {
-    //         for ( UIndicatorDescriptor * Indicator : Indicators )
-    //         {
-    //             IndicatorManager->RemoveIndicator( Indicator );
-    //         }
-    //         Indicators.Reset();
-    //
-    //         for ( const FGBFInteractionOption & InteractionOption : interactive_options )
-    //         {
-    //             AActor * InteractableTargetActor = UGBFInteractionStatics::GetActorFromInteractableTarget( InteractionOption.InteractableTarget );
-    //
-    //             TSoftClassPtr< UUserWidget > InteractionWidgetClass =
-    //                 InteractionOption.InteractionWidgetClass.IsNull() ? DefaultInteractionWidgetClass : InteractionOption.InteractionWidgetClass;
-    //
-    //             UIndicatorDescriptor * Indicator = NewObject< UIndicatorDescriptor >();
-    //             Indicator->SetDataObject( InteractableTargetActor );
-    //             Indicator->SetSceneComponent( InteractableTargetActor->GetRootComponent() );
-    //             Indicator->SetIndicatorClass( InteractionWidgetClass );
-    //             IndicatorManager->AddIndicator( Indicator );
-    //
-    //             Indicators.Add( Indicator );
-    //         }
-    //     }
-    //     else
-    //     {
-    //         // :TODO: This should probably be a noisy warning.  Why are we updating interactions on a PC that can never do anything with them?
-    //     }
-    // }
+    if ( const auto * pc = GetControllerFromActorInfo() )
+    {
+        if ( auto * indicator_manager = UGBFIndicatorManagerComponent::GetComponent( pc ) )
+        {
+            for ( auto & indicator : Indicators )
+            {
+                indicator_manager->RemoveIndicator( indicator );
+            }
+            Indicators.Reset();
+
+            for ( const auto & interaction_option : CurrentOptions )
+            {
+                auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
+
+                const auto interaction_widget_class = interaction_option.InteractionWidgetClass.IsNull()
+                                                          ? DefaultInteractionWidgetClass
+                                                          : interaction_option.InteractionWidgetClass;
+
+                auto * indicator = NewObject< UGBFIndicatorDescriptor >();
+                indicator->SetDataObject( interactable_target_actor );
+                indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
+                indicator->SetIndicatorClass( interaction_widget_class );
+                indicator_manager->AddIndicator( indicator );
+
+                Indicators.Add( indicator );
+            }
+        }
+    }
 }
 
 void UGBFGameplayAbility_Interact::TriggerInteraction()
