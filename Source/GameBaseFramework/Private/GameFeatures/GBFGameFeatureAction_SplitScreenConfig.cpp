@@ -27,7 +27,7 @@ void UGBFGameFeatureAction_SplitScreenConfig::OnGameFeatureDeactivating( FGameFe
         }
 
         if ( auto & vote_count = GlobalDisableVotes[ viewport_key ];
-            vote_count <= 1 )
+             vote_count <= 1 )
         {
             GlobalDisableVotes.Remove( viewport_key );
 
@@ -48,7 +48,7 @@ void UGBFGameFeatureAction_SplitScreenConfig::AddToWorld( const FWorldContext & 
 {
     if ( bDisableSplitscreen )
     {
-        if (const UGameInstance * game_instance = world_context.OwningGameInstance )
+        if ( const UGameInstance * game_instance = world_context.OwningGameInstance )
         {
             if ( auto * game_viewport_client = game_instance->GetGameViewportClient() )
             {
