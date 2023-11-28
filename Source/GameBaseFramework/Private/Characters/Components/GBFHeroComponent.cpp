@@ -170,24 +170,35 @@ void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_
         return;
     }
 
-    const auto * pc = GetController< APlayerController >();
-    check( pc != nullptr );
-
-    const auto * lp = pc->GetLocalPlayer();
-    check( lp != nullptr );
-
-    const auto * subsystem = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
-    check( subsystem != nullptr );
-
     if ( UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) != nullptr )
     {
-        TArray< uint32 > bind_handles;
-        input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+        if ( ensureAlways( BoundActionsByInputConfig.Find( input_config ) == nullptr ) )
+        {
+            auto & bind_handles = BoundActionsByInputConfig.Add( input_config );
+            input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+        }
     }
 }
 
 void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * input_config )
 {
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    {
+        return;
+    }
+
+    if ( auto * bind_handles = BoundActionsByInputConfig.Find( input_config ) )
+    {
+        input_component->RemoveBinds( *bind_handles );
+        BoundActionsByInputConfig.Remove( input_config );
+    }
 }
 
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
@@ -300,9 +311,7 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
                 {
                     input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
 
-                    TArray< uint32 > bind_handles;
-                    input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
-
+                    AddAdditionalInputConfig( input_config );
                     BindNativeActions( input_component, input_config );
                 }
             }

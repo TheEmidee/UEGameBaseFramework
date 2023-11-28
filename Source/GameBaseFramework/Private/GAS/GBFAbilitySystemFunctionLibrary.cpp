@@ -17,6 +17,14 @@ void UGBFAbilitySystemFunctionLibrary::CancelAllAbilities( UAbilitySystemCompone
     }
 }
 
+void UGBFAbilitySystemFunctionLibrary::CancelAbilities( UAbilitySystemComponent * ability_system_component, const FGameplayTagContainer & with_tags, const FGameplayTagContainer & without_tags, UGameplayAbility * ignore_ability )
+{
+    if ( ability_system_component != nullptr )
+    {
+        ability_system_component->CancelAbilities( &with_tags, &without_tags, ignore_ability );
+    }
+}
+
 void UGBFAbilitySystemFunctionLibrary::CancelAllAbilitiesForActor( AActor * actor, UGameplayAbility * ignore_ability )
 {
     if ( auto * asc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor ) )
