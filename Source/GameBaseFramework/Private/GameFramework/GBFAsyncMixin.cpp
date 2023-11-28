@@ -1,12 +1,12 @@
 #include "GameFramework/GBFAsyncMixin.h"
 
-#include "Engine/AssetManager.h"
-#include "Engine/StreamableManager.h"
-#include "Stats/Stats.h"
+#include <Engine/AssetManager.h>
+#include <Engine/StreamableManager.h>
+#include <Stats/Stats.h>
 
-DEFINE_LOG_CATEGORY_STATIC( LogAsyncMixin, Log, All );
+DEFINE_LOG_CATEGORY_STATIC( LogGBFAsyncMixin, Log, All );
 
-TMap< FGBFAsyncMixin *, TSharedRef< FGBFAsyncMixin::FLoadingState > > FGBFAsyncMixin::Loading;
+TMap< FGBFAsyncMixin *, TSharedRef< FGBFAsyncMixin::FGBFLoadingState > > FGBFAsyncMixin::Loading;
 
 FGBFAsyncMixin::FGBFAsyncMixin()
 {
@@ -21,22 +21,22 @@ FGBFAsyncMixin::~FGBFAsyncMixin()
     Loading.Remove( this );
 }
 
-const FGBFAsyncMixin::FLoadingState & FGBFAsyncMixin::GetLoadingStateConst() const
+const FGBFAsyncMixin::FGBFLoadingState & FGBFAsyncMixin::GetLoadingStateConst() const
 {
     check( IsInGameThread() );
     return Loading.FindChecked( this ).Get();
 }
 
-FGBFAsyncMixin::FLoadingState & FGBFAsyncMixin::GetLoadingState()
+FGBFAsyncMixin::FGBFLoadingState & FGBFAsyncMixin::GetLoadingState()
 {
     check( IsInGameThread() );
 
-    if ( TSharedRef< FLoadingState > * LoadingState = Loading.Find( this ) )
+    if ( const auto loading_state = Loading.Find( this ) )
     {
-        return ( *LoadingState ).Get();
+        return loading_state->Get();
     }
 
-    return Loading.Add( this, MakeShared< FLoadingState >( *this ) ).Get();
+    return Loading.Add( this, MakeShared< FGBFLoadingState >( *this ) ).Get();
 }
 
 bool FGBFAsyncMixin::HasLoadingState() const
@@ -76,29 +76,29 @@ bool FGBFAsyncMixin::IsLoadingInProgressOrPending() const
     return false;
 }
 
-void FGBFAsyncMixin::AsyncLoad( FSoftObjectPath SoftObjectPath, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::AsyncLoad( const FSoftObjectPath & soft_object_path, const FSimpleDelegate & callback )
 {
-    GetLoadingState().AsyncLoad( SoftObjectPath, DelegateToCall );
+    GetLoadingState().AsyncLoad( soft_object_path, callback );
 }
 
-void FGBFAsyncMixin::AsyncLoad( const TArray< FSoftObjectPath > & SoftObjectPaths, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::AsyncLoad( const TArray< FSoftObjectPath > & soft_object_paths, const FSimpleDelegate & callback )
 {
-    GetLoadingState().AsyncLoad( SoftObjectPaths, DelegateToCall );
+    GetLoadingState().AsyncLoad( soft_object_paths, callback );
 }
 
-void FGBFAsyncMixin::AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & AssetIds, const TArray< FName > & LoadBundles, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & asset_ids, const TArray< FName > & load_bundles, const FSimpleDelegate & callback )
 {
-    GetLoadingState().AsyncPreloadPrimaryAssetsAndBundles( AssetIds, LoadBundles, DelegateToCall );
+    GetLoadingState().AsyncPreloadPrimaryAssetsAndBundles( asset_ids, load_bundles, callback );
 }
 
-void FGBFAsyncMixin::AsyncCondition( TSharedRef< FAsyncCondition > Condition, const FSimpleDelegate & Callback )
+void FGBFAsyncMixin::AsyncCondition( const TSharedRef< FGBFAsyncCondition > & condition, const FSimpleDelegate & callback )
 {
-    GetLoadingState().AsyncCondition( Condition, Callback );
+    GetLoadingState().AsyncCondition( condition, callback );
 }
 
-void FGBFAsyncMixin::AsyncEvent( const FSimpleDelegate & Callback )
+void FGBFAsyncMixin::AsyncEvent( const FSimpleDelegate & callback )
 {
-    GetLoadingState().AsyncEvent( Callback );
+    GetLoadingState().AsyncEvent( callback );
 }
 
 void FGBFAsyncMixin::StartAsyncLoading()
@@ -120,15 +120,15 @@ void FGBFAsyncMixin::StartAsyncLoading()
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-FGBFAsyncMixin::FLoadingState::FLoadingState( FGBFAsyncMixin & InOwner ) :
-    OwnerRef( InOwner )
+FGBFAsyncMixin::FGBFLoadingState::FGBFLoadingState( FGBFAsyncMixin & owner ) :
+    OwnerRef( owner )
 {
 }
 
-FGBFAsyncMixin::FLoadingState::~FLoadingState()
+FGBFAsyncMixin::FGBFLoadingState::~FGBFLoadingState()
 {
     QUICK_SCOPE_CYCLE_COUNTER( STAT_FAsyncMixin_FLoadingState_DestroyThisMemoryDelegate );
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Destroy LoadingState (Done)" ), this );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Destroy LoadingState (Done)" ), this );
 
     // If we get destroyed, need to cancel whatever we're doing and cancel any
     // pending destruction - as we're already on the way out.
@@ -136,18 +136,18 @@ FGBFAsyncMixin::FLoadingState::~FLoadingState()
     CancelDestroyThisMemory( /*bDestroying*/ true );
 }
 
-void FGBFAsyncMixin::FLoadingState::CancelOnly( bool bDestroying )
+void FGBFAsyncMixin::FGBFLoadingState::CancelOnly( const bool destroying )
 {
-    if ( !bDestroying )
+    if ( !destroying )
     {
-        UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Cancel" ), this );
+        UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Cancel" ), this );
     }
 
     CancelStartTimer();
 
-    for ( TUniquePtr< FAsyncStep > & Step : AsyncSteps )
+    for ( const auto & step : AsyncSteps )
     {
-        Step->Cancel();
+        step->Cancel();
     }
 
     // Moving the memory to another array so we don't crash.
@@ -159,20 +159,20 @@ void FGBFAsyncMixin::FLoadingState::CancelOnly( bool bDestroying )
     CurrentAsyncStep = 0;
 }
 
-void FGBFAsyncMixin::FLoadingState::CancelAndDestroy()
+void FGBFAsyncMixin::FGBFLoadingState::CancelAndDestroy()
 {
     CancelOnly( /*bDestroying*/ false );
     RequestDestroyThisMemory();
 }
 
-void FGBFAsyncMixin::FLoadingState::CancelDestroyThisMemory( bool bDestroying )
+void FGBFAsyncMixin::FGBFLoadingState::CancelDestroyThisMemory( const bool destroying )
 {
     // If we've schedule the memory to be deleted we need to abort that.
     if ( IsPendingDestroy() )
     {
-        if ( !bDestroying )
+        if ( !destroying )
         {
-            UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Destroy LoadingState (Canceled)" ), this );
+            UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Destroy LoadingState (Canceled)" ), this );
         }
 
         FTSTicker::GetCoreTicker().RemoveTicker( DestroyMemoryDelegate );
@@ -180,14 +180,14 @@ void FGBFAsyncMixin::FLoadingState::CancelDestroyThisMemory( bool bDestroying )
     }
 }
 
-void FGBFAsyncMixin::FLoadingState::RequestDestroyThisMemory()
+void FGBFAsyncMixin::FGBFLoadingState::RequestDestroyThisMemory()
 {
     // If we're already pending to destroy this memory, just ignore.
     if ( !IsPendingDestroy() )
     {
-        UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Destroy LoadingState (Requested)" ), this );
+        UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Destroy LoadingState (Requested)" ), this );
 
-        DestroyMemoryDelegate = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateLambda( [ this ]( float DeltaTime ) {
+        DestroyMemoryDelegate = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateLambda( [ this ]( float delta_time ) {
             // Remove any memory we were using.
             FGBFAsyncMixin::Loading.Remove( &OwnerRef );
             return false;
@@ -195,7 +195,7 @@ void FGBFAsyncMixin::FLoadingState::RequestDestroyThisMemory()
     }
 }
 
-void FGBFAsyncMixin::FLoadingState::CancelStartTimer()
+void FGBFAsyncMixin::FGBFLoadingState::CancelStartTimer()
 {
     if ( StartTimerDelegate.IsValid() )
     {
@@ -204,14 +204,12 @@ void FGBFAsyncMixin::FLoadingState::CancelStartTimer()
     }
 }
 
-void FGBFAsyncMixin::FLoadingState::Start()
+void FGBFAsyncMixin::FGBFLoadingState::Start()
 {
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Start (Current Progress %d/%d)" ), this, CurrentAsyncStep + 1, AsyncSteps.Num() );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Start (Current Progress %d/%d)" ), this, CurrentAsyncStep + 1, AsyncSteps.Num() );
 
     // Cancel any pending kickoff load requests.
     CancelStartTimer();
-
-    bool bStartingStepFound = false;
 
     if ( !bHasStarted )
     {
@@ -222,88 +220,88 @@ void FGBFAsyncMixin::FLoadingState::Start()
     TryCompleteAsyncLoading();
 }
 
-void FGBFAsyncMixin::FLoadingState::AsyncLoad( FSoftObjectPath SoftObjectPath, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::FGBFLoadingState::AsyncLoad( const FSoftObjectPath & soft_object, const FSimpleDelegate & delegate_to_call )
 {
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] AsyncLoad '%s'" ), this, *SoftObjectPath.ToString() );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] AsyncLoad '%s'" ), this, *soft_object.ToString() );
 
     AsyncSteps.Add(
         MakeUnique< FAsyncStep >(
-            DelegateToCall,
-            UAssetManager::GetStreamableManager().RequestAsyncLoad( SoftObjectPath, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, false, false, TEXT( "AsyncMixin" ) ) ) );
+            delegate_to_call,
+            UAssetManager::GetStreamableManager().RequestAsyncLoad( soft_object, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, false, false, TEXT( "AsyncMixin" ) ) ) );
 
     TryScheduleStart();
 }
 
-void FGBFAsyncMixin::FLoadingState::AsyncLoad( const TArray< FSoftObjectPath > & SoftObjectPaths, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::FGBFLoadingState::AsyncLoad( const TArray< FSoftObjectPath > & soft_object_paths, const FSimpleDelegate & delegate_to_call )
 {
     {
-        const FString & Paths = FString::JoinBy( SoftObjectPaths, TEXT( ", " ), []( const FSoftObjectPath & SoftObjectPath ) {
-            return FString::Printf( TEXT( "'%s'" ), *SoftObjectPath.ToString() );
+        const auto & paths = FString::JoinBy( soft_object_paths, TEXT( ", " ), []( const FSoftObjectPath & soft_object_path ) {
+            return FString::Printf( TEXT( "'%s'" ), *soft_object_path.ToString() );
         } );
-        UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] AsyncLoad [%s]" ), this, *Paths );
+        UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] AsyncLoad [%s]" ), this, *paths );
     }
 
     AsyncSteps.Add(
         MakeUnique< FAsyncStep >(
-            DelegateToCall,
-            UAssetManager::GetStreamableManager().RequestAsyncLoad( SoftObjectPaths, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, false, false, TEXT( "AsyncMixin" ) ) ) );
+            delegate_to_call,
+            UAssetManager::GetStreamableManager().RequestAsyncLoad( soft_object_paths, FStreamableDelegate(), FStreamableManager::AsyncLoadHighPriority, false, false, TEXT( "AsyncMixin" ) ) ) );
 
     TryScheduleStart();
 }
 
-void FGBFAsyncMixin::FLoadingState::AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & AssetIds, const TArray< FName > & LoadBundles, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::FGBFLoadingState::AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & primary_asset_ids, const TArray< FName > & load_bundles, const FSimpleDelegate & delegate_to_call )
 {
     {
-        const FString & Assets = FString::JoinBy( AssetIds, TEXT( ", " ), []( const FPrimaryAssetId & AssetId ) {
-            return AssetId.ToString();
+        const auto & assets = FString::JoinBy( primary_asset_ids, TEXT( ", " ), []( const FPrimaryAssetId & asset_id ) {
+            return asset_id.ToString();
         } );
-        const FString & Bundles = FString::JoinBy( LoadBundles, TEXT( ", " ), []( const FName & LoadBundle ) {
-            return LoadBundle.ToString();
+        const auto & bundles = FString::JoinBy( load_bundles, TEXT( ", " ), []( const FName & load_bundle ) {
+            return load_bundle.ToString();
         } );
-        UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X]  AsyncPreload Assets [%s], Bundles[%s]" ), this, *Assets, *Bundles );
+        UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p]  AsyncPreload Assets [%s], Bundles[%s]" ), this, *assets, *bundles );
     }
 
-    TSharedPtr< FStreamableHandle > StreamingHandle;
+    TSharedPtr< FStreamableHandle > streaming_handle;
 
-    if ( AssetIds.Num() > 0 )
+    if ( primary_asset_ids.Num() > 0 )
     {
         bPreloadedBundles = true;
 
-        const bool bLoadRecursive = true;
-        StreamingHandle = UAssetManager::Get().PreloadPrimaryAssets( AssetIds, LoadBundles, bLoadRecursive );
+        constexpr bool load_recursive = true;
+        streaming_handle = UAssetManager::Get().PreloadPrimaryAssets( primary_asset_ids, load_bundles, load_recursive );
     }
 
-    AsyncSteps.Add( MakeUnique< FAsyncStep >( DelegateToCall, StreamingHandle ) );
+    AsyncSteps.Add( MakeUnique< FAsyncStep >( delegate_to_call, streaming_handle ) );
 
     TryScheduleStart();
 }
 
-void FGBFAsyncMixin::FLoadingState::AsyncCondition( TSharedRef< FAsyncCondition > Condition, const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::FGBFLoadingState::AsyncCondition( TSharedRef< FGBFAsyncCondition > condition, const FSimpleDelegate & callback )
 {
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] AsyncCondition '0x%X'" ), this, &Condition.Get() );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] AsyncCondition '0x%p'" ), this, &condition.Get() );
 
-    AsyncSteps.Add( MakeUnique< FAsyncStep >( DelegateToCall, Condition ) );
+    AsyncSteps.Add( MakeUnique< FAsyncStep >( callback, condition ) );
 
     TryScheduleStart();
 }
 
-void FGBFAsyncMixin::FLoadingState::AsyncEvent( const FSimpleDelegate & DelegateToCall )
+void FGBFAsyncMixin::FGBFLoadingState::AsyncEvent( const FSimpleDelegate & callback )
 {
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] AsyncEvent" ), this );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] AsyncEvent" ), this );
 
-    AsyncSteps.Add( MakeUnique< FAsyncStep >( DelegateToCall ) );
+    AsyncSteps.Add( MakeUnique< FAsyncStep >( callback ) );
 
     TryScheduleStart();
 }
 
-void FGBFAsyncMixin::FLoadingState::TryScheduleStart()
+void FGBFAsyncMixin::FGBFLoadingState::TryScheduleStart()
 {
     CancelDestroyThisMemory( /*bDestroying*/ false );
 
     // In the event the user forgets to start async loading, we'll begin doing it next frame.
     if ( !StartTimerDelegate.IsValid() )
     {
-        StartTimerDelegate = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateLambda( [ this ]( float DeltaTime ) {
+        StartTimerDelegate = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateLambda( [ this ]( float delta_time ) {
             QUICK_SCOPE_CYCLE_COUNTER( STAT_FAsyncMixin_FLoadingState_TryScheduleStartDelegate );
             Start();
             return false;
@@ -311,7 +309,7 @@ void FGBFAsyncMixin::FLoadingState::TryScheduleStart()
     }
 }
 
-bool FGBFAsyncMixin::FLoadingState::IsLoadingInProgress() const
+bool FGBFAsyncMixin::FGBFLoadingState::IsLoadingInProgress() const
 {
     if ( AsyncSteps.Num() > 0 )
     {
@@ -331,17 +329,17 @@ bool FGBFAsyncMixin::FLoadingState::IsLoadingInProgress() const
     return false;
 }
 
-bool FGBFAsyncMixin::FLoadingState::IsLoadingInProgressOrPending() const
+bool FGBFAsyncMixin::FGBFLoadingState::IsLoadingInProgressOrPending() const
 {
     return StartTimerDelegate.IsValid() || IsLoadingInProgress();
 }
 
-bool FGBFAsyncMixin::FLoadingState::IsPendingDestroy() const
+bool FGBFAsyncMixin::FGBFLoadingState::IsPendingDestroy() const
 {
     return DestroyMemoryDelegate.IsValid();
 }
 
-void FGBFAsyncMixin::FLoadingState::TryCompleteAsyncLoading()
+void FGBFAsyncMixin::FGBFLoadingState::TryCompleteAsyncLoading()
 {
     // If we haven't started when we get this callback it means we've already completed
     // and this is some other callback finishing on the same frame/stack that we need to avoid
@@ -351,35 +349,35 @@ void FGBFAsyncMixin::FLoadingState::TryCompleteAsyncLoading()
         return;
     }
 
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] TryCompleteAsyncLoading - (Current Progress %d/%d)" ), this, CurrentAsyncStep + 1, AsyncSteps.Num() );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] TryCompleteAsyncLoading - (Current Progress %d/%d)" ), this, CurrentAsyncStep + 1, AsyncSteps.Num() );
 
     while ( CurrentAsyncStep < AsyncSteps.Num() )
     {
-        FAsyncStep * Step = AsyncSteps[ CurrentAsyncStep ].Get();
-        if ( Step->IsLoadingInProgress() )
+        auto * step = AsyncSteps[ CurrentAsyncStep ].Get();
+        if ( step->IsLoadingInProgress() )
         {
-            if ( !Step->IsCompleteDelegateBound() )
+            if ( !step->IsCompleteDelegateBound() )
             {
-                UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Step %d - Still Loading (Listening)" ), this, CurrentAsyncStep + 1 );
-                const bool bBound = Step->BindCompleteDelegate( FSimpleDelegate::CreateSP( this, &FLoadingState::TryCompleteAsyncLoading ) );
-                ensureMsgf( bBound, TEXT( "This is not intended to return false.  We're checking if it's loaded above, this should definitely return true." ) );
+                UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Step %d - Still Loading (Listening)" ), this, CurrentAsyncStep + 1 );
+                const auto bound = step->BindCompleteDelegate( FSimpleDelegate::CreateSP( this, &FGBFLoadingState::TryCompleteAsyncLoading ) );
+                ensureMsgf( bound, TEXT( "This is not intended to return false.  We're checking if it's loaded above, this should definitely return true." ) );
             }
             else
             {
-                UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Step %d - Still Loading (Waiting)" ), this, CurrentAsyncStep + 1 );
+                UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Step %d - Still Loading (Waiting)" ), this, CurrentAsyncStep + 1 );
             }
 
             break;
         }
         else
         {
-            UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] Step %d - Completed (Calling User)" ), this, CurrentAsyncStep + 1 );
+            UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] Step %d - Completed (Calling User)" ), this, CurrentAsyncStep + 1 );
 
             // Always advance the CurrentAsyncStep, before calling the user callback, it's possible they might
             // add new work, and try and start again, so we need to be ready for the next bit.
             CurrentAsyncStep++;
 
-            Step->ExecuteUserCallback();
+            step->ExecuteUserCallback();
         }
     }
 
@@ -394,9 +392,9 @@ void FGBFAsyncMixin::FLoadingState::TryCompleteAsyncLoading()
     }
 }
 
-void FGBFAsyncMixin::FLoadingState::CompleteAsyncLoading()
+void FGBFAsyncMixin::FGBFLoadingState::CompleteAsyncLoading()
 {
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] CompleteAsyncLoading" ), this );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] CompleteAsyncLoading" ), this );
 
     // Mark that we've completed loading.
     if ( bHasStarted )
@@ -429,40 +427,41 @@ void FGBFAsyncMixin::FLoadingState::CompleteAsyncLoading()
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-FGBFAsyncMixin::FLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & InUserCallback ) :
-    UserCallback( InUserCallback )
+FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & user_callback ) :
+    UserCallback( user_callback )
 {
 }
 
-FGBFAsyncMixin::FLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & InUserCallback, const TSharedPtr< FStreamableHandle > & InStreamingHandle ) :
-    UserCallback( InUserCallback ),
-    StreamingHandle( InStreamingHandle )
+FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & user_callback, const TSharedPtr< FStreamableHandle > & streaming_handle ) :
+    UserCallback( user_callback ),
+    StreamingHandle( streaming_handle )
 {
 }
 
-FGBFAsyncMixin::FLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & InUserCallback, const TSharedPtr< FAsyncCondition > & InCondition ) :
-    UserCallback( InUserCallback ),
-    Condition( InCondition )
+FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::FAsyncStep( const FSimpleDelegate & user_callback, const TSharedPtr< FGBFAsyncCondition > & condition ) :
+    UserCallback( user_callback ),
+    Condition( condition )
 {
 }
 
-FGBFAsyncMixin::FLoadingState::FAsyncStep::~FAsyncStep()
+FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::~FAsyncStep()
 {
 }
 
-void FGBFAsyncMixin::FLoadingState::FAsyncStep::ExecuteUserCallback()
+void FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::ExecuteUserCallback()
 {
     UserCallback.ExecuteIfBound();
     UserCallback.Unbind();
 }
 
-bool FGBFAsyncMixin::FLoadingState::FAsyncStep::IsComplete() const
+bool FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::IsComplete() const
 {
     if ( StreamingHandle.IsValid() )
     {
         return StreamingHandle->HasLoadCompleted();
     }
-    else if ( Condition.IsValid() )
+
+    if ( Condition.IsValid() )
     {
         return Condition->IsComplete();
     }
@@ -470,7 +469,7 @@ bool FGBFAsyncMixin::FLoadingState::FAsyncStep::IsComplete() const
     return true;
 }
 
-void FGBFAsyncMixin::FLoadingState::FAsyncStep::Cancel()
+void FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::Cancel()
 {
     if ( StreamingHandle.IsValid() )
     {
@@ -485,7 +484,7 @@ void FGBFAsyncMixin::FLoadingState::FAsyncStep::Cancel()
     bIsCompletionDelegateBound = false;
 }
 
-bool FGBFAsyncMixin::FLoadingState::FAsyncStep::BindCompleteDelegate( const FSimpleDelegate & NewDelegate )
+bool FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::BindCompleteDelegate( const FSimpleDelegate & new_delegate )
 {
     if ( IsComplete() )
     {
@@ -495,11 +494,11 @@ bool FGBFAsyncMixin::FLoadingState::FAsyncStep::BindCompleteDelegate( const FSim
 
     if ( StreamingHandle.IsValid() )
     {
-        StreamingHandle->BindCompleteDelegate( NewDelegate );
+        StreamingHandle->BindCompleteDelegate( new_delegate );
     }
     else if ( Condition )
     {
-        Condition->BindCompleteDelegate( NewDelegate );
+        Condition->BindCompleteDelegate( new_delegate );
     }
 
     bIsCompletionDelegateBound = true;
@@ -507,7 +506,7 @@ bool FGBFAsyncMixin::FLoadingState::FAsyncStep::BindCompleteDelegate( const FSim
     return true;
 }
 
-bool FGBFAsyncMixin::FLoadingState::FAsyncStep::IsCompleteDelegateBound() const
+bool FGBFAsyncMixin::FGBFLoadingState::FAsyncStep::IsCompleteDelegateBound() const
 {
     return bIsCompletionDelegateBound;
 }
@@ -515,35 +514,35 @@ bool FGBFAsyncMixin::FLoadingState::FAsyncStep::IsCompleteDelegateBound() const
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-FAsyncCondition::FAsyncCondition( const FAsyncConditionDelegate & Condition ) :
-    UserCondition( Condition )
+FGBFAsyncCondition::FGBFAsyncCondition( const FGBFAsyncConditionDelegate & condition ) :
+    UserCondition( condition )
 {
 }
 
-FAsyncCondition::FAsyncCondition( TFunction< EAsyncConditionResult() > && Condition ) :
-    UserCondition( FAsyncConditionDelegate::CreateLambda( [ UserFunction = MoveTemp( Condition ) ]() mutable {
+FGBFAsyncCondition::FGBFAsyncCondition( TFunction< EGBFAsyncConditionResult() > && condition ) :
+    UserCondition( FGBFAsyncConditionDelegate::CreateLambda( [ UserFunction = MoveTemp( condition ) ]() mutable {
         return UserFunction();
     } ) )
 {
 }
 
-FAsyncCondition::~FAsyncCondition()
+FGBFAsyncCondition::~FGBFAsyncCondition()
 {
     FTSTicker::GetCoreTicker().RemoveTicker( RepeatHandle );
 }
 
-bool FAsyncCondition::IsComplete() const
+bool FGBFAsyncCondition::IsComplete() const
 {
     if ( UserCondition.IsBound() )
     {
-        const EAsyncConditionResult Result = UserCondition.Execute();
-        return Result == EAsyncConditionResult::Complete;
+        const auto result = UserCondition.Execute();
+        return result == EGBFAsyncConditionResult::Complete;
     }
 
     return true;
 }
 
-bool FAsyncCondition::BindCompleteDelegate( const FSimpleDelegate & NewDelegate )
+bool FGBFAsyncCondition::BindCompleteDelegate( const FSimpleDelegate & new_delegate )
 {
     if ( IsComplete() )
     {
@@ -551,31 +550,31 @@ bool FAsyncCondition::BindCompleteDelegate( const FSimpleDelegate & NewDelegate 
         return false;
     }
 
-    CompletionDelegate = NewDelegate;
+    CompletionDelegate = new_delegate;
 
     if ( !RepeatHandle.IsValid() )
     {
-        RepeatHandle = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateSP( this, &FAsyncCondition::TryToContinue ), 0.16 );
+        RepeatHandle = FTSTicker::GetCoreTicker().AddTicker( FTickerDelegate::CreateSP( this, &FGBFAsyncCondition::TryToContinue ), 0.16 );
     }
 
     return true;
 }
 
-bool FAsyncCondition::TryToContinue( float )
+bool FGBFAsyncCondition::TryToContinue( float )
 {
     QUICK_SCOPE_CYCLE_COUNTER( STAT_FAsyncCondition_TryToContinue );
 
-    UE_LOG( LogAsyncMixin, Verbose, TEXT( "[0x%X] AsyncCondition::TryToContinue" ), this );
+    UE_LOG( LogGBFAsyncMixin, Verbose, TEXT( "[0x%p] AsyncCondition::TryToContinue" ), this );
 
     if ( UserCondition.IsBound() )
     {
-        const EAsyncConditionResult Result = UserCondition.Execute();
+        const auto result = UserCondition.Execute();
 
-        switch ( Result )
+        switch ( result )
         {
-            case EAsyncConditionResult::TryAgain:
+            case EGBFAsyncConditionResult::TryAgain:
                 return true;
-            case EAsyncConditionResult::Complete:
+            case EGBFAsyncConditionResult::Complete:
                 RepeatHandle.Reset();
                 UserCondition.Unbind();
 

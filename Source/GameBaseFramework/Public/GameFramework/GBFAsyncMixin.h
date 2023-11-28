@@ -3,7 +3,7 @@
 #include <Containers/Ticker.h>
 #include <UObject/SoftObjectPtr.h>
 
-class FAsyncCondition;
+class FGBFAsyncCondition;
 class FName;
 class UPrimaryDataAsset;
 struct FPrimaryAssetId;
@@ -26,10 +26,10 @@ DECLARE_DELEGATE_OneParam( FGBFStreamableHandleDelegate, TSharedPtr< FStreamable
 // };
 
 /**
- * The FAsyncMixin allows easier management of async loading requests, to ensure linear request handling, to make
+ * The FGBFAsyncMixin allows easier management of async loading requests, to ensure linear request handling, to make
  * writing code much easier.  The usage pattern is as follows,
  *
- * First - inherit from FAsyncMixin, even if you're a UObject, you can also inherit from FAsyncMixin.
+ * First - inherit from FGBFAsyncMixin, even if you're a UObject, you can also inherit from FGBFAsyncMixin.
  *
  * Then - you can make your async loads as follows.
  *
@@ -56,12 +56,12 @@ DECLARE_DELEGATE_OneParam( FGBFStreamableHandleDelegate, TSharedPtr< FStreamable
  * when you're done with your setup, as maybe everything is already loaded, and it will avoid a single frame
  * of a loading indicator flash, which is annoying.
  *
- * NOTE: The FAsyncMixin also makes it safe to pass [this] as a captured input into your lambda, because it handles
+ * NOTE: The FGBFAsyncMixin also makes it safe to pass [this] as a captured input into your lambda, because it handles
  * unhooking everything if either your owner class is destroyed, or you cancel everything.
  *
- * NOTE: FAsyncMixin doesn't add any additional memory to your class.  Several classes currently handling async loading
+ * NOTE: FGBFAsyncMixin doesn't add any additional memory to your class.  Several classes currently handling async loading
  * internally allocate TSharedPtr<FStreamableHandle> members and tend to hold onto SoftObjectPaths temporary state.  The
- * FAsyncMixin does all of this internally with a static TMap so that all of the async request memory is stored temporarily
+ * FGBFAsyncMixin does all of this internally with a static TMap so that all of the async request memory is stored temporarily
  * and sparsely.
  *
  * NOTE: For debugging and understanding what's going on, you should add -LogCmds="LogAsyncMixin Verbose" to the command line.
@@ -86,97 +86,97 @@ protected:
 protected:
     /** Async load a TSoftClassPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftClassPtr< T > SoftClass, TFunction< void() > && Callback )
+    void AsyncLoad( TSoftClassPtr< T > soft_class, TFunction< void() > && callback )
     {
-        AsyncLoad( SoftClass.ToSoftObjectPath(), FSimpleDelegate::CreateLambda( MoveTemp( Callback ) ) );
+        AsyncLoad( soft_class.ToSoftObjectPath(), FSimpleDelegate::CreateLambda( MoveTemp( callback ) ) );
     }
 
     /** Async load a TSoftClassPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftClassPtr< T > SoftClass, TFunction< void( TSubclassOf< T > ) > && Callback )
+    void AsyncLoad( TSoftClassPtr< T > soft_class, TFunction< void( TSubclassOf< T > ) > && callback )
     {
-        AsyncLoad( SoftClass.ToSoftObjectPath(),
-            FSimpleDelegate::CreateLambda( [ SoftClass, UserCallback = MoveTemp( Callback ) ]() mutable {
-                UserCallback( SoftClass.Get() );
+        AsyncLoad( soft_class.ToSoftObjectPath(),
+            FSimpleDelegate::CreateLambda( [ soft_class, UserCallback = MoveTemp( callback ) ]() mutable {
+                UserCallback( soft_class.Get() );
             } ) );
     }
 
     /** Async load a TSoftClassPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftClassPtr< T > SoftClass, const FSimpleDelegate & Callback = FSimpleDelegate() )
+    void AsyncLoad( TSoftClassPtr< T > soft_class, const FSimpleDelegate & callback = FSimpleDelegate() )
     {
-        AsyncLoad( SoftClass.ToSoftObjectPath(), Callback );
+        AsyncLoad( soft_class.ToSoftObjectPath(), callback );
     }
 
     /** Async load a TSoftObjectPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftObjectPtr< T > SoftObject, TFunction< void() > && Callback )
+    void AsyncLoad( TSoftObjectPtr< T > soft_object, TFunction< void() > && callback )
     {
-        AsyncLoad( SoftObject.ToSoftObjectPath(), FSimpleDelegate::CreateLambda( MoveTemp( Callback ) ) );
+        AsyncLoad( soft_object.ToSoftObjectPath(), FSimpleDelegate::CreateLambda( MoveTemp( callback ) ) );
     }
 
     /** Async load a TSoftObjectPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftObjectPtr< T > SoftObject, TFunction< void( T * ) > && Callback )
+    void AsyncLoad( TSoftObjectPtr< T > soft_object, TFunction< void( T * ) > && callback )
     {
-        AsyncLoad( SoftObject.ToSoftObjectPath(),
-            FSimpleDelegate::CreateLambda( [ SoftObject, UserCallback = MoveTemp( Callback ) ]() mutable {
-                UserCallback( SoftObject.Get() );
+        AsyncLoad( soft_object.ToSoftObjectPath(),
+            FSimpleDelegate::CreateLambda( [ soft_object, UserCallback = MoveTemp( callback ) ]() mutable {
+                UserCallback( soft_object.Get() );
             } ) );
     }
 
     /** Async load a TSoftObjectPtr<T>, call the Callback when complete. */
     template < typename T = UObject >
-    void AsyncLoad( TSoftObjectPtr< T > SoftObject, const FSimpleDelegate & Callback = FSimpleDelegate() )
+    void AsyncLoad( TSoftObjectPtr< T > soft_object, const FSimpleDelegate & callback = FSimpleDelegate() )
     {
-        AsyncLoad( SoftObject.ToSoftObjectPath(), Callback );
+        AsyncLoad( soft_object.ToSoftObjectPath(), callback );
     }
 
     /** Async load a FSoftObjectPath, call the Callback when complete. */
-    void AsyncLoad( FSoftObjectPath SoftObjectPath, const FSimpleDelegate & Callback = FSimpleDelegate() );
+    void AsyncLoad( const FSoftObjectPath & soft_object_path, const FSimpleDelegate & callback = FSimpleDelegate() );
 
     /** Async load an array of FSoftObjectPath, call the Callback when complete. */
-    void AsyncLoad( const TArray< FSoftObjectPath > & SoftObjectPaths, TFunction< void() > && Callback )
+    void AsyncLoad( const TArray< FSoftObjectPath > & soft_object_paths, TFunction< void() > && callback )
     {
-        AsyncLoad( SoftObjectPaths, FSimpleDelegate::CreateLambda( MoveTemp( Callback ) ) );
+        AsyncLoad( soft_object_paths, FSimpleDelegate::CreateLambda( MoveTemp( callback ) ) );
     }
 
     /** Async load an array of FSoftObjectPath, call the Callback when complete. */
-    void AsyncLoad( const TArray< FSoftObjectPath > & SoftObjectPaths, const FSimpleDelegate & Callback = FSimpleDelegate() );
+    void AsyncLoad( const TArray< FSoftObjectPath > & soft_object_paths, const FSimpleDelegate & callback = FSimpleDelegate() );
 
     /** Given an array of primary assets, it loads all of the bundles referenced by properties of these assets specified in the LoadBundles array. */
     template < typename T = UPrimaryDataAsset >
-    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< T * > & Assets, const TArray< FName > & LoadBundles, const FSimpleDelegate & Callback = FSimpleDelegate() )
+    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< T * > & assets, const TArray< FName > & load_bundles, const FSimpleDelegate & callback = FSimpleDelegate() )
     {
-        TArray< FPrimaryAssetId > PrimaryAssetIds;
-        for ( const T * Item : Assets )
+        TArray< FPrimaryAssetId > primary_asset_ids;
+        for ( const auto * item : assets )
         {
-            PrimaryAssetIds.Add( Item );
+            primary_asset_ids.Add( item );
         }
 
-        AsyncPreloadPrimaryAssetsAndBundles( PrimaryAssetIds, LoadBundles, Callback );
+        AsyncPreloadPrimaryAssetsAndBundles( primary_asset_ids, load_bundles, callback );
     }
 
     /** Given an array of primary asset ids, it loads all of the bundles referenced by properties of these assets specified in the LoadBundles array. */
-    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & AssetIds, const TArray< FName > & LoadBundles, TFunction< void() > && Callback )
+    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & asset_ids, const TArray< FName > & load_bundles, TFunction< void() > && callback )
     {
-        AsyncPreloadPrimaryAssetsAndBundles( AssetIds, LoadBundles, FSimpleDelegate::CreateLambda( MoveTemp( Callback ) ) );
+        AsyncPreloadPrimaryAssetsAndBundles( asset_ids, load_bundles, FSimpleDelegate::CreateLambda( MoveTemp( callback ) ) );
     }
 
     /** Given an array of primary asset ids, it loads all of the bundles referenced by properties of these assets specified in the LoadBundles array. */
-    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & AssetIds, const TArray< FName > & LoadBundles, const FSimpleDelegate & Callback = FSimpleDelegate() );
+    void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & asset_ids, const TArray< FName > & load_bundles, const FSimpleDelegate & callback = FSimpleDelegate() );
 
     /** Add a future condition that must be true before we move forward. */
-    void AsyncCondition( TSharedRef< FAsyncCondition > Condition, const FSimpleDelegate & Callback = FSimpleDelegate() );
+    void AsyncCondition( const TSharedRef< FGBFAsyncCondition > & condition, const FSimpleDelegate & callback = FSimpleDelegate() );
 
     /**
      * Rather than load anything, this callback is just inserted into the callback sequence so that when async loading
      * completes this event will be called at the same point in the sequence.  Super useful if you don't want a step to be
      * tied to a particular asset in case some of the assets are optional.
      */
-    void AsyncEvent( TFunction< void() > && Callback )
+    void AsyncEvent( TFunction< void() > && callback )
     {
-        AsyncEvent( FSimpleDelegate::CreateLambda( MoveTemp( Callback ) ) );
+        AsyncEvent( FSimpleDelegate::CreateLambda( MoveTemp( callback ) ) );
     }
 
     /**
@@ -184,7 +184,7 @@ protected:
      * completes this event will be called at the same point in the sequence.  Super useful if you don't want a step to be
      * tied to a particular asset in case some of the assets are optional.
      */
-    void AsyncEvent( const FSimpleDelegate & Callback );
+    void AsyncEvent( const FSimpleDelegate & callback );
 
     /** Flushes any async loading requests. */
     void StartAsyncLoading();
@@ -197,14 +197,14 @@ protected:
 
 private:
     /**
-     * The FLoadingState is what actually is allocated for the FAsyncMixin in a big map so that the FAsyncMixin itself holds no
-     * no memory, and we dynamically create the FLoadingState only if needed, and destroy it when it's unneeded.
+     * The FGBFLoadingState is what actually is allocated for the FGBFAsyncMixin in a big map so that the FGBFAsyncMixin itself holds no
+     * no memory, and we dynamically create the FGBFLoadingState only if needed, and destroy it when it's unneeded.
      */
-    class FLoadingState : public TSharedFromThis< FLoadingState >
+    class FGBFLoadingState : public TSharedFromThis< FGBFLoadingState >
     {
     public:
-        FLoadingState( FGBFAsyncMixin & InOwner );
-        virtual ~FLoadingState();
+        FGBFLoadingState( FGBFAsyncMixin & owner );
+        virtual ~FGBFLoadingState();
 
         /** Starts the async sequence. */
         void Start();
@@ -212,11 +212,11 @@ private:
         /** Cancels the async sequence. */
         void CancelAndDestroy();
 
-        void AsyncLoad( FSoftObjectPath SoftObject, const FSimpleDelegate & DelegateToCall );
-        void AsyncLoad( const TArray< FSoftObjectPath > & SoftObjectPaths, const FSimpleDelegate & DelegateToCall );
-        void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & PrimaryAssetIds, const TArray< FName > & LoadBundles, const FSimpleDelegate & DelegateToCall );
-        void AsyncCondition( TSharedRef< FAsyncCondition > Condition, const FSimpleDelegate & Callback );
-        void AsyncEvent( const FSimpleDelegate & Callback );
+        void AsyncLoad( const FSoftObjectPath & soft_object, const FSimpleDelegate & delegate_to_call );
+        void AsyncLoad( const TArray< FSoftObjectPath > & soft_object_paths, const FSimpleDelegate & delegate_to_call );
+        void AsyncPreloadPrimaryAssetsAndBundles( const TArray< FPrimaryAssetId > & primary_asset_ids, const TArray< FName > & load_bundles, const FSimpleDelegate & delegate_to_call );
+        void AsyncCondition( TSharedRef< FGBFAsyncCondition > condition, const FSimpleDelegate & callback );
+        void AsyncEvent( const FSimpleDelegate & callback );
 
         bool IsLoadingComplete() const
         {
@@ -227,7 +227,7 @@ private:
         bool IsPendingDestroy() const;
 
     private:
-        void CancelOnly( bool bDestroying );
+        void CancelOnly( bool destroying );
         void CancelStartTimer();
         void TryScheduleStart();
         void TryCompleteAsyncLoading();
@@ -235,23 +235,23 @@ private:
 
     private:
         void RequestDestroyThisMemory();
-        void CancelDestroyThisMemory( bool bDestroying );
+        void CancelDestroyThisMemory( bool destroying );
 
         /** Who owns the loading state?  We need this to call back into the owning mix-in object. */
         FGBFAsyncMixin & OwnerRef;
 
         /**
          * Did we need to pre-load bundles?  If we didn't pre-load bundles (which require you keep the streaming handle
-         * around or they will be destroyed), then we can safely destroy the FLoadingState when everything is done loading.
+         * around or they will be destroyed), then we can safely destroy the FGBFLoadingState when everything is done loading.
          */
         bool bPreloadedBundles = false;
 
         class FAsyncStep
         {
         public:
-            FAsyncStep( const FSimpleDelegate & InUserCallback );
-            FAsyncStep( const FSimpleDelegate & InUserCallback, const TSharedPtr< FStreamableHandle > & InStreamingHandle );
-            FAsyncStep( const FSimpleDelegate & InUserCallback, const TSharedPtr< FAsyncCondition > & InCondition );
+            FAsyncStep( const FSimpleDelegate & user_callback );
+            FAsyncStep( const FSimpleDelegate & user_callback, const TSharedPtr< FStreamableHandle > & streaming_handle );
+            FAsyncStep( const FSimpleDelegate & user_callback, const TSharedPtr< FGBFAsyncCondition > & condition );
 
             ~FAsyncStep();
 
@@ -265,7 +265,7 @@ private:
             bool IsComplete() const;
             void Cancel();
 
-            bool BindCompleteDelegate( const FSimpleDelegate & NewDelegate );
+            bool BindCompleteDelegate( const FSimpleDelegate & new_delegate );
             bool IsCompleteDelegateBound() const;
 
         private:
@@ -274,7 +274,7 @@ private:
 
             // Possible Async 'thing'
             TSharedPtr< FStreamableHandle > StreamingHandle;
-            TSharedPtr< FAsyncCondition > Condition;
+            TSharedPtr< FGBFAsyncCondition > Condition;
         };
 
         bool bHasStarted = false;
@@ -287,26 +287,26 @@ private:
         FTSTicker::FDelegateHandle DestroyMemoryDelegate;
     };
 
-    const FLoadingState & GetLoadingStateConst() const;
+    const FGBFLoadingState & GetLoadingStateConst() const;
 
-    FLoadingState & GetLoadingState();
+    FGBFLoadingState & GetLoadingState();
 
     bool HasLoadingState() const;
 
     bool IsLoadingInProgressOrPending() const;
 
 private:
-    static TMap< FGBFAsyncMixin *, TSharedRef< FLoadingState > > Loading;
+    static TMap< FGBFAsyncMixin *, TSharedRef< FGBFLoadingState > > Loading;
 };
 
 /**
  * Sometimes a mix-in just doesn't make sense.  Perhaps the object has to manage many different jobs
- * that each have their own async dependency chain/scope.  For those situations you can use the FAsyncScope.
+ * that each have their own async dependency chain/scope.  For those situations you can use the FGBFAsyncScope.
  *
  * This class is a standalone Async dependency handler so that you can fire off several load jobs and always handle them
- * in the proper order, just like with combining FAsyncMixin with your class.
+ * in the proper order, just like with combining FGBFAsyncMixin with your class.
  */
-class GAMEBASEFRAMEWORK_API FAsyncScope : public FGBFAsyncMixin
+class GAMEBASEFRAMEWORK_API FGBFAsyncScope : public FGBFAsyncMixin
 {
 public:
     using FGBFAsyncMixin::AsyncLoad;
@@ -327,33 +327,33 @@ public:
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-enum class EAsyncConditionResult : uint8
+enum class EGBFAsyncConditionResult : uint8
 {
     TryAgain,
     Complete
 };
 
-DECLARE_DELEGATE_RetVal( EAsyncConditionResult, FAsyncConditionDelegate );
+DECLARE_DELEGATE_RetVal( EGBFAsyncConditionResult, FGBFAsyncConditionDelegate );
 
 /**
  * The async condition allows you to have custom reasons to hault the async loading until some condition is met.
  */
-class FAsyncCondition : public TSharedFromThis< FAsyncCondition >
+class FGBFAsyncCondition : public TSharedFromThis< FGBFAsyncCondition >
 {
 public:
-    FAsyncCondition( const FAsyncConditionDelegate & Condition );
-    FAsyncCondition( TFunction< EAsyncConditionResult() > && Condition );
-    virtual ~FAsyncCondition();
+    FGBFAsyncCondition( const FGBFAsyncConditionDelegate & condition );
+    FGBFAsyncCondition( TFunction< EGBFAsyncConditionResult() > && condition );
+    virtual ~FGBFAsyncCondition();
 
 protected:
     bool IsComplete() const;
-    bool BindCompleteDelegate( const FSimpleDelegate & NewDelegate );
+    bool BindCompleteDelegate( const FSimpleDelegate & new_delegate );
 
 private:
-    bool TryToContinue( float DeltaTime );
+    bool TryToContinue( float delta_time );
 
     FTSTicker::FDelegateHandle RepeatHandle;
-    FAsyncConditionDelegate UserCondition;
+    FGBFAsyncConditionDelegate UserCondition;
     FSimpleDelegate CompletionDelegate;
 
     friend FGBFAsyncMixin;
