@@ -122,7 +122,7 @@ void AGBFCharacter::OnMovementModeChanged( EMovementMode prev_movement_mode, uin
 {
     Super::OnMovementModeChanged( prev_movement_mode, previous_custom_mode );
 
-    auto * character_movement_component = GetCharacterMovement();
+    const auto * character_movement_component = GetCharacterMovement();
 
     SetMovementModeTag( prev_movement_mode, previous_custom_mode, false );
     SetMovementModeTag( character_movement_component->MovementMode, character_movement_component->CustomMovementMode, true );
