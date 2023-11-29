@@ -61,6 +61,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
                 indicator->SetDataObject( interactable_target_actor );
                 indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
                 indicator->SetIndicatorClass( interaction_widget_class );
+                indicator->SetScreenSpaceOffset( interaction_option.InteractionWidgetOffset );
                 indicator_manager->AddIndicator( indicator );
 
                 Indicators.Add( indicator );
