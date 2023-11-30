@@ -2,6 +2,7 @@
 
 #include "Engine/GBFHUD.h"
 
+#include <Blueprint/GameViewportSubsystem.h>
 #include <CommonActivatableWidget.h>
 #include <CommonUIExtensions.h>
 #include <Components/GameFrameworkComponentManager.h>
@@ -44,7 +45,7 @@ EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( FDataValidat
     auto result = CombineDataValidationResults( Super::IsDataValid( context ), EDataValidationResult::Valid );
     {
         auto entry_index = 0;
-        for ( const auto & [ layout_class, layer_id ] : Layout )
+        for ( const auto & [ layout_class, layer_id, controller_id ] : Layout )
         {
             if ( layout_class.IsNull() )
             {
@@ -64,7 +65,7 @@ EDataValidationResult UGBFGameFeatureAction_AddWidget::IsDataValid( FDataValidat
 
     {
         auto entry_index = 0;
-        for ( const auto & [ widget_class, slot_id ] : Widgets )
+        for ( const auto & [ widget_class, slot_id, controller_id ] : Widgets )
         {
             if ( widget_class.IsNull() )
             {
@@ -144,16 +145,33 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
 
         for ( const auto & entry : Layout )
         {
-            if ( const auto concrete_widget_class = entry.LayoutClass.Get() )
+            if ( entry.ControllerId == -1 || local_player->GetControllerId() == entry.ControllerId )
             {
-                per_actor_data.LayoutsAdded.Add( UCommonUIExtensions::PushContentToLayer_ForPlayer( local_player, entry.LayerID, concrete_widget_class ) );
+                if ( const auto concrete_widget_class = entry.LayoutClass.Get() )
+                {
+                    per_actor_data.LayoutsAdded.Add( UCommonUIExtensions::PushContentToLayer_ForPlayer( local_player, entry.LayerID, concrete_widget_class ) );
+                }
             }
         }
 
         auto * extension_subsystem = hud->GetWorld()->GetSubsystem< UUIExtensionSubsystem >();
         for ( const auto & entry : Widgets )
         {
-            per_actor_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, entry.WidgetClass.Get(), -1 ) );
+            if ( entry.ControllerId == -1 || local_player->GetControllerId() == entry.ControllerId )
+            {
+                per_actor_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, entry.WidgetClass.Get(), -1 ) );
+            }
+        }
+
+        if ( local_player->GetControllerId() == 0 )
+        {
+            for ( const auto & overlay : Overlay )
+            {
+                auto * widget = CreateWidget( hud->GetOwningPlayerController(), overlay.WidgetClass.Get() );
+                active_data.OverlayWidgets.Add( widget );
+
+                widget->AddToViewport();
+            }
         }
     }
 }
@@ -178,6 +196,13 @@ void UGBFGameFeatureAction_AddWidget::RemoveWidgets( AActor * actor, FPerContext
             handle.Unregister();
         }
         active_data.ActorData.Remove( hud );
+
+        for ( const auto overlay_widget : active_data.OverlayWidgets )
+        {
+            overlay_widget->RemoveFromParent();
+        }
+
+        active_data.OverlayWidgets.Reset();
     }
 }
 
