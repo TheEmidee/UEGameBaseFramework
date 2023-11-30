@@ -31,6 +31,14 @@ void UGBFViewportSplitScreenLayoutSubsystem::ApplySplitScreenOffset( FGBFViewPor
     }
 }
 
+void UGBFViewportSplitScreenLayoutSubsystem::UpdatePlayerSplitScreenType( ETwoPlayerSplitScreenType::Type two_players_split_type, EThreePlayerSplitScreenType::Type three_players_split_type, EFourPlayerSplitScreenType four_players_split_type )
+{
+    auto * game_settings = GetMutableDefault< UGameMapsSettings >();
+    game_settings->TwoPlayerSplitscreenLayout = two_players_split_type;
+    game_settings->ThreePlayerSplitscreenLayout = three_players_split_type;
+    game_settings->FourPlayerSplitscreenLayout = four_players_split_type;
+}
+
 void UGBFViewportSplitScreenLayoutSubsystem::Tick( float delta_time )
 {
     Super::Tick( delta_time );
