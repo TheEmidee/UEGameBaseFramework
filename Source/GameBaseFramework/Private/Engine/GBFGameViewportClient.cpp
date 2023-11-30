@@ -15,11 +15,6 @@ UGBFGameViewportClient::UGBFGameViewportClient()
 {
 }
 
-void UGBFGameViewportClient::SetSplitScreenLayoutOffset( FGBFViewPortPlayerOffset offset )
-{
-    SplitScreenLayoutOffset = offset;
-}
-
 void UGBFGameViewportClient::LayoutPlayers()
 {
     Super::LayoutPlayers();
