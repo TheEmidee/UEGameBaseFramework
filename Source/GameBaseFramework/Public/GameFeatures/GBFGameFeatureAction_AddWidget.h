@@ -23,6 +23,9 @@ struct FGBFHUDLayoutRequest
     // The layer to insert the widget in
     UPROPERTY( EditAnywhere, Category = UI, meta = ( Categories = "UI.Layer" ) )
     FGameplayTag LayerID;
+
+    UPROPERTY( EditAnywhere, Category = UI )
+    int ControllerId = -1;
 };
 
 USTRUCT()
@@ -37,6 +40,19 @@ struct FGBFHUDElementEntry
     // The slot ID where we should place this widget
     UPROPERTY( EditAnywhere, Category = UI )
     FGameplayTag SlotID;
+
+    UPROPERTY( EditAnywhere, Category = UI )
+    int ControllerId = -1;
+};
+
+USTRUCT()
+struct FGBFOverlayElementEntry
+{
+    GENERATED_BODY()
+
+    // The widget to spawn
+    UPROPERTY( EditAnywhere, Category = UI, meta = ( AssetBundles = "Client" ) )
+    TSoftClassPtr< UUserWidget > WidgetClass;
 };
 
 /*
@@ -69,6 +85,7 @@ private:
     {
         TArray< TSharedPtr< FComponentRequestHandle > > ComponentRequests;
         TMap< FObjectKey, FPerActorData > ActorData;
+        TArray< TWeakObjectPtr< UUserWidget > > OverlayWidgets;
     };
 
     void AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context ) override;
@@ -84,6 +101,9 @@ private:
     // Widgets to add to the HUD
     UPROPERTY( EditAnywhere, Category = UI, meta = ( TitleProperty = "{SlotID} -> {WidgetClass}" ) )
     TArray< FGBFHUDElementEntry > Widgets;
+
+    UPROPERTY( EditAnywhere, Category = UI )
+    TArray< FGBFOverlayElementEntry > Overlay;
 
     TMap< FGameFeatureStateChangeContext, FPerContextData > ContextData;
 };
