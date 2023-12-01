@@ -25,6 +25,12 @@ public:
     UFUNCTION( BlueprintCallable )
     void UpdatePlayerSplitScreenType( ETwoPlayerSplitScreenType::Type two_players_split_type, EThreePlayerSplitScreenType::Type three_players_split_type, EFourPlayerSplitScreenType four_players_split_type );
 
+    UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options") )
+    void AddMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, int priority, FModifyContextOptions options );
+
+    UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options" ) )
+    void RemoveMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, FModifyContextOptions options );
+
     void Tick( float delta_time ) override;
     TStatId GetStatId() const override;
 

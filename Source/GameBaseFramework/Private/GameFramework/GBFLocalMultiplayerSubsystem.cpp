@@ -42,6 +42,39 @@ void UGBFLocalMultiplayerSubsystem::UpdatePlayerSplitScreenType( ETwoPlayerSplit
     game_settings->FourPlayerSplitscreenLayout = four_players_split_type;
 }
 
+void UGBFLocalMultiplayerSubsystem::AddMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, int priority, FModifyContextOptions options )
+{
+    for ( auto lp_iterator = GetWorld()->GetGameInstance()->GetLocalPlayerIterator(); lp_iterator; ++lp_iterator )
+    {
+        if ( const auto * lp = *lp_iterator )
+        {
+            if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
+            {
+                if ( const auto * imc = input_mapping_context.Get() )
+                {
+                    input_system->AddMappingContext( imc, priority, options );
+                }
+            }
+        }
+    }
+}
+
+void UGBFLocalMultiplayerSubsystem::RemoveMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, FModifyContextOptions options )
+{
+    for ( auto lp_iterator = GetWorld()->GetGameInstance()->GetLocalPlayerIterator(); lp_iterator; ++lp_iterator )
+    {
+        if ( const auto * lp = *lp_iterator )
+        {
+            if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
+            {
+                if ( const auto * imc = input_mapping_context.Get() )
+                {
+                    input_system->RemoveMappingContext( imc, options );
+                }
+            }
+        }
+    }
+}
 
 void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
 {
