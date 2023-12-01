@@ -1,22 +1,23 @@
 #pragma once
 
-#include "GBFGameViewportClient.h"
-#include "GameMapsSettings.h"
+#include "EnhancedInputSubsystemInterface.h"
+#include "Engine/GBFGameViewportClient.h"
 
 #include <CoreMinimal.h>
+#include <GameMapsSettings.h>
 #include <Subsystems/WorldSubsystem.h>
 
-#include "GBFViewportSplitScreenLayoutSubsystem.generated.h"
+#include "GBFLocalMultiplayerSubsystem.generated.h"
 
 DECLARE_DYNAMIC_DELEGATE( FGBFViewportSplitScreenOffsetLerpEndedDelegate );
 
-UCLASS( MinimalAPI )
-class UGBFViewportSplitScreenLayoutSubsystem : public UTickableWorldSubsystem
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFLocalMultiplayerSubsystem final : public UTickableWorldSubsystem
 {
     GENERATED_BODY()
 
 public:
-    UGBFViewportSplitScreenLayoutSubsystem();
+    UGBFLocalMultiplayerSubsystem();
 
     UFUNCTION( BlueprintCallable )
     void ApplySplitScreenOffset( FGBFViewPortPlayerOffset offset, FGBFViewportSplitScreenOffsetLerpEndedDelegate on_lerp_ended_delegate, float duration = 0.0f );

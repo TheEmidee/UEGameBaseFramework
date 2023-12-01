@@ -1,16 +1,19 @@
-#include "Engine/GBFViewportSplitScreenLayoutSubsystem.h"
+#include "GameFramework/GBFLocalMultiplayerSubsystem.h"
 
 #include "Engine/GBFGameViewportClient.h"
 
+#include <Engine/LocalPlayer.h>
 #include <Engine/World.h>
+#include <EnhancedInputSubsystems.h>
+#include <InputMappingContext.h>
 
-UGBFViewportSplitScreenLayoutSubsystem::UGBFViewportSplitScreenLayoutSubsystem() :
+UGBFLocalMultiplayerSubsystem::UGBFLocalMultiplayerSubsystem() :
     LerpToTargetOffsetRemainingTime( 0.0f ),
     LerpToTargetOffsetDuration( 0.0f )
 {
 }
 
-void UGBFViewportSplitScreenLayoutSubsystem::ApplySplitScreenOffset( FGBFViewPortPlayerOffset offset, FGBFViewportSplitScreenOffsetLerpEndedDelegate on_lerp_ended_delegate, float duration /* = 0.0f */ )
+void UGBFLocalMultiplayerSubsystem::ApplySplitScreenOffset( FGBFViewPortPlayerOffset offset, FGBFViewportSplitScreenOffsetLerpEndedDelegate on_lerp_ended_delegate, float duration )
 {
     if ( const auto * world = GetWorld() )
     {
@@ -31,7 +34,7 @@ void UGBFViewportSplitScreenLayoutSubsystem::ApplySplitScreenOffset( FGBFViewPor
     }
 }
 
-void UGBFViewportSplitScreenLayoutSubsystem::UpdatePlayerSplitScreenType( ETwoPlayerSplitScreenType::Type two_players_split_type, EThreePlayerSplitScreenType::Type three_players_split_type, EFourPlayerSplitScreenType four_players_split_type )
+void UGBFLocalMultiplayerSubsystem::UpdatePlayerSplitScreenType( ETwoPlayerSplitScreenType::Type two_players_split_type, EThreePlayerSplitScreenType::Type three_players_split_type, EFourPlayerSplitScreenType four_players_split_type )
 {
     auto * game_settings = GetMutableDefault< UGameMapsSettings >();
     game_settings->TwoPlayerSplitscreenLayout = two_players_split_type;
@@ -39,7 +42,8 @@ void UGBFViewportSplitScreenLayoutSubsystem::UpdatePlayerSplitScreenType( ETwoPl
     game_settings->FourPlayerSplitscreenLayout = four_players_split_type;
 }
 
-void UGBFViewportSplitScreenLayoutSubsystem::Tick( float delta_time )
+
+void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
 {
     Super::Tick( delta_time );
 
@@ -63,7 +67,7 @@ void UGBFViewportSplitScreenLayoutSubsystem::Tick( float delta_time )
     }
 }
 
-TStatId UGBFViewportSplitScreenLayoutSubsystem::GetStatId() const
+TStatId UGBFLocalMultiplayerSubsystem::GetStatId() const
 {
     RETURN_QUICK_DECLARE_CYCLE_STAT( UGBFViewportSplitScreenLayoutSubsystem, STATGROUP_Tickables );
 }
