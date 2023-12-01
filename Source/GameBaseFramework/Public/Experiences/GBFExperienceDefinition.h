@@ -115,7 +115,7 @@ public:
 };
 
 UCLASS( BlueprintType, Const )
-class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition final : public UPrimaryDataAsset
+class GAMEBASEFRAMEWORK_API UGBFExperienceDefinition : public UPrimaryDataAsset
 {
     GENERATED_BODY()
 
