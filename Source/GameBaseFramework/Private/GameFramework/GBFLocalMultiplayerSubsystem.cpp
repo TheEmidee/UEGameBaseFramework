@@ -42,7 +42,7 @@ void UGBFLocalMultiplayerSubsystem::UpdatePlayerSplitScreenType( ETwoPlayerSplit
     game_settings->FourPlayerSplitscreenLayout = four_players_split_type;
 }
 
-void UGBFLocalMultiplayerSubsystem::AddMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, int priority, FModifyContextOptions options )
+void UGBFLocalMultiplayerSubsystem::AddMappingContextToAllPlayers( UInputMappingContext * input_mapping_context, int priority, FModifyContextOptions options )
 {
     for ( auto lp_iterator = GetWorld()->GetGameInstance()->GetLocalPlayerIterator(); lp_iterator; ++lp_iterator )
     {
@@ -50,7 +50,7 @@ void UGBFLocalMultiplayerSubsystem::AddMappingContextToAllPlayers( TSoftObjectPt
         {
             if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
             {
-                if ( const auto * imc = input_mapping_context.Get() )
+                if ( const auto * imc = input_mapping_context )
                 {
                     input_system->AddMappingContext( imc, priority, options );
                 }
@@ -59,7 +59,7 @@ void UGBFLocalMultiplayerSubsystem::AddMappingContextToAllPlayers( TSoftObjectPt
     }
 }
 
-void UGBFLocalMultiplayerSubsystem::RemoveMappingContextToAllPlayers( TSoftObjectPtr< UInputMappingContext > input_mapping_context, FModifyContextOptions options )
+void UGBFLocalMultiplayerSubsystem::RemoveMappingContextToAllPlayers( UInputMappingContext * input_mapping_context, FModifyContextOptions options )
 {
     for ( auto lp_iterator = GetWorld()->GetGameInstance()->GetLocalPlayerIterator(); lp_iterator; ++lp_iterator )
     {
@@ -67,7 +67,7 @@ void UGBFLocalMultiplayerSubsystem::RemoveMappingContextToAllPlayers( TSoftObjec
         {
             if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
             {
-                if ( const auto * imc = input_mapping_context.Get() )
+                if ( const auto * imc = input_mapping_context )
                 {
                     input_system->RemoveMappingContext( imc, options );
                 }
