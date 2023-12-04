@@ -86,7 +86,7 @@ void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
         {
             if ( LerpToTargetOffsetRemainingTime > 0.0f )
             {
-                LerpToTargetOffsetRemainingTime -= delta_time;
+                LerpToTargetOffsetRemainingTime = FMath::Max( 0.0f, LerpToTargetOffsetRemainingTime - delta_time );
 
                 const auto offset = FGBFViewPortPlayerOffset::Lerp( OriginalOffset, TargetOffset, 1.0f - LerpToTargetOffsetRemainingTime / LerpToTargetOffsetDuration );
                 viewport->SetSplitScreenLayoutOffset( offset );
