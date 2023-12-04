@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameplayAbilitySpec.h"
+#include "Abilities/GBFAbilitySet.h"
 
 #include <CoreMinimal.h>
 #include <Subsystems/WorldSubsystem.h>
@@ -38,11 +39,22 @@ private:
     TMap< UGBFAbilitySystemComponent *, FActiveGameplayEffectHandle > Handles;
 };
 
+USTRUCT()
+struct FGlobalAppliedAbilitySetList
+{
+    GENERATED_BODY()
+
+    void AddToASC( const UGBFAbilitySet * ability_set, UGBFAbilitySystemComponent * asc );
+    void RemoveFromASC( UGBFAbilitySystemComponent * asc );
+    void RemoveFromAll();
+
+private:
+    UPROPERTY()
+    TMap< UGBFAbilitySystemComponent *, FGBFAbilitySet_GrantedHandles > Handles;
+};
+
 DECLARE_DELEGATE_OneParam( FGBFGlobalAbilitySystemOnASCUpdateDelegate, UGBFAbilitySystemComponent * ASC );
 
-/**
- * Imported from Lyra
- */
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGlobalAbilitySystem final : public UWorldSubsystem
 {
@@ -52,17 +64,23 @@ public:
     FGBFGlobalAbilitySystemOnASCUpdateDelegate & OnASCRegistered();
     FGBFGlobalAbilitySystemOnASCUpdateDelegate & OnASCUnregistered();
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Lyra" )
-    void ApplyAbilityToAll( TSubclassOf< UGameplayAbility > ability );
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void GrantAbilityToAll( TSubclassOf< UGameplayAbility > ability );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Lyra" )
-    void ApplyEffectToAll( TSubclassOf< UGameplayEffect > effect );
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void GrantEffectToAll( TSubclassOf< UGameplayEffect > effect );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Lyra" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void GrantAbilitySetToAll( UGBFAbilitySet * ability_set );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
     void RemoveAbilityFromAll( TSubclassOf< UGameplayAbility > ability );
 
-    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Lyra" )
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
     void RemoveEffectFromAll( TSubclassOf< UGameplayEffect > effect );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void RemoveAbilitySetFromAll( UGBFAbilitySet * ability_set );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     void CancelAbilitiesByTagFromAll( FGameplayTag tag );
@@ -82,6 +100,9 @@ private:
 
     UPROPERTY()
     TMap< TSubclassOf< UGameplayEffect >, FGlobalAppliedEffectList > AppliedEffects;
+
+    UPROPERTY()
+    TMap< UGBFAbilitySet *, FGlobalAppliedAbilitySetList > AppliedAbilitySets;
 
     UPROPERTY()
     TArray< UGBFAbilitySystemComponent * > RegisteredASCs;
