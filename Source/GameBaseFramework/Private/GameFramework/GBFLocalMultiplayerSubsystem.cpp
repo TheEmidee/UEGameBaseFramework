@@ -76,6 +76,22 @@ void UGBFLocalMultiplayerSubsystem::RemoveMappingContextToAllPlayers( UInputMapp
     }
 }
 
+TArray< ULocalPlayer * > UGBFLocalMultiplayerSubsystem::GetAllLocalPlayers() const
+{
+    TArray< ULocalPlayer * > result;
+    result.Reserve( GetWorld()->GetGameInstance()->GetNumLocalPlayers() );
+
+    for ( auto lp_iterator = GetWorld()->GetGameInstance()->GetLocalPlayerIterator(); lp_iterator; ++lp_iterator )
+    {
+        if ( auto * lp = *lp_iterator )
+        {
+            result.Add( lp );
+        }
+    }
+
+    return result;
+}
+
 void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
 {
     Super::Tick( delta_time );

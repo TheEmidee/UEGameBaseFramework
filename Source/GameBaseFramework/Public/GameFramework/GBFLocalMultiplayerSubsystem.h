@@ -31,6 +31,8 @@ public:
     UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options" ) )
     void RemoveMappingContextToAllPlayers( UInputMappingContext * input_mapping_context, FModifyContextOptions options );
 
+    UFUNCTION( BlueprintPure )
+    TArray< ULocalPlayer * > GetAllLocalPlayers() const;
 
     void Tick( float delta_time ) override;
     TStatId GetStatId() const override;
