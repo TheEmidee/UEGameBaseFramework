@@ -17,6 +17,11 @@ class UGBFGameFeatureAction_StartGamePhase final : public UGBFGameFeatureAction_
 {
     GENERATED_BODY()
 
+public:
+#if WITH_EDITORONLY_DATA
+    void AddAdditionalAssetBundleData( FAssetBundleData & asset_bundle_data ) override;
+#endif
+
 private:
     void AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context ) override;
 
