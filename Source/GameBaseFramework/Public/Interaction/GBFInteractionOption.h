@@ -54,6 +54,9 @@ public:
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TSoftClassPtr< UUserWidget > InteractionWidgetClass;
 
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FVector2D InteractionWidgetOffset;
+
     //--------------------------------------------------------------
 
 public:
@@ -64,6 +67,7 @@ public:
                TargetAbilitySystem == other.TargetAbilitySystem &&
                TargetInteractionAbilityHandle == other.TargetInteractionAbilityHandle &&
                InteractionWidgetClass == other.InteractionWidgetClass &&
+               InteractionWidgetOffset == other.InteractionWidgetOffset &&
                Text.IdenticalTo( other.Text ) &&
                SubText.IdenticalTo( other.SubText );
     }

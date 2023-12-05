@@ -4,6 +4,7 @@
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+class UGBFIndicatorDescriptor;
 struct FGBFInteractionOption;
 class IGBFInteractableTarget;
 class UGBFAT_WaitForInteractableTargets;
@@ -36,9 +37,8 @@ protected:
     UPROPERTY( BlueprintReadWrite )
     TArray< FGBFInteractionOption > CurrentOptions;
 
-    // :TODO: Add Indicator system
-    // UPROPERTY()
-    // TArray< TObjectPtr< UIndicatorDescriptor > > Indicators;
+    UPROPERTY()
+    TArray< TObjectPtr< UGBFIndicatorDescriptor > > Indicators;
 
     UPROPERTY( EditDefaultsOnly )
     float InteractionScanRate;
