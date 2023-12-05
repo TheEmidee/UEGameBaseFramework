@@ -38,7 +38,6 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
 
     UpdateInteractableOptions( interactable_targets );
 
-    // :TODO: Implement indicator system and allow to display widget in different ways
     if ( const auto * pc = GetControllerFromActorInfo() )
     {
         if ( auto * indicator_manager = UGBFIndicatorManagerComponent::GetComponent( pc ) )
