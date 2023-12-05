@@ -23,6 +23,10 @@ static FAutoConsoleCommand ListActivePhasesCommand(
 
 void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDelegate phase_ended_callback )
 {
+    if ( !ensureAlwaysMsgf( phase_ability != nullptr, TEXT( "StartPhase was called with a null phase ability" ) ) )
+    {
+        return;
+    }
     const auto * world = GetWorld();
     auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
     const auto incoming_phase_tag = phase_ability.GetDefaultObject()->GetGamePhaseTag();
