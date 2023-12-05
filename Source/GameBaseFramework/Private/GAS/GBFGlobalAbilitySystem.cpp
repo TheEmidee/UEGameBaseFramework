@@ -69,9 +69,42 @@ void FGlobalAppliedEffectList::RemoveFromAll()
     Handles.Empty();
 }
 
-void UGBFGlobalAbilitySystem::ApplyAbilityToAll( const TSubclassOf< UGameplayAbility > ability )
+void FGlobalAppliedAbilitySetList::AddToASC( const UGBFAbilitySet * ability_set, UGBFAbilitySystemComponent * asc )
 {
-    if ( ( ability.Get() != nullptr ) && ( !AppliedAbilities.Contains( ability ) ) )
+    if ( Handles.Find( asc ) != nullptr )
+    {
+        RemoveFromASC( asc );
+    }
+
+    FGBFAbilitySet_GrantedHandles handles;
+    ability_set->GiveToAbilitySystem( asc, &handles );
+    Handles.Add( asc, handles );
+}
+
+void FGlobalAppliedAbilitySetList::RemoveFromASC( UGBFAbilitySystemComponent * asc )
+{
+    if ( auto * effect_handle = Handles.Find( asc ) )
+    {
+        effect_handle->TakeFromAbilitySystem( asc );
+        Handles.Remove( asc );
+    }
+}
+
+void FGlobalAppliedAbilitySetList::RemoveFromAll()
+{
+    for ( auto & kvp : Handles )
+    {
+        if ( kvp.Key != nullptr )
+        {
+            kvp.Value.TakeFromAbilitySystem( kvp.Key );
+        }
+    }
+    Handles.Empty();
+}
+
+void UGBFGlobalAbilitySystem::GrantAbilityToAll( const TSubclassOf< UGameplayAbility > ability )
+{
+    if ( ability.Get() != nullptr && ( !AppliedAbilities.Contains( ability ) ) )
     {
         auto & entry = AppliedAbilities.Add( ability );
         for ( auto * asc : RegisteredASCs )
@@ -81,9 +114,9 @@ void UGBFGlobalAbilitySystem::ApplyAbilityToAll( const TSubclassOf< UGameplayAbi
     }
 }
 
-void UGBFGlobalAbilitySystem::ApplyEffectToAll( const TSubclassOf< UGameplayEffect > effect )
+void UGBFGlobalAbilitySystem::GrantEffectToAll( const TSubclassOf< UGameplayEffect > effect )
 {
-    if ( ( effect.Get() != nullptr ) && ( !AppliedEffects.Contains( effect ) ) )
+    if ( effect.Get() != nullptr && ( !AppliedEffects.Contains( effect ) ) )
     {
         auto & entry = AppliedEffects.Add( effect );
         for ( auto * asc : RegisteredASCs )
@@ -93,9 +126,22 @@ void UGBFGlobalAbilitySystem::ApplyEffectToAll( const TSubclassOf< UGameplayEffe
     }
 }
 
+void UGBFGlobalAbilitySystem::GrantAbilitySetToAll( UGBFAbilitySet * ability_set )
+{
+    if ( ability_set != nullptr && !AppliedAbilitySets.Contains( ability_set ) )
+    {
+        auto & entry = AppliedAbilitySets.Add( ability_set );
+
+        for ( auto * asc : RegisteredASCs )
+        {
+            entry.AddToASC( ability_set, asc );
+        }
+    }
+}
+
 void UGBFGlobalAbilitySystem::RemoveAbilityFromAll( const TSubclassOf< UGameplayAbility > ability )
 {
-    if ( ( ability.Get() != nullptr ) && AppliedAbilities.Contains( ability ) )
+    if ( ability.Get() != nullptr && AppliedAbilities.Contains( ability ) )
     {
         auto & entry = AppliedAbilities[ ability ];
         entry.RemoveFromAll();
@@ -105,11 +151,21 @@ void UGBFGlobalAbilitySystem::RemoveAbilityFromAll( const TSubclassOf< UGameplay
 
 void UGBFGlobalAbilitySystem::RemoveEffectFromAll( const TSubclassOf< UGameplayEffect > effect )
 {
-    if ( ( effect.Get() != nullptr ) && AppliedEffects.Contains( effect ) )
+    if ( effect.Get() != nullptr && AppliedEffects.Contains( effect ) )
     {
         auto & entry = AppliedEffects[ effect ];
         entry.RemoveFromAll();
         AppliedEffects.Remove( effect );
+    }
+}
+
+void UGBFGlobalAbilitySystem::RemoveAbilitySetFromAll( UGBFAbilitySet * ability_set )
+{
+    if ( ability_set != nullptr && AppliedAbilitySets.Contains( ability_set ) )
+    {
+        auto & entry = AppliedAbilitySets[ ability_set ];
+        entry.RemoveFromAll();
+        AppliedAbilitySets.Remove( ability_set );
     }
 }
 
@@ -143,6 +199,10 @@ void UGBFGlobalAbilitySystem::RegisterASC( UGBFAbilitySystemComponent * asc )
     {
         entry.Value.AddToASC( entry.Key, asc );
     }
+    for ( auto & entry : AppliedAbilitySets )
+    {
+        entry.Value.AddToASC( entry.Key, asc );
+    }
 
     RegisteredASCs.Add( asc );
 
@@ -157,6 +217,10 @@ void UGBFGlobalAbilitySystem::UnregisterASC( UGBFAbilitySystemComponent * asc )
         entry.Value.RemoveFromASC( asc );
     }
     for ( auto & entry : AppliedEffects )
+    {
+        entry.Value.RemoveFromASC( asc );
+    }
+    for ( auto & entry : AppliedAbilitySets )
     {
         entry.Value.RemoveFromASC( asc );
     }
