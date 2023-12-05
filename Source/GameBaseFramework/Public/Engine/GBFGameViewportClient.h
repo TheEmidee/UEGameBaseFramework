@@ -73,7 +73,6 @@ public:
     const FGBFViewPortPlayerOffset & GetSplitScreenLayoutOffset() const;
     void LayoutPlayers() override;
 
-
 private:
     FGBFViewPortPlayerOffset SplitScreenLayoutOffset;
 };
