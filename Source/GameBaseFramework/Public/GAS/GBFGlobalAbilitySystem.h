@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GameplayAbilitySpec.h"
 #include "Abilities/GBFAbilitySet.h"
 
 #include <CoreMinimal.h>
