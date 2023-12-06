@@ -3,6 +3,19 @@
 #include "Phases/GBFGamePhaseAbility.h"
 #include "Phases/GBFGamePhaseSubsystem.h"
 
+#include <GameFeaturesSubsystemSettings.h>
+
+#if WITH_EDITORONLY_DATA
+void UGBFGameFeatureAction_StartGamePhase::AddAdditionalAssetBundleData( FAssetBundleData & asset_bundle_data )
+{
+    for ( auto phase_class : Phases )
+    {
+        asset_bundle_data.AddBundleAsset( UGameFeaturesSubsystemSettings::LoadStateServer, phase_class.ToSoftObjectPath().GetAssetPath() );
+        asset_bundle_data.AddBundleAsset( UGameFeaturesSubsystemSettings::LoadStateClient, phase_class.ToSoftObjectPath().GetAssetPath() );
+    }
+}
+#endif
+
 void UGBFGameFeatureAction_StartGamePhase::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
 {
     const auto * world = world_context.World();
