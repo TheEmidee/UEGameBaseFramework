@@ -17,7 +17,7 @@ UGBFAsyncTaskGameplayTagAddedOrRemoved * UGBFAsyncTaskGameplayTagAddedOrRemoved:
     }
 
     wait_for_gameplay_tag_changed_task->ListenForGameplayTagChangeDelegateHandle =
-        ability_system_component->RegisterGameplayTagEvent( gameplay_tag, EGameplayTagEventType::NewOrRemoved ).AddUObject( wait_for_gameplay_tag_changed_task, &GameplayTagChanged );
+        ability_system_component->RegisterGameplayTagEvent( gameplay_tag, EGameplayTagEventType::NewOrRemoved ).AddUObject( wait_for_gameplay_tag_changed_task, &ThisClass::GameplayTagChanged );
 
     return wait_for_gameplay_tag_changed_task;
 }
