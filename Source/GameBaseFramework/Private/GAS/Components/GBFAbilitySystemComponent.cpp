@@ -847,14 +847,14 @@ void UGBFAbilitySystemComponent::RemoveAbilityFromActivationGroup( const EGBFAbi
 
 void UGBFAbilitySystemComponent::CancelActivationGroupAbilities( const EGBFAbilityActivationGroup group, UGBFGameplayAbility * ignore_ability, bool replicate_cancel_ability )
 {
-    const auto should_cancel_func = [ this, group, ignore_ability ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle ability_handle ) {
-        return ( ( ability->GetActivationGroup() == group ) && ( ability != ignore_ability ) );
+    const auto should_cancel_func = [ this, group, ignore_ability ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle /*ability_handle*/ ) {
+        return ability->GetActivationGroup() == group && ability != ignore_ability;
     };
 
     CancelAbilitiesByFunc( should_cancel_func, replicate_cancel_ability );
 }
 
-void UGBFAbilitySystemComponent::CancelAbilitiesByFunc( TShouldCancelAbilityFunc predicate, bool replicate_cancel_ability )
+void UGBFAbilitySystemComponent::CancelAbilitiesByFunc( const TShouldCancelAbilityFunc & predicate, bool replicate_cancel_ability )
 {
     ABILITYLIST_SCOPE_LOCK();
     for ( const FGameplayAbilitySpec & ability_spec : ActivatableAbilities.Items )
@@ -902,12 +902,11 @@ void UGBFAbilitySystemComponent::CancelAbilitiesByFunc( TShouldCancelAbilityFunc
 
 void UGBFAbilitySystemComponent::CancelInputActivatedAbilities( bool replicate_cancel_ability )
 {
-    const TShouldCancelAbilityFunc predicate = [ this ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
+    CancelAbilitiesByFunc( []( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle /*handle*/ ) {
         const auto activation_policy = ability->GetActivationPolicy();
         return activation_policy == EGBFAbilityActivationPolicy::OnInputTriggered || activation_policy == EGBFAbilityActivationPolicy::WhileInputActive;
-    };
-
-    CancelAbilitiesByFunc( predicate, replicate_cancel_ability );
+    },
+        replicate_cancel_ability );
 }
 
 void UGBFAbilitySystemComponent::AbilitySpecInputPressed( FGameplayAbilitySpec & spec )

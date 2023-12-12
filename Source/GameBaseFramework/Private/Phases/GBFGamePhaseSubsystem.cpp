@@ -232,7 +232,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
                 UE_LOG( LogGBFGamePhase, Log, TEXT( "\tEnding Phase '%s' (%s)" ), *active_phase_tag.ToString(), *GetNameSafe( active_phase_ability ) );
 
                 auto handle_to_end = active_phase->Handle;
-                game_state_asc->CancelAbilitiesByFunc( [ handle_to_end ]( const UGBFGameplayAbility * ability, const FGameplayAbilitySpecHandle handle ) {
+                game_state_asc->CancelAbilitiesByFunc( [ handle_to_end ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
                     return handle == handle_to_end;
                 },
                     true );
