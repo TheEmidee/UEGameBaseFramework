@@ -92,6 +92,17 @@ TArray< ULocalPlayer * > UGBFLocalMultiplayerSubsystem::GetAllLocalPlayers() con
     return result;
 }
 
+void UGBFLocalMultiplayerSubsystem::SetForceDisableSplitscreen( bool disable )
+{
+    if ( const auto * world = GetWorld() )
+    {
+        if ( auto * viewport = Cast< UGBFGameViewportClient >( world->GetGameViewport() ) )
+        {
+            viewport->SetForceDisableSplitscreen( disable );
+        }
+    }
+}
+
 void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
 {
     Super::Tick( delta_time );

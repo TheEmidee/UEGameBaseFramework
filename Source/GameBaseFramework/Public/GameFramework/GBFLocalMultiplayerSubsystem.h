@@ -34,6 +34,9 @@ public:
     UFUNCTION( BlueprintPure )
     TArray< ULocalPlayer * > GetAllLocalPlayers() const;
 
+    UFUNCTION( BlueprintCallable )
+    void SetForceDisableSplitscreen( bool disable );
+
     void Tick( float delta_time ) override;
     TStatId GetStatId() const override;
 
