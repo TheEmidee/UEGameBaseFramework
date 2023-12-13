@@ -76,7 +76,7 @@ void UGBFCameraMode::OnDeactivation()
 {
 }
 
-AActor * UGBFCameraMode::GetTargetActor() const
+AActor * UGBFCameraMode::GetTargetActor_Implementation() const
 {
     const auto * camera_component = GetGBFCameraComponent();
 
@@ -85,34 +85,36 @@ AActor * UGBFCameraMode::GetTargetActor() const
 
 FVector UGBFCameraMode::GetPivotLocation() const
 {
-    const auto * target_actor = GetTargetActor();
-    check( target_actor != nullptr );
-
-    if ( const auto * target_pawn = Cast< APawn >( target_actor ) )
+    if ( const auto * target_actor = GetTargetActor() )
     {
-        // Height adjustments for characters to account for crouching.
-        if ( const auto * target_character = Cast< ACharacter >( target_pawn ) )
+        if ( const auto * target_pawn = Cast< APawn >( target_actor ) )
         {
-            const auto * target_character_cdo = target_character->GetClass()->GetDefaultObject< ACharacter >();
-            check( target_character_cdo != nullptr );
+            // Height adjustments for characters to account for crouching.
+            if ( const auto * target_character = Cast< ACharacter >( target_pawn ) )
+            {
+                const auto * target_character_cdo = target_character->GetClass()->GetDefaultObject< ACharacter >();
+                check( target_character_cdo != nullptr );
 
-            const auto * capsule_comp = target_character->GetCapsuleComponent();
-            check( capsule_comp != nullptr );
+                const auto * capsule_comp = target_character->GetCapsuleComponent();
+                check( capsule_comp != nullptr );
 
-            const auto * capsule_comp_cdo = target_character_cdo->GetCapsuleComponent();
-            check( capsule_comp_cdo != nullptr );
+                const auto * capsule_comp_cdo = target_character_cdo->GetCapsuleComponent();
+                check( capsule_comp_cdo != nullptr );
 
-            const float default_half_height = capsule_comp_cdo->GetUnscaledCapsuleHalfHeight();
-            const float actual_half_height = capsule_comp->GetUnscaledCapsuleHalfHeight();
-            const float height_adjustment = ( default_half_height - actual_half_height ) + target_character_cdo->BaseEyeHeight;
+                const float default_half_height = capsule_comp_cdo->GetUnscaledCapsuleHalfHeight();
+                const float actual_half_height = capsule_comp->GetUnscaledCapsuleHalfHeight();
+                const float height_adjustment = ( default_half_height - actual_half_height ) + target_character_cdo->BaseEyeHeight;
 
-            return target_character->GetActorLocation() + ( FVector::UpVector * height_adjustment );
+                return target_character->GetActorLocation() + ( FVector::UpVector * height_adjustment );
+            }
+
+            return target_pawn->GetPawnViewLocation();
         }
 
-        return target_pawn->GetPawnViewLocation();
+        return target_actor->GetActorLocation();
     }
 
-    return target_actor->GetActorLocation();
+    return FVector::ZeroVector;
 }
 
 FRotator UGBFCameraMode::GetPivotRotation() const
