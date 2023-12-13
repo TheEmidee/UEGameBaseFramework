@@ -165,7 +165,7 @@ void UGBFPawnExtensionComponent::OnAbilitySystemInitialized_RegisterAndCall( FSi
         OnAbilitySystemInitialized.Add( delegate );
     }
 
-    if ( AbilitySystemComponent )
+    if ( AbilitySystemComponent != nullptr )
     {
         delegate.Execute();
     }
