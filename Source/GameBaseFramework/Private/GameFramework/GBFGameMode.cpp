@@ -316,6 +316,13 @@ bool AGBFGameMode::TryDedicatedServerLogin()
     return false;
 }
 
+void AGBFGameMode::GenericPlayerInitialization( AController * new_player )
+{
+    Super::GenericPlayerInitialization( new_player );
+
+    OnPlayerInitializedDelegate.Broadcast( this, new_player );
+}
+
 void AGBFGameMode::HandleMatchHasStarted()
 {
     Super::HandleMatchHasStarted();
@@ -403,13 +410,6 @@ void AGBFGameMode::FailedToRestartPlayer( AController * new_player )
     {
         UE_LOG( LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) but there's no pawn class so giving up." ), *GetPathNameSafe( new_player ) );
     }
-}
-
-void AGBFGameMode::GenericPlayerInitialization( AController * new_player )
-{
-    Super::GenericPlayerInitialization( new_player );
-
-    OnPlayerInitializedDelegate.Broadcast( this, new_player );
 }
 
 void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
