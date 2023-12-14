@@ -123,7 +123,7 @@ void UGBFGameFeatureAction_SpawnActors::AddToWorld( const FWorldContext & world_
     {
         for ( const auto & actor_entry : entry.Actors )
         {
-            const bool should_spawn_actor = is_standalone || is_server && actor_entry.bSpawnOnServer || is_client && actor_entry.bSpawnOnClients;
+            const bool should_spawn_actor = is_standalone || ( is_server && actor_entry.bSpawnOnServer ) || ( is_client && actor_entry.bSpawnOnClients );
 
             if ( !should_spawn_actor )
             {

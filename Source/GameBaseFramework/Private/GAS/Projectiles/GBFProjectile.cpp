@@ -104,7 +104,7 @@ bool AGBFProjectile::ShouldIgnoreHit_Implementation( AActor * other_actor, UPrim
 {
     const auto * instigator = GetInstigator();
 
-    return instigator == nullptr || bIgnoreImpactWithInstigator && other_actor == instigator;
+    return instigator == nullptr || ( bIgnoreImpactWithInstigator && other_actor == instigator );
 }
 
 void AGBFProjectile::ApplyGameplayEffects()

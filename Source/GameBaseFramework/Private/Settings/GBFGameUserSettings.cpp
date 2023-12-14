@@ -1114,7 +1114,7 @@ void UGBFGameUserSettings::UpdateDesktopFramePacing()
 
 void UGBFGameUserSettings::UpdateDynamicResFrameTime( const float target_fps ) const
 {
-    if ( static auto * c_var_dy_res_frame_time_budget = IConsoleManager::Get().FindConsoleVariable( TEXT( "r.DynamicRes.FrameTimeBudget" ) ) )
+    if ( auto * c_var_dy_res_frame_time_budget = IConsoleManager::Get().FindConsoleVariable( TEXT( "r.DynamicRes.FrameTimeBudget" ) ) )
     {
         if ( ensure( target_fps > 0.0f ) )
         {

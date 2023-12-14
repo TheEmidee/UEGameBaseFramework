@@ -198,7 +198,7 @@ public:
     void CancelActivationGroupAbilities( EGBFAbilityActivationGroup group, UGBFGameplayAbility * ignore_ability, bool replicate_cancel_ability );
 
     typedef TFunctionRef< bool( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) > TShouldCancelAbilityFunc;
-    void CancelAbilitiesByFunc( TShouldCancelAbilityFunc predicate, bool replicate_cancel_ability );
+    void CancelAbilitiesByFunc( const TShouldCancelAbilityFunc & predicate, bool replicate_cancel_ability );
 
     void CancelInputActivatedAbilities( bool replicate_cancel_ability );
 
