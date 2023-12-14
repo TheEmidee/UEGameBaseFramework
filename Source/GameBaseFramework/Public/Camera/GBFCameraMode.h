@@ -102,7 +102,9 @@ public:
 
     virtual void DrawDebug( UCanvas * canvas ) const;
 
+    UFUNCTION( BlueprintNativeEvent )
     AActor * GetTargetActor() const;
+
     void UpdateCameraMode( float delta_time );
     void SetBlendWeight( float weight );
 
