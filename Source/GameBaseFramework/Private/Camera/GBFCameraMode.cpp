@@ -83,7 +83,7 @@ AActor * UGBFCameraMode::GetTargetActor_Implementation() const
     return camera_component->GetTargetActor();
 }
 
-FVector UGBFCameraMode::GetPivotLocation() const
+FVector UGBFCameraMode::GetPivotLocation_Implementation() const
 {
     if ( const auto * target_actor = GetTargetActor() )
     {
@@ -117,7 +117,7 @@ FVector UGBFCameraMode::GetPivotLocation() const
     return FVector::ZeroVector;
 }
 
-FRotator UGBFCameraMode::GetPivotRotation() const
+FRotator UGBFCameraMode::GetPivotRotation_Implementation() const
 {
     const auto * target_actor = GetTargetActor();
     check( target_actor != nullptr );
