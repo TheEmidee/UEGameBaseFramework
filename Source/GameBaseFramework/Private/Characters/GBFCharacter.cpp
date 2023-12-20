@@ -136,6 +136,8 @@ void AGBFCharacter::OnAbilitySystemInitialized()
     HealthComponent->InitializeWithAbilitySystem( asc );
 
     InitializeGameplayTags();
+
+    K2_OnAbilitySystemComponentInitialized();
 }
 
 void AGBFCharacter::OnAbilitySystemUninitialized()
