@@ -72,6 +72,7 @@ public:
     void SetSplitScreenLayoutOffset( const FGBFViewPortPlayerOffset & offset );
     const FGBFViewPortPlayerOffset & GetSplitScreenLayoutOffset() const;
     void LayoutPlayers() override;
+    void RemapControllerInput( FInputKeyEventArgs & key_event ) override;
 
 private:
     FGBFViewPortPlayerOffset SplitScreenLayoutOffset;

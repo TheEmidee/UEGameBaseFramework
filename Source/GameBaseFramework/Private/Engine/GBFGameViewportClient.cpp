@@ -1,7 +1,10 @@
 #include "Engine/GBFGameViewportClient.h"
 
+#include <Components/Viewport.h>
 #include <Engine/Engine.h>
 #include <Engine/LocalPlayer.h>
+#include <GameMapsSettings.h>
+#include <InputKeyEventArgs.h>
 
 FGBFViewPortPlayerOffset::FGBFViewPortPlayerOffset() :
     TopLeftX( 0 ),
@@ -119,5 +122,29 @@ void UGBFGameViewportClient::LayoutPlayers()
             {
             }
         }
+    }
+}
+
+void UGBFGameViewportClient::RemapControllerInput( FInputKeyEventArgs & key_event )
+{
+    const int32 NumLocalPlayers = World ? World->GetGameInstance()->GetNumLocalPlayers() : 0;
+
+    if ( NumLocalPlayers > 1 && key_event.Key.IsGamepadKey() && GetDefault< UGameMapsSettings >()->bOffsetPlayerGamepadIds )
+    {
+        // key_event.ControllerId++;
+
+        auto id = key_event.InputDevice.GetId();
+        id++;
+        key_event.InputDevice = FInputDeviceId::CreateFromInternalId( id );
+
+        if ( auto & device_mapper = IPlatformInputDeviceMapper::Get();
+             !device_mapper.GetUserForInputDevice( key_event.InputDevice ).IsValid() )
+        {
+            device_mapper.Internal_MapInputDeviceToUser( key_event.InputDevice, FPlatformUserId::CreateFromInternalId( 1 ), EInputDeviceConnectionState::Connected );
+        }
+    }
+    else if ( key_event.Viewport->IsPlayInEditorViewport() && key_event.Key.IsGamepadKey() )
+    {
+        GEngine->RemapGamepadControllerIdForPIE( this, key_event.ControllerId );
     }
 }
