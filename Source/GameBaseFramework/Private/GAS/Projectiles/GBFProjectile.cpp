@@ -67,11 +67,12 @@ void AGBFProjectile::BeginPlay()
     {
         AbilitySystemComponent = Cast< UGBFAbilitySystemComponent >( UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( character_owner ) );
 
+        /* :TODO: In non multiplayer games we never execute the fire gameplay cue because the GA may not have executed the GC
         // Play the fire gameplay cue only for simulated clients. The client who made the server spawn that projectile already executed the cue locally in the ability
         if ( character_owner->IsLocallyControlled() )
         {
             return;
-        }
+        }*/
 
         ExecuteGameplayCue( FireGameplayCue, [ projectile = this ]( FGameplayCueParameters & gameplay_cue_parameters ) {
             projectile->UpdateFireGameplayCueParameters( gameplay_cue_parameters );
