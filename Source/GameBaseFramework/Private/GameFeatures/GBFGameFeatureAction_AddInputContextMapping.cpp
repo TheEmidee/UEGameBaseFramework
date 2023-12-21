@@ -242,9 +242,11 @@ void UGBFGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer( UPl
     {
         if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
         {
+            auto & asset_manager = UGBFAssetManager::Get();
+
             for ( const auto & entry : InputMappings )
             {
-                if ( const auto * imc = entry.InputMapping.Get() )
+                if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
                 {
                     input_system->AddMappingContext( imc, entry.Priority );
                 }
