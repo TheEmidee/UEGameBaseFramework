@@ -1,5 +1,6 @@
 #include "GameFeatures/GBFGameFeatureAction_AddWidget.h"
 
+#include "Engine/GBFAssetManager.h"
 #include "Engine/GBFHUD.h"
 
 #include <Blueprint/GameViewportSubsystem.h>
@@ -139,6 +140,8 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
 {
     const auto * hud = CastChecked< AGBFHUD >( actor );
 
+    auto & asset_manager = UGBFAssetManager::Get();
+
     if ( auto * local_player = Cast< ULocalPlayer >( hud->GetOwningPlayerController()->Player ) )
     {
         auto & per_actor_data = active_data.ActorData.FindOrAdd( hud );
@@ -147,7 +150,7 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
         {
             if ( entry.ControllerId == -1 || local_player->GetControllerId() == entry.ControllerId )
             {
-                if ( const auto concrete_widget_class = entry.LayoutClass.Get() )
+                if ( const auto concrete_widget_class = asset_manager.GetSubclass( entry.LayoutClass ) )
                 {
                     per_actor_data.LayoutsAdded.Add( UCommonUIExtensions::PushContentToLayer_ForPlayer( local_player, entry.LayerID, concrete_widget_class ) );
                 }
@@ -159,7 +162,10 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
         {
             if ( entry.ControllerId == -1 || local_player->GetControllerId() == entry.ControllerId )
             {
-                per_actor_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, entry.WidgetClass.Get(), -1 ) );
+                if ( const auto widget_class = asset_manager.GetSubclass( entry.WidgetClass ) )
+                {
+                    per_actor_data.ExtensionHandles.Add( extension_subsystem->RegisterExtensionAsWidgetForContext( entry.SlotID, local_player, widget_class, -1 ) );
+                }
             }
         }
 
@@ -167,10 +173,13 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
         {
             for ( const auto & overlay : Overlay )
             {
-                auto * widget = CreateWidget( hud->GetOwningPlayerController(), overlay.WidgetClass.Get() );
-                active_data.OverlayWidgets.Add( widget );
+                if ( const auto widget_class = asset_manager.GetSubclass( overlay.WidgetClass ) )
+                {
+                    auto * widget = CreateWidget( hud->GetOwningPlayerController(), widget_class );
+                    active_data.OverlayWidgets.Add( widget );
 
-                widget->AddToViewport();
+                    widget->AddToViewport();
+                }
             }
         }
     }
