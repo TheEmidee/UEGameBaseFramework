@@ -63,7 +63,6 @@ protected:
     UFUNCTION( BlueprintImplementableEvent, meta = ( DisplayName = "OnDeathFinished" ) )
     void K2_OnDeathFinished();
 
-
     UFUNCTION( BlueprintImplementableEvent, meta = ( DisplayName = "OnAbilitySystemComponentInitialized" ) )
     void K2_OnAbilitySystemComponentInitialized();
 
