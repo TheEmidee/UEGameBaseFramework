@@ -8,6 +8,7 @@
 #include "Engine/GBFAssetManager.h"
 
 #include <Components/GameFrameworkComponentManager.h>
+#include <Engine/GameInstance.h>
 #include <Engine/LocalPlayer.h>
 #include <EnhancedInputSubsystems.h>
 #include <GameFramework/PlayerController.h>
