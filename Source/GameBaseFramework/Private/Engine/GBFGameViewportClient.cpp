@@ -127,12 +127,9 @@ void UGBFGameViewportClient::LayoutPlayers()
 
 void UGBFGameViewportClient::RemapControllerInput( FInputKeyEventArgs & key_event )
 {
-    const int32 NumLocalPlayers = World ? World->GetGameInstance()->GetNumLocalPlayers() : 0;
-
-    if ( NumLocalPlayers > 1 && key_event.Key.IsGamepadKey() && GetDefault< UGameMapsSettings >()->bOffsetPlayerGamepadIds )
+    if ( const auto num_local_players = World ? World->GetGameInstance()->GetNumLocalPlayers() : 0;
+         num_local_players > 1 && key_event.Key.IsGamepadKey() && GetDefault< UGameMapsSettings >()->bOffsetPlayerGamepadIds )
     {
-        // key_event.ControllerId++;
-
         auto id = key_event.InputDevice.GetId();
         id++;
         key_event.InputDevice = FInputDeviceId::CreateFromInternalId( id );
