@@ -77,7 +77,7 @@ struct GAMEBASEFRAMEWORK_API FGBFCameraModeView
  *
  *	Base class for all camera modes.
  */
-UCLASS( Abstract, NotBlueprintable, BlueprintType )
+UCLASS( Abstract, Blueprintable, BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFCameraMode : public UObject
 {
     GENERATED_BODY()
@@ -109,8 +109,11 @@ public:
     void SetBlendWeight( float weight );
 
 protected:
-    virtual FVector GetPivotLocation() const;
-    virtual FRotator GetPivotRotation() const;
+    UFUNCTION( BlueprintNativeEvent )
+    FVector GetPivotLocation() const;
+
+    UFUNCTION( BlueprintNativeEvent )
+    FRotator GetPivotRotation() const;
 
     virtual void UpdateView( float delta_time );
     virtual void UpdateBlending( float delta_time );
