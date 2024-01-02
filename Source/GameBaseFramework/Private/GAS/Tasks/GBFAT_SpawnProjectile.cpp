@@ -36,7 +36,8 @@ void UGBFAT_SpawnProjectile::FinishSpawningActor( UGameplayAbility * owning_abil
 {
     if ( SpawnedActor != nullptr )
     {
-        const auto spawn_transform = targeting_location_info.GetTargetingTransform();
+        auto spawn_transform = targeting_location_info.GetTargetingTransform();
+        spawn_transform.SetScale3D( FVector::OneVector );
         SpawnedActor->FinishSpawning( spawn_transform );
 
         if ( ShouldBroadcastAbilityTaskDelegates() )
