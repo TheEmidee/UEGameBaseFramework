@@ -112,15 +112,15 @@ void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsF
         {
             for ( const auto & entry : InputMappings )
             {
-                // Skip entries that don't want to be registered
-                if ( !entry.bRegisterWithSettings )
-                {
-                    continue;
-                }
-
                 // Register this IMC with the settings!
                 if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
                 {
+                    // Skip entries that don't want to be registered
+                    if ( !entry.bRegisterWithSettings )
+                    {
+                        continue;
+                    }
+
                     settings->RegisterInputMappingContext( imc );
                 }
             }
