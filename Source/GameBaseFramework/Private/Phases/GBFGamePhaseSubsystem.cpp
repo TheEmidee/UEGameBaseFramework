@@ -210,22 +210,27 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
 
             if ( !cancel_active_phases )
             {
-                if ( !active_phase_tag.MatchesTag( incoming_phase_tag ) )
-                {
-                    // Deliberately skip the last tag of the array (which is in fact the root parent tag) as it's generally the same tag for all phases
-                    // For example we may have an active phase for the current state of the game (Ex: GamePhase.Playing)
-                    // And an active phase for the current mood of the game, that would start with GamePhase.Mood.Exploration.
-                    // We don't want to cancel the GamePhase.Playing phases when we change the mood
-                    for ( auto iterator = incoming_phase_parent_tags.CreateConstIterator(); iterator.GetIndex() < incoming_phase_parent_tags.Num() - 1; ++iterator )
-                    {
-                        cancel_active_phases = active_phase_tag.MatchesTag( *iterator );
+                cancel_active_phases = !incoming_phase_tag.MatchesTag( active_phase_tag );
 
-                        if ( cancel_active_phases )
-                        {
-                            break;
-                        }
-                    }
-                }
+                // :TODO: Commented because it breaks the default behavior of not cancelling nested phases.
+                // Fix or remove because it may not be a good idea to have multiple phases to run at the same time
+
+                //if ( !active_phase_tag.MatchesTag( incoming_phase_tag ) )
+                //{
+                //    // Deliberately skip the last tag of the array (which is in fact the root parent tag) as it's generally the same tag for all phases
+                //    // For example we may have an active phase for the current state of the game (Ex: GamePhase.Playing)
+                //    // And an active phase for the current mood of the game, that would start with GamePhase.Mood.Exploration.
+                //    // We don't want to cancel the GamePhase.Playing phases when we change the mood
+                //    for ( auto iterator = incoming_phase_parent_tags.CreateConstIterator(); iterator.GetIndex() < incoming_phase_parent_tags.Num() - 1; ++iterator )
+                //    {
+                //        cancel_active_phases = active_phase_tag.MatchesTag( *iterator );
+
+                //        if ( cancel_active_phases )
+                //        {
+                //            break;
+                //        }
+                //    }
+                //}
             }
             if ( cancel_active_phases )
             {
