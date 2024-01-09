@@ -55,7 +55,7 @@ public:
     TSoftClassPtr< UUserWidget > InteractionWidgetClass;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    FVector2D InteractionWidgetOffset;
+    FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
 
     //--------------------------------------------------------------
 
