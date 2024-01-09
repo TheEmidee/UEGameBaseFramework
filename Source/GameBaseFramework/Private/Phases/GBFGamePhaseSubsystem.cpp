@@ -72,27 +72,33 @@ void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility
     }
 }
 
-void UGBFGamePhaseSubsystem::WhenPhaseStartsOrIsActive( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active )
+FGBFGamePhaseObserverHandle UGBFGamePhaseSubsystem::WhenPhaseStartsOrIsActive( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active, bool trigger_once /*= false*/ )
 {
-    FPhaseObserver Observer;
-    Observer.PhaseTag = phase_tag;
-    Observer.MatchType = match_type;
-    Observer.PhaseCallback = when_phase_active;
-    PhaseStartObservers.Add( Observer );
+    FPhaseObserver observer;
+    observer.PhaseTag = phase_tag;
+    observer.MatchType = match_type;
+    observer.PhaseCallback = when_phase_active;
+    observer.bTriggerOnce = trigger_once;
+    PhaseStartObservers.Add( observer );
 
     if ( IsPhaseActive( phase_tag ) )
     {
         when_phase_active.ExecuteIfBound( phase_tag );
     }
+
+    return observer.Handle;
 }
 
-void UGBFGamePhaseSubsystem::WhenPhaseEnds( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end )
+FGBFGamePhaseObserverHandle UGBFGamePhaseSubsystem::WhenPhaseEnds( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end, bool trigger_once /*= false*/ )
 {
-    FPhaseObserver Observer;
-    Observer.PhaseTag = phase_tag;
-    Observer.MatchType = match_type;
-    Observer.PhaseCallback = when_phase_end;
-    PhaseEndObservers.Add( Observer );
+    FPhaseObserver observer;
+    observer.PhaseTag = phase_tag;
+    observer.MatchType = match_type;
+    observer.PhaseCallback = when_phase_end;
+    observer.bTriggerOnce = trigger_once;
+    PhaseEndObservers.Add( observer );
+
+    return observer.Handle;
 }
 
 bool UGBFGamePhaseSubsystem::IsPhaseActive( const FGameplayTag & phase_tag ) const
@@ -107,6 +113,17 @@ bool UGBFGamePhaseSubsystem::IsPhaseActive( const FGameplayTag & phase_tag ) con
     }
 
     return false;
+}
+
+void UGBFGamePhaseSubsystem::UnRegisterObserver( FGBFGamePhaseObserverHandle handle )
+{
+    PhaseStartObservers.RemoveAll( [ handle ]( const auto & observer ) {
+        return observer.Handle == handle;
+    } );
+
+    PhaseEndObservers.RemoveAll( [ handle ]( const auto & observer ) {
+        return observer.Handle == handle;
+    } );
 }
 
 #if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
@@ -134,22 +151,22 @@ void UGBFGamePhaseSubsystem::K2_StartPhase( const TSubclassOf< UGBFGamePhaseAbil
     StartPhase( phase_ability, ended_delegate );
 }
 
-void UGBFGamePhaseSubsystem::K2_WhenPhaseStartsOrIsActive( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active )
+FGBFGamePhaseObserverHandle UGBFGamePhaseSubsystem::K2_WhenPhaseStartsOrIsActive( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active, bool trigger_once /*= false*/ )
 {
     const auto active_delegate = FGBFGamePhaseTagDelegate::CreateWeakLambda( when_phase_active.GetUObject(), [ when_phase_active ]( const FGameplayTag & phase_tag ) {
         when_phase_active.ExecuteIfBound( phase_tag );
     } );
 
-    WhenPhaseStartsOrIsActive( phase_tag, match_type, active_delegate );
+    return WhenPhaseStartsOrIsActive( phase_tag, match_type, active_delegate, trigger_once );
 }
 
-void UGBFGamePhaseSubsystem::K2_WhenPhaseEnds( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_end )
+FGBFGamePhaseObserverHandle UGBFGamePhaseSubsystem::K2_WhenPhaseEnds( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_end, bool trigger_once /*= false*/ )
 {
     const auto ended_delegate = FGBFGamePhaseTagDelegate::CreateWeakLambda( when_phase_end.GetUObject(), [ when_phase_end ]( const FGameplayTag & phase_tag ) {
         when_phase_end.ExecuteIfBound( phase_tag );
     } );
 
-    WhenPhaseEnds( phase_tag, match_type, ended_delegate );
+    return WhenPhaseEnds( phase_tag, match_type, ended_delegate, trigger_once );
 }
 
 void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ability, const FGameplayAbilitySpecHandle phase_ability_handle )
@@ -215,15 +232,15 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
                 // :TODO: Commented because it breaks the default behavior of not cancelling nested phases.
                 // Fix or remove because it may not be a good idea to have multiple phases to run at the same time
 
-                //if ( !active_phase_tag.MatchesTag( incoming_phase_tag ) )
+                // if ( !active_phase_tag.MatchesTag( incoming_phase_tag ) )
                 //{
-                //    // Deliberately skip the last tag of the array (which is in fact the root parent tag) as it's generally the same tag for all phases
-                //    // For example we may have an active phase for the current state of the game (Ex: GamePhase.Playing)
-                //    // And an active phase for the current mood of the game, that would start with GamePhase.Mood.Exploration.
-                //    // We don't want to cancel the GamePhase.Playing phases when we change the mood
-                //    for ( auto iterator = incoming_phase_parent_tags.CreateConstIterator(); iterator.GetIndex() < incoming_phase_parent_tags.Num() - 1; ++iterator )
-                //    {
-                //        cancel_active_phases = active_phase_tag.MatchesTag( *iterator );
+                //     // Deliberately skip the last tag of the array (which is in fact the root parent tag) as it's generally the same tag for all phases
+                //     // For example we may have an active phase for the current state of the game (Ex: GamePhase.Playing)
+                //     // And an active phase for the current mood of the game, that would start with GamePhase.Mood.Exploration.
+                //     // We don't want to cancel the GamePhase.Playing phases when we change the mood
+                //     for ( auto iterator = incoming_phase_parent_tags.CreateConstIterator(); iterator.GetIndex() < incoming_phase_parent_tags.Num() - 1; ++iterator )
+                //     {
+                //         cancel_active_phases = active_phase_tag.MatchesTag( *iterator );
 
                 //        if ( cancel_active_phases )
                 //        {
@@ -247,13 +264,22 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
         auto & entry = ActivePhaseMap.FindOrAdd( phase_ability_handle );
         entry.PhaseTag = incoming_phase_tag;
 
+        TArray< FGBFGamePhaseObserverHandle > observer_indices_to_remove;
+
         // Notify all observers of this phase that it has started.
-        for ( const auto & observer : PhaseStartObservers )
+        for ( auto index = 0; index < PhaseStartObservers.Num(); ++index )
         {
+            const auto & observer = PhaseStartObservers[ index ];
             if ( observer.IsMatch( incoming_phase_tag ) )
             {
+                observer_indices_to_remove.Add( observer.Handle );
                 observer.PhaseCallback.ExecuteIfBound( incoming_phase_tag );
             }
+        }
+
+        for ( const auto handle : observer_indices_to_remove )
+        {
+            UnRegisterObserver( handle );
         }
     }
 }
@@ -268,14 +294,41 @@ void UGBFGamePhaseSubsystem::OnEndPhase( const UGBFGamePhaseAbility * phase_abil
 
     ActivePhaseMap.Remove( phase_ability_handle );
 
+    TArray< FGBFGamePhaseObserverHandle > observer_indices_to_remove;
+
     // Notify all observers of this phase that it has ended.
-    for ( const auto & observer : PhaseEndObservers )
+    for ( auto index = 0; index < PhaseEndObservers.Num(); ++index )
     {
+        const auto & observer = PhaseEndObservers[ index ];
         if ( observer.IsMatch( ended_phase_tag ) )
         {
             observer.PhaseCallback.ExecuteIfBound( ended_phase_tag );
+            observer_indices_to_remove.Add( observer.Handle );
         }
     }
+
+    for ( const auto handle : observer_indices_to_remove )
+    {
+        UnRegisterObserver( handle );
+    }
+}
+
+void UGBFGamePhaseSubsystem::EndAllPhases()
+{
+    const auto * world = GetWorld();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+
+    TMap<FGameplayAbilitySpecHandle, FGBFGamePhaseEntry> copy = ActivePhaseMap;
+    for ( auto & [ handle_to_end, entry ] : copy )
+    {
+        game_state_asc->CancelAbilitiesByFunc( [ handle_to_end ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
+            return handle == handle_to_end;
+        },
+            true );
+    }
+
+    PhaseStartObservers.Reset();
+    PhaseEndObservers.Reset();
 }
 
 void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const
