@@ -141,9 +141,7 @@ private:
     {
         FPhaseObserver() :
             Handle( FGBFGamePhaseObserverHandle::GenerateNewHandle() ),
-            bTriggerOnce( false )
-        {
-        };
+            bTriggerOnce( false ) {};
 
         bool IsMatch( const FGameplayTag & compare_phase_tag ) const;
 
