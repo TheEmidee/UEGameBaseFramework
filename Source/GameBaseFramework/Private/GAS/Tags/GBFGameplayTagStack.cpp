@@ -74,6 +74,22 @@ void FGBFGameplayTagStackContainer::RemoveStack( FGameplayTag tag, int32 stack_c
     }
 }
 
+void FGBFGameplayTagStackContainer::ResetStack( FGameplayTag tag )
+{
+    const auto * tag_stack_ptr = Stacks.FindByPredicate( [ tag ]( const FGBFGameplayTagStack & tag_stack ) {
+        return tag_stack.Tag == tag;
+    } );
+
+    if ( tag_stack_ptr == nullptr )
+    {
+        return;
+    }
+
+    Stacks.Remove( *tag_stack_ptr );
+    TagToCountMap.Remove( tag );
+    MarkArrayDirty();
+}
+
 void FGBFGameplayTagStackContainer::PreReplicatedRemove( const TArrayView< int32 > removed_indices, int32 /*final_size*/ )
 {
     for ( const int32 index : removed_indices )

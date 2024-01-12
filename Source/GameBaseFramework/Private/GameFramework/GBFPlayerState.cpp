@@ -45,6 +45,11 @@ void AGBFPlayerState::RemoveStatTagStack( const FGameplayTag tag, const int32 st
     StatTags.RemoveStack( tag, stack_count );
 }
 
+void AGBFPlayerState::ResetStatTagStack( const FGameplayTag tag )
+{
+    StatTags.ResetStack( tag );
+}
+
 int32 AGBFPlayerState::GetStatTagStackCount( const FGameplayTag tag ) const
 {
     return StatTags.GetStackCount( tag );
