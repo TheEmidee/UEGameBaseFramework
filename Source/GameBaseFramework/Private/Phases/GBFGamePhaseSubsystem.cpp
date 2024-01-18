@@ -267,7 +267,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
         TArray< FGBFGamePhaseObserverHandle > observer_indices_to_remove;
 
         // Copy because the observers may change the active state
-        TArray<FPhaseObserver> phase_observers = PhaseStartObservers;
+        TArray< FPhaseObserver > phase_observers = PhaseStartObservers;
 
         // Notify all observers of this phase that it has started.
         for ( const auto & observer : phase_observers )
@@ -299,7 +299,7 @@ void UGBFGamePhaseSubsystem::OnEndPhase( const UGBFGamePhaseAbility * phase_abil
     TArray< FGBFGamePhaseObserverHandle > observer_indices_to_remove;
 
     // Copy because the observers may change the active state
-    TArray<FPhaseObserver> phase_observers = PhaseEndObservers;
+    TArray< FPhaseObserver > phase_observers = PhaseEndObservers;
 
     // Notify all observers of this phase that it has ended.
     for ( const auto & observer : phase_observers )
