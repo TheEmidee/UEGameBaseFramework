@@ -25,9 +25,12 @@ AGBFCharacter::AGBFCharacter( const FObjectInitializer & object_initializer ) :
     PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnAbilitySystemInitialized ) );
     PawnExtComponent->OnAbilitySystemUninitialized_Register( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnAbilitySystemUninitialized ) );
 
-    HealthComponent = CreateDefaultSubobject< UGBFHealthComponent >( TEXT( "HealthComponent" ) );
-    HealthComponent->OnDeathStarted().AddDynamic( this, &ThisClass::OnDeathStarted );
-    HealthComponent->OnDeathFinished().AddDynamic( this, &ThisClass::OnDeathFinished );
+    HealthComponent = CreateOptionalDefaultSubobject< UGBFHealthComponent >( TEXT( "HealthComponent" ) );
+    if ( HealthComponent != nullptr )
+    {
+        HealthComponent->OnDeathStarted().AddDynamic( this, &ThisClass::OnDeathStarted );
+        HealthComponent->OnDeathFinished().AddDynamic( this, &ThisClass::OnDeathFinished );
+    }
 }
 
 AGBFPlayerState * AGBFCharacter::GetGBFPlayerState() const
@@ -133,7 +136,10 @@ void AGBFCharacter::OnAbilitySystemInitialized()
     auto * asc = GetGBFAbilitySystemComponent();
     check( asc );
 
-    HealthComponent->InitializeWithAbilitySystem( asc );
+    if ( HealthComponent != nullptr )
+    {
+        HealthComponent->InitializeWithAbilitySystem( asc );
+    }
 
     InitializeGameplayTags();
 
@@ -142,7 +148,10 @@ void AGBFCharacter::OnAbilitySystemInitialized()
 
 void AGBFCharacter::OnAbilitySystemUninitialized()
 {
-    HealthComponent->UninitializeFromAbilitySystem();
+    if ( HealthComponent != nullptr )
+    {
+        HealthComponent->UninitializeFromAbilitySystem();
+    }
 }
 
 void AGBFCharacter::InitializeGameplayTags()
