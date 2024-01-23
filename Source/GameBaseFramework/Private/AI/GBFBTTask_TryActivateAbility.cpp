@@ -20,6 +20,7 @@ UGBFBTTask_TryActivateAbility::UGBFBTTask_TryActivateAbility( const FObjectIniti
 
     BlackboardKey.AddObjectFilter( this, GET_MEMBER_NAME_CHECKED( UGBFBTTask_TryActivateAbility, BlackboardKey ), AActor::StaticClass() );
     bUseActorFromBlackboardKey = false;
+    bRequireServerOnlyPolicy = false;
 }
 
 EBTNodeResult::Type UGBFBTTask_TryActivateAbility::ExecuteTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
@@ -94,7 +95,7 @@ EBTNodeResult::Type UGBFBTTask_TryActivateAbility::TryActivateAbilityHandle( UBe
         return EBTNodeResult::Failed;
     }
 
-    if ( ability->GetNetExecutionPolicy() != EGameplayAbilityNetExecutionPolicy::ServerOnly )
+    if ( bRequireServerOnlyPolicy && ability->GetNetExecutionPolicy() != EGameplayAbilityNetExecutionPolicy::ServerOnly )
     {
         ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with ability with invalid NetExecutionPolicy (Must be ServerOnly)" ) );
         return EBTNodeResult::Failed;
@@ -108,10 +109,8 @@ EBTNodeResult::Type UGBFBTTask_TryActivateAbility::TryActivateAbilityHandle( UBe
         return EBTNodeResult::Failed;
     }
 
-    const ENetRole net_mode = actor_info->AvatarActor->GetLocalRole();
-
     // This should only come from button presses/local instigation (AI, etc).
-    if ( net_mode != ROLE_Authority )
+    if ( actor_info->AvatarActor->GetLocalRole() != ROLE_Authority )
     {
         ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with ability with invalid actor local role (Must be Authority)" ) );
         return EBTNodeResult::Failed;
