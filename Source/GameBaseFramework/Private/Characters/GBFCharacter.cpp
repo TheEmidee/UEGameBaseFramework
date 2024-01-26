@@ -6,6 +6,7 @@
 #include "GBFTags.h"
 #include "GameFramework/GBFPlayerState.h"
 
+#include <AbilitySystemGlobals.h>
 #include <Components/CapsuleComponent.h>
 #include <Engine/World.h>
 #include <GameFramework/CharacterMovementComponent.h>
@@ -104,12 +105,29 @@ void AGBFCharacter::PossessedBy( AController * new_controller )
 {
     Super::PossessedBy( new_controller );
 
+    if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( GetPlayerState() ) )
+    {
+        if ( asc->GetAvatarActor() != this )
+        {
+            asc->SetAvatarActor( this );
+        }
+    }
+
     PawnExtComponent->HandleControllerChanged();
 }
 
 void AGBFCharacter::UnPossessed()
 {
     Super::UnPossessed();
+
+    // Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
+    if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( GetPlayerState() ) )
+    {
+        if ( asc->GetAvatarActor() == this )
+        {
+            asc->SetAvatarActor( nullptr );
+        }
+    }
 
     PawnExtComponent->HandleControllerChanged();
 }
