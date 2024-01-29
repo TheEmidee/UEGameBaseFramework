@@ -63,22 +63,6 @@ void AGBFAIController::ServerRestartController()
     }
 }
 
-void AGBFAIController::OnUnPossess()
-{
-    if ( auto * pawn_being_unpossessed = GetPawn() )
-    {
-        if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( PlayerState ) )
-        {
-            if ( asc->GetAvatarActor() == pawn_being_unpossessed )
-            {
-                asc->SetAvatarActor( nullptr );
-            }
-        }
-    }
-
-    Super::OnUnPossess();
-}
-
 void AGBFAIController::OnPlayerStateChanged()
 {
 }
