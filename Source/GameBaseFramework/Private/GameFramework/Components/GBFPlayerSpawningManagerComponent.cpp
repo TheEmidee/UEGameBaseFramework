@@ -158,7 +158,7 @@ APlayerStart * UGBFPlayerSpawningManagerComponent::GetFirstRandomUnoccupiedPlaye
     return nullptr;
 }
 
-AActor * UGBFPlayerSpawningManagerComponent::OnChoosePlayerStart_Implementation( AController * /*player*/, TArray<AGBFPlayerStart *> & /*player_starts*/ )
+AActor * UGBFPlayerSpawningManagerComponent::OnChoosePlayerStart_Implementation( AController * /*player*/, TArray< AGBFPlayerStart * > & /*player_starts*/ )
 {
     return nullptr;
 }
