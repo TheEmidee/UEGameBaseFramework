@@ -17,7 +17,7 @@ struct FGBFLevelPlayerStarts
     TArray< TWeakObjectPtr< AGBFPlayerStart > > PlayerStarts;
 };
 
-UCLASS()
+UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFPlayerSpawningManagerComponent : public UGameStateComponent
 {
     GENERATED_BODY()
@@ -32,7 +32,9 @@ public:
 
 protected:
     APlayerStart * GetFirstRandomUnoccupiedPlayerStart( AController * controller, const TArray< AGBFPlayerStart * > & found_start_points ) const;
-    virtual AActor * OnChoosePlayerStart( AController * player, TArray< AGBFPlayerStart * > & player_starts );
+
+    UFUNCTION( BlueprintNativeEvent )
+    AActor * OnChoosePlayerStart( AController * player, UPARAM( ref ) TArray< AGBFPlayerStart * > & player_starts );
 
     virtual void OnFinishRestartPlayer( AController * Player, const FRotator & start_rotation );
 

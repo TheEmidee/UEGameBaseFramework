@@ -37,7 +37,7 @@ protected:
     UPROPERTY( EditDefaultsOnly, Category = "Player Start Claiming" )
     float ExpirationCheckInterval = 1.f;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagContainer StartPointTags;
 
     UPROPERTY( EditAnywhere )
