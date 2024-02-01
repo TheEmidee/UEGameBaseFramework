@@ -7,7 +7,7 @@
 
 #include "GBFInteractableComponent.generated.h"
 
-UCLASS( meta = ( BlueprintSpawnableComponent ) )
+UCLASS( Blueprintable, meta = ( BlueprintSpawnableComponent ) )
 class GAMEBASEFRAMEWORK_API UGBFInteractableComponent : public UActorComponent, public IGBFInteractableTarget
 {
     GENERATED_BODY()

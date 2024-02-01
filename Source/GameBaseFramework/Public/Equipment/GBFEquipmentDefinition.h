@@ -9,14 +9,14 @@ class AActor;
 class UGBFAbilitySet;
 class UGBFEquipmentInstance;
 
-USTRUCT()
+USTRUCT( Blueprintable )
 struct FGBFEquipmentActorToSpawn
 {
     GENERATED_BODY()
 
     FGBFEquipmentActorToSpawn() = default;
 
-    UPROPERTY( EditAnywhere, Category = Equipment )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = Equipment )
     TSubclassOf< AActor > ActorToSpawn;
 
     UPROPERTY( EditAnywhere, Category = Equipment )
@@ -46,6 +46,6 @@ public:
     TArray< TObjectPtr< const UGBFAbilitySet > > AbilitySetsToGrant;
 
     // Actors to spawn on the pawn when this is equipped
-    UPROPERTY( EditDefaultsOnly, Category = Equipment )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Equipment )
     TArray< FGBFEquipmentActorToSpawn > ActorsToSpawn;
 };
