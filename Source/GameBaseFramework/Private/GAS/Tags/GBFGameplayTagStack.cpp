@@ -74,6 +74,20 @@ void FGBFGameplayTagStackContainer::RemoveStack( FGameplayTag tag, int32 stack_c
     }
 }
 
+void FGBFGameplayTagStackContainer::ResetStack( const FGameplayTag tag )
+{
+    for ( auto stack_iterator = Stacks.CreateIterator(); stack_iterator; ++stack_iterator )
+    {
+        auto & stack = *stack_iterator;
+        if ( stack.Tag == tag )
+        {
+            stack_iterator.RemoveCurrent();
+            TagToCountMap.Remove( tag );
+            MarkArrayDirty();
+        }
+    }
+}
+
 void FGBFGameplayTagStackContainer::PreReplicatedRemove( const TArrayView< int32 > removed_indices, int32 /*final_size*/ )
 {
     for ( const int32 index : removed_indices )

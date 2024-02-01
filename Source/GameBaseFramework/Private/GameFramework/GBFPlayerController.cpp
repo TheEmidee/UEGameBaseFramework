@@ -199,23 +199,6 @@ void AGBFPlayerController::OnPossess( APawn * pawn )
 #endif
 }
 
-void AGBFPlayerController::OnUnPossess()
-{
-    // Make sure the pawn that is being unpossessed doesn't remain our ASC's avatar actor
-    if ( auto * pawn_being_unpossessed = GetPawn() )
-    {
-        if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( PlayerState ) )
-        {
-            if ( asc->GetAvatarActor() == pawn_being_unpossessed )
-            {
-                asc->SetAvatarActor( nullptr );
-            }
-        }
-    }
-
-    Super::OnUnPossess();
-}
-
 void AGBFPlayerController::OnPlayerStateChanged()
 {
 }

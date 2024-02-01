@@ -21,7 +21,6 @@ public:
     void ServerRestartController();
 
 protected:
-    void OnUnPossess() override;
     virtual void OnPlayerStateChanged();
 
 private:

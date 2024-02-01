@@ -49,6 +49,9 @@ struct GAMEBASEFRAMEWORK_API FGBFGameplayTagStackContainer : public FFastArraySe
     // Removes a specified number of stacks from the tag (does nothing if StackCount is below 1)
     void RemoveStack( FGameplayTag tag, int32 stack_count );
 
+    // Resets the stacks from the tag
+    void ResetStack( FGameplayTag tag );
+
     // Returns the stack count of the specified tag (or 0 if the tag is not present)
     int32 GetStackCount( const FGameplayTag tag ) const;
 

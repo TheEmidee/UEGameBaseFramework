@@ -45,7 +45,6 @@ public:
 
 protected:
     void OnPossess( APawn * pawn ) override;
-    void OnUnPossess() override;
 
     // Called when the player state is set or cleared
     virtual void OnPlayerStateChanged();

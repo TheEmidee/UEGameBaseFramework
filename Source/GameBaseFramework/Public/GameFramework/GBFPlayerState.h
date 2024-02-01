@@ -39,6 +39,10 @@ public:
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     void RemoveStatTagStack( FGameplayTag tag, int32 stack_count );
 
+    // Resets the stacks from the tag
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
+    void ResetStatTagStack( FGameplayTag tag );
+
     // Returns the stack count of the specified tag (or 0 if the tag is not present)
     UFUNCTION( BlueprintCallable )
     int32 GetStatTagStackCount( FGameplayTag tag ) const;

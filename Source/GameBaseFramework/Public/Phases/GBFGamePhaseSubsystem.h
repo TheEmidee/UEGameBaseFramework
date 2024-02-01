@@ -18,6 +18,62 @@ DECLARE_DELEGATE_OneParam( FGBFGamePhaseDelegate, const UGBFGamePhaseAbility * P
 DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFGamePhaseTagDynamicDelegate, const FGameplayTag &, PhaseTag );
 DECLARE_DELEGATE_OneParam( FGBFGamePhaseTagDelegate, const FGameplayTag & PhaseTag );
 
+USTRUCT( BlueprintType )
+struct GAMEBASEFRAMEWORK_API FGBFGamePhaseObserverHandle
+{
+    GENERATED_USTRUCT_BODY()
+
+    FGBFGamePhaseObserverHandle() :
+        Handle( INDEX_NONE )
+    {
+    }
+
+    explicit FGBFGamePhaseObserverHandle( int32 handle ) :
+        Handle( handle )
+    {
+    }
+
+    bool IsValid() const
+    {
+        return Handle != INDEX_NONE;
+    }
+
+    bool operator==( const FGBFGamePhaseObserverHandle & other ) const
+    {
+        return Handle == other.Handle;
+    }
+
+    bool operator!=( const FGBFGamePhaseObserverHandle & other ) const
+    {
+        return Handle != other.Handle;
+    }
+
+    friend uint32 GetTypeHash( const FGBFGamePhaseObserverHandle & handle )
+    {
+        return handle.Handle;
+    }
+
+    FString ToString() const
+    {
+        return FString::Printf( TEXT( "%d" ), Handle );
+    }
+
+    void Invalidate()
+    {
+        Handle = INDEX_NONE;
+    }
+
+    static FGBFGamePhaseObserverHandle GenerateNewHandle()
+    {
+        static int GHandle = 0;
+
+        return FGBFGamePhaseObserverHandle( GHandle++ );
+    }
+
+private:
+    int32 Handle;
+};
+
 // Match rule for message receivers
 UENUM( BlueprintType )
 enum class EPhaseTagMatchType : uint8
@@ -31,9 +87,6 @@ enum class EPhaseTagMatchType : uint8
     PartialMatch
 };
 
-/**
- * Imported from Lyra
- */
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFGamePhaseSubsystem : public UWorldSubsystem
 {
@@ -42,13 +95,14 @@ class GAMEBASEFRAMEWORK_API UGBFGamePhaseSubsystem : public UWorldSubsystem
 public:
     void StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, FGBFGamePhaseDelegate phase_ended_callback = FGBFGamePhaseDelegate() );
 
-    // TODO Return a handle so folks can delete these.  They will just grow until the world resets.
-    // TODO Should we just occasionally clean these observers up?  It's not as if everyone will properly unhook them even if there is a handle.
-    void WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active );
-    void WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end );
+    FGBFGamePhaseObserverHandle WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active, bool trigger_once = false );
+    FGBFGamePhaseObserverHandle WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end, bool trigger_once = false );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, BlueprintPure = false, meta = ( AutoCreateRefTerm = "phase_tag" ) )
     bool IsPhaseActive( const FGameplayTag & phase_tag ) const;
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase" )
+    void UnRegisterObserver( FGBFGamePhaseObserverHandle handle );
 
 #if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
     void DumpActivePhases( FOutputDevice & output_device );
@@ -61,13 +115,16 @@ protected:
     void K2_StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDynamicDelegate & phase_ended_delegate );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Starts or Is Active", AutoCreateRefTerm = "when_phase_active" ) )
-    void K2_WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active );
+    FGBFGamePhaseObserverHandle K2_WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active, bool trigger_once = false );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Ends", AutoCreateRefTerm = "when_phase_end" ) )
-    void K2_WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_end );
+    FGBFGamePhaseObserverHandle K2_WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_end, bool trigger_once = false );
 
     void OnBeginPhase( const UGBFGamePhaseAbility * phase_ability, const FGameplayAbilitySpecHandle phase_ability_handle );
     void OnEndPhase( const UGBFGamePhaseAbility * phase_ability, const FGameplayAbilitySpecHandle phase_ability_handle );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase" )
+    void EndAllPhases();
 
 private:
     void GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const;
@@ -82,11 +139,17 @@ private:
 
     struct FPhaseObserver
     {
+        FPhaseObserver() :
+            Handle( FGBFGamePhaseObserverHandle::GenerateNewHandle() ),
+            bTriggerOnce( false ) {};
+
         bool IsMatch( const FGameplayTag & compare_phase_tag ) const;
 
         FGameplayTag PhaseTag;
         EPhaseTagMatchType MatchType = EPhaseTagMatchType::ExactMatch;
         FGBFGamePhaseTagDelegate PhaseCallback;
+        FGBFGamePhaseObserverHandle Handle;
+        bool bTriggerOnce;
     };
 
     TArray< FPhaseObserver > PhaseStartObservers;

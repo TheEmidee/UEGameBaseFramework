@@ -45,6 +45,9 @@ private:
 
     UPROPERTY( EditAnywhere, Category = "Target", meta = ( EditCondition = "bUseActorFromBlackboardKey" ) )
     FBlackboardKeySelector BlackboardKey;
+
+    UPROPERTY( EditAnywhere, Category = "Target" )
+    uint8 bRequireServerOnlyPolicy : 1;
 };
 
 UCLASS()
