@@ -32,7 +32,7 @@ public:
     // 1) Place an ability on the avatar that they can activate when they perform interaction.
 
     /** The ability to grant the avatar when they get near interactable objects. */
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UGameplayAbility > InteractionAbilityToGrant;
 
     // - OR -
