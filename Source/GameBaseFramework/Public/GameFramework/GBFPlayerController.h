@@ -19,6 +19,9 @@ public:
     UFUNCTION( BlueprintPure )
     UGBFLocalPlayer * GetGBFLocalPlayer() const;
 
+    UFUNCTION( BlueprintPure )
+    AActor * GetStartSpot() const;
+
     void EnableInput( APlayerController * player_controller ) override;
     void DisableInput( APlayerController * player_controller ) override;
 
@@ -57,3 +60,8 @@ private:
 
     FTimerHandle ReEnableInputTimerHandle;
 };
+
+FORCEINLINE AActor * AGBFPlayerController::GetStartSpot() const
+{
+    return StartSpot.Get();
+}
