@@ -117,8 +117,8 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipm
 
     auto & new_entry = Entries.AddDefaulted_GetRef();
     new_entry.EquipmentDefinition = equipment_definition;
-    new_entry.Instance = equipment_instance; //@TODO: Using the actor instead of component as the outer due to UE-127172
-    UGBFEquipmentInstance * result = new_entry.Instance;
+    new_entry.Instance = equipment_instance; //:TODO: Using the actor instead of component as the outer due to UE-127172
+    auto & result = new_entry.Instance;
 
     if ( auto * asc = GetAbilitySystemComponent() )
     {
@@ -129,7 +129,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipm
     }
     else
     {
-        //@TODO: Warning logging?
+        //:TODO: Warning logging?
     }
 
     MarkItemDirty( new_entry );
