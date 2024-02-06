@@ -34,6 +34,12 @@ public:
     UFUNCTION( BlueprintPure, Category = Equipment, meta = ( DeterminesOutputType = pawn_type ) )
     APawn * GetTypedPawn( TSubclassOf< APawn > pawn_type ) const;
 
+    UFUNCTION( BlueprintCallable, Category = Equipment )
+    void AddSpawnedActor( AActor * spawned_actor );
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Equipment )
+    bool ShouldBeDroppedOnGround;
+
     virtual void SpawnEquipmentActors( const TArray< FGBFEquipmentActorToSpawn > & actors_to_spawn );
     virtual void DestroyEquipmentActors();
 

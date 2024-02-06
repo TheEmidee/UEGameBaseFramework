@@ -106,6 +106,43 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
     return result;
 }
 
+UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+{
+    check( equipment_definition != nullptr );
+    check( equipment_instance != nullptr );
+    check( OwnerComponent != nullptr );
+    check( OwnerComponent->GetOwner()->HasAuthority() );
+
+    const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
+
+    auto & new_entry = Entries.AddDefaulted_GetRef();
+    new_entry.EquipmentDefinition = equipment_definition;
+    new_entry.Instance = equipment_instance; //@TODO: Using the actor instead of component as the outer due to UE-127172
+    UGBFEquipmentInstance * result = new_entry.Instance;
+
+    if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        for ( const auto ability_set : equipment_cdo->AbilitySetsToGrant )
+        {
+            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, result );
+        }
+    }
+    else
+    {
+        //@TODO: Warning logging?
+    }
+
+    MarkItemDirty( new_entry );
+
+    FGBFEquipmentStateChangedMessage message;
+    message.EquipmentOwner = OwnerComponent;
+    message.Instance = new_entry.Instance;
+
+    UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
+
+    return result;
+}
+
 void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
 {
     for ( auto entry_it = Entries.CreateIterator(); entry_it; ++entry_it )
@@ -118,7 +155,10 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
                 entry.GrantedHandles.TakeFromAbilitySystem( asc );
             }
 
-            instance->DestroyEquipmentActors();
+            if ( !instance->ShouldBeDroppedOnGround )
+            {
+                instance->DestroyEquipmentActors();
+            }
 
             entry_it.RemoveCurrent();
             MarkArrayDirty();
@@ -160,6 +200,25 @@ UGBFEquipmentInstance * UGBFEquipmentManagerComponent::EquipItem( const TSubclas
     if ( equipment_definition != nullptr )
     {
         result = EquipmentList.AddEntry( equipment_definition );
+        if ( result != nullptr )
+        {
+            result->OnEquipped();
+
+            if ( IsUsingRegisteredSubObjectList() && IsReadyForReplication() )
+            {
+                AddReplicatedSubObject( result );
+            }
+        }
+    }
+    return result;
+}
+
+UGBFEquipmentInstance * UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+{
+    UGBFEquipmentInstance * result = nullptr;
+    if ( equipment_instance != nullptr && equipment_definition != nullptr )
+    {
+        result = EquipmentList.AddEntryFromExistingActor( equipment_instance, equipment_definition );
         if ( result != nullptr )
         {
             result->OnEquipped();

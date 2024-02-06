@@ -66,6 +66,7 @@ struct FGBFEquipmentList : public FFastArraySerializer
     bool NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params );
     UGBFEquipmentInstance * AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
     void RemoveEntry( UGBFEquipmentInstance * instance );
+    UGBFEquipmentInstance * AddEntryFromExistingActor( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
 private:
     UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
@@ -99,6 +100,9 @@ public:
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     UGBFEquipmentInstance * EquipItem( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
+    UGBFEquipmentInstance * PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     void UnequipItem( UGBFEquipmentInstance * item_instance );
