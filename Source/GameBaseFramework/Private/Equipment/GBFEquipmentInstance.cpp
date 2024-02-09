@@ -86,11 +86,6 @@ void UGBFEquipmentInstance::DestroyEquipmentActors()
     }
 }
 
-void UGBFEquipmentInstance::AddSpawnedActor( AActor * spawned_actor )
-{
-    SpawnedActors.Add( spawned_actor );
-}
-
 void UGBFEquipmentInstance::OnEquipped()
 {
     K2_OnEquipped();
