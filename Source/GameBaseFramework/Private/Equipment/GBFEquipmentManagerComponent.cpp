@@ -191,23 +191,20 @@ UGBFEquipmentInstance * UGBFEquipmentManagerComponent::EquipItem( const TSubclas
     return result;
 }
 
-UGBFEquipmentInstance * UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+void UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
 {
-    UGBFEquipmentInstance * result = nullptr;
     if ( equipment_instance != nullptr && equipment_definition != nullptr )
     {
-        result = EquipmentList.AddEntry( equipment_instance, equipment_definition );
-        if ( result != nullptr )
-        {
-            result->OnEquipped();
+        //:NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
+        equipment_instance->Rename( nullptr, GetOwner() );
+        EquipmentList.AddEntry( equipment_instance, equipment_definition );
+        equipment_instance->OnEquipped();
 
-            if ( IsUsingRegisteredSubObjectList() && IsReadyForReplication() )
-            {
-                AddReplicatedSubObject( result );
-            }
+        if ( IsUsingRegisteredSubObjectList() && IsReadyForReplication() )
+        {
+            AddReplicatedSubObject( equipment_instance );
         }
     }
-    return result;
 }
 
 void UGBFEquipmentManagerComponent::UnequipItem( UGBFEquipmentInstance * item_instance )

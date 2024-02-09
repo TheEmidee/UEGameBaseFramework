@@ -16,17 +16,13 @@ class GAMEBASEFRAMEWORK_API UGBFPickupDefinition : public UDataAsset
     GENERATED_BODY()
 
 public:
-    // Define the pickable equipment
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
+    // Actor to spawn instead of only display a mesh
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
+    TSubclassOf< AActor > ActorToSpawn;
 
     // Visual of the pickup
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
     TObjectPtr< UStaticMesh > DisplayMesh;
-
-    // Actor to spawn instead of only display a mesh
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    TSubclassOf< AActor > ActorToSpawn;
 
     // Particle FX to play when picked up
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
