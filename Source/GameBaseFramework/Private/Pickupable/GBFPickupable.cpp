@@ -5,6 +5,8 @@
 
 void AGBFPickupable::BeginPlay()
 {
+    Super::BeginPlay();
+    
     CreateEquipmentInstance();
 }
 
@@ -21,4 +23,5 @@ void AGBFPickupable::CreateEquipmentInstance()
     }
 
     EquipmentInstance = NewObject< UGBFEquipmentInstance >( this, instance_type );
+    EquipmentInstance->SetInstigator( this );
 }
