@@ -195,7 +195,7 @@ void UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipmentInstance * equipmen
 {
     if ( equipment_instance != nullptr && equipment_definition != nullptr )
     {
-        //:NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
+        //: NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
         equipment_instance->Rename( nullptr, GetOwner() );
         EquipmentList.AddEntry( equipment_instance, equipment_definition );
         equipment_instance->OnEquipped();
