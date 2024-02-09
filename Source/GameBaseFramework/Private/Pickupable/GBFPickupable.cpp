@@ -6,7 +6,7 @@
 void AGBFPickupable::BeginPlay()
 {
     Super::BeginPlay();
-    
+
     CreateEquipmentInstance();
 }
 
