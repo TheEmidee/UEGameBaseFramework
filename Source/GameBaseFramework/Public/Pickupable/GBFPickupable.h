@@ -18,7 +18,6 @@ class GAMEBASEFRAMEWORK_API AGBFPickupable : public AGBFInteractableActor
 public:
     void BeginPlay() override;
 
-
 private:
     void CreateEquipmentInstance();
 
