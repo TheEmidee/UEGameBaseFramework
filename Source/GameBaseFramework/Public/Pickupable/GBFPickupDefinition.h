@@ -28,10 +28,6 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
     TSubclassOf< AActor > ActorToSpawn;
 
-    // Cool down time between pickups in seconds
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    float SpawnCoolDownSeconds;
-
     // Particle FX to play when picked up
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
     TObjectPtr< UNiagaraSystem > PickedUpEffect;
