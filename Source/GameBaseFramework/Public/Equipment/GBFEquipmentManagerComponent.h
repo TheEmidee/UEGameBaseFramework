@@ -66,10 +66,11 @@ struct FGBFEquipmentList : public FFastArraySerializer
     bool NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params );
     UGBFEquipmentInstance * AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
     void RemoveEntry( UGBFEquipmentInstance * instance );
-    UGBFEquipmentInstance * AddEntryFromExistingActor( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
+    UGBFEquipmentInstance * AddEntry( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
 private:
     UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGBFEquipmentInstance * AddEntryInternal( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition, bool spawn_equipment_actors );
 
     friend UGBFEquipmentManagerComponent;
 

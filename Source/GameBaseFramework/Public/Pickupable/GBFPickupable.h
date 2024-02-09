@@ -18,14 +18,15 @@ class GAMEBASEFRAMEWORK_API AGBFPickupable : public AGBFInteractableActor
 public:
     void BeginPlay() override;
 
-    // define the equipment definition of the pickupable
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 
 private:
     void CreateEquipmentInstance();
 
+    // define the equipment definition of the pickupable
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
+
     // The Equipment Instance from the equipmentdefition to fit with the EquipmentManager
-    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TObjectPtr< UGBFEquipmentInstance > EquipmentInstance;
 };

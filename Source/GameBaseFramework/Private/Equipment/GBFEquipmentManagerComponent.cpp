@@ -64,10 +64,6 @@ bool FGBFEquipmentList::NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params
 
 UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
 {
-    check( equipment_definition != nullptr );
-    check( OwnerComponent != nullptr );
-    check( OwnerComponent->GetOwner()->HasAuthority() );
-
     const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
 
     TSubclassOf< UGBFEquipmentInstance > instance_type = equipment_cdo->InstanceType;
@@ -76,37 +72,15 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
         instance_type = UGBFEquipmentInstance::StaticClass();
     }
 
-    auto & new_entry = Entries.AddDefaulted_GetRef();
-    new_entry.EquipmentDefinition = equipment_definition;
-    new_entry.Instance = NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type ); //@TODO: Using the actor instead of component as the outer due to UE-127172
-    UGBFEquipmentInstance * result = new_entry.Instance;
-
-    if ( auto * asc = GetAbilitySystemComponent() )
-    {
-        for ( const auto ability_set : equipment_cdo->AbilitySetsToGrant )
-        {
-            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, result );
-        }
-    }
-    else
-    {
-        //@TODO: Warning logging?
-    }
-
-    result->SpawnEquipmentActors( equipment_cdo->ActorsToSpawn );
-
-    MarkItemDirty( new_entry );
-
-    FGBFEquipmentStateChangedMessage message;
-    message.EquipmentOwner = OwnerComponent;
-    message.Instance = new_entry.Instance;
-
-    UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
-
-    return result;
+    return AddEntryInternal( NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type ), equipment_definition, true );
 }
 
-UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+{
+    return AddEntryInternal( equipment_instance, equipment_definition, false );
+}
+
+UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition, bool spawn_equipment_actors )
 {
     check( equipment_definition != nullptr );
     check( equipment_instance != nullptr );
@@ -117,19 +91,23 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipm
 
     auto & new_entry = Entries.AddDefaulted_GetRef();
     new_entry.EquipmentDefinition = equipment_definition;
-    new_entry.Instance = equipment_instance; //:TODO: Using the actor instead of component as the outer due to UE-127172
-    auto & result = new_entry.Instance;
+    new_entry.Instance = equipment_instance; //: TODO: Using the actor instead of component as the outer due to UE-127172
 
     if ( auto * asc = GetAbilitySystemComponent() )
     {
         for ( const auto ability_set : equipment_cdo->AbilitySetsToGrant )
         {
-            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, result );
+            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, new_entry.Instance );
         }
     }
     else
     {
-        //:TODO: Warning logging?
+        //: TODO: Warning logging?
+    }
+
+    if ( spawn_equipment_actors )
+    {
+        new_entry.Instance->SpawnEquipmentActors( new_entry.EquipmentDefinition->GetDefaultObject< UGBFEquipmentDefinition >()->ActorsToSpawn );
     }
 
     MarkItemDirty( new_entry );
@@ -140,7 +118,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryFromExistingActor( UGBFEquipm
 
     UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
 
-    return result;
+    return new_entry.Instance;
 }
 
 void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
@@ -218,7 +196,7 @@ UGBFEquipmentInstance * UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipment
     UGBFEquipmentInstance * result = nullptr;
     if ( equipment_instance != nullptr && equipment_definition != nullptr )
     {
-        result = EquipmentList.AddEntryFromExistingActor( equipment_instance, equipment_definition );
+        result = EquipmentList.AddEntry( equipment_instance, equipment_definition );
         if ( result != nullptr )
         {
             result->OnEquipped();
