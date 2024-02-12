@@ -16,7 +16,7 @@ class GAMEBASEFRAMEWORK_API AGBFPickupable : public AGBFInteractableActor
     GENERATED_BODY()
 
 public:
-    void BeginPlay() override;
+    void PostInitializeComponents() override;
 
 private:
     void CreateEquipmentInstance();
@@ -26,6 +26,6 @@ private:
     TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 
     // The Equipment Instance from the equipmentdefition to fit with the EquipmentManager
-    UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( BlueprintReadOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TObjectPtr< UGBFEquipmentInstance > EquipmentInstance;
 };

@@ -3,10 +3,9 @@
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
 
-void AGBFPickupable::BeginPlay()
+void AGBFPickupable::PostInitializeComponents()
 {
-    Super::BeginPlay();
-
+    Super::PostInitializeComponents();
     CreateEquipmentInstance();
 }
 
