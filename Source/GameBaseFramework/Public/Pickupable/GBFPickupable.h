@@ -26,6 +26,6 @@ private:
     TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 
     // The Equipment Instance from the equipmentdefition to fit with the EquipmentManager
-    UPROPERTY( BlueprintReadOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( VisibleInstanceOnly, BlueprintReadOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TObjectPtr< UGBFEquipmentInstance > EquipmentInstance;
 };
