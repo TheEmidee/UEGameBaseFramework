@@ -20,6 +20,8 @@ public:
 
 private:
     void CreateEquipmentInstance();
+    UFUNCTION( BlueprintPure )
+    bool IsDataValid();
 
     // Defines the equipment definition of the pickupable
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )

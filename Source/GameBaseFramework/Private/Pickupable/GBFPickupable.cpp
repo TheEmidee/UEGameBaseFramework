@@ -9,6 +9,16 @@ void AGBFPickupable::PostInitializeComponents()
     CreateEquipmentInstance();
 }
 
+bool AGBFPickupable::IsDataValid()
+{
+    if ( EquipmentDefinition == nullptr )
+    {
+        return false;
+    }
+
+    return true;
+}
+
 void AGBFPickupable::CreateEquipmentInstance()
 {
     check( EquipmentDefinition != nullptr );
