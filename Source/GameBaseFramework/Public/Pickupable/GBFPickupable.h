@@ -17,11 +17,12 @@ class GAMEBASEFRAMEWORK_API AGBFPickupable : public AGBFInteractableActor
 
 public:
     void PostInitializeComponents() override;
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
+#endif
 
 private:
     void CreateEquipmentInstance();
-    UFUNCTION( BlueprintPure )
-    bool IsDataValid();
 
     // Defines the equipment definition of the pickupable
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )

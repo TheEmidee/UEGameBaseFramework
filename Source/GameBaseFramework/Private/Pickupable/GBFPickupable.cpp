@@ -2,21 +2,12 @@
 
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+#include <DVEDataValidator.h>
 
 void AGBFPickupable::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
     CreateEquipmentInstance();
-}
-
-bool AGBFPickupable::IsDataValid()
-{
-    if ( EquipmentDefinition == nullptr )
-    {
-        return false;
-    }
-
-    return true;
 }
 
 void AGBFPickupable::CreateEquipmentInstance()
@@ -34,3 +25,12 @@ void AGBFPickupable::CreateEquipmentInstance()
     EquipmentInstance = NewObject< UGBFEquipmentInstance >( this, instance_type );
     EquipmentInstance->SetInstigator( this );
 }
+
+#if WITH_EDITOR
+EDataValidationResult AGBFPickupable::IsDataValid( FDataValidationContext & context ) const
+{
+    return FDVEDataValidator( context )
+        .NotNull( VALIDATOR_GET_PROPERTY( EquipmentDefinition ) )
+        .Result();
+}
+#endif

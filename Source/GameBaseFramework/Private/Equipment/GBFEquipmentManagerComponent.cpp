@@ -91,7 +91,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
 
     auto & new_entry = Entries.AddDefaulted_GetRef();
     new_entry.EquipmentDefinition = equipment_definition;
-    new_entry.Instance = equipment_instance; //: TODO: Using the actor instead of component as the outer due to UE-127172
+    new_entry.Instance = equipment_instance; // :TODO: Using the actor instead of component as the outer due to UE-127172
 
     if ( auto * asc = GetAbilitySystemComponent() )
     {
@@ -102,7 +102,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
     }
     else
     {
-        //: TODO: Warning logging?
+        // :TODO: Warning logging?
     }
 
     if ( spawn_equipment_actors )
@@ -133,7 +133,7 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
                 entry.GrantedHandles.TakeFromAbilitySystem( asc );
             }
 
-            if ( !instance->bDestroyWhenUnEquipped )
+            if ( instance->bDestroyWhenUnEquipped )
             {
                 instance->DestroyEquipmentActors();
             }
@@ -195,7 +195,7 @@ void UGBFEquipmentManagerComponent::EquipItemWithInstance( UGBFEquipmentInstance
 {
     if ( equipment_instance != nullptr && equipment_definition != nullptr )
     {
-        //: NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
+        // :NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
         equipment_instance->Rename( nullptr, GetOwner() );
         EquipmentList.AddEntry( equipment_instance, equipment_definition );
         equipment_instance->OnEquipped();
