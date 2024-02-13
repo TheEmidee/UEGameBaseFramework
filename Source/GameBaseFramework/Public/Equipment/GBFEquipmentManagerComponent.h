@@ -103,7 +103,7 @@ public:
     UGBFEquipmentInstance * EquipItem( TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
-    void PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
+    void EquipItemWithInstance( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     void UnequipItem( UGBFEquipmentInstance * item_instance );

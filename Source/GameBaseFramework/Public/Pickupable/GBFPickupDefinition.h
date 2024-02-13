@@ -11,14 +11,17 @@ class UGBFEquipmentDefinition;
 class UGBFGameplayAbility;
 
 UCLASS( Blueprintable, BlueprintType, Const, Meta = ( DisplayName = "GBFPickupDefinition", ShortTooltip = "Data asset used to configure a pickup." ) )
-class GAMEBASEFRAMEWORK_API UGBFPickupDefinition : public UDataAsset
+class GAMEBASEFRAMEWORK_API UGBFPickupDefinition final : public UDataAsset
 {
     GENERATED_BODY()
 
 public:
     // Actor to spawn instead of only display a mesh
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
-    TSubclassOf< AActor > ActorToSpawn;
+    TArray< TSubclassOf< AActor > > ActorToSpawn;
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )
+    TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 
     // Visual of the pickup
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly )

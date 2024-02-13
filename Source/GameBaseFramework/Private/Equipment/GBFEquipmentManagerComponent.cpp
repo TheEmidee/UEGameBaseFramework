@@ -133,7 +133,7 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
                 entry.GrantedHandles.TakeFromAbilitySystem( asc );
             }
 
-            if ( !instance->ShouldBeDroppedOnGround )
+            if ( !instance->bDestroyWhenUnEquipped )
             {
                 instance->DestroyEquipmentActors();
             }
@@ -191,7 +191,7 @@ UGBFEquipmentInstance * UGBFEquipmentManagerComponent::EquipItem( const TSubclas
     return result;
 }
 
-void UGBFEquipmentManagerComponent::PickItemUp( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+void UGBFEquipmentManagerComponent::EquipItemWithInstance( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
 {
     if ( equipment_instance != nullptr && equipment_definition != nullptr )
     {

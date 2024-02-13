@@ -21,7 +21,7 @@ public:
 private:
     void CreateEquipmentInstance();
 
-    // define the equipment definition of the pickupable
+    // Defines the equipment definition of the pickupable
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TSubclassOf< UGBFEquipmentDefinition > EquipmentDefinition;
 

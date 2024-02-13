@@ -35,7 +35,7 @@ public:
     APawn * GetTypedPawn( TSubclassOf< APawn > pawn_type ) const;
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Equipment )
-    bool ShouldBeDroppedOnGround;
+    bool bDestroyWhenUnEquipped;
 
     virtual void SpawnEquipmentActors( const TArray< FGBFEquipmentActorToSpawn > & actors_to_spawn );
     virtual void DestroyEquipmentActors();
