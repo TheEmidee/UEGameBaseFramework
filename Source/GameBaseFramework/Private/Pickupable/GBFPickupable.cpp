@@ -2,6 +2,7 @@
 
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+
 #include <DVEDataValidator.h>
 
 void AGBFPickupable::PostInitializeComponents()
