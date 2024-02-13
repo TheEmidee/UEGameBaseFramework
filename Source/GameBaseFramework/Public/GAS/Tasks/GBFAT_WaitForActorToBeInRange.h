@@ -33,7 +33,7 @@ public:
     UGBFAT_WaitForActorToBeInRange();
 
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
-    static UGBFAT_WaitForActorToBeInRange * WaitForActorToBeInRange( UGameplayAbility * owning_ability, AActor * actor_to_wait_for, float range, const FGBFAxesToCheck & axes_to_check, bool trigger_once );
+    static UGBFAT_WaitForActorToBeInRange * WaitForActorToBeInRange( UGameplayAbility * owning_ability, AActor * actor_to_wait_for, float range, const FGBFAxesToCheck & axes_to_check );
 
     void Activate() override;
 
@@ -47,7 +47,6 @@ private:
     UPROPERTY()
     TObjectPtr< AActor > ActorToWaitFor;
 
-    float Range;
+    float RangeSquared;
     FGBFAxesToCheck AxesToCheck;
-    uint8 bTriggerOnce : 1;
 };

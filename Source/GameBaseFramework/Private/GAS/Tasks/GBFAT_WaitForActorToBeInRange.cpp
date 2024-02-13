@@ -10,21 +10,18 @@ FGBFAxesToCheck::FGBFAxesToCheck() :
 UGBFAT_WaitForActorToBeInRange::UGBFAT_WaitForActorToBeInRange()
 {
     bTickingTask = true;
-    Range = 0.0f;
-    bTriggerOnce = false;
+    RangeSquared = 0.0f;
 }
 
 UGBFAT_WaitForActorToBeInRange * UGBFAT_WaitForActorToBeInRange::WaitForActorToBeInRange( UGameplayAbility * owning_ability,
     AActor * actor_to_wait_for,
     const float range,
-    const FGBFAxesToCheck & axes_to_check,
-    const bool trigger_once )
+    const FGBFAxesToCheck & axes_to_check )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitForActorToBeInRange >( owning_ability );
     my_obj->ActorToWaitFor = actor_to_wait_for;
-    my_obj->Range = range;
+    my_obj->RangeSquared = range * range;
     my_obj->AxesToCheck = axes_to_check;
-    my_obj->bTriggerOnce = trigger_once;
     return my_obj;
 }
 
@@ -53,13 +50,9 @@ void UGBFAT_WaitForActorToBeInRange::TickTask( const float delta_time )
     delta.Z *= AxesToCheck.bCheckZ;
 
     const auto sq_distance = delta.SquaredLength();
-    if ( sq_distance <= Range * Range )
+    if ( sq_distance <= RangeSquared )
     {
         OnActorInRangeDelegate.Broadcast();
-
-        if ( bTriggerOnce )
-        {
-            EndTask();
-        }
+        EndTask();
     }
 }
