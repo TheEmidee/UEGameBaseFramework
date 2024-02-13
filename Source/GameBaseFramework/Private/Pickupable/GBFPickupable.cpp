@@ -9,6 +9,7 @@ void AGBFPickupable::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
     CreateEquipmentInstance();
+    EquipmentInstance->Initialize();
 }
 
 void AGBFPickupable::CreateEquipmentInstance()
