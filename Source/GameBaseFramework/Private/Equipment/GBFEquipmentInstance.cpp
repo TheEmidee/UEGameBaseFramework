@@ -99,3 +99,7 @@ void UGBFEquipmentInstance::OnUnequipped()
 void UGBFEquipmentInstance::OnRep_Instigator()
 {
 }
+
+void UGBFEquipmentInstance::Initialize_Implementation()
+{
+}

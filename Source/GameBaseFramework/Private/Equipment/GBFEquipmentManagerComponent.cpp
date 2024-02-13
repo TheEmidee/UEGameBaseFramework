@@ -87,6 +87,8 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
     check( OwnerComponent != nullptr );
     check( OwnerComponent->GetOwner()->HasAuthority() );
 
+    equipment_instance->Initialize();
+
     const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
 
     auto & new_entry = Entries.AddDefaulted_GetRef();
