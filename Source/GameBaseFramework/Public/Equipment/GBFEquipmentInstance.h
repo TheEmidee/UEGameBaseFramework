@@ -17,6 +17,9 @@ class GAMEBASEFRAMEWORK_API UGBFEquipmentInstance : public UObject
 public:
     explicit UGBFEquipmentInstance( const FObjectInitializer & object_initializer = FObjectInitializer::Get() );
 
+    UFUNCTION( BlueprintNativeEvent, BlueprintCallable )
+    void Initialize();
+
     bool IsSupportedForNetworking() const override;
     UWorld * GetWorld() const final;
 
