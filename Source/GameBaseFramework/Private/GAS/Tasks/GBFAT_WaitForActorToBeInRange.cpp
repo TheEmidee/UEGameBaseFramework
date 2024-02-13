@@ -7,6 +7,13 @@ FGBFAxesToCheck::FGBFAxesToCheck() :
 {
 }
 
+UGBFAT_WaitForActorToBeInRange::UGBFAT_WaitForActorToBeInRange()
+{
+    bTickingTask = true;
+    Range = 0.0f;
+    bTriggerOnce = false;
+}
+
 UGBFAT_WaitForActorToBeInRange * UGBFAT_WaitForActorToBeInRange::WaitForActorToBeInRange( UGameplayAbility * owning_ability,
     AActor * actor_to_wait_for,
     const float range,
