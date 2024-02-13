@@ -34,6 +34,9 @@ public:
     UFUNCTION( BlueprintPure, Category = Equipment, meta = ( DeterminesOutputType = pawn_type ) )
     APawn * GetTypedPawn( TSubclassOf< APawn > pawn_type ) const;
 
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = Equipment )
+    uint8 bDestroyWhenUnEquipped : 1;
+
     virtual void SpawnEquipmentActors( const TArray< FGBFEquipmentActorToSpawn > & actors_to_spawn );
     virtual void DestroyEquipmentActors();
 

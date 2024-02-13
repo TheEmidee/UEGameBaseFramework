@@ -64,10 +64,6 @@ bool FGBFEquipmentList::NetDeltaSerialize( FNetDeltaSerializeInfo & delta_params
 
 UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
 {
-    check( equipment_definition != nullptr );
-    check( OwnerComponent != nullptr );
-    check( OwnerComponent->GetOwner()->HasAuthority() );
-
     const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
 
     TSubclassOf< UGBFEquipmentInstance > instance_type = equipment_cdo->InstanceType;
@@ -76,24 +72,43 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
         instance_type = UGBFEquipmentInstance::StaticClass();
     }
 
+    return AddEntryInternal( NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type ), equipment_definition, true );
+}
+
+UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+{
+    return AddEntryInternal( equipment_instance, equipment_definition, false );
+}
+
+UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition, bool spawn_equipment_actors )
+{
+    check( equipment_definition != nullptr );
+    check( equipment_instance != nullptr );
+    check( OwnerComponent != nullptr );
+    check( OwnerComponent->GetOwner()->HasAuthority() );
+
+    const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
+
     auto & new_entry = Entries.AddDefaulted_GetRef();
     new_entry.EquipmentDefinition = equipment_definition;
-    new_entry.Instance = NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type ); //@TODO: Using the actor instead of component as the outer due to UE-127172
-    UGBFEquipmentInstance * result = new_entry.Instance;
+    new_entry.Instance = equipment_instance; // :TODO: Using the actor instead of component as the outer due to UE-127172
 
     if ( auto * asc = GetAbilitySystemComponent() )
     {
         for ( const auto ability_set : equipment_cdo->AbilitySetsToGrant )
         {
-            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, result );
+            ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, new_entry.Instance );
         }
     }
     else
     {
-        //@TODO: Warning logging?
+        // :TODO: Warning logging?
     }
 
-    result->SpawnEquipmentActors( equipment_cdo->ActorsToSpawn );
+    if ( spawn_equipment_actors )
+    {
+        new_entry.Instance->SpawnEquipmentActors( new_entry.EquipmentDefinition->GetDefaultObject< UGBFEquipmentDefinition >()->ActorsToSpawn );
+    }
 
     MarkItemDirty( new_entry );
 
@@ -103,7 +118,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
 
     UGameplayMessageSubsystem::Get( OwnerComponent->GetWorld() ).BroadcastMessage( TAG_Gameplay_Equipment_Message_Equipped, message );
 
-    return result;
+    return new_entry.Instance;
 }
 
 void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
@@ -118,7 +133,10 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
                 entry.GrantedHandles.TakeFromAbilitySystem( asc );
             }
 
-            instance->DestroyEquipmentActors();
+            if ( instance->bDestroyWhenUnEquipped )
+            {
+                instance->DestroyEquipmentActors();
+            }
 
             entry_it.RemoveCurrent();
             MarkArrayDirty();
@@ -171,6 +189,22 @@ UGBFEquipmentInstance * UGBFEquipmentManagerComponent::EquipItem( const TSubclas
         }
     }
     return result;
+}
+
+void UGBFEquipmentManagerComponent::EquipItemWithInstance( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
+{
+    if ( equipment_instance != nullptr && equipment_definition != nullptr )
+    {
+        // :NOTE: Set the character who pick the item up as owner what is originally made at the actor spawning
+        equipment_instance->Rename( nullptr, GetOwner() );
+        EquipmentList.AddEntry( equipment_instance, equipment_definition );
+        equipment_instance->OnEquipped();
+
+        if ( IsUsingRegisteredSubObjectList() && IsReadyForReplication() )
+        {
+            AddReplicatedSubObject( equipment_instance );
+        }
+    }
 }
 
 void UGBFEquipmentManagerComponent::UnequipItem( UGBFEquipmentInstance * item_instance )
