@@ -8,6 +8,7 @@
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemGlobals.h>
 #include <AbilitySystemLog.h>
+#include <GameplayEffectComponents/AdditionalEffectsGameplayEffectComponent.h>
 
 void UGBFAbilitySystemFunctionLibrary::CancelAllAbilities( UAbilitySystemComponent * ability_system_component, UGameplayAbility * ignore_ability )
 {
@@ -223,6 +224,7 @@ TSubclassOf< UGameplayEffect > UGBFAbilitySystemFunctionLibrary::GetGameplayEffe
     return nullptr;
 }
 
+// :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToConditionalEffects( FGameplayEffectSpec * gameplay_effect_spec )
 {
     if ( gameplay_effect_spec == nullptr )
@@ -230,34 +232,35 @@ void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToCon
         return;
     }
 
-    // :TODO: Investigate how to fix this deprecation issue
-    for ( auto handle : gameplay_effect_spec->TargetEffectSpecs )
+    if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent< UAdditionalEffectsGameplayEffectComponent >() )
     {
-        if ( !handle.Data.IsValid() )
+        for ( auto conditional_gameplay_effect : additional_gameplay_effect_component->OnApplicationGameplayEffects )
         {
-            continue;
-        }
+            auto handle = conditional_gameplay_effect.CreateSpec( gameplay_effect_spec->GetContext(), 0 );
 
-        handle.Data->CopySetByCallerMagnitudes( *gameplay_effect_spec );
-        CopySetByCallerTagMagnitudesFromSpecToConditionalEffects( handle.Data.Get() );
+            handle.Data->CopySetByCallerMagnitudes( *gameplay_effect_spec );
+            CopySetByCallerTagMagnitudesFromSpecToConditionalEffects( handle.Data.Get() );
+        }
     }
 }
 
+// :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::InitializeConditionalGameplayEffectSpecsFromParent( FGameplayEffectSpec * gameplay_effect_spec )
 {
-    for ( auto handle : gameplay_effect_spec->TargetEffectSpecs )
+    if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent < UAdditionalEffectsGameplayEffectComponent >() )
     {
-        if ( !handle.Data.IsValid() )
+        for ( auto conditional_gameplay_effect : additional_gameplay_effect_component->OnApplicationGameplayEffects )
         {
-            continue;
+            auto handle = conditional_gameplay_effect.CreateSpec( gameplay_effect_spec->GetContext(), 0 );
+
+            handle.Data->InitializeFromLinkedSpec( handle.Data->Def.Get(), *gameplay_effect_spec );
+
+            InitializeConditionalGameplayEffectSpecsFromParent( handle.Data.Get() );
         }
-
-        handle.Data->InitializeFromLinkedSpec( handle.Data->Def.Get(), *gameplay_effect_spec );
-
-        InitializeConditionalGameplayEffectSpecsFromParent( handle.Data.Get() );
     }
 }
 
+// :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::AddDynamicAssetTagToSpecAndChildren( FGameplayEffectSpec * gameplay_effect_spec, const FGameplayTag gameplay_tag )
 {
     if ( gameplay_effect_spec == nullptr )
@@ -267,14 +270,14 @@ void UGBFAbilitySystemFunctionLibrary::AddDynamicAssetTagToSpecAndChildren( FGam
 
     gameplay_effect_spec->AddDynamicAssetTag( gameplay_tag );
 
-    for ( auto handle : gameplay_effect_spec->TargetEffectSpecs )
+    if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent< UAdditionalEffectsGameplayEffectComponent >() )
     {
-        if ( !handle.Data.IsValid() )
+        for ( auto conditional_gameplay_effect : additional_gameplay_effect_component->OnApplicationGameplayEffects )
         {
-            continue;
-        }
+            auto handle = conditional_gameplay_effect.CreateSpec( gameplay_effect_spec->GetContext(), 0 );
 
-        handle.Data->AddDynamicAssetTag( gameplay_tag );
-        AddDynamicAssetTagToSpecAndChildren( handle.Data.Get(), gameplay_tag );
+            handle.Data->AddDynamicAssetTag( gameplay_tag );
+            AddDynamicAssetTagToSpecAndChildren( handle.Data.Get(), gameplay_tag );
+        }
     }
 }
