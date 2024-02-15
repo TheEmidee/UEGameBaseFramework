@@ -42,7 +42,7 @@ class GAMEBASEFRAMEWORK_API UGBFAT_WaitActorLocationChanged : public UAbilityTas
 public:
     UGBFAT_WaitActorLocationChanged();
 
-    UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
+    UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE", AutoCreateRefTerm = "x_axis_comparison, y_axis_comparison, z_axis_comparison" ) )
     static UGBFAT_WaitActorLocationChanged * WaitActorLocationChanged(
         UGameplayAbility * owning_ability,
         const FGBFComparisonAxis & x_axis_comparison,

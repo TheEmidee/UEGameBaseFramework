@@ -53,6 +53,7 @@ void UGBFAT_WaitActorLocationChanged::TickTask( const float delta_time )
          bAllTrue == false && ( x_comparison || y_comparison || z_comparison ) )
     {
         OnActorLocationChangedDelegate.Broadcast();
+        EndTask();
     }
 }
 
@@ -62,7 +63,10 @@ bool UGBFAT_WaitActorLocationChanged::GetComparisonResult( const FGBFComparisonA
     switch ( comparison_axis.ComparisonType )
     {
         case EGBFWaitLocationChangeComparisonType::None:
-            break;
+        {
+            result = true;
+        }
+        break;
         case EGBFWaitLocationChangeComparisonType::GreaterThan:
         {
             result = axis_value > comparison_axis.Value;
