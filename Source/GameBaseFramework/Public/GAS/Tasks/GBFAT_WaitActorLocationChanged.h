@@ -20,7 +20,7 @@ enum class EGBFWaitLocationChangeComparisonType : uint8
     MAX UMETA( Hidden )
 };
 
-USTRUCT()
+USTRUCT( BlueprintType )
 struct FGBFComparisonAxis
 {
     GENERATED_BODY()
