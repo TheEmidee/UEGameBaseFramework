@@ -72,7 +72,10 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( TSubclassOf< UGBFEquipmentD
         instance_type = UGBFEquipmentInstance::StaticClass();
     }
 
-    return AddEntryInternal( NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type ), equipment_definition, true );
+    auto equipment_instance = NewObject< UGBFEquipmentInstance >( OwnerComponent->GetOwner(), instance_type );
+    equipment_instance->Initialize();
+
+    return AddEntryInternal( equipment_instance, equipment_definition, true );
 }
 
 UGBFEquipmentInstance * FGBFEquipmentList::AddEntry( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition )
@@ -86,8 +89,6 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
     check( equipment_instance != nullptr );
     check( OwnerComponent != nullptr );
     check( OwnerComponent->GetOwner()->HasAuthority() );
-
-    equipment_instance->Initialize();
 
     const auto * equipment_cdo = GetDefault< UGBFEquipmentDefinition >( equipment_definition );
 
