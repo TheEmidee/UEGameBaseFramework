@@ -247,7 +247,7 @@ void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToCon
 // :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::InitializeConditionalGameplayEffectSpecsFromParent( FGameplayEffectSpec * gameplay_effect_spec )
 {
-    if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent < UAdditionalEffectsGameplayEffectComponent >() )
+    if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent< UAdditionalEffectsGameplayEffectComponent >() )
     {
         for ( auto conditional_gameplay_effect : additional_gameplay_effect_component->OnApplicationGameplayEffects )
         {
