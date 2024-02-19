@@ -102,7 +102,7 @@ public:
 
     virtual void DrawDebug( UCanvas * canvas ) const;
 
-    UFUNCTION( BlueprintNativeEvent, BlueprintCallable )
+    UFUNCTION( BlueprintNativeEvent, BlueprintPure )
     AActor * GetTargetActor() const;
 
     void UpdateCameraMode( float delta_time );
