@@ -49,8 +49,10 @@ void UGBFAT_WaitActorLocationChanged::TickTask( const float delta_time )
     const auto y_comparison = GetComparisonResult( AxisComparisonY, avatar_location.Y );
     const auto z_comparison = GetComparisonResult( AxisComparisonZ, avatar_location.Z );
 
-    if ( ( bAllTrue && ( x_comparison && y_comparison && z_comparison ) ) ||
-         bAllTrue == false && ( x_comparison || y_comparison || z_comparison ) )
+    const auto are_all_true = bAllTrue && ( x_comparison && y_comparison && z_comparison );
+    const auto is_at_least_one_true = bAllTrue == false && ( x_comparison || y_comparison || z_comparison );
+
+    if ( are_all_true || is_at_least_one_true )
     {
         OnActorLocationChangedDelegate.Broadcast();
         EndTask();
