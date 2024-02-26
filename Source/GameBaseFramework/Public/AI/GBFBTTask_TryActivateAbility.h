@@ -25,9 +25,11 @@ class GAMEBASEFRAMEWORK_API UGBFBTTask_TryActivateAbility : public UBTTaskNode
 public:
     explicit UGBFBTTask_TryActivateAbility( const FObjectInitializer & object_initializer );
 
+    void InitializeFromAsset( UBehaviorTree & asset ) override;
     EBTNodeResult::Type ExecuteTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) override;
     uint16 GetInstanceMemorySize() const override;
     FString GetStaticDescription() const override;
+    void TickTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, float delta_seconds ) override;
 
 protected:
     void OnTaskFinished( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, EBTNodeResult::Type task_result ) override;
@@ -40,6 +42,8 @@ protected:
 private:
     void OnGameplayAbilityEnded( UGameplayAbility * ability, FGBFTryActivateAbilityBTTaskMemory * memory, UBehaviorTreeComponent * owner_comp );
 
+    void StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) const;
+
     UPROPERTY( EditAnywhere, Category = "Target" )
     uint8 bUseActorFromBlackboardKey : 1;
 
@@ -48,6 +52,12 @@ private:
 
     UPROPERTY( EditAnywhere, Category = "Target" )
     uint8 bRequireServerOnlyPolicy : 1;
+
+    UPROPERTY( EditAnywhere, Category = "Task" )
+    FBlackboardKeySelector TimeBlackboardKey;
+
+    UPROPERTY( EditAnywhere, Category = "Task" )
+    FBlackboardKeySelector DeviationBlackboardKey;
 };
 
 UCLASS()

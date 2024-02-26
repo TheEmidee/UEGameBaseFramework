@@ -4,6 +4,7 @@
 #include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystemComponent.h>
 #include <AbilitySystemLog.h>
+#include <BehaviorTree/Blackboard/BlackboardKeyType_Float.h>
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
 #include <BehaviorTree/BlackboardComponent.h>
 
@@ -21,13 +22,32 @@ UGBFBTTask_TryActivateAbility::UGBFBTTask_TryActivateAbility( const FObjectIniti
     BlackboardKey.AddObjectFilter( this, GET_MEMBER_NAME_CHECKED( UGBFBTTask_TryActivateAbility, BlackboardKey ), AActor::StaticClass() );
     bUseActorFromBlackboardKey = false;
     bRequireServerOnlyPolicy = false;
+    bTickIntervals = true;
+}
+
+void UGBFBTTask_TryActivateAbility::InitializeFromAsset( UBehaviorTree & asset )
+{
+    Super::InitializeFromAsset( asset );
+
+    const auto * blackboard = GetBlackboardAsset();
+    if ( ensure( blackboard != nullptr ) )
+    {
+        TimeBlackboardKey.ResolveSelectedKey( *blackboard );
+        DeviationBlackboardKey.ResolveSelectedKey( *blackboard );
+    }
 }
 
 EBTNodeResult::Type UGBFBTTask_TryActivateAbility::ExecuteTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
 {
     if ( auto * asc = GetAbilitySystemComponent( owner_comp ) )
     {
-        return TryActivateAbility( owner_comp, *asc, CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory ) );
+        const auto result = TryActivateAbility( owner_comp, *asc, CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory ) );
+        if ( result == EBTNodeResult::InProgress )
+        {
+            StartTimer( owner_comp, node_memory );
+        }
+
+        return result;
     }
 
     return EBTNodeResult::Failed;
@@ -50,6 +70,19 @@ FString UGBFBTTask_TryActivateAbility::GetStaticDescription() const
     }
 
     return FString::Printf( TEXT( "%s: Target: %s - %s" ), *Super::GetStaticDescription(), *key_desc, *GetDetailedStaticDescription() );
+}
+
+void UGBFBTTask_TryActivateAbility::TickTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, float delta_seconds )
+{
+    ensure( GetSpecialNodeMemory< FBTTaskMemory >( node_memory )->NextTickRemainingTime <= 0.f );
+
+    const auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
+    check( memory != nullptr );
+
+    const auto & asc = memory->ASC;
+    check( asc != nullptr );
+
+    asc->CancelAbilityHandle( memory->AbilitySpecHandle );
 }
 
 void UGBFBTTask_TryActivateAbility::OnTaskFinished( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, const EBTNodeResult::Type task_result )
@@ -170,6 +203,22 @@ void UGBFBTTask_TryActivateAbility::OnGameplayAbilityEnded( UGameplayAbility * /
     if ( memory->bObserverCanFinishTask )
     {
         FinishLatentTask( *owner_comp, EBTNodeResult::Succeeded );
+    }
+}
+
+void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) const
+{
+    const auto * blackboard_component = owner_comp.GetBlackboardComponent();
+
+    if ( blackboard_component != nullptr &&
+         TimeBlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass() &&
+         DeviationBlackboardKey.SelectedKeyType == UBlackboardKeyType_Float::StaticClass() )
+    {
+        const auto time = blackboard_component->GetValue< UBlackboardKeyType_Float >( TimeBlackboardKey.GetSelectedKeyID() );
+        const auto deviation = blackboard_component->GetValue< UBlackboardKeyType_Float >( DeviationBlackboardKey.GetSelectedKeyID() );
+        const auto wait_time = FMath::FRandRange( FMath::Max( 0.0f, time - deviation ), time + deviation );
+
+        SetNextTickTime( node_memory, wait_time );
     }
 }
 
