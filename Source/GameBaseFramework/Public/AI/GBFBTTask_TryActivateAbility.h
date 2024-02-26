@@ -54,7 +54,7 @@ private:
     uint8 bRequireServerOnlyPolicy : 1;
 
     UPROPERTY( EditAnywhere, Category = "Task" )
-    FBlackboardKeySelector TimeBlackboardKey;
+    FBlackboardKeySelector TimeLimitBlackboardKey;
 
     UPROPERTY( EditAnywhere, Category = "Task" )
     FBlackboardKeySelector DeviationBlackboardKey;
