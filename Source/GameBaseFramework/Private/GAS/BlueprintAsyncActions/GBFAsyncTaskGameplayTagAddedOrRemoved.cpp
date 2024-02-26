@@ -52,7 +52,7 @@ void UGBFAsyncTaskGameplayTagAddedOrRemoved::Activate()
 
 void UGBFAsyncTaskGameplayTagAddedOrRemoved::GameplayTagChanged( const FGameplayTag tag, int32 tag_event_type )
 {
-    OnGameplayTagChangedDelegate.Broadcast( ASC->HasMatchingGameplayTag( tag ) );
+    OnGameplayTagChangedDelegate.Broadcast( ASC->HasMatchingGameplayTag( tag ), this );
 
     if ( bTriggerOnce )
     {

@@ -8,11 +8,11 @@
 
 #include "GBFAsyncTaskGameplayTagAddedOrRemoved.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnGameplayTagChangedDelegate, bool, it_is_present );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnGameplayTagChangedDelegate, bool, it_is_present, const UGBFAsyncTaskGameplayTagAddedOrRemoved *, listening_task );
 
 class UAbilitySystemComponent;
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFAsyncTaskGameplayTagAddedOrRemoved final : public UBlueprintAsyncActionBase
 {
     GENERATED_BODY()
