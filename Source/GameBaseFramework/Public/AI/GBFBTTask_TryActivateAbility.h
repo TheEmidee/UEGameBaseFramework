@@ -42,7 +42,7 @@ protected:
 private:
     void OnGameplayAbilityEnded( UGameplayAbility * ability, FGBFTryActivateAbilityBTTaskMemory * memory, UBehaviorTreeComponent * owner_comp );
 
-    void StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) const;
+    void StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory );
 
     UPROPERTY( EditAnywhere, Category = "Target" )
     uint8 bUseActorFromBlackboardKey : 1;

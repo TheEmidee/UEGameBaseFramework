@@ -23,6 +23,7 @@ UGBFBTTask_TryActivateAbility::UGBFBTTask_TryActivateAbility( const FObjectIniti
     bUseActorFromBlackboardKey = false;
     bRequireServerOnlyPolicy = false;
     bTickIntervals = true;
+    INIT_TASK_NODE_NOTIFY_FLAGS();
 }
 
 void UGBFBTTask_TryActivateAbility::InitializeFromAsset( UBehaviorTree & asset )
@@ -206,7 +207,7 @@ void UGBFBTTask_TryActivateAbility::OnGameplayAbilityEnded( UGameplayAbility * /
     }
 }
 
-void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) const
+void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
 {
     const auto * blackboard_component = owner_comp.GetBlackboardComponent();
 
@@ -219,7 +220,10 @@ void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_c
         const auto wait_time = FMath::FRandRange( FMath::Max( 0.0f, time - deviation ), time + deviation );
 
         SetNextTickTime( node_memory, wait_time );
+        return;
     }
+
+    bTickIntervals = false;
 }
 
 UGBFBTTask_TryActivateAbilityByClass::UGBFBTTask_TryActivateAbilityByClass( const FObjectInitializer & object_initializer ) :
