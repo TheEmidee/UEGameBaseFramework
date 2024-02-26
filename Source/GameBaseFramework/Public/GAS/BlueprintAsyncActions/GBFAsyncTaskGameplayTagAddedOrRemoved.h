@@ -8,7 +8,7 @@
 
 #include "GBFAsyncTaskGameplayTagAddedOrRemoved.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnGameplayTagChangedDelegate, bool, it_is_present, const UGBFAsyncTaskGameplayTagAddedOrRemoved *, listening_task );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnGameplayTagChangedDelegate, const UGBFAsyncTaskGameplayTagAddedOrRemoved *, listening_task, bool, it_is_present );
 
 class UAbilitySystemComponent;
 
