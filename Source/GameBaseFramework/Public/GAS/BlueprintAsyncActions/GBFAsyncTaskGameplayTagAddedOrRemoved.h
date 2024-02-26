@@ -3,17 +3,17 @@
 #include "GameplayEffectTypes.h"
 
 #include <CoreMinimal.h>
+#include <Engine/CancellableAsyncAction.h>
 #include <GameplayTagContainer.h>
-#include <Kismet/BlueprintAsyncActionBase.h>
 
 #include "GBFAsyncTaskGameplayTagAddedOrRemoved.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnGameplayTagChangedDelegate, const UGBFAsyncTaskGameplayTagAddedOrRemoved *, listening_task, bool, it_is_present );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FSWOnGameplayTagChangedDelegate, bool, it_is_present );
 
 class UAbilitySystemComponent;
 
-UCLASS( BlueprintType )
-class GAMEBASEFRAMEWORK_API UGBFAsyncTaskGameplayTagAddedOrRemoved final : public UBlueprintAsyncActionBase
+UCLASS()
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskGameplayTagAddedOrRemoved final : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 

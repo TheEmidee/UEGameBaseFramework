@@ -1,9 +1,9 @@
 #pragma once
 
 #include <CoreMinimal.h>
+#include <Engine/CancellableAsyncAction.h>
 #include <GameplayEffect.h>
 #include <GameplayTagContainer.h>
-#include <Kismet/BlueprintAsyncActionBase.h>
 
 #include "GBFAsyncTaskWaitGERemoved.generated.h"
 
@@ -12,7 +12,7 @@ class UAbilitySystemComponent;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnGameplayEffectRemovedDelegate, FActiveGameplayEffectHandle, Handle );
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFAsyncTaskWaitGERemoved : public UBlueprintAsyncActionBase
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskWaitGERemoved : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 

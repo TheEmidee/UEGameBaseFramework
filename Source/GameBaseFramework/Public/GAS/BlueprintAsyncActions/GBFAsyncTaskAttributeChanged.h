@@ -2,7 +2,7 @@
 
 #include <AbilitySystemComponent.h>
 #include <CoreMinimal.h>
-#include <Kismet/BlueprintAsyncActionBase.h>
+#include <Engine/CancellableAsyncAction.h>
 
 #include "GBFAsyncTaskAttributeChanged.generated.h"
 
@@ -12,7 +12,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FSWOnAttributeChangedDelegate, F
 // Useful to use in UI.
 
 UCLASS( BlueprintType, meta = ( ExposedAsyncProxy = AsyncTask ) )
-class GAMEBASEFRAMEWORK_API UGBFAsyncTaskAttributeChanged : public UBlueprintAsyncActionBase
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskAttributeChanged : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 
