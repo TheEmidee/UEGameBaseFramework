@@ -2,7 +2,7 @@
 
 #include <ActiveGameplayEffectHandle.h>
 #include <CoreMinimal.h>
-#include <Kismet/BlueprintAsyncActionBase.h>
+#include <Engine/CancellableAsyncAction.h>
 
 #include "GBFAsyncTaskWaitAbilityCooldownChanged.generated.h"
 
@@ -12,7 +12,7 @@ struct FGameplayEffectSpec;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FGBFOnAbilityCooldownChanged, FGameplayTag, CooldownTag, float, TimeRemaining, float, Duration );
 
 UCLASS( BlueprintType, meta = ( ExposedAsyncProxy = AsyncTask ) )
-class GAMEBASEFRAMEWORK_API UGBFAsyncTaskWaitAbilityCooldownChanged final : public UBlueprintAsyncActionBase
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskWaitAbilityCooldownChanged final : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 

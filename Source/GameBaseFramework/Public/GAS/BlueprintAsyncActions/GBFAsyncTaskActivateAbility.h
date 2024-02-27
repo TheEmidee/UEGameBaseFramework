@@ -1,8 +1,8 @@
 #pragma once
 
 #include <CoreMinimal.h>
+#include <Engine/CancellableAsyncAction.h>
 #include <GameplayAbilitySpec.h>
-#include <Kismet/BlueprintAsyncActionBase.h>
 
 #include "GBFAsyncTaskActivateAbility.generated.h"
 
@@ -13,7 +13,7 @@ class UGameplayAbility;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnAbilityEndedDelegate, bool, WasActivated, bool, WasCancelled );
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFAsyncTaskActivateAbility : public UBlueprintAsyncActionBase
+class GAMEBASEFRAMEWORK_API UGBFAsyncTaskActivateAbility : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 
