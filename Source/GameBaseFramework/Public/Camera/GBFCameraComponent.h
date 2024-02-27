@@ -51,6 +51,8 @@ public:
     // Gets the tag associated with the top layer and the blend weight of it
     void GetBlendInfo( float & out_weight_of_top_layer, FGameplayTag & out_tag_of_top_layer ) const;
 
+    void Reset() const;
+
     // Delegate used to query for the best camera mode.
     FGBFCameraModeDelegate DetermineCameraModeDelegate;
 

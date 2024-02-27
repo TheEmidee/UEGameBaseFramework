@@ -55,6 +55,14 @@ void UGBFCameraComponent::GetBlendInfo( float & out_weight_of_top_layer, FGamepl
     CameraModeStack->GetBlendInfo( out_weight_of_top_layer, out_tag_of_top_layer );
 }
 
+void UGBFCameraComponent::Reset() const
+{
+    if ( CameraModeStack != nullptr )
+    {
+        CameraModeStack->Reset();
+    }
+}
+
 void UGBFCameraComponent::OnRegister()
 {
     Super::OnRegister();
@@ -129,7 +137,7 @@ void UGBFCameraComponent::UpdateCameraModes()
 {
     check( CameraModeStack != nullptr );
 
-    if ( CameraModeStack->IsStackActivate() )
+    if ( CameraModeStack->IsStackActive() )
     {
         auto camera_mode = CameraModeOverride;
 
