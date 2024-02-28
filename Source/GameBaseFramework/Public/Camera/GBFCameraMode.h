@@ -100,6 +100,9 @@ public:
     // Called when this camera mode is deactivated on the camera mode stack.
     virtual void OnDeactivation();
 
+    UFUNCTION( BlueprintNativeEvent )
+    void Reset();
+
     virtual void DrawDebug( UCanvas * canvas ) const;
 
     UFUNCTION( BlueprintNativeEvent, BlueprintPure )
@@ -194,7 +197,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModeStack : public UObject
 public:
     UGBFCameraModeStack();
 
-    bool IsStackActivate() const;
+    bool IsStackActive() const;
 
     void ActivateStack();
     void DeactivateStack();
@@ -202,6 +205,7 @@ public:
     void PushCameraMode( TSubclassOf< UGBFCameraMode > camera_mode_class );
     bool EvaluateStack( float delta_time, FGBFCameraModeView & out_camera_mode_view );
     void DrawDebug( UCanvas * canvas ) const;
+    void Reset();
 
     // Gets the tag associated with the top layer and the blend weight of it
     void GetBlendInfo( float & out_weight_of_top_layer, FGameplayTag & out_tag_of_top_layer ) const;
@@ -221,7 +225,7 @@ protected:
     bool bIsActive;
 };
 
-FORCEINLINE bool UGBFCameraModeStack::IsStackActivate() const
+FORCEINLINE bool UGBFCameraModeStack::IsStackActive() const
 {
     return bIsActive;
 }

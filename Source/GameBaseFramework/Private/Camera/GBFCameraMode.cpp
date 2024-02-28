@@ -76,6 +76,10 @@ void UGBFCameraMode::OnDeactivation()
 {
 }
 
+void UGBFCameraMode::Reset_Implementation()
+{
+}
+
 AActor * UGBFCameraMode::GetTargetActor_Implementation() const
 {
     const auto * camera_component = GetGBFCameraComponent();
@@ -464,6 +468,14 @@ void UGBFCameraModeStack::DrawDebug( UCanvas * canvas ) const
 
     display_debug_manager.SetDrawColor( FColor::Green );
     display_debug_manager.DrawString( FString::Printf( TEXT( "   --- Camera Modes (End) ---" ) ) );
+}
+
+void UGBFCameraModeStack::Reset()
+{
+    for ( const auto camera_mode : CameraModeStack )
+    {
+        camera_mode->Reset();
+    }
 }
 
 void UGBFCameraModeStack::GetBlendInfo( float & out_weight_of_top_layer, FGameplayTag & out_tag_of_top_layer ) const
