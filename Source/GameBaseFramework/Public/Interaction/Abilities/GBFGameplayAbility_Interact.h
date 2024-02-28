@@ -1,9 +1,12 @@
 #pragma once
 
 #include "GAS/Abilities/GBFGameplayAbility.h"
+#include "Interaction/GBFInteractionOption.h"
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+class UEnhancedInputLocalPlayerSubsystem;
+class UEnhancedInputUserSettings;
 class UGBFIndicatorDescriptor;
 struct FGBFInteractionOption;
 class IGBFInteractableTarget;
@@ -31,11 +34,44 @@ public:
     void TriggerInteraction();
 
 protected:
+    struct InteractionOptionContext
+    {
+        FDelegateHandle DelegateHandle;
+        FGameplayAbilitySpecHandle AbilitySpecHandle;
+        TWeakObjectPtr< UAbilitySystemComponent > AbilitySystemComponent;
+        FPredictionKey PredictionKey;
+        FGBFInteractionOption InteractionOption;
+    };
+
+    struct InputConfigInfos
+    {
+        bool IsValid() const;
+
+        TWeakObjectPtr< UGBFHeroComponent > HeroComponent;
+        TWeakObjectPtr< UGBFInputConfig > InputConfig;
+    };
+
+    struct InputMappingContextInfos
+    {
+        bool IsValid() const;
+
+        TWeakObjectPtr< UEnhancedInputLocalPlayerSubsystem > EnhancedSystem;
+        TWeakObjectPtr< UInputMappingContext > InputMappingContext;
+    };
+
+    struct Context
+    {
+        void Reset();
+
+        TArray< FGBFInteractionOptionContainer > InteractionOptionContainers;
+        TArray< InteractionOptionContext > InteractionOptionContexts;
+        TArray< InputConfigInfos > InputConfigInfos;
+        TArray< InputMappingContextInfos > InputMappingContextInfos;
+        TArray< FGameplayAbilitySpecHandle > GrantedAbilities;
+    };
+
     UFUNCTION( BlueprintImplementableEvent )
     void LookForInteractables();
-
-    UPROPERTY( BlueprintReadWrite )
-    TArray< FGBFInteractionOption > CurrentOptions;
 
     UPROPERTY()
     TArray< TObjectPtr< UGBFIndicatorDescriptor > > Indicators;
@@ -52,6 +88,9 @@ protected:
     UPROPERTY( EditDefaultsOnly )
     TSoftClassPtr< UUserWidget > DefaultInteractionWidgetClass;
 
+    Context Context;
+
 private:
     void UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets );
+    void OnPressCallBack( FGBFInteractionOption interaction_option );
 };

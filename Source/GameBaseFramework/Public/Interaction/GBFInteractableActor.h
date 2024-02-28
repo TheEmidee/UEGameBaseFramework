@@ -19,6 +19,6 @@ public:
     void GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder ) override;
 
 private:
-    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
-    FGBFInteractionOption Option;
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    FGBFInteractionOptionContainer InteractionOptionContainer;
 };

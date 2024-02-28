@@ -2,16 +2,21 @@
 
 #include "Interaction/GBFInteractionOption.h"
 
-FGBFInteractionOptionBuilder::FGBFInteractionOptionBuilder( const TScriptInterface< IGBFInteractableTarget > interface_target_scope, TArray< FGBFInteractionOption > & interact_options ) :
+FGBFInteractionOptionBuilder::FGBFInteractionOptionBuilder( const TScriptInterface< IGBFInteractableTarget > interface_target_scope, TArray< FGBFInteractionOptionContainer > & interact_options ) :
     Scope( interface_target_scope ),
     Options( interact_options )
 {
 }
 
-void FGBFInteractionOptionBuilder::AddInteractionOption( const FGBFInteractionOption & option )
+void FGBFInteractionOptionBuilder::AddInteractionOption( const FGBFInteractionOptionContainer & option_container ) const
 {
-    auto & option_entry = Options.Add_GetRef( option );
-    option_entry.InteractableTarget = Scope;
+    auto & container_entry = Options.Add_GetRef( option_container );
+    container_entry.InteractableTarget = Scope;
+
+    for ( auto option : container_entry.Options )
+    {
+        option.InteractableTarget = Scope;
+    }
 }
 
 void IGBFInteractableTarget::CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, FGameplayEventData & in_out_event_data )

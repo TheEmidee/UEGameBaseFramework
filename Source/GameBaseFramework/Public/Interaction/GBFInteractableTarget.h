@@ -13,13 +13,13 @@ struct FGameplayEventData;
 class FGBFInteractionOptionBuilder
 {
 public:
-    FGBFInteractionOptionBuilder( const TScriptInterface< IGBFInteractableTarget > interface_target_scope, TArray< FGBFInteractionOption > & interact_options );
+    FGBFInteractionOptionBuilder( const TScriptInterface< IGBFInteractableTarget > interface_target_scope, TArray< FGBFInteractionOptionContainer > & interact_options );
 
-    void AddInteractionOption( const FGBFInteractionOption & option );
+    void AddInteractionOption( const FGBFInteractionOptionContainer & option_container ) const;
 
 private:
     TScriptInterface< IGBFInteractableTarget > Scope;
-    TArray< FGBFInteractionOption > & Options;
+    TArray< FGBFInteractionOptionContainer > & Options;
 };
 
 UINTERFACE( MinimalAPI, meta = ( CannotImplementInterfaceInBlueprint ) )

@@ -1,5 +1,7 @@
 #include "Interaction/Abilities/GBFGameplayAbility_Interact.h"
 
+#include "Characters/Components/GBFHeroComponent.h"
+#include "Input/GBFInputConfig.h"
 #include "Interaction/GBFInteractableTarget.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionQuery.h"
@@ -8,8 +10,12 @@
 #include "UI/IndicatorSystem/GBFIndicatorManagerComponent.h"
 
 #include <AbilitySystemComponent.h>
+#include <Engine/LocalPlayer.h>
+#include <EnhancedInputSubsystems.h>
 #include <GameFramework/Controller.h>
+#include <InputMappingContext.h>
 #include <NativeGameplayTags.h>
+#include <UserSettings/EnhancedInputUserSettings.h>
 
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Ability_Interaction_Activate, "Ability.Interaction.Activate" );
 
@@ -48,22 +54,31 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
             }
             Indicators.Reset();
 
-            for ( const auto & interaction_option : CurrentOptions )
-            {
-                auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
+            const auto add_indicator = [ & ]( TScriptInterface< IGBFInteractableTarget > interactable_target, const FGBFInteractionWidgetInfos & widget_infos ) {
+                if ( widget_infos.InteractionWidgetClass == nullptr )
+                {
+                    return;
+                }
 
-                const auto interaction_widget_class = interaction_option.InteractionWidgetClass.IsNull()
-                                                          ? DefaultInteractionWidgetClass
-                                                          : interaction_option.InteractionWidgetClass;
-
+                auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interactable_target );
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
                 indicator->SetDataObject( interactable_target_actor );
                 indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
-                indicator->SetIndicatorClass( interaction_widget_class );
-                indicator->SetScreenSpaceOffset( interaction_option.InteractionWidgetOffset );
+                indicator->SetIndicatorClass( widget_infos.InteractionWidgetClass );
+                indicator->SetScreenSpaceOffset( widget_infos.InteractionWidgetOffset );
                 indicator_manager->AddIndicator( indicator );
 
                 Indicators.Add( indicator );
+            };
+
+            for ( const auto & option_container : Context.InteractionOptionContainers )
+            {
+                add_indicator( option_container.InteractableTarget, option_container.CommonWidgetInfos );
+            }
+
+            for ( const auto & interaction_option_context : Context.InteractionOptionContexts )
+            {
+                add_indicator( interaction_option_context.InteractionOption.InteractableTarget, interaction_option_context.InteractionOption.WidgetInfos );
             }
         }
     }
@@ -71,59 +86,102 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
 
 void UGBFGameplayAbility_Interact::TriggerInteraction()
 {
-    if ( CurrentOptions.Num() == 0 )
+    // if ( CurrentOptions.Num() == 0 )
+    //{
+    //     return;
+    // }
+
+    // const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
+    // if ( ability_system != nullptr )
+    //{
+    //     auto & interaction_option = CurrentOptions[ 0 ];
+
+    //    if ( !interaction_option.TargetInteractionAbilityHandle.IsValid() )
+    //    {
+    //        FGameplayAbilitySpec spec( interaction_option.InteractionAbilityToGrant, 1, INDEX_NONE, this );
+    //        interaction_option.TargetInteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
+    //    }
+
+    //    auto * instigator = GetAvatarActorFromActorInfo();
+    //    auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
+
+    //    // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
+    //    // that only the actor knows.
+    //    FGameplayEventData payload;
+    //    payload.EventTag = TAG_Ability_Interaction_Activate;
+    //    payload.Instigator = instigator;
+    //    payload.Target = interactable_target_actor;
+
+    //    // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
+    //    // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
+    //    // door actor.
+    //    interaction_option.InteractableTarget->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
+
+    //    // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
+    //    // source InteractableTarget actor as the owner actor.
+    //    auto * target_actor = const_cast< AActor * >( ToRawPtr( payload.Target ) );
+
+    //    // The actor info needed for the interaction.
+    //    FGameplayAbilityActorInfo actor_info;
+    //    actor_info.InitFromActor( interactable_target_actor, target_actor, interaction_option.TargetAbilitySystem );
+
+    //    // Trigger the ability using event tag.
+    //    interaction_option.TargetAbilitySystem->TriggerAbilityFromGameplayEvent(
+    //        interaction_option.TargetInteractionAbilityHandle,
+    //        &actor_info,
+    //        TAG_Ability_Interaction_Activate,
+    //        &payload,
+    //        *interaction_option.TargetAbilitySystem );
+    //}
+}
+
+bool UGBFGameplayAbility_Interact::InputConfigInfos::IsValid() const
+{
+    return HeroComponent.IsValid() && InputConfig.IsValid();
+}
+
+bool UGBFGameplayAbility_Interact::InputMappingContextInfos::IsValid() const
+{
+    return EnhancedSystem.IsValid() && InputMappingContext.IsValid();
+}
+
+void UGBFGameplayAbility_Interact::Context::Reset()
+{
+    for ( const auto context : InteractionOptionContexts )
     {
-        return;
+        context.AbilitySystemComponent->AbilityReplicatedEventDelegate( EAbilityGenericReplicatedEvent::InputPressed, context.AbilitySpecHandle, context.PredictionKey ).Remove( context.DelegateHandle );
     }
 
-    const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
-    if ( ability_system != nullptr )
-    {
-        auto & interaction_option = CurrentOptions[ 0 ];
+    InteractionOptionContexts.Reset();
 
-        if ( !interaction_option.TargetInteractionAbilityHandle.IsValid() )
+    for ( const auto context : InputConfigInfos )
+    {
+        if ( context.IsValid() )
         {
-            FGameplayAbilitySpec spec( interaction_option.InteractionAbilityToGrant, 1, INDEX_NONE, this );
-            interaction_option.TargetInteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
+            context.HeroComponent->RemoveAdditionalInputConfig( context.InputConfig.Get() );
         }
-
-        auto * instigator = GetAvatarActorFromActorInfo();
-        auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
-
-        // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
-        // that only the actor knows.
-        FGameplayEventData payload;
-        payload.EventTag = TAG_Ability_Interaction_Activate;
-        payload.Instigator = instigator;
-        payload.Target = interactable_target_actor;
-
-        // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
-        // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
-        // door actor.
-        interaction_option.InteractableTarget->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
-
-        // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
-        // source InteractableTarget actor as the owner actor.
-        auto * target_actor = const_cast< AActor * >( ToRawPtr( payload.Target ) );
-
-        // The actor info needed for the interaction.
-        FGameplayAbilityActorInfo actor_info;
-        actor_info.InitFromActor( interactable_target_actor, target_actor, interaction_option.TargetAbilitySystem );
-
-        // Trigger the ability using event tag.
-        interaction_option.TargetAbilitySystem->TriggerAbilityFromGameplayEvent(
-            interaction_option.TargetInteractionAbilityHandle,
-            &actor_info,
-            TAG_Ability_Interaction_Activate,
-            &payload,
-            *interaction_option.TargetAbilitySystem );
     }
+
+    InputConfigInfos.Reset();
+
+    for ( const auto context : InputMappingContextInfos )
+    {
+        if ( context.IsValid() )
+        {
+            context.EnhancedSystem->RemoveMappingContext( context.InputMappingContext.Get() );
+        }
+    }
+
+    InputConfigInfos.Reset();
+
+    InteractionOptionContainers.Reset();
 }
 
 void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets )
 {
-    TArray< FGBFInteractionOption > new_options;
+    Context.Reset();
 
+    TArray< FGBFInteractionOptionContainer > new_option_containers;
     for ( const auto & interactive_target : interactable_targets )
     {
         if ( !ensureAlways( interactive_target.GetInterface() != nullptr ) )
@@ -131,8 +189,8 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
             continue;
         }
 
-        TArray< FGBFInteractionOption > temp_options;
-        FGBFInteractionOptionBuilder interaction_builder( interactive_target, temp_options );
+        TArray< FGBFInteractionOptionContainer > temp_option_containers;
+        FGBFInteractionOptionBuilder interaction_builder( interactive_target, temp_option_containers );
 
         FGBFInteractionQuery interact_query;
         interact_query.RequestingAvatar = GetAvatarActorFromActorInfo();
@@ -140,46 +198,137 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
 
         interactive_target->GatherInteractionOptions( interact_query, interaction_builder );
 
-        for ( auto & option : temp_options )
+        for ( auto & option_container : temp_option_containers )
         {
-            const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
             auto * asc = GetAbilitySystemComponentFromActorInfo_Checked();
 
-            // if there is a handle an a target ability system, we're triggering the ability on the target.
-            if ( option.TargetAbilitySystem != nullptr && option.TargetInteractionAbilityHandle.IsValid() )
+            if ( const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() ) )
             {
-                // Find the spec
-                interaction_ability_spec = option.TargetAbilitySystem->FindAbilitySpecFromHandle( option.TargetInteractionAbilityHandle );
+                if ( auto * hero_component = pawn->FindComponentByClass< UGBFHeroComponent >() )
+                {
+                    if ( auto * input_config = option_container.InputConfig.LoadSynchronous() )
+                    {
+                        hero_component->AddAdditionalInputConfig( input_config );
+                        Context.InputConfigInfos.Emplace( hero_component, input_config );
+                    }
+                }
+
+                if ( auto * pc = Cast< APlayerController >( pawn->GetController() ) )
+                {
+                    if ( auto * lp = pc->GetLocalPlayer() )
+                    {
+                        if ( auto * system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
+                        {
+                            if ( auto * imc = option_container.InputMappingContext.LoadSynchronous() )
+                            {
+                                system->AddMappingContext( imc, 100 );
+                                Context.InputMappingContextInfos.Emplace( system, imc );
+                            }
+                        }
+                    }
+                }
             }
-            // If there's an interaction ability then we're activating it on ourselves.
-            else if ( option.InteractionAbilityToGrant != nullptr )
+
+            for ( auto & option : option_container.Options )
             {
-                // Find the spec
-                interaction_ability_spec = asc->FindAbilitySpecFromClass( option.InteractionAbilityToGrant );
+                const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
+
+                // if there is a handle an a target ability system, we're triggering the ability on the target.
+                if ( option.TargetAbilitySystem != nullptr && option.TargetInteractionAbilityHandle.IsValid() )
+                {
+                    // Find the spec
+                    interaction_ability_spec = option.TargetAbilitySystem->FindAbilitySpecFromHandle( option.TargetInteractionAbilityHandle );
+                }
+                // If there's an interaction ability then we're activating it on ourselves.
+                else if ( option.InteractionAbilityToGrant != nullptr )
+                {
+                    // Find the spec
+                    interaction_ability_spec = asc->FindAbilitySpecFromClass( option.InteractionAbilityToGrant );
+
+                    if ( interaction_ability_spec == nullptr && option.bGiveAbilityIfNotOnTarget && option.InputTag.IsValid() )
+                    {
+                        FGameplayAbilitySpec ability_spec( option.InteractionAbilityToGrant, 1, INDEX_NONE, option.InteractableTarget.GetObject() );
+                        ability_spec.DynamicAbilityTags.AddTag( option.InputTag );
+
+                        asc->GiveAbility( ability_spec );
+                        interaction_ability_spec = asc->FindAbilitySpecFromClass( option.InteractionAbilityToGrant );
+                    }
+
+                    if ( interaction_ability_spec != nullptr )
+                    {
+                        // update the option
+                        option.TargetInteractionAbilityHandle = interaction_ability_spec->Handle;
+                    }
+                }
 
                 if ( interaction_ability_spec != nullptr )
                 {
-                    // update the option
-                    option.TargetInteractionAbilityHandle = interaction_ability_spec->Handle;
+                    // Filter any options that we can't activate right now for whatever reason.
+                    if ( !interaction_ability_spec->Ability->CanActivateAbility( option.TargetInteractionAbilityHandle, asc->AbilityActorInfo.Get() ) )
+                    {
+                        continue;
+                    }
                 }
+
+                option.TargetAbilitySystem = asc;
+                new_option_containers.Add( option_container );
+
+                auto activation_prediction_key = GetCurrentActivationInfo().GetActivationPredictionKey();
+                auto delegate_handle = asc->AbilityReplicatedEventDelegate(
+                                              EAbilityGenericReplicatedEvent::InputPressed,
+                                              option.TargetInteractionAbilityHandle,
+                                              activation_prediction_key )
+                                           .AddUObject( this, &ThisClass::OnPressCallBack, option );
+
+                Context.InteractionOptionContexts.Emplace( delegate_handle, option.TargetInteractionAbilityHandle, asc, activation_prediction_key );
             }
 
-            if ( interaction_ability_spec != nullptr )
-            {
-                // Filter any options that we can't activate right now for whatever reason.
-                if ( !interaction_ability_spec->Ability->CanActivateAbility( interaction_ability_spec->Handle, asc->AbilityActorInfo.Get() ) )
-                {
-                    continue;
-                }
-            }
-
-            option.TargetAbilitySystem = asc;
-            new_options.Add( option );
+            Context.InteractionOptionContainers.Add( option_container );
         }
     }
 
-    if ( new_options != CurrentOptions )
+    /*if ( new_option_containers != Context.InteractionOptionContainer )
     {
-        CurrentOptions = new_options;
-    }
+        Context.InteractionOptionContainer = new_option_containers;
+    }*/
+}
+
+void UGBFGameplayAbility_Interact::OnPressCallBack( FGBFInteractionOption interaction_option )
+{
+    /*if ( !interaction_option.TargetInteractionAbilityHandle.IsValid() )
+    {
+        FGameplayAbilitySpec spec( interaction_option.InteractionAbilityToGrant, 1, INDEX_NONE, this );
+        interaction_option.TargetInteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
+    }*/
+
+    auto * instigator = GetAvatarActorFromActorInfo();
+    auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
+
+    // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
+    // that only the actor knows.
+    FGameplayEventData payload;
+    payload.EventTag = TAG_Ability_Interaction_Activate;
+    payload.Instigator = instigator;
+    payload.Target = interactable_target_actor;
+
+    // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
+    // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
+    // door actor.
+    interaction_option.InteractableTarget->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
+
+    // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
+    // source InteractableTarget actor as the owner actor.
+    auto * target_actor = const_cast< AActor * >( ToRawPtr( payload.Target ) );
+
+    // The actor info needed for the interaction.
+    FGameplayAbilityActorInfo actor_info;
+    actor_info.InitFromActor( interactable_target_actor, target_actor, interaction_option.TargetAbilitySystem );
+
+    // Trigger the ability using event tag.
+    interaction_option.TargetAbilitySystem->TriggerAbilityFromGameplayEvent(
+        interaction_option.TargetInteractionAbilityHandle,
+        &actor_info,
+        TAG_Ability_Interaction_Activate,
+        &payload,
+        *interaction_option.TargetAbilitySystem );
 }

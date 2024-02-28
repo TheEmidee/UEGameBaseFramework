@@ -8,5 +8,5 @@ AGBFInteractableActor::AGBFInteractableActor()
 
 void AGBFInteractableActor::GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder )
 {
-    option_builder.AddInteractionOption( Option );
+    option_builder.AddInteractionOption( InteractionOptionContainer );
 }

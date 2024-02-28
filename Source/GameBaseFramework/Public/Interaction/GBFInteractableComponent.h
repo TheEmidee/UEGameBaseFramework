@@ -7,6 +7,9 @@
 
 #include "GBFInteractableComponent.generated.h"
 
+class UInputMappingContext;
+class UGBFInputConfig;
+
 UCLASS( Blueprintable, meta = ( BlueprintSpawnableComponent ) )
 class GAMEBASEFRAMEWORK_API UGBFInteractableComponent : public UActorComponent, public IGBFInteractableTarget
 {
@@ -18,6 +21,6 @@ public:
     virtual void GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder ) override;
 
 private:
-    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
-    FGBFInteractionOption Option;
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    FGBFInteractionOptionContainer InteractionOptionContainer;
 };
