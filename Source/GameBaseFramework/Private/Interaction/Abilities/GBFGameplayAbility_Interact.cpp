@@ -256,6 +256,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
 
                     if ( interaction_ability_spec != nullptr )
                     {
+                        option.TargetAbilitySystem = asc;
                         // update the option
                         option.TargetInteractionAbilityHandle = interaction_ability_spec->Handle;
                     }
@@ -270,7 +271,6 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
                     }
                 }
 
-                option.TargetAbilitySystem = asc;
                 new_option_containers.Add( option_container );
 
                 auto activation_prediction_key = GetCurrentActivationInfo().GetActivationPredictionKey();
