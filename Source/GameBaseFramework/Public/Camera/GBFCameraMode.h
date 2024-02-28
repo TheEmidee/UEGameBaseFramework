@@ -118,6 +118,9 @@ protected:
     UFUNCTION( BlueprintNativeEvent, BlueprintPure )
     FRotator GetPivotRotation() const;
 
+    UFUNCTION( BlueprintPure )
+    float GetClampedPitch( float pitch ) const;
+
     virtual void UpdateView( float delta_time );
     virtual void UpdateBlending( float delta_time );
 
