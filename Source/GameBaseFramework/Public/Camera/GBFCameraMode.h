@@ -112,11 +112,14 @@ public:
     void SetBlendWeight( float weight );
 
 protected:
-    UFUNCTION( BlueprintNativeEvent )
+    UFUNCTION( BlueprintNativeEvent, BlueprintPure )
     FVector GetPivotLocation() const;
 
-    UFUNCTION( BlueprintNativeEvent )
+    UFUNCTION( BlueprintNativeEvent, BlueprintPure )
     FRotator GetPivotRotation() const;
+
+    UFUNCTION( BlueprintPure )
+    float GetClampedPitch( float pitch ) const;
 
     virtual void UpdateView( float delta_time );
     virtual void UpdateBlending( float delta_time );
@@ -131,11 +134,11 @@ protected:
     float FieldOfView;
 
     // Minimum view pitch (in degrees).
-    UPROPERTY( EditDefaultsOnly, Category = "View", Meta = ( UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9" ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "View", Meta = ( UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9" ) )
     float ViewPitchMin;
 
     // Maximum view pitch (in degrees).
-    UPROPERTY( EditDefaultsOnly, Category = "View", Meta = ( UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9" ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "View", Meta = ( UIMin = "-89.9", UIMax = "89.9", ClampMin = "-89.9", ClampMax = "89.9" ) )
     float ViewPitchMax;
 
     // How long it takes to blend in this mode.

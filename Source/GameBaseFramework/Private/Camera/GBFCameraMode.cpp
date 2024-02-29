@@ -140,12 +140,17 @@ void UGBFCameraMode::UpdateCameraMode( const float delta_time )
     UpdateBlending( delta_time );
 }
 
+float UGBFCameraMode::GetClampedPitch( const float pitch ) const
+{
+    return FMath::ClampAngle( pitch, ViewPitchMin, ViewPitchMax );
+}
+
 void UGBFCameraMode::UpdateView( float delta_time )
 {
     const auto pivot_location = GetPivotLocation();
     auto pivot_rotation = GetPivotRotation();
 
-    pivot_rotation.Pitch = FMath::ClampAngle( pivot_rotation.Pitch, ViewPitchMin, ViewPitchMax );
+    pivot_rotation.Pitch = GetClampedPitch( pivot_rotation.Pitch );
 
     View.Location = pivot_location;
     View.Rotation = pivot_rotation;
