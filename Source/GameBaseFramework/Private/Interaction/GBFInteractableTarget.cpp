@@ -13,7 +13,7 @@ void FGBFInteractionOptionBuilder::AddInteractionOption( const FGBFInteractionOp
     auto & container_entry = Options.Add_GetRef( option_container );
     container_entry.InteractableTarget = Scope;
 
-    for ( auto option : container_entry.Options )
+    for ( auto & option : container_entry.Options )
     {
         option.InteractableTarget = Scope;
     }

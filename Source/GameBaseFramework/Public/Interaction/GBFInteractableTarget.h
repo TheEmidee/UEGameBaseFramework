@@ -35,4 +35,6 @@ class GAMEBASEFRAMEWORK_API IGBFInteractableTarget
 public:
     virtual void GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder ) = 0;
     virtual void CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, FGameplayEventData & in_out_event_data );
+
+    virtual TArray< FGBFInteractionOptionContainer > GetInteractableOptions() const = 0;
 };

@@ -5,6 +5,7 @@
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+class UGBFInputComponent;
 class UEnhancedInputLocalPlayerSubsystem;
 class UEnhancedInputUserSettings;
 class UGBFIndicatorDescriptor;
@@ -34,15 +35,6 @@ public:
     void TriggerInteraction();
 
 protected:
-    struct InteractionOptionContext
-    {
-        FDelegateHandle DelegateHandle;
-        FGameplayAbilitySpecHandle AbilitySpecHandle;
-        TWeakObjectPtr< UAbilitySystemComponent > AbilitySystemComponent;
-        FPredictionKey PredictionKey;
-        FGBFInteractionOption InteractionOption;
-    };
-
     struct InputConfigInfos
     {
         bool IsValid() const;
@@ -59,15 +51,35 @@ protected:
         TWeakObjectPtr< UInputMappingContext > InputMappingContext;
     };
 
+    struct InputBindingInfos
+    {
+        TWeakObjectPtr< UGBFInputComponent > InputComponent;
+        uint32 Handle;
+    };
+
+    struct OptionHandle
+    {
+        TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+        TWeakObjectPtr< UAbilitySystemComponent > TargetAbilitySystem;
+        FGameplayAbilitySpecHandle InteractionAbilityHandle;
+    };
+
+    struct WidgetInfosHandle
+    {
+        TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+        FGBFInteractionWidgetInfos WidgetInfos;
+    };
+
     struct Context
     {
         void Reset();
 
-        TArray< FGBFInteractionOptionContainer > InteractionOptionContainers;
-        TArray< InteractionOptionContext > InteractionOptionContexts;
+        TArray< WidgetInfosHandle > WidgetInfosHandles;
+        TArray< OptionHandle > OptionHandles;
         TArray< InputConfigInfos > InputConfigInfos;
         TArray< InputMappingContextInfos > InputMappingContextInfos;
         TArray< FGameplayAbilitySpecHandle > GrantedAbilities;
+        TArray< InputBindingInfos > BindActionHandles;
     };
 
     UFUNCTION( BlueprintImplementableEvent )
@@ -92,5 +104,5 @@ protected:
 
 private:
     void UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets );
-    void OnPressCallBack( FGBFInteractionOption interaction_option );
+    void OnPressCallBack( OptionHandle interaction_option );
 };
