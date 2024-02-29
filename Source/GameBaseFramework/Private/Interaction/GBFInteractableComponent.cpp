@@ -6,7 +6,7 @@ UGBFInteractableComponent::UGBFInteractableComponent()
     PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UGBFInteractableComponent::GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder )
+const FGBFInteractionOptionContainer & UGBFInteractableComponent::GetInteractableOptions() const
 {
-    option_builder.AddInteractionOption( InteractionOptionContainer );
+    return InteractionOptionContainer;
 }

@@ -58,6 +58,12 @@ public:
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UGameplayAbility > InteractionAbility;
 
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InteractableTargetTagRequirements;
+
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InstigatorTagRequirements;
+
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 

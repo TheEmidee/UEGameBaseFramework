@@ -16,7 +16,7 @@ class GAMEBASEFRAMEWORK_API AGBFInteractableActor : public AActor, public IGBFIn
 public:
     AGBFInteractableActor();
 
-    void GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder ) override;
+    const FGBFInteractionOptionContainer & GetInteractableOptions() const override;
 
 private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )

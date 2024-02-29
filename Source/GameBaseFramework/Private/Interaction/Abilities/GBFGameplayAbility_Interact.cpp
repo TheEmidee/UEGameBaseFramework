@@ -83,53 +83,6 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
 
 void UGBFGameplayAbility_Interact::TriggerInteraction()
 {
-    // if ( CurrentOptions.Num() == 0 )
-    //{
-    //     return;
-    // }
-
-    // const auto * ability_system = GetAbilitySystemComponentFromActorInfo();
-    // if ( ability_system != nullptr )
-    //{
-    //     auto & interaction_option = CurrentOptions[ 0 ];
-
-    //    if ( !interaction_option.InteractionAbilityHandle.IsValid() )
-    //    {
-    //        FGameplayAbilitySpec spec( interaction_option.InteractionAbility, 1, INDEX_NONE, this );
-    //        interaction_option.InteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
-    //    }
-
-    //    auto * instigator = GetAvatarActorFromActorInfo();
-    //    auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
-
-    //    // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
-    //    // that only the actor knows.
-    //    FGameplayEventData payload;
-    //    payload.EventTag = TAG_Ability_Interaction_Activate;
-    //    payload.Instigator = instigator;
-    //    payload.Target = interactable_target_actor;
-
-    //    // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
-    //    // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
-    //    // door actor.
-    //    interaction_option.InteractableTarget->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
-
-    //    // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
-    //    // source InteractableTarget actor as the owner actor.
-    //    auto * target_actor = const_cast< AActor * >( ToRawPtr( payload.Target ) );
-
-    //    // The actor info needed for the interaction.
-    //    FGameplayAbilityActorInfo actor_info;
-    //    actor_info.InitFromActor( interactable_target_actor, target_actor, interaction_option.TargetAbilitySystem );
-
-    //    // Trigger the ability using event tag.
-    //    interaction_option.TargetAbilitySystem->TriggerAbilityFromGameplayEvent(
-    //        interaction_option.InteractionAbilityHandle,
-    //        &actor_info,
-    //        TAG_Ability_Interaction_Activate,
-    //        &payload,
-    //        *interaction_option.TargetAbilitySystem );
-    //}
 }
 
 bool UGBFGameplayAbility_Interact::InputConfigInfos::IsValid() const
@@ -187,139 +140,120 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
             continue;
         }
 
-        /*TArray< FGBFInteractionOptionContainer > temp_option_containers;
-        FGBFInteractionOptionBuilder interaction_builder( interactive_target, temp_option_containers );
-
-        FGBFInteractionQuery interact_query;
-        interact_query.RequestingAvatar = GetAvatarActorFromActorInfo();
-        interact_query.RequestingController = Cast< AController >( GetOwningActorFromActorInfo() );
-
-        interactive_target->GatherInteractionOptions( interact_query, interaction_builder );*/
-
         const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
 
-        const auto containers = interactive_target->GetInteractableOptions();
+        const auto & option_container = interactive_target->GetInteractableOptions();
 
-        for ( auto & option_container : containers )
+        Context.WidgetInfosHandles.Emplace( interactive_target, option_container.CommonWidgetInfos );
+
+        if ( auto * pc = Cast< APlayerController >( pawn->GetController() ) )
         {
-            Context.WidgetInfosHandles.Emplace( interactive_target, option_container.CommonWidgetInfos );
-
-            if ( auto * pc = Cast< APlayerController >( pawn->GetController() ) )
+            if ( auto * lp = pc->GetLocalPlayer() )
             {
-                if ( auto * lp = pc->GetLocalPlayer() )
+                if ( auto * system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
                 {
-                    if ( auto * system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
+                    if ( auto * imc = option_container.InputMappingContext.LoadSynchronous() )
                     {
-                        if ( auto * imc = option_container.InputMappingContext.LoadSynchronous() )
-                        {
-                            system->AddMappingContext( imc, 100 );
-                            Context.InputMappingContextInfos.Emplace( system, imc );
-                        }
+                        system->AddMappingContext( imc, 100 );
+                        Context.InputMappingContextInfos.Emplace( system, imc );
                     }
                 }
             }
+        }
 
-            for ( auto & option : option_container.Options )
+        for ( auto & option : option_container.Options )
+        {
+            auto * asc_from_actor_info_checked = GetAbilitySystemComponentFromActorInfo_Checked();
+
+            FGameplayTagContainer tag_container;
+            asc_from_actor_info_checked->GetOwnedGameplayTags( tag_container );
+
+            if ( !option.InstigatorTagRequirements.RequirementsMet( tag_container ) )
             {
-                auto & option_handle = Context.OptionHandles.AddZeroed_GetRef();
-                option_handle.InteractableTarget = interactive_target;
-
-                const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
-
-                switch ( option.AbilityTarget )
-                {
-                    case EGBFInteractionAbilityTarget::Instigator:
-                    {
-                        option_handle.TargetAbilitySystem = GetAbilitySystemComponentFromActorInfo_Checked();
-                    }
-                    break;
-                    case EGBFInteractionAbilityTarget::InteractableTarget:
-                    {
-                        auto * interactable_object = option_handle.InteractableTarget.GetObject();
-
-                        if ( const auto * component = Cast< UActorComponent >( interactable_object ) )
-                        {
-                            option_handle.TargetAbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( component->GetOwner() );
-                        }
-                        else if ( auto * actor = Cast< AActor >( interactable_object ) )
-                        {
-                            option_handle.TargetAbilitySystem = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor );
-                        }
-                        else
-                        {
-                            checkNoEntry();
-                        }
-                    }
-                    break;
-                    default:
-                    {
-                        checkNoEntry();
-                    }
-                    break;
-                }
-
-                //// if there is a handle an a target ability system, we're triggering the ability on the target.
-                // if ( option.TargetAbilitySystem != nullptr && option.InteractionAbilityHandle.IsValid() )
-                //{
-                //     // Find the spec
-                //     interaction_ability_spec = option.TargetAbilitySystem->FindAbilitySpecFromHandle( option.InteractionAbilityHandle );
-                // }
-                //// If there's an interaction ability then we're activating it on ourselves.
-                // else
-
-                if ( interaction_ability_spec == nullptr )
-                {
-                    continue;
-                }
-
-                // Find the spec
-                interaction_ability_spec = option_handle.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
-
-                //if ( interaction_ability_spec == nullptr && option.bGiveAbilityIfNotOnTarget )
-                //{
-                //    FGameplayAbilitySpec ability_spec( option.InteractionAbility, 1, INDEX_NONE, option.InteractableTarget.GetObject() );
-
-                //    option.TargetAbilitySystem->GiveAbility( ability_spec );
-                //    interaction_ability_spec = option.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
-                //}
-
-                option_handle.InteractionAbilityHandle = interaction_ability_spec->Handle;
-
-                // Filter any options that we can't activate right now for whatever reason.
-                if ( !interaction_ability_spec->Ability->CanActivateAbility( option_handle.InteractionAbilityHandle, option_handle.TargetAbilitySystem->AbilityActorInfo.Get() ) )
-                {
-                    continue;
-                }
-
-                if ( option.InputAction != nullptr )
-                {
-                    if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
-                    {
-                        Context.BindActionHandles.Emplace( input_component, input_component->BindAction( option.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
-                    }
-                }
-
-                Context.WidgetInfosHandles.Emplace( interactive_target, option.WidgetInfos );
+                continue;
             }
 
-            //Context.WidgetInfosHandles.Add( option_container );
+            const auto get_asc_from_interactable_target = [ interactive_target ]() -> UAbilitySystemComponent * {
+                auto * interactable_object = interactive_target.GetObject();
+
+                if ( const auto * component = Cast< UActorComponent >( interactable_object ) )
+                {
+                    return UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( component->GetOwner() );
+                }
+                if ( auto * actor = Cast< AActor >( interactable_object ) )
+                {
+                    return UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor );
+                }
+
+                return nullptr;
+            };
+
+            auto * asc_from_interactable_target = get_asc_from_interactable_target();
+            if ( asc_from_interactable_target != nullptr )
+            {
+                asc_from_interactable_target->GetOwnedGameplayTags( tag_container );
+
+                if ( !option.InstigatorTagRequirements.RequirementsMet( tag_container ) )
+                {
+                    continue;
+                }
+            }
+
+            auto & option_handle = Context.OptionHandles.AddZeroed_GetRef();
+            option_handle.InteractableTarget = interactive_target;
+
+            const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
+
+            switch ( option.AbilityTarget )
+            {
+                case EGBFInteractionAbilityTarget::Instigator:
+                {
+                    option_handle.TargetAbilitySystem = asc_from_actor_info_checked;
+                }
+                break;
+                case EGBFInteractionAbilityTarget::InteractableTarget:
+                {
+                    option_handle.TargetAbilitySystem = asc_from_interactable_target;
+                }
+                break;
+                default:
+                {
+                    checkNoEntry();
+                }
+                break;
+            }
+
+            // Find the spec
+            interaction_ability_spec = option_handle.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
+
+            if ( interaction_ability_spec == nullptr )
+            {
+                continue;
+            }
+
+            option_handle.InteractionAbilityHandle = interaction_ability_spec->Handle;
+
+            // Filter any options that we can't activate right now for whatever reason.
+            if ( !interaction_ability_spec->Ability->CanActivateAbility( option_handle.InteractionAbilityHandle, option_handle.TargetAbilitySystem->AbilityActorInfo.Get() ) )
+            {
+                continue;
+            }
+
+            if ( option.InputAction != nullptr )
+            {
+                if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
+                {
+                    Context.BindActionHandles.Emplace( input_component, input_component->BindAction( option.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
+                }
+            }
+
+            Context.WidgetInfosHandles.Emplace( interactive_target, option.WidgetInfos );
         }
     }
-
-    /*if ( new_option_containers != Context.InteractionOptionContainer )
-    {
-        Context.InteractionOptionContainer = new_option_containers;
-    }*/
 }
 
 void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_option )
 {
-    /*if ( !interaction_option.InteractionAbilityHandle.IsValid() )
-    {
-        FGameplayAbilitySpec spec( interaction_option.InteractionAbility, 1, INDEX_NONE, this );
-        interaction_option.InteractionAbilityHandle = interaction_option.TargetAbilitySystem->GiveAbility( spec );
-    }*/
-
     auto * instigator = GetAvatarActorFromActorInfo();
     auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
 
