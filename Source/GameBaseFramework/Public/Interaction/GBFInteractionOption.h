@@ -37,12 +37,25 @@ enum class EGBFInteractionAbilityTarget : uint8
     Instigator
 };
 
+UENUM( BlueprintType )
+enum class EGBFInteractionGroup : uint8
+{
+    /* Means that when the interactable target is in range, its interaction options exclude any other interactions
+     * If multiple interactable targets with the Exclusive group are in range, the closest one is selected
+    */
+    Exclusive,
+    // Means that the interactable target options are added to the ones already in range
+    Additive
+};
+
 USTRUCT( BlueprintType )
 struct FGBFInteractionOption
 {
     GENERATED_BODY()
 
 public:
+    FGBFInteractionOption() = default;
+
     /** Simple text the interaction might return */
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FText Text;
@@ -90,8 +103,13 @@ struct FGBFInteractionOptionContainer
     GENERATED_BODY()
 
 public:
+    FGBFInteractionOptionContainer() = default;
+
     UPROPERTY( EditAnywhere )
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
+
+    UPROPERTY( EditAnywhere )
+    EGBFInteractionGroup InteractionGroup;
 
     UPROPERTY( EditAnywhere )
     TArray< FGBFInteractionOption > Options;

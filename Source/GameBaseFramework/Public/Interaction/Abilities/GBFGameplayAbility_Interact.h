@@ -123,6 +123,20 @@ protected:
         TArray< InputBindingInfos > BindActionHandles;
     };
 
+    struct InteractableTargetInfos
+    {
+        InteractableTargetInfos() = default;
+
+        InteractableTargetInfos( const TWeakObjectPtr<AActor> & Actor, EGBFInteractionGroup Group ) :
+            Actor( Actor ),
+            Group( Group )
+        {
+        }
+
+        TWeakObjectPtr< AActor > Actor;
+        EGBFInteractionGroup Group;
+    };
+
     UFUNCTION( BlueprintImplementableEvent )
     void LookForInteractables();
 
@@ -142,6 +156,7 @@ protected:
     TSoftClassPtr< UUserWidget > DefaultInteractionWidgetClass;
 
     Context Context;
+    TArray< InteractableTargetInfos > TargetInfos;
 
 private:
     void UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets );

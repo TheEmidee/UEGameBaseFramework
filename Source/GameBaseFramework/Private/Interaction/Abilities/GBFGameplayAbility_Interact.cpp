@@ -133,18 +133,54 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
 {
     Context.Reset();
 
-    for ( const auto & interactive_target : interactable_targets )
+    for ( const auto & interactable_target : interactable_targets )
     {
-        if ( !ensureAlways( interactive_target.GetInterface() != nullptr ) )
+        if ( !ensureAlways( interactable_target.GetInterface() != nullptr ) )
         {
             continue;
         }
 
-        const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
+        auto * interactable_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interactable_target );
+        const auto & option_container = interactable_target->GetInteractableOptions();
 
-        const auto & option_container = interactive_target->GetInteractableOptions();
+        TargetInfos.Emplace( interactable_actor, option_container.InteractionGroup );
+    }
 
-        Context.WidgetInfosHandles.Emplace( interactive_target, option_container.CommonWidgetInfos );
+    const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
+
+    TargetInfos.Sort( [ instigator = pawn ]( const InteractableTargetInfos & left, const InteractableTargetInfos & right ) {
+        if ( left.Group == EGBFInteractionGroup::Exclusive && right.Group != EGBFInteractionGroup::Exclusive )
+        {
+            return true;
+        }
+
+        if ( left.Group != EGBFInteractionGroup::Exclusive && right.Group == EGBFInteractionGroup::Exclusive )
+        {
+            return false;
+        }
+
+        return FVector::DistSquared2D( instigator->GetActorLocation(), left.Actor->GetActorLocation() ) < FVector::DistSquared2D( instigator->GetActorLocation(), right.Actor->GetActorLocation() );
+    } );
+
+    for ( auto index = 0; index < TargetInfos.Num(); ++index )
+    {
+        const auto & target_infos = TargetInfos[ index ];
+
+        if ( target_infos.Group == EGBFInteractionGroup::Exclusive )
+        {
+            break;
+        }
+    }
+
+    Compare the interactable actors with the ones already selected from last sphere cast and enable / disable accordingly
+
+    for ( const auto & interactable_target : interactable_targets )
+    {
+        
+
+        const auto & option_container = interactable_target->GetInteractableOptions();
+
+        Context.WidgetInfosHandles.Emplace( interactable_target, option_container.CommonWidgetInfos );
 
         if ( auto * pc = Cast< APlayerController >( pawn->GetController() ) )
         {
@@ -173,8 +209,8 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
                 continue;
             }
 
-            const auto get_asc_from_interactable_target = [ interactive_target ]() -> UAbilitySystemComponent * {
-                auto * interactable_object = interactive_target.GetObject();
+            const auto get_asc_from_interactable_target = [ interactable_target ]() -> UAbilitySystemComponent * {
+                auto * interactable_object = interactable_target.GetObject();
 
                 if ( const auto * component = Cast< UActorComponent >( interactable_object ) )
                 {
@@ -200,7 +236,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
             }
 
             auto & option_handle = Context.OptionHandles.AddZeroed_GetRef();
-            option_handle.InteractableTarget = interactive_target;
+            option_handle.InteractableTarget = interactable_target;
 
             const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
 
@@ -247,7 +283,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
                 }
             }
 
-            Context.WidgetInfosHandles.Emplace( interactive_target, option.WidgetInfos );
+            Context.WidgetInfosHandles.Emplace( interactable_target, option.WidgetInfos );
         }
     }
 }
