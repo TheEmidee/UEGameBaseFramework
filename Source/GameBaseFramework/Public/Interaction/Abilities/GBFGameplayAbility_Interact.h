@@ -37,6 +37,14 @@ public:
 protected:
     struct InputConfigInfos
     {
+        InputConfigInfos() = default;
+
+        InputConfigInfos( const TWeakObjectPtr<UGBFHeroComponent> & HeroComponent, const TWeakObjectPtr<UGBFInputConfig> & InputConfig ) :
+            HeroComponent( HeroComponent ),
+            InputConfig( InputConfig )
+        {
+        }
+
         bool IsValid() const;
 
         TWeakObjectPtr< UGBFHeroComponent > HeroComponent;
@@ -45,6 +53,14 @@ protected:
 
     struct InputMappingContextInfos
     {
+        InputMappingContextInfos() = default;
+
+        InputMappingContextInfos( const TWeakObjectPtr<UEnhancedInputLocalPlayerSubsystem> & EnhancedSystem, const TWeakObjectPtr<UInputMappingContext> & InputMappingContext ) :
+            EnhancedSystem( EnhancedSystem ),
+            InputMappingContext( InputMappingContext )
+        {
+        }
+
         bool IsValid() const;
 
         TWeakObjectPtr< UEnhancedInputLocalPlayerSubsystem > EnhancedSystem;
@@ -53,12 +69,29 @@ protected:
 
     struct InputBindingInfos
     {
+        InputBindingInfos() = default;
+
+        InputBindingInfos( const TWeakObjectPtr<UGBFInputComponent> & InputComponent, uint32 Handle ) :
+            InputComponent( InputComponent ),
+            Handle( Handle )
+        {
+        }
+
         TWeakObjectPtr< UGBFInputComponent > InputComponent;
         uint32 Handle;
     };
 
     struct OptionHandle
     {
+        OptionHandle() = default;
+
+        OptionHandle( const TScriptInterface<IGBFInteractableTarget> & InteractableTarget, const TWeakObjectPtr<UAbilitySystemComponent> & TargetAbilitySystem, const FGameplayAbilitySpecHandle & InteractionAbilityHandle ) :
+            InteractableTarget( InteractableTarget ),
+            TargetAbilitySystem( TargetAbilitySystem ),
+            InteractionAbilityHandle( InteractionAbilityHandle )
+        {
+        }
+
         TScriptInterface< IGBFInteractableTarget > InteractableTarget;
         TWeakObjectPtr< UAbilitySystemComponent > TargetAbilitySystem;
         FGameplayAbilitySpecHandle InteractionAbilityHandle;
@@ -66,6 +99,14 @@ protected:
 
     struct WidgetInfosHandle
     {
+        WidgetInfosHandle() = default;
+
+        WidgetInfosHandle( const TScriptInterface<IGBFInteractableTarget> & InteractableTarget, const FGBFInteractionWidgetInfos & WidgetInfos ) :
+            InteractableTarget( InteractableTarget ),
+            WidgetInfos( WidgetInfos )
+        {
+        }
+
         TScriptInterface< IGBFInteractableTarget > InteractableTarget;
         FGBFInteractionWidgetInfos WidgetInfos;
     };
