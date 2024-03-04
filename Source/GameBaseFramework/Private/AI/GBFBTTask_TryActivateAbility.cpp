@@ -224,6 +224,7 @@ void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_c
     }
 
     bTickIntervals = false;
+    bNotifyTick = false;
 }
 
 UGBFBTTask_TryActivateAbilityByClass::UGBFBTTask_TryActivateAbilityByClass( const FObjectInitializer & object_initializer ) :
