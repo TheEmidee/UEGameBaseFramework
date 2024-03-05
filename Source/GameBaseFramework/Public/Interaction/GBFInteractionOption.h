@@ -42,7 +42,7 @@ enum class EGBFInteractionGroup : uint8
 {
     /* Means that when the interactable target is in range, its interaction options exclude any other interactions
      * If multiple interactable targets with the Exclusive group are in range, the closest one is selected
-    */
+     */
     Exclusive,
     // Means that the interactable target options are added to the ones already in range
     Additive
