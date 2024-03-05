@@ -1,5 +1,6 @@
 #include "Interaction/GBFInteractionStatics.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Interaction/GBFInteractableTarget.h"
 
 #include <Components/PrimitiveComponent.h>
@@ -100,4 +101,20 @@ void UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( cons
             GetInteractableTargetsFromActor( actor.Get(), out_interactable_targets );
         }
     }
+}
+
+UAbilitySystemComponent * UGBFInteractionStatics::GetASCFromInteractableTarget( TScriptInterface< IGBFInteractableTarget > interactable_target )
+{
+    auto * interactable_object = interactable_target.GetObject();
+
+    if ( const auto * component = Cast< UActorComponent >( interactable_object ) )
+    {
+        return UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( component->GetOwner() );
+    }
+    if ( auto * actor = Cast< AActor >( interactable_object ) )
+    {
+        return UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor );
+    }
+
+    return nullptr;
 }

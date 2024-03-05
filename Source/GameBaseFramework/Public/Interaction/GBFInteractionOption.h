@@ -112,6 +112,12 @@ public:
     EGBFInteractionGroup InteractionGroup;
 
     UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InteractableTargetTagRequirements;
+
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InstigatorTagRequirements;
+
+    UPROPERTY( EditAnywhere )
     TArray< FGBFInteractionOption > Options;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )

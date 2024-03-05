@@ -4,6 +4,7 @@
 
 #include "GBFInteractionStatics.generated.h"
 
+class UAbilitySystemComponent;
 struct FGameplayAbilityTargetDataHandle;
 class IGBFInteractableTarget;
 struct FOverlapResult;
@@ -26,4 +27,5 @@ public:
     static void AppendInteractableTargetsFromOverlapResults( const TArray< FOverlapResult > & overlap_results, TArray< TScriptInterface< IGBFInteractableTarget > > & out_interactable_targets );
     static void AppendInteractableTargetsFromHitResult( const FHitResult & hit_result, TArray< TScriptInterface< IGBFInteractableTarget > > & out_interactable_targets );
     static void AppendInteractableTargetsFromTargetDataHandle( const FGameplayAbilityTargetDataHandle & target_data_handle, TArray< TScriptInterface< IGBFInteractableTarget > > & out_interactable_targets );
+    static UAbilitySystemComponent * GetASCFromInteractableTarget( TScriptInterface< IGBFInteractableTarget > interactable_target );
 };
