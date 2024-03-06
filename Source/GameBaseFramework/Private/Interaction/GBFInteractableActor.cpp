@@ -1,12 +1,13 @@
 ﻿#include "Interaction/GBFInteractableActor.h"
 
-AGBFInteractableActor::AGBFInteractableActor()
+AGBFInteractableActor::AGBFInteractableActor() :
+    InteractionOptionContainer()
 {
     PrimaryActorTick.bCanEverTick = false;
     PrimaryActorTick.bStartWithTickEnabled = false;
 }
 
-void AGBFInteractableActor::GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder )
+const FGBFInteractionOptionContainer & AGBFInteractableActor::GetInteractableOptions() const
 {
-    option_builder.AddInteractionOption( Option );
+    return InteractionOptionContainer;
 }

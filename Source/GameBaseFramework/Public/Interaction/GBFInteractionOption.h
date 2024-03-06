@@ -5,8 +5,48 @@
 
 #include "GBFInteractionOption.generated.h"
 
+class UInputAction;
+class UInputMappingContext;
+class UGBFInputConfig;
 class UAbilitySystemComponent;
 class IGBFInteractableTarget;
+
+USTRUCT( BlueprintType )
+struct FGBFInteractionWidgetInfos
+{
+    GENERATED_BODY()
+
+    /** The widget to show for this kind of interaction. */
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    TSoftClassPtr< UUserWidget > InteractionWidgetClass;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
+
+    FORCEINLINE bool operator==( const FGBFInteractionWidgetInfos & other ) const
+    {
+        return InteractionWidgetClass == other.InteractionWidgetClass &&
+               InteractionWidgetOffset == other.InteractionWidgetOffset;
+    }
+};
+
+UENUM()
+enum class EGBFInteractionAbilityTarget : uint8
+{
+    InteractableTarget,
+    Instigator
+};
+
+UENUM( BlueprintType )
+enum class EGBFInteractionGroup : uint8
+{
+    /* Means that when the interactable target is in range, its interaction options exclude any other interactions
+     * If multiple interactable targets with the Exclusive group are in range, the closest one is selected
+     */
+    Exclusive,
+    // Means that the interactable target options are added to the ones already in range
+    Additive
+};
 
 USTRUCT( BlueprintType )
 struct FGBFInteractionOption
@@ -14,9 +54,7 @@ struct FGBFInteractionOption
     GENERATED_BODY()
 
 public:
-    /** The interactable target */
-    UPROPERTY( BlueprintReadWrite )
-    TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+    FGBFInteractionOption() = default;
 
     /** Simple text the interaction might return */
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
@@ -26,59 +64,74 @@ public:
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FText SubText;
 
-    // METHODS OF INTERACTION
-    //--------------------------------------------------------------
-
-    // 1) Place an ability on the avatar that they can activate when they perform interaction.
+    UPROPERTY( EditAnywhere )
+    EGBFInteractionAbilityTarget AbilityTarget;
 
     /** The ability to grant the avatar when they get near interactable objects. */
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    TSubclassOf< UGameplayAbility > InteractionAbilityToGrant;
+    TSubclassOf< UGameplayAbility > InteractionAbility;
 
-    // - OR -
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InteractableTargetTagRequirements;
 
-    // 2) Allow the object we're interacting with to have its own ability system and interaction ability, that we can activate instead.
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InstigatorTagRequirements;
 
-    /** The ability system on the target that can be used for the TargetInteractionHandle and sending the event, if needed. */
-    UPROPERTY( BlueprintReadOnly )
-    TObjectPtr< UAbilitySystemComponent > TargetAbilitySystem = nullptr;
-
-    /** The ability spec to activate on the object for this option. */
-    UPROPERTY( BlueprintReadOnly )
-    FGameplayAbilitySpecHandle TargetInteractionAbilityHandle;
-
-    // UI
-    //--------------------------------------------------------------
-
-    /** The widget to show for this kind of interaction. */
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    TSoftClassPtr< UUserWidget > InteractionWidgetClass;
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    TObjectPtr< const UInputAction > InputAction = nullptr;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
+    FGBFInteractionWidgetInfos WidgetInfos;
 
-    //--------------------------------------------------------------
-
-public:
     FORCEINLINE bool operator==( const FGBFInteractionOption & other ) const
     {
-        return InteractableTarget == other.InteractableTarget &&
-               InteractionAbilityToGrant == other.InteractionAbilityToGrant &&
-               TargetAbilitySystem == other.TargetAbilitySystem &&
-               TargetInteractionAbilityHandle == other.TargetInteractionAbilityHandle &&
-               InteractionWidgetClass == other.InteractionWidgetClass &&
-               InteractionWidgetOffset == other.InteractionWidgetOffset &&
+        return InteractionAbility == other.InteractionAbility &&
                Text.IdenticalTo( other.Text ) &&
-               SubText.IdenticalTo( other.SubText );
+               SubText.IdenticalTo( other.SubText ) &&
+               WidgetInfos == other.WidgetInfos;
     }
 
     FORCEINLINE bool operator!=( const FGBFInteractionOption & other ) const
     {
         return !operator==( other );
     }
+};
 
-    FORCEINLINE bool operator<( const FGBFInteractionOption & other ) const
+USTRUCT( BlueprintType )
+struct FGBFInteractionOptionContainer
+{
+    GENERATED_BODY()
+
+public:
+    FGBFInteractionOptionContainer() = default;
+
+    UPROPERTY( EditAnywhere )
+    TSoftObjectPtr< UInputMappingContext > InputMappingContext;
+
+    UPROPERTY( EditAnywhere )
+    EGBFInteractionGroup InteractionGroup;
+
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InteractableTargetTagRequirements;
+
+    UPROPERTY( EditAnywhere )
+    FGameplayTagRequirements InstigatorTagRequirements;
+
+    UPROPERTY( EditAnywhere )
+    TArray< FGBFInteractionOption > Options;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FGBFInteractionWidgetInfos CommonWidgetInfos;
+
+    FORCEINLINE bool operator==( const FGBFInteractionOptionContainer & other ) const
     {
-        return InteractableTarget.GetInterface() < other.InteractableTarget.GetInterface();
+        return InputMappingContext == other.InputMappingContext &&
+               Options == other.Options &&
+               CommonWidgetInfos == other.CommonWidgetInfos;
+    }
+
+    FORCEINLINE bool operator!=( const FGBFInteractionOptionContainer & other ) const
+    {
+        return !operator==( other );
     }
 };

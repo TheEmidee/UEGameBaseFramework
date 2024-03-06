@@ -10,18 +10,6 @@ struct FGBFInteractionQuery;
 struct FGameplayTag;
 struct FGameplayEventData;
 
-class FGBFInteractionOptionBuilder
-{
-public:
-    FGBFInteractionOptionBuilder( const TScriptInterface< IGBFInteractableTarget > interface_target_scope, TArray< FGBFInteractionOption > & interact_options );
-
-    void AddInteractionOption( const FGBFInteractionOption & option );
-
-private:
-    TScriptInterface< IGBFInteractableTarget > Scope;
-    TArray< FGBFInteractionOption > & Options;
-};
-
 UINTERFACE( MinimalAPI, meta = ( CannotImplementInterfaceInBlueprint ) )
 class UGBFInteractableTarget : public UInterface
 {
@@ -33,6 +21,7 @@ class GAMEBASEFRAMEWORK_API IGBFInteractableTarget
     GENERATED_BODY()
 
 public:
-    virtual void GatherInteractionOptions( const FGBFInteractionQuery & interact_query, FGBFInteractionOptionBuilder & option_builder ) = 0;
     virtual void CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, FGameplayEventData & in_out_event_data );
+
+    virtual const FGBFInteractionOptionContainer & GetInteractableOptions() const = 0;
 };

@@ -26,6 +26,9 @@ public:
     template < class _USER_CLASS_, typename _PRESSED_FUNC_, typename _RELEASED_FUNC_ >
     void BindAbilityActions( const UGBFInputConfig * input_config, _USER_CLASS_ * object, _PRESSED_FUNC_ pressed_func, _RELEASED_FUNC_ released_func, TArray< uint32 > & bind_handles );
 
+    template < class _USER_CLASS_, typename _PRESSED_FUNC_, typename _RELEASED_FUNC_ >
+    void BindAbilityAction( const UInputAction * input_action, _USER_CLASS_ * object, _PRESSED_FUNC_ pressed_func, _RELEASED_FUNC_ released_func, TArray< uint32 > & bind_handles );
+
     void RemoveBinds( TArray< uint32 > & bind_handles );
 };
 
@@ -58,5 +61,24 @@ void UGBFInputComponent::BindAbilityActions( const UGBFInputConfig * input_confi
                 bind_handles.Add( BindAction( input_action, ETriggerEvent::Completed, object, released_func, input_tag ).GetHandle() );
             }
         }
+    }
+}
+
+template < class _USER_CLASS_, typename _PRESSED_FUNC_, typename _RELEASED_FUNC_ >
+void UGBFInputComponent::BindAbilityAction( const UInputAction * input_action, _USER_CLASS_ * object, _PRESSED_FUNC_ pressed_func, _RELEASED_FUNC_ released_func, TArray< uint32 > & bind_handles )
+{
+    if ( input_action == nullptr )
+    {
+        return;
+    }
+
+    if ( pressed_func )
+    {
+        bind_handles.Add( BindAction( input_action, ETriggerEvent::Triggered, object, pressed_func ).GetHandle() );
+    }
+
+    if ( released_func )
+    {
+        bind_handles.Add( BindAction( input_action, ETriggerEvent::Completed, object, released_func ).GetHandle() );
     }
 }
