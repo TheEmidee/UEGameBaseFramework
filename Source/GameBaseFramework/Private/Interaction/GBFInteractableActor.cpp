@@ -1,8 +1,7 @@
 ﻿#include "Interaction/GBFInteractableActor.h"
 
-#include "OnlineSubsystemTypes.h"
-
-AGBFInteractableActor::AGBFInteractableActor()
+AGBFInteractableActor::AGBFInteractableActor() :
+    InteractionOptionContainer()
 {
     PrimaryActorTick.bCanEverTick = false;
     PrimaryActorTick.bStartWithTickEnabled = false;

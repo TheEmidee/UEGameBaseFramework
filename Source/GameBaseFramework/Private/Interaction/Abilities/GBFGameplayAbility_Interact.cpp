@@ -46,11 +46,6 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
     UpdateIndicators();
 }
 
-bool UGBFGameplayAbility_Interact::InputConfigInfos::IsValid() const
-{
-    return HeroComponent.IsValid() && InputConfig.IsValid();
-}
-
 bool UGBFGameplayAbility_Interact::InputMappingContextInfos::IsValid() const
 {
     return EnhancedSystem.IsValid() && InputMappingContext.IsValid();
@@ -58,16 +53,6 @@ bool UGBFGameplayAbility_Interact::InputMappingContextInfos::IsValid() const
 
 void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
 {
-    for ( const auto context : InputConfigInfos )
-    {
-        if ( context.IsValid() )
-        {
-            context.HeroComponent->RemoveAdditionalInputConfig( context.InputConfig.Get() );
-        }
-    }
-
-    InputConfigInfos.Reset();
-
     for ( const auto context : InputMappingContextInfos )
     {
         if ( context.IsValid() )
@@ -76,7 +61,7 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
         }
     }
 
-    InputConfigInfos.Reset();
+    InputMappingContextInfos.Reset();
 
     for ( const auto context : BindActionHandles )
     {
@@ -85,7 +70,7 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
         context.InputComponent->RemoveBinds( handles );
     }
 
-    InputConfigInfos.Reset();
+    BindActionHandles.Reset();
     WidgetInfosHandles.Reset();
     OptionHandles.Reset();
 }

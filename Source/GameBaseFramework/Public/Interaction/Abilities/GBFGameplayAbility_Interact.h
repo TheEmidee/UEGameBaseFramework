@@ -36,22 +36,6 @@ protected:
     void LookForInteractables();
 
 private:
-    struct InputConfigInfos
-    {
-        InputConfigInfos() = default;
-
-        InputConfigInfos( const TWeakObjectPtr< UGBFHeroComponent > & HeroComponent, const TWeakObjectPtr< UGBFInputConfig > & InputConfig ) :
-            HeroComponent( HeroComponent ),
-            InputConfig( InputConfig )
-        {
-        }
-
-        bool IsValid() const;
-
-        TWeakObjectPtr< UGBFHeroComponent > HeroComponent;
-        TWeakObjectPtr< UGBFInputConfig > InputConfig;
-    };
-
     struct InputMappingContextInfos
     {
         InputMappingContextInfos() = default;
@@ -118,9 +102,7 @@ private:
 
         TArray< WidgetInfosHandle > WidgetInfosHandles;
         TArray< OptionHandle > OptionHandles;
-        TArray< InputConfigInfos > InputConfigInfos;
         TArray< InputMappingContextInfos > InputMappingContextInfos;
-        TArray< FGameplayAbilitySpecHandle > GrantedAbilities;
         TArray< InputBindingInfos > BindActionHandles;
     };
 
