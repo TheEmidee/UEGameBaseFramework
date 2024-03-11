@@ -13,8 +13,7 @@ class GAMEBASEFRAMEWORK_API UGBFUIMessagingSubsystem final : public UCommonMessa
 
 public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
-
-    void ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback = FCommonMessagingResultDelegate() ) override;
+    void ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, TSubclassOf< UCommonGameDialog > custom_dialog_widget = nullptr, FCommonMessagingResultDelegate result_callback = FCommonMessagingResultDelegate() ) override;
     void ShowError( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback = FCommonMessagingResultDelegate() ) override;
 
 private:
