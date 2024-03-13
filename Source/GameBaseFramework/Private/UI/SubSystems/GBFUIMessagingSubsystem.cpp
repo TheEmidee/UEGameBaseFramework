@@ -15,13 +15,13 @@ void UGBFUIMessagingSubsystem::Initialize( FSubsystemCollectionBase & collection
     ErrorDialogClassPtr = settings->ErrorDialogClass.LoadSynchronous();
 }
 
-void UGBFUIMessagingSubsystem::ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback )
+void UGBFUIMessagingSubsystem::ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, TSubclassOf< UCommonGameDialog > custom_dialog_widget, FCommonMessagingResultDelegate result_callback )
 {
     if ( const auto * local_player = GetLocalPlayer< UGBFLocalPlayer >() )
     {
         if ( auto * root_layout = local_player->GetRootUILayout() )
         {
-            root_layout->PushWidgetToLayerStack< UCommonGameDialog >( GBFTag_UI_Layer_Modal, ConfirmationDialogClassPtr, [ dialog_descriptor, result_callback ]( UCommonGameDialog & dialog ) {
+            root_layout->PushWidgetToLayerStack< UCommonGameDialog >( GBFTag_UI_Layer_Modal, custom_dialog_widget != nullptr ? custom_dialog_widget : ConfirmationDialogClassPtr, [ dialog_descriptor, result_callback ]( UCommonGameDialog & dialog ) {
                 dialog.SetupDialog( dialog_descriptor, result_callback );
             } );
         }
