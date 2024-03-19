@@ -156,12 +156,24 @@ FGameplayEffectSpecHandle UGBFAbilitySystemFunctionLibrary::MakeGameplayEffectSp
 
 FGameplayAbilitySpecHandle UGBFAbilitySystemFunctionLibrary::GiveAbility( UAbilitySystemComponent * asc, TSubclassOf< UGameplayAbility > ability, int32 level, UObject * source_object )
 {
-    FGameplayAbilitySpec spec( ability, level, INDEX_NONE, source_object );
+    if ( asc == nullptr )
+    {
+        ABILITY_LOG( Error, TEXT( "UGBFAbilitySystemFunctionLibrary::GiveAbility: Invalid ability system component" ) );
+        return FGameplayAbilitySpecHandle();
+    }
+
+    const FGameplayAbilitySpec spec( ability, level, INDEX_NONE, source_object );
     return asc->GiveAbility( spec );
 }
 
 FGameplayAbilitySpecHandle UGBFAbilitySystemFunctionLibrary::GiveAbilityAndActivateOnce( UAbilitySystemComponent * asc, TSubclassOf< UGameplayAbility > ability, int32 level /*= 1*/, UObject * source_object /*= nullptr*/ )
 {
+    if ( asc == nullptr )
+    {
+        ABILITY_LOG( Error, TEXT( "UGBFAbilitySystemFunctionLibrary::GiveAbilityAndActivateOnce: Invalid ability system component" ) );
+        return FGameplayAbilitySpecHandle();
+    }
+
     FGameplayAbilitySpec spec( ability, level, INDEX_NONE, source_object );
     return asc->GiveAbilityAndActivateOnce( spec );
 }
@@ -247,6 +259,11 @@ void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToCon
 // :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::InitializeConditionalGameplayEffectSpecsFromParent( FGameplayEffectSpec * gameplay_effect_spec )
 {
+    if ( gameplay_effect_spec == nullptr )
+    {
+        return;
+    }
+
     if ( auto * additional_gameplay_effect_component = gameplay_effect_spec->Def->FindComponent< UAdditionalEffectsGameplayEffectComponent >() )
     {
         for ( auto conditional_gameplay_effect : additional_gameplay_effect_component->OnApplicationGameplayEffects )
