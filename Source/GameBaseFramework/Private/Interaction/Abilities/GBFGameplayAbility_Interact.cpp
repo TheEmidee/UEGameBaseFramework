@@ -310,6 +310,11 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
             break;
         }
 
+        if ( option_handle.TargetAbilitySystem == nullptr )
+        {
+            continue;
+        }
+
         // Find the spec
         interaction_ability_spec = option_handle.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
 
