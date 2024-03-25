@@ -1,5 +1,7 @@
 #include "GAS/Tasks/GBFAT_WaitUseSmartObjectGameplayBehavior.h"
 
+#include "BlueprintLibraries/CoreExtArrayBlueprintLibrary.h"
+
 #include <GameplayBehavior.h>
 #include <GameplayInteractionSmartObjectBehaviorDefinition.h>
 #include <Misc/ScopeExit.h>
@@ -9,7 +11,9 @@
 
 UGBFAT_WaitUseSmartObjectGameplayBehavior::UGBFAT_WaitUseSmartObjectGameplayBehavior( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
+
 {
+    bInteractionCompleted = false;
     bTickingTask = true;
 }
 
@@ -52,7 +56,7 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Activate()
     bSuccess = StartInteraction();
 }
 
-UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component )
+UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection )
 {
     auto * smart_object_subsystem = USmartObjectSubsystem::GetCurrent( owning_ability->GetWorld() );
 
@@ -61,15 +65,60 @@ UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBeh
     TArray< FSmartObjectSlotHandle > slots;
     smart_object_subsystem->GetAllSlots( registered_handle, slots );
 
-    FSmartObjectClaimHandle claim_handle;
+    FSmartObjectClaimHandle claim_handle( FSmartObjectClaimHandle::InvalidHandle );
 
-    for ( const auto slot_handle : slots )
+    for ( auto ite = slots.CreateIterator(); ite; ++ite )
     {
-        if ( smart_object_subsystem->CanBeClaimed( slot_handle ) )
+        const auto slot_handle = *ite;
+
+        if ( !smart_object_subsystem->CanBeClaimed( slot_handle ) )
         {
-            claim_handle = smart_object_subsystem->MarkSlotAsClaimed( slot_handle );
-            break;
+            ite.RemoveCurrent();
         }
+    }
+
+    if ( slots.Num() > 0 )
+    {
+        FSmartObjectSlotHandle selected_slot;
+
+        switch ( slot_selection )
+        {
+            case EGBFATSmartObjectComponentSlotSelection::First:
+            {
+                selected_slot = slots[ 0 ];
+            }
+            break;
+            case EGBFATSmartObjectComponentSlotSelection::Closest:
+            {
+                const auto avatar_location = owning_ability->GetAvatarActorFromActorInfo()->GetActorLocation();
+                auto max_distance_squared = TNumericLimits< float >::Max();
+
+                for ( const auto slot_handle : slots )
+                {
+                    const auto slot_location = smart_object_subsystem->GetSlotLocation( slot_handle ).GetValue();
+                    const auto distance_squared = ( slot_location - avatar_location ).SquaredLength();
+
+                    if ( distance_squared < max_distance_squared )
+                    {
+                        max_distance_squared = distance_squared;
+                        selected_slot = slot_handle;
+                    }
+                }
+            }
+            break;
+            case EGBFATSmartObjectComponentSlotSelection::Random:
+            {
+                selected_slot = UCoreExtArrayBlueprintLibrary::GetRandomArrayValue( slots );
+            }
+            break;
+            default:
+            {
+                checkNoEntry();
+                break;
+            }
+        }
+
+        claim_handle = smart_object_subsystem->MarkSlotAsClaimed( selected_slot );
     }
 
     return WaitUseSmartObjectGameplayBehaviorWithClaimHandle( owning_ability, claim_handle );

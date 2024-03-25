@@ -10,6 +10,15 @@
 
 class UGameplayBehavior;
 class USmartObjectComponent;
+
+UENUM( BlueprintType )
+enum class EGBFATSmartObjectComponentSlotSelection : uint8
+{
+    First,
+    Closest,
+    Random
+};
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAT_WaitUseSmartObjectGameplayBehavior final : public UAbilityTask
 {
@@ -22,7 +31,7 @@ public:
     void Activate() override;
 
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
-    static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component );
+    static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection );
 
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
     static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSlotHandle( UGameplayAbility * owning_ability, FSmartObjectSlotHandle slot_handle );
