@@ -5,6 +5,7 @@
 #include <GameplayInteractionContext.h>
 #include <SmartObjectRuntime.h>
 #include <SmartObjectTypes.h>
+#include <StructView.h>
 
 #include "GBFAT_WaitUseSmartObjectGameplayBehavior.generated.h"
 
@@ -19,13 +20,27 @@ enum class EGBFATSmartObjectComponentSlotSelection : uint8
     Random
 };
 
+UCLASS( BlueprintType )
+class UGBFWaitUseSmartObjectProxy : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    UFUNCTION( BlueprintCallable )
+    void SendEventToStateTree( const FGameplayTag tag );
+
+    UPROPERTY()
+    FGameplayInteractionContext GameplayInteractionContext;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FOnWaitUseSmartObjectGameplayBehaviorActivated, UGBFWaitUseSmartObjectProxy *, Proxy );
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAT_WaitUseSmartObjectGameplayBehavior final : public UAbilityTask
 {
     GENERATED_BODY()
 
 public:
-
     explicit UGBFAT_WaitUseSmartObjectGameplayBehavior( const FObjectInitializer & object_initializer );
 
     void Activate() override;
@@ -49,13 +64,16 @@ private:
     void OnSmartObjectBehaviorFinished( UGameplayBehavior & behavior, AActor & avatar, const bool interrupted );
 
     UPROPERTY( BlueprintAssignable )
+    FOnWaitUseSmartObjectGameplayBehaviorActivated OnActivated;
+
+    UPROPERTY( BlueprintAssignable )
     FGenericGameplayTaskDelegate OnSucceeded;
 
     UPROPERTY( BlueprintAssignable )
     FGenericGameplayTaskDelegate OnFailed;
 
     UPROPERTY()
-    FGameplayInteractionContext GameplayInteractionContext;
+    TObjectPtr< UGBFWaitUseSmartObjectProxy > SmartObjectProxy;
 
     UPROPERTY()
     FGameplayInteractionAbortContext AbortContext;

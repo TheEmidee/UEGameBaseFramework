@@ -59,7 +59,8 @@ namespace UnrealBuildTool.Rules
                     "GameplayBehaviorsModule",
                     "GameplayBehaviorSmartObjectsModule",
                     "GameplayInteractionsModule",
-                    "StateTreeModule"
+                    "StateTreeModule",
+                    "StructUtils"
                 }
             );
         }

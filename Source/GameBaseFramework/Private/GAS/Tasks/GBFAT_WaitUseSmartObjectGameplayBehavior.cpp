@@ -9,6 +9,11 @@
 #include <SmartObjectSubsystem.h>
 #include <VisualLogger/VisualLogger.h>
 
+void UGBFWaitUseSmartObjectProxy::SendEventToStateTree( const FGameplayTag tag )
+{
+    GameplayInteractionContext.SendEvent( tag );
+}
+
 UGBFAT_WaitUseSmartObjectGameplayBehavior::UGBFAT_WaitUseSmartObjectGameplayBehavior( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
 
@@ -54,6 +59,11 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Activate()
     smart_object_subsystem->RegisterSlotInvalidationCallback( ClaimedHandle, FOnSlotInvalidated::CreateUObject( this, &ThisClass::OnSlotInvalidated ) );
 
     bSuccess = StartInteraction();
+
+    if ( bSuccess )
+    {
+        OnActivated.Broadcast( SmartObjectProxy );
+    }
 }
 
 UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection )
@@ -156,11 +166,14 @@ bool UGBFAT_WaitUseSmartObjectGameplayBehavior::StartInteraction()
     }
 
     const auto * smart_object_component = smart_object_subsystem->GetSmartObjectComponent( ClaimedHandle );
-    GameplayInteractionContext.SetContextActor( GetAvatarActor() );
-    GameplayInteractionContext.SetSmartObjectActor( smart_object_component ? smart_object_component->GetOwner() : nullptr );
-    GameplayInteractionContext.SetClaimedHandle( ClaimedHandle );
 
-    return GameplayInteractionContext.Activate( *behavior_definition );
+    SmartObjectProxy = NewObject< UGBFWaitUseSmartObjectProxy >( this );
+
+    SmartObjectProxy->GameplayInteractionContext.SetContextActor( GetAvatarActor() );
+    SmartObjectProxy->GameplayInteractionContext.SetSmartObjectActor( smart_object_component ? smart_object_component->GetOwner() : nullptr );
+    SmartObjectProxy->GameplayInteractionContext.SetClaimedHandle( ClaimedHandle );
+
+    return SmartObjectProxy->GameplayInteractionContext.Activate( *behavior_definition );
 }
 
 void UGBFAT_WaitUseSmartObjectGameplayBehavior::Abort( const EGameplayInteractionAbortReason reason )
@@ -169,7 +182,7 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Abort( const EGameplayInteractio
 
     if ( !bInteractionCompleted )
     {
-        GameplayInteractionContext.SetAbortContext( AbortContext );
+        SmartObjectProxy->GameplayInteractionContext.SetAbortContext( AbortContext );
     }
 
     EndTask();
@@ -200,6 +213,7 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::OnDestroy( bool ability_ended )
         }
     }
 
+    SmartObjectProxy = nullptr;
     Super::OnDestroy( ability_ended );
 }
 
@@ -207,7 +221,7 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::TickTask( float delta_time )
 {
     Super::TickTask( delta_time );
 
-    const auto keep_ticking = GameplayInteractionContext.Tick( delta_time );
+    const auto keep_ticking = SmartObjectProxy->GameplayInteractionContext.Tick( delta_time );
     if ( !keep_ticking )
     {
         bInteractionCompleted = true;
