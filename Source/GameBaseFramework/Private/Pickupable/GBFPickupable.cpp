@@ -39,8 +39,13 @@ UGBFEquipmentInstance * AGBFPickupable::CreateEquipmentInstance()
 #if WITH_EDITOR
 EDataValidationResult AGBFPickupable::IsDataValid( FDataValidationContext & context ) const
 {
-    return FDVEDataValidator( context )
-        .NotNull( VALIDATOR_GET_PROPERTY( EquipmentDefinition ) )
-        .Result();
+    if ( !GetClass()->HasAnyClassFlags( CLASS_Abstract ) )
+    {
+        return FDVEDataValidator( context )
+            .NotNull( VALIDATOR_GET_PROPERTY( EquipmentDefinition ) )
+            .Result();
+    }
+
+    return EDataValidationResult::Valid;
 }
 #endif
