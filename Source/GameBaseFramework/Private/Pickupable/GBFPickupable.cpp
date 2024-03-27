@@ -8,24 +8,32 @@
 void AGBFPickupable::PostInitializeComponents()
 {
     Super::PostInitializeComponents();
-    CreateEquipmentInstance();
-    EquipmentInstance->Initialize();
+
+    if ( auto * equipment_instance = CreateEquipmentInstance() )
+    {
+        equipment_instance->Initialize();
+    }
 }
 
-void AGBFPickupable::CreateEquipmentInstance()
+UGBFEquipmentInstance * AGBFPickupable::CreateEquipmentInstance()
 {
-    check( EquipmentDefinition != nullptr );
-
-    const auto * equipment_definition_cdo = GetDefault< UGBFEquipmentDefinition >( EquipmentDefinition );
-    auto instance_type = equipment_definition_cdo->InstanceType;
-
-    if ( instance_type == nullptr )
+    if ( EquipmentDefinition != nullptr )
     {
-        instance_type = UGBFEquipmentInstance::StaticClass();
+        const auto * equipment_definition_cdo = GetDefault< UGBFEquipmentDefinition >( EquipmentDefinition );
+        auto instance_type = equipment_definition_cdo->InstanceType;
+
+        if ( instance_type == nullptr )
+        {
+            instance_type = UGBFEquipmentInstance::StaticClass();
+        }
+
+        EquipmentInstance = NewObject< UGBFEquipmentInstance >( this, instance_type );
+        EquipmentInstance->SetInstigator( this );
+
+        return EquipmentInstance;
     }
 
-    EquipmentInstance = NewObject< UGBFEquipmentInstance >( this, instance_type );
-    EquipmentInstance->SetInstigator( this );
+    return nullptr;
 }
 
 #if WITH_EDITOR
