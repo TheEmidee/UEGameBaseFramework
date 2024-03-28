@@ -102,6 +102,26 @@
     {
       "Name": "UIExtension",
       "Enabled": true
+    },
+    {
+      "Name": "SmartObjects",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayBehaviors",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayBehaviorSmartObjects",
+      "Enabled": true
+    },
+    {
+      "Name": "GameplayInteractions",
+      "Enabled": true
+    },
+    {
+      "Name": "StateTree",
+      "Enabled": true
     }
   ]
 }

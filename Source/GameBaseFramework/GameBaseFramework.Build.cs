@@ -54,7 +54,13 @@ namespace UnrealBuildTool.Rules
                     "EngineSettings",
                     "Niagara",
                     "PhysicsCore",
-                    "GameplayMessageRuntime"
+                    "GameplayMessageRuntime",
+                    "SmartObjectsModule",
+                    "GameplayBehaviorsModule",
+                    "GameplayBehaviorSmartObjectsModule",
+                    "GameplayInteractionsModule",
+                    "StateTreeModule",
+                    "StructUtils"
                 }
             );
         }

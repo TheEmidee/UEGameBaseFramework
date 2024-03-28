@@ -22,7 +22,7 @@ public:
 #endif
 
 private:
-    void CreateEquipmentInstance();
+    UGBFEquipmentInstance * CreateEquipmentInstance();
 
     // Defines the equipment definition of the pickupable
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
