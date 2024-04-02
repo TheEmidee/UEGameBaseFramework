@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GameFeaturePluginOperationResult.h"
+#include "LoadingProcessInterface.h"
 
 #include <Components/GameStateComponent.h>
 #include <CoreMinimal.h>
@@ -25,7 +26,7 @@ enum class EGBFExperienceLoadState
 DECLARE_MULTICAST_DELEGATE_OneParam( FOnGBFExperienceLoaded, const UGBFExperienceImplementation * /*Experience*/ );
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFExperienceManagerComponent final : public UGameStateComponent
+class GAMEBASEFRAMEWORK_API UGBFExperienceManagerComponent final : public UGameStateComponent, public ILoadingProcessInterface
 {
     GENERATED_BODY()
 
@@ -57,6 +58,8 @@ public:
     bool IsExperienceLoaded() const;
 
     bool ReplicateSubobjects( UActorChannel * channel, FOutBunch * bunch, FReplicationFlags * rep_flags ) override;
+
+    bool ShouldShowLoadingScreen( FString & reason ) const override;
 
     static UGBFExperienceManagerComponent * GetExperienceManagerComponent( const UObject * world_context );
 
