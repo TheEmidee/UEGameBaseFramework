@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Components/GameStateComponent.h"
+#include "LoadingProcessInterface.h"
 
+#include <Components/GameStateComponent.h>
 #include <ControlFlowNode.h>
 #include <CoreMinimal.h>
 
@@ -10,17 +11,17 @@
 class UCommonActivatableWidget;
 class UGBFExperienceImplementation;
 
-/*
- * This class comes from Lyra
- */
-
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent final : public UGameStateComponent
+class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent final : public UGameStateComponent, public ILoadingProcessInterface
 {
     GENERATED_BODY()
 
 public:
+    explicit UGBFFrontEndStateComponent( const FObjectInitializer & object_initializer );
+
     void BeginPlay() override;
+
+    bool ShouldShowLoadingScreen( FString & reason ) const override;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
@@ -34,7 +35,7 @@ private:
 
     void FlowStep_WaitForUserInitialization( FControlFlowNodeRef sub_flow );
     void FlowStep_TryShowPressStartScreen( FControlFlowNodeRef sub_flow );
-    void FlowStep_TryJoinRequestedSession( FControlFlowNodeRef SubFlow );
+    void FlowStep_TryJoinRequestedSession( FControlFlowNodeRef sub_flow );
     void FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow );
 
     UPROPERTY( EditAnywhere, Category = UI )
@@ -49,6 +50,5 @@ private:
     FControlFlowNodePtr InProgressPressStartScreen;
     FDelegateHandle OnJoinSessionCompleteEventHandle;
 
-    // :TODO: LoadingScreen
     bool bShouldShowLoadingScreen;
 };
