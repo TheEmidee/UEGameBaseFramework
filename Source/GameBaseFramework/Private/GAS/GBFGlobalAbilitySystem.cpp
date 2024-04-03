@@ -139,6 +139,14 @@ void UGBFGlobalAbilitySystem::GrantAbilitySetToAll( UGBFAbilitySet * ability_set
     }
 }
 
+void UGBFGlobalAbilitySystem::GrantAbilitySetsToAll( const TArray< UGBFAbilitySet * > & ability_sets )
+{
+    for ( auto * ability_set : ability_sets )
+    {
+        GrantAbilitySetToAll( ability_set );
+    }
+}
+
 void UGBFGlobalAbilitySystem::RemoveAbilityFromAll( const TSubclassOf< UGameplayAbility > ability )
 {
     if ( ability.Get() != nullptr && AppliedAbilities.Contains( ability ) )
@@ -166,6 +174,14 @@ void UGBFGlobalAbilitySystem::RemoveAbilitySetFromAll( UGBFAbilitySet * ability_
         auto & entry = AppliedAbilitySets[ ability_set ];
         entry.RemoveFromAll();
         AppliedAbilitySets.Remove( ability_set );
+    }
+}
+
+void UGBFGlobalAbilitySystem::RemoveAbilitySetsFromAll( const TArray< UGBFAbilitySet * > & ability_sets )
+{
+    for ( auto * ability_set : ability_sets )
+    {
+        RemoveAbilitySetFromAll( ability_set );
     }
 }
 
