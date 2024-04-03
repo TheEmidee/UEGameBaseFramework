@@ -1,12 +1,7 @@
 #include "Animation/GBFAnimNotifyState_AddLooseGameplayTags.h"
 
-#include "AbilitySystemComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-
-namespace
-{
-
-}
+#include <AbilitySystemComponent.h>
+#include <Components/SkeletalMeshComponent.h>
 
 void UGBFAnimNotifyState_AddLooseGameplayTags::NotifyBegin( USkeletalMeshComponent * mesh_component, UAnimSequenceBase * animation, float total_duration, const FAnimNotifyEventReference & event_reference )
 {

@@ -21,7 +21,6 @@ protected:
     UAbilitySystemComponent * GetAbilitySystemComponent( const USkeletalMeshComponent * mesh_component ) const;
 
 private:
-
     UPROPERTY( EditAnywhere, Category = "Gameplay Tags" )
     FGameplayTagContainer TagContainer;
 
