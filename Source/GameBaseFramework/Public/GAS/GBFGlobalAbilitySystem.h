@@ -73,6 +73,9 @@ public:
     void GrantAbilitySetToAll( UGBFAbilitySet * ability_set );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void GrantAbilitySetsToAll( const TArray< UGBFAbilitySet * > & ability_sets );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
     void RemoveAbilityFromAll( TSubclassOf< UGameplayAbility > ability );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
@@ -80,6 +83,9 @@ public:
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
     void RemoveAbilitySetFromAll( UGBFAbilitySet * ability_set );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "GameBaseFramework|GlobalAbilitySystem" )
+    void RemoveAbilitySetsFromAll( const TArray< UGBFAbilitySet * > & ability_sets );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly )
     void CancelAbilitiesByTagFromAll( FGameplayTag tag );
