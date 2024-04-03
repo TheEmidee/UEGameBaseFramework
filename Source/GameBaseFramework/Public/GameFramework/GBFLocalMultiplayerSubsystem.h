@@ -29,7 +29,13 @@ public:
     void AddMappingContextToAllPlayers( UInputMappingContext * input_mapping_context, int priority, FModifyContextOptions options );
 
     UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options" ) )
+    void AddMappingContextsToAllPlayers( const TArray< UInputMappingContext * > & input_mapping_contexts, int priority, FModifyContextOptions options );
+
+    UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options" ) )
     void RemoveMappingContextToAllPlayers( UInputMappingContext * input_mapping_context, FModifyContextOptions options );
+
+    UFUNCTION( BlueprintCallable, meta = ( AutoCreateRefTerm = "options" ) )
+    void RemoveMappingContextsToAllPlayers( const TArray< UInputMappingContext * > & input_mapping_contexts, FModifyContextOptions options );
 
     UFUNCTION( BlueprintPure )
     TArray< ULocalPlayer * > GetAllLocalPlayers() const;
