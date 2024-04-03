@@ -176,6 +176,17 @@ bool UGBFExperienceManagerComponent::ReplicateSubobjects( UActorChannel * channe
     return wrote_something;
 }
 
+bool UGBFExperienceManagerComponent::ShouldShowLoadingScreen( FString & reason ) const
+{
+    if ( LoadState != EGBFExperienceLoadState::Loaded )
+    {
+        reason = TEXT( "Experience still loading" );
+        return true;
+    }
+
+    return false;
+}
+
 UGBFExperienceManagerComponent * UGBFExperienceManagerComponent::GetExperienceManagerComponent( const UObject * world_context )
 {
     if ( const auto * world = world_context->GetWorld() )
