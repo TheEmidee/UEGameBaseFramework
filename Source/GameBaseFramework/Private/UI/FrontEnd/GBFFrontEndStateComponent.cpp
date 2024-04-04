@@ -21,6 +21,12 @@ namespace FrontendTags
     UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_UI_LAYER_MENU, "UI.Layer.Menu" );
 }
 
+UGBFFrontEndStateComponent::UGBFFrontEndStateComponent( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer ),
+    bShouldShowLoadingScreen( true )
+{
+}
+
 void UGBFFrontEndStateComponent::BeginPlay()
 {
     Super::BeginPlay();
@@ -32,6 +38,27 @@ void UGBFFrontEndStateComponent::BeginPlay()
 
     // This delegate is on a component with the same lifetime as this one, so no need to unhook it in
     experience_component->CallOrRegister_OnExperienceLoaded_HighPriority( FOnGBFExperienceLoaded::FDelegate::CreateUObject( this, &ThisClass::OnExperienceLoaded ) );
+}
+
+bool UGBFFrontEndStateComponent::ShouldShowLoadingScreen( FString & reason ) const
+{
+    if ( bShouldShowLoadingScreen )
+    {
+        reason = TEXT( "Frontend Flow Pending..." );
+
+        if ( FrontEndFlow.IsValid() )
+        {
+            if ( const auto step_debug_name = FrontEndFlow->GetCurrentStepDebugName();
+                 step_debug_name.IsSet() )
+            {
+                reason = step_debug_name.GetValue();
+            }
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 #if WITH_EDITOR
@@ -60,7 +87,7 @@ void UGBFFrontEndStateComponent::OnExperienceLoaded( const UGBFExperienceImpleme
 void UGBFFrontEndStateComponent::OnUserInitialized( const UCommonUserInfo * /*user_info*/, bool success, FText /*error*/, ECommonUserPrivilege /*requested_privilege*/, ECommonUserOnlineContext /*online_context*/ )
 {
     const auto flow_to_continue = InProgressPressStartScreen;
-    auto * game_instance = UGameplayStatics::GetGameInstance( this );
+    const auto * game_instance = UGameplayStatics::GetGameInstance( this );
     auto * user_subsystem = game_instance->GetSubsystem< UCommonUserSubsystem >();
 
     if ( ensure( flow_to_continue.IsValid() && user_subsystem ) )
@@ -81,13 +108,13 @@ void UGBFFrontEndStateComponent::OnUserInitialized( const UCommonUserInfo * /*us
     }
 }
 
-void UGBFFrontEndStateComponent::FlowStep_WaitForUserInitialization( const FControlFlowNodeRef sub_flow )
+void UGBFFrontEndStateComponent::FlowStep_WaitForUserInitialization( FControlFlowNodeRef sub_flow )
 {
     // If this was a hard disconnect, explicitly destroy all user and session state
     // TODO: Refactor the engine disconnect flow so it is more explicit about why it happened
     bool bWasHardDisconnect = false;
     const auto * game_mode = GetWorld()->GetAuthGameMode< AGameModeBase >();
-    auto * game_instance = UGameplayStatics::GetGameInstance( this );
+    const auto * game_instance = UGameplayStatics::GetGameInstance( this );
 
     if ( ensure( game_mode != nullptr ) && UGameplayStatics::HasOption( game_mode->OptionsString, TEXT( "closed" ) ) )
     {
@@ -156,13 +183,15 @@ void UGBFFrontEndStateComponent::FlowStep_TryShowPressStartScreen( FControlFlowN
                 case EAsyncWidgetLayerState::Canceled:
                     bShouldShowLoadingScreen = false;
                     sub_flow->ContinueFlow();
-                    return;
+                default:
+                {
+                };
             }
         } );
     }
 }
 
-void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowNodeRef SubFlow )
+void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowNodeRef sub_flow )
 {
     auto * game_instance = Cast< UCommonGameInstance >( UGameplayStatics::GetGameInstance( this ) );
     if ( game_instance->GetRequestedSession() != nullptr && game_instance->CanJoinRequestedSession() )
@@ -172,7 +201,7 @@ void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowN
         {
             // Bind to session join completion to continue or cancel the flow
             // TODO:  Need to ensure that after session join completes, the server travel completes.
-            OnJoinSessionCompleteEventHandle = session_subsystem->OnJoinSessionCompleteEvent.AddWeakLambda( this, [ this, SubFlow, session_subsystem ]( const FOnlineResultInformation & result ) {
+            OnJoinSessionCompleteEventHandle = session_subsystem->OnJoinSessionCompleteEvent.AddWeakLambda( this, [ this, sub_flow, session_subsystem ]( const FOnlineResultInformation & result ) {
                 // Unbind delegate. SessionSubsystem is the object triggering this event, so it must still be valid.
                 session_subsystem->OnJoinSessionCompleteEvent.Remove( OnJoinSessionCompleteEventHandle );
                 OnJoinSessionCompleteEventHandle.Reset();
@@ -180,13 +209,12 @@ void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowN
                 if ( result.bWasSuccessful )
                 {
                     // No longer transitioning to the main menu
-                    SubFlow->CancelFlow();
+                    sub_flow->CancelFlow();
                 }
                 else
                 {
                     // Proceed to the main menu
-                    SubFlow->ContinueFlow();
-                    return;
+                    sub_flow->ContinueFlow();
                 }
             } );
             game_instance->JoinRequestedSession();
@@ -194,7 +222,7 @@ void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowN
         }
     }
     // Skip this step if we didn't start requesting a session join
-    SubFlow->ContinueFlow();
+    sub_flow->ContinueFlow();
 }
 
 void UGBFFrontEndStateComponent::FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow )
