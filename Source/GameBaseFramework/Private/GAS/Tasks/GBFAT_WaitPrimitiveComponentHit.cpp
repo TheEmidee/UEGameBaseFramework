@@ -1,5 +1,7 @@
 #include "GAS/Tasks/GBFAT_WaitPrimitiveComponentHit.h"
 
+#include <Components/PrimitiveComponent.h>
+
 UGBFAT_WaitPrimitiveComponentHit * UGBFAT_WaitPrimitiveComponentHit::WaitPrimitiveComponentHit( UGameplayAbility * owning_ability, UPrimitiveComponent * component, bool wait_overlaps, bool wait_hits, bool end_task_on_event )
 {
     auto * my_obj = NewAbilityTask< UGBFAT_WaitPrimitiveComponentHit >( owning_ability );
