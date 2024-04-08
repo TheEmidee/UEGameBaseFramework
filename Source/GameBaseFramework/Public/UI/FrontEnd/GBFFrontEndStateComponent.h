@@ -12,7 +12,7 @@ class UCommonActivatableWidget;
 class UGBFExperienceImplementation;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent final : public UGameStateComponent, public ILoadingProcessInterface
+class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent : public UGameStateComponent, public ILoadingProcessInterface
 {
     GENERATED_BODY()
 
