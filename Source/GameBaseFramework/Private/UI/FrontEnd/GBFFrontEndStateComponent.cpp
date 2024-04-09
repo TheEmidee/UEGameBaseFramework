@@ -71,6 +71,34 @@ EDataValidationResult UGBFFrontEndStateComponent::IsDataValid( FDataValidationCo
 }
 #endif
 
+void UGBFFrontEndStateComponent::FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow )
+{
+    if ( auto * root_layout = UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer( this ) )
+    {
+        constexpr bool suspend_input_until_complete = true;
+        root_layout->PushWidgetToLayerStackAsync< UCommonActivatableWidget >( FrontendTags::TAG_UI_LAYER_MENU, suspend_input_until_complete, MainScreenClass, [ this, sub_flow ]( EAsyncWidgetLayerState state, UCommonActivatableWidget * screen ) {
+            switch ( state )
+            {
+                case EAsyncWidgetLayerState::AfterPush:
+                {
+                    bShouldShowLoadingScreen = false;
+                    sub_flow->ContinueFlow();
+                }
+                break;
+                case EAsyncWidgetLayerState::Canceled:
+                {
+                    bShouldShowLoadingScreen = false;
+                    sub_flow->ContinueFlow();
+                }
+                break;
+                default:
+                {
+                }
+            }
+        } );
+    }
+}
+
 void UGBFFrontEndStateComponent::OnExperienceLoaded( const UGBFExperienceImplementation * /*experience*/ )
 {
     auto & flow = FControlFlowStatics::Create( this, TEXT( "FrontendFlow" ) )
@@ -223,32 +251,4 @@ void UGBFFrontEndStateComponent::FlowStep_TryJoinRequestedSession( FControlFlowN
     }
     // Skip this step if we didn't start requesting a session join
     sub_flow->ContinueFlow();
-}
-
-void UGBFFrontEndStateComponent::FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow )
-{
-    if ( auto * root_layout = UPrimaryGameLayout::GetPrimaryGameLayoutForPrimaryPlayer( this ) )
-    {
-        constexpr bool suspend_input_until_complete = true;
-        root_layout->PushWidgetToLayerStackAsync< UCommonActivatableWidget >( FrontendTags::TAG_UI_LAYER_MENU, suspend_input_until_complete, MainScreenClass, [ this, sub_flow ]( EAsyncWidgetLayerState state, UCommonActivatableWidget * screen ) {
-            switch ( state )
-            {
-                case EAsyncWidgetLayerState::AfterPush:
-                {
-                    bShouldShowLoadingScreen = false;
-                    sub_flow->ContinueFlow();
-                }
-                break;
-                case EAsyncWidgetLayerState::Canceled:
-                {
-                    bShouldShowLoadingScreen = false;
-                    sub_flow->ContinueFlow();
-                }
-                break;
-                default:
-                {
-                }
-            }
-        } );
-    }
 }

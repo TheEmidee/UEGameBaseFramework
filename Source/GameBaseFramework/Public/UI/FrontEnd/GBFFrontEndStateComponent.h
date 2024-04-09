@@ -12,7 +12,7 @@ class UCommonActivatableWidget;
 class UGBFExperienceImplementation;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent final : public UGameStateComponent, public ILoadingProcessInterface
+class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent : public UGameStateComponent, public ILoadingProcessInterface
 {
     GENERATED_BODY()
 
@@ -27,6 +27,11 @@ public:
     EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
+protected:
+    virtual void FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow );
+
+    bool bShouldShowLoadingScreen;
+
 private:
     void OnExperienceLoaded( const UGBFExperienceImplementation * experience );
 
@@ -36,7 +41,6 @@ private:
     void FlowStep_WaitForUserInitialization( FControlFlowNodeRef sub_flow );
     void FlowStep_TryShowPressStartScreen( FControlFlowNodeRef sub_flow );
     void FlowStep_TryJoinRequestedSession( FControlFlowNodeRef sub_flow );
-    void FlowStep_TryShowMainScreen( FControlFlowNodeRef sub_flow );
 
     UPROPERTY( EditAnywhere, Category = UI )
     TSoftClassPtr< UCommonActivatableWidget > PressStartScreenClass;
@@ -49,6 +53,4 @@ private:
     // If set, this is the in-progress press start screen task
     FControlFlowNodePtr InProgressPressStartScreen;
     FDelegateHandle OnJoinSessionCompleteEventHandle;
-
-    bool bShouldShowLoadingScreen;
 };
