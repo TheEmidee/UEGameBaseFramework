@@ -60,7 +60,8 @@ namespace UnrealBuildTool.Rules
                     "GameplayBehaviorSmartObjectsModule",
                     "GameplayInteractionsModule",
                     "StateTreeModule",
-                    "StructUtils"
+                    "StructUtils",
+                    "AIExtensions"
                 }
             );
         }
