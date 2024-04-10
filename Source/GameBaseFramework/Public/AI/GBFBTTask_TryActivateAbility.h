@@ -6,14 +6,13 @@
 
 #include "GBFBTTask_TryActivateAbility.generated.h"
 
+class UAIExtAITask_ActivateAbility;
+
 struct FGBFTryActivateAbilityBTTaskMemory
 {
     FGBFTryActivateAbilityBTTaskMemory();
 
-    FOnGameplayAbilityEnded::FDelegate OnGameplayAbilityEndedDelegate;
-    FGameplayAbilitySpecHandle AbilitySpecHandle;
-    TWeakObjectPtr< UAbilitySystemComponent > ASC;
-    bool bAbilityHasEnded;
+    TWeakObjectPtr< UAIExtAITask_ActivateAbility > Task;
     bool bObserverCanFinishTask;
 };
 
@@ -31,17 +30,21 @@ public:
     FString GetStaticDescription() const override;
     void TickTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, float delta_seconds ) override;
 
+    void OnGameplayTaskDeactivated( UGameplayTask & task ) override;
+
 protected:
     void OnTaskFinished( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, EBTNodeResult::Type task_result ) override;
     virtual FString GetDetailedStaticDescription() const PURE_VIRTUAL( UGBFBTTask_TryActivateAbility::GetDetailedStaticDescription, return ""; );
     EBTNodeResult::Type AbortTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory ) override;
-    virtual EBTNodeResult::Type TryActivateAbility( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGBFTryActivateAbilityBTTaskMemory * memory ) PURE_VIRTUAL( UGBFBTTask_TryActivateAbility::TryActivateAbility, return EBTNodeResult::Aborted; );
-    EBTNodeResult::Type TryActivateAbilityHandle( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGameplayAbilitySpecHandle ability_to_activate, FGBFTryActivateAbilityBTTaskMemory * memory );
+    virtual void SetupAITask( UAIExtAITask_ActivateAbility & ai_task, AAIController & ai_controller, UAbilitySystemComponent & asc ) PURE_VIRTUAL( UGBFBTTask_TryActivateAbility::SetupAITask, );
     UAbilitySystemComponent * GetAbilitySystemComponent( UBehaviorTreeComponent & owner_comp ) const;
 
-private:
-    void OnGameplayAbilityEnded( UGameplayAbility * ability, FGBFTryActivateAbilityBTTaskMemory * memory, UBehaviorTreeComponent * owner_comp );
+    // If false, this BT Task when end immediately even if the ability does not end
+    // If true, the BT task will end when the ability ends
+    UPROPERTY( EditAnywhere, Category = "Target" )
+    uint8 bEndWhenAbilityEnds : 1;
 
+private:
     void StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory );
 
     UPROPERTY( EditAnywhere, Category = "Target" )
@@ -49,9 +52,6 @@ private:
 
     UPROPERTY( EditAnywhere, Category = "Target", meta = ( EditCondition = "bUseActorFromBlackboardKey" ) )
     FBlackboardKeySelector BlackboardKey;
-
-    UPROPERTY( EditAnywhere, Category = "Target" )
-    uint8 bRequireServerOnlyPolicy : 1;
 
     UPROPERTY( EditAnywhere, Category = "Task" )
     FBlackboardKeySelector TimeLimitBlackboardKey;
@@ -70,7 +70,7 @@ public:
 
 protected:
     FString GetDetailedStaticDescription() const override;
-    EBTNodeResult::Type TryActivateAbility( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGBFTryActivateAbilityBTTaskMemory * memory ) override;
+    void SetupAITask( UAIExtAITask_ActivateAbility & ai_task, AAIController & ai_controller, UAbilitySystemComponent & asc ) override;
 
 private:
     UPROPERTY( Category = "Ability", EditAnywhere )
@@ -91,11 +91,11 @@ public:
 
 protected:
     FString GetDetailedStaticDescription() const override;
-    EBTNodeResult::Type TryActivateAbility( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGBFTryActivateAbilityBTTaskMemory * memory ) override;
+    void SetupAITask( UAIExtAITask_ActivateAbility & ai_task, AAIController & ai_controller, UAbilitySystemComponent & asc ) override;
 
 private:
     UPROPERTY( Category = "Ability", EditAnywhere )
-    FGameplayTagContainer TagContainer;
+    FGameplayTag AbilityTag;
 };
 
 UENUM()

@@ -1,5 +1,7 @@
 #include "AI/GBFBTTask_TryActivateAbility.h"
 
+#include "Tasks/AIExtAITask_ActivateAbility.h"
+
 #include <AIController.h>
 #include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystemComponent.h>
@@ -7,9 +9,9 @@
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Float.h>
 #include <BehaviorTree/Blackboard/BlackboardKeyType_Object.h>
 #include <BehaviorTree/BlackboardComponent.h>
+#include <GameFramework/PlayerState.h>
 
 FGBFTryActivateAbilityBTTaskMemory::FGBFTryActivateAbilityBTTaskMemory() :
-    bAbilityHasEnded( false ),
     bObserverCanFinishTask( false )
 {
 }
@@ -21,7 +23,7 @@ UGBFBTTask_TryActivateAbility::UGBFBTTask_TryActivateAbility( const FObjectIniti
 
     BlackboardKey.AddObjectFilter( this, GET_MEMBER_NAME_CHECKED( UGBFBTTask_TryActivateAbility, BlackboardKey ), AActor::StaticClass() );
     bUseActorFromBlackboardKey = false;
-    bRequireServerOnlyPolicy = false;
+    bEndWhenAbilityEnds = true;
     bTickIntervals = true;
     INIT_TASK_NODE_NOTIFY_FLAGS();
 }
@@ -40,18 +42,43 @@ void UGBFBTTask_TryActivateAbility::InitializeFromAsset( UBehaviorTree & asset )
 
 EBTNodeResult::Type UGBFBTTask_TryActivateAbility::ExecuteTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
 {
-    if ( auto * asc = GetAbilitySystemComponent( owner_comp ) )
+    auto * ai_controller = owner_comp.GetAIOwner();
+    if ( ai_controller == nullptr )
     {
-        const auto result = TryActivateAbility( owner_comp, *asc, CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory ) );
-        if ( result == EBTNodeResult::InProgress )
-        {
-            StartTimer( owner_comp, node_memory );
-        }
-
-        return result;
+        UE_VLOG( owner_comp.GetOwner(), LogBehaviorTree, Error, TEXT( "UGBFBTTask_TryActivateAbility::ExecuteTask failed since AIController is missing." ) );
+        return EBTNodeResult::Failed;
     }
 
-    return EBTNodeResult::Failed;
+    auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
+    auto * task = NewBTAITask< UAIExtAITask_ActivateAbility >( owner_comp );
+
+    memory->bObserverCanFinishTask = false;
+
+    auto * asc = GetAbilitySystemComponent( owner_comp );
+    if ( asc == nullptr )
+    {
+        UE_VLOG( owner_comp.GetOwner(), LogBehaviorTree, Error, TEXT( "UGBFBTTask_TryActivateAbility::ExecuteTask failed to get an ASC." ) );
+        return EBTNodeResult::Failed;
+    }
+
+    SetupAITask( *task, *ai_controller, *asc );
+    task->ReadyForActivation();
+
+    memory->Task = task;
+    memory->bObserverCanFinishTask = true;
+
+    const auto node_result = task->GetState() != EGameplayTaskState::Finished
+                                 ? EBTNodeResult::InProgress
+                             : task->WasActivationSuccessful()
+                                 ? EBTNodeResult::Succeeded
+                                 : EBTNodeResult::Failed;
+
+    if ( node_result == EBTNodeResult::InProgress )
+    {
+        StartTimer( owner_comp, node_memory );
+    }
+
+    return node_result;
 }
 
 uint16 UGBFBTTask_TryActivateAbility::GetInstanceMemorySize() const
@@ -80,94 +107,53 @@ void UGBFBTTask_TryActivateAbility::TickTask( UBehaviorTreeComponent & owner_com
     const auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
     check( memory != nullptr );
 
-    const auto & asc = memory->ASC;
-    check( asc != nullptr );
+    if ( auto * ai_task = memory->Task.Get() )
+    {
+        ai_task->ExternalCancel();
+    }
+}
 
-    asc->CancelAbilityHandle( memory->AbilitySpecHandle );
+void UGBFBTTask_TryActivateAbility::OnGameplayTaskDeactivated( UGameplayTask & task )
+{
+    // AI ActivateAbilityTask finished
+    if ( const auto * ai_task = Cast< UAIExtAITask_ActivateAbility >( &task ) )
+    {
+        if ( ai_task->GetAIController() && ai_task->GetState() != EGameplayTaskState::Paused )
+        {
+            if ( auto * behavior_tree_component = GetBTComponentForTask( task ) )
+            {
+                auto * raw_memory = behavior_tree_component->GetNodeMemory( this, behavior_tree_component->FindInstanceContainingNode( this ) );
+                if ( const auto * my_memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( raw_memory ) )
+                {
+                    if ( my_memory->bObserverCanFinishTask && ( ai_task == my_memory->Task ) )
+                    {
+                        const bool success = ai_task->DidAbilityEnd();
+                        FinishLatentTask( *behavior_tree_component, success ? EBTNodeResult::Succeeded : EBTNodeResult::Failed );
+                    }
+                }
+            }
+        }
+    }
 }
 
 void UGBFBTTask_TryActivateAbility::OnTaskFinished( UBehaviorTreeComponent & owner_comp, uint8 * node_memory, const EBTNodeResult::Type task_result )
 {
     auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
-    memory->ASC.Reset();
-    memory->OnGameplayAbilityEndedDelegate.Unbind();
+    memory->Task.Reset();
 
     Super::OnTaskFinished( owner_comp, node_memory, task_result );
 }
 
 EBTNodeResult::Type UGBFBTTask_TryActivateAbility::AbortTask( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
 {
-    const auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
-    memory->ASC->CancelAbilityHandle( memory->AbilitySpecHandle );
+    auto * memory = CastInstanceNodeMemory< FGBFTryActivateAbilityBTTaskMemory >( node_memory );
+    if ( auto * ai_task = memory->Task.Get() )
+    {
+        memory->bObserverCanFinishTask = false;
+        ai_task->ExternalCancel();
+    }
 
     return Super::AbortTask( owner_comp, node_memory );
-}
-
-EBTNodeResult::Type UGBFBTTask_TryActivateAbility::TryActivateAbilityHandle( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, const FGameplayAbilitySpecHandle ability_to_activate, FGBFTryActivateAbilityBTTaskMemory * memory )
-{
-    // Copied from UAbilitySystemComponent::TryActivateAbility but stripped out of code paths about clients or EGameplayAbilityNetExecutionPolicy not ServerOnly
-
-    FGameplayTagContainer failure_tags;
-    FGameplayAbilitySpec * spec = asc.FindAbilitySpecFromHandle( ability_to_activate );
-    if ( spec == nullptr )
-    {
-        ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with invalid Handle" ) );
-        return EBTNodeResult::Failed;
-    }
-
-    // don't activate abilities that are waiting to be removed
-    if ( spec->PendingRemove || spec->RemoveAfterActivation )
-    {
-        return EBTNodeResult::Failed;
-    }
-
-    UGameplayAbility * ability = spec->Ability;
-
-    if ( ability == nullptr )
-    {
-        ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with invalid Ability" ) );
-        return EBTNodeResult::Failed;
-    }
-
-    if ( bRequireServerOnlyPolicy && ability->GetNetExecutionPolicy() != EGameplayAbilityNetExecutionPolicy::ServerOnly )
-    {
-        ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with ability with invalid NetExecutionPolicy (Must be ServerOnly)" ) );
-        return EBTNodeResult::Failed;
-    }
-
-    const FGameplayAbilityActorInfo * actor_info = asc.AbilityActorInfo.Get();
-
-    // make sure the ActorInfo and then Actor on that FGameplayAbilityActorInfo are valid, if not bail out.
-    if ( actor_info == nullptr || !actor_info->OwnerActor.IsValid() || !actor_info->AvatarActor.IsValid() )
-    {
-        return EBTNodeResult::Failed;
-    }
-
-    // This should only come from button presses/local instigation (AI, etc).
-    if ( actor_info->AvatarActor->GetLocalRole() != ROLE_Authority )
-    {
-        ABILITY_LOG( Warning, TEXT( "UGBFBTTask_TryActivateAbility::TryActivateAbility called with ability with invalid actor local role (Must be Authority)" ) );
-        return EBTNodeResult::Failed;
-    }
-
-    memory->ASC = &asc;
-    memory->OnGameplayAbilityEndedDelegate.BindUObject( this, &UGBFBTTask_TryActivateAbility::OnGameplayAbilityEnded, memory, &owner_comp );
-    memory->AbilitySpecHandle = ability_to_activate;
-    memory->bObserverCanFinishTask = false;
-    memory->bAbilityHasEnded = false;
-
-    if ( !asc.InternalTryActivateAbility( ability_to_activate, FPredictionKey(), nullptr, &memory->OnGameplayAbilityEndedDelegate ) )
-    {
-        return EBTNodeResult::Failed;
-    }
-
-    if ( !memory->bAbilityHasEnded )
-    {
-        memory->bObserverCanFinishTask = true;
-        return EBTNodeResult::InProgress;
-    }
-
-    return EBTNodeResult::Succeeded;
 }
 
 UAbilitySystemComponent * UGBFBTTask_TryActivateAbility::GetAbilitySystemComponent( UBehaviorTreeComponent & owner_comp ) const
@@ -182,6 +168,10 @@ UAbilitySystemComponent * UGBFBTTask_TryActivateAbility::GetAbilitySystemCompone
         {
             result = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor_owner->GetPawn() );
         }
+        if ( result == nullptr )
+        {
+            result = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor_owner->GetPlayerState< APlayerState >() );
+        }
     }
     else if ( const UBlackboardComponent * blackboard_component = owner_comp.GetBlackboardComponent() )
     {
@@ -195,16 +185,6 @@ UAbilitySystemComponent * UGBFBTTask_TryActivateAbility::GetAbilitySystemCompone
     }
 
     return result;
-}
-
-void UGBFBTTask_TryActivateAbility::OnGameplayAbilityEnded( UGameplayAbility * /*ability*/, FGBFTryActivateAbilityBTTaskMemory * memory, UBehaviorTreeComponent * owner_comp )
-{
-    memory->bAbilityHasEnded = true;
-
-    if ( memory->bObserverCanFinishTask )
-    {
-        FinishLatentTask( *owner_comp, EBTNodeResult::Succeeded );
-    }
 }
 
 void UGBFBTTask_TryActivateAbility::StartTimer( UBehaviorTreeComponent & owner_comp, uint8 * node_memory )
@@ -243,20 +223,9 @@ FString UGBFBTTask_TryActivateAbilityByClass::GetDetailedStaticDescription() con
     return ability_desc;
 }
 
-EBTNodeResult::Type UGBFBTTask_TryActivateAbilityByClass::TryActivateAbility( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGBFTryActivateAbilityBTTaskMemory * memory )
+void UGBFBTTask_TryActivateAbilityByClass::SetupAITask( UAIExtAITask_ActivateAbility & ai_task, AAIController & ai_controller, UAbilitySystemComponent & asc )
 {
-    // Copied from UAbilitySystemComponent::TryActivateAbilityByClass
-    const UGameplayAbility * const InAbilityCDO = AbilityClass.GetDefaultObject();
-
-    for ( const FGameplayAbilitySpec & spec : asc.GetActivatableAbilities() )
-    {
-        if ( spec.Ability == InAbilityCDO )
-        {
-            return TryActivateAbilityHandle( owner_comp, asc, spec.Handle, memory );
-        }
-    }
-
-    return EBTNodeResult::Failed;
+    ai_task.Setup( ai_controller, asc, bEndWhenAbilityEnds, AbilityClass );
 }
 
 UGBFBTTask_TryActivateAbilityByTag::UGBFBTTask_TryActivateAbilityByTag( const FObjectInitializer & object_initializer ) :
@@ -267,21 +236,12 @@ UGBFBTTask_TryActivateAbilityByTag::UGBFBTTask_TryActivateAbilityByTag( const FO
 
 FString UGBFBTTask_TryActivateAbilityByTag::GetDetailedStaticDescription() const
 {
-    return TagContainer.ToString();
+    return AbilityTag.ToString();
 }
 
-EBTNodeResult::Type UGBFBTTask_TryActivateAbilityByTag::TryActivateAbility( UBehaviorTreeComponent & owner_comp, UAbilitySystemComponent & asc, FGBFTryActivateAbilityBTTaskMemory * memory )
+void UGBFBTTask_TryActivateAbilityByTag::SetupAITask( UAIExtAITask_ActivateAbility & ai_task, AAIController & ai_controller, UAbilitySystemComponent & asc )
 {
-    // Copied from UAbilitySystemComponent::TryActivateAbilitiesByTag
-    TArray< FGameplayAbilitySpec * > abilities_to_activate;
-    asc.GetActivatableGameplayAbilitySpecsByAllMatchingTags( TagContainer, abilities_to_activate );
-
-    for ( const auto gameplay_ability_spec : abilities_to_activate )
-    {
-        return TryActivateAbilityHandle( owner_comp, asc, gameplay_ability_spec->Handle, memory );
-    }
-
-    return EBTNodeResult::Failed;
+    ai_task.Setup( ai_controller, asc, bEndWhenAbilityEnds, AbilityTag );
 }
 
 FGBFBTTaskSendGameplayEventAssetSelector::FGBFBTTaskSendGameplayEventAssetSelector() :
@@ -318,7 +278,8 @@ UObject * FGBFBTTaskSendGameplayEventAssetSelector::GetAsset( UBehaviorTreeCompo
 }
 
 UGBFBTTask_SendGameplayEvent::UGBFBTTask_SendGameplayEvent( const FObjectInitializer & object_initializer ) :
-    Super( object_initializer )
+    Super( object_initializer ),
+    EventMagnitude( 0 )
 {
     NodeName = TEXT( "Send Gameplay Event" );
 }
