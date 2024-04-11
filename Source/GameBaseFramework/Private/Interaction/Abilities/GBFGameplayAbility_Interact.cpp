@@ -77,7 +77,11 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
     {
         TArray< uint32 > handles;
         handles.Add( context.Handle );
-        context.InputComponent->RemoveBinds( handles );
+
+        if ( context.InputComponent.IsValid() )
+        {
+            context.InputComponent->RemoveBinds( handles );
+        }
     }
 
     BindActionHandles.Reset();
