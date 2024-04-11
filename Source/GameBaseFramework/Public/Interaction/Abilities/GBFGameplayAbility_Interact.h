@@ -27,9 +27,11 @@ public:
     UGBFGameplayAbility_Interact();
 
     void ActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilityActivationInfo activation_info, const FGameplayEventData * trigger_event_data ) override;
+    void EndAbility( const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled ) override;
 
     UFUNCTION( BlueprintCallable )
     void UpdateInteractions( const FGameplayAbilityTargetDataHandle & target_data_handle );
+    void ResetAllInteractions();
 
 protected:
     UFUNCTION( BlueprintImplementableEvent )

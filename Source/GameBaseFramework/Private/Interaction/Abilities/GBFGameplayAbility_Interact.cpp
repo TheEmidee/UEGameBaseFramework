@@ -35,6 +35,11 @@ void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHa
 
     LookForInteractables();
 }
+void UGBFGameplayAbility_Interact::EndAbility( const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled )
+{
+    ResetAllInteractions();
+    Super::EndAbility( Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled );
+}
 
 void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTargetDataHandle & target_data_handle )
 {
@@ -44,6 +49,11 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
     UpdateInteractableOptions( interactable_targets );
 
     UpdateIndicators();
+}
+
+void UGBFGameplayAbility_Interact::ResetAllInteractions()
+{
+    UpdateInteractions( FGameplayAbilityTargetDataHandle() );
 }
 
 bool UGBFGameplayAbility_Interact::InputMappingContextInfos::IsValid() const
@@ -67,7 +77,11 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
     {
         TArray< uint32 > handles;
         handles.Add( context.Handle );
-        context.InputComponent->RemoveBinds( handles );
+
+        if ( context.InputComponent.IsValid() )
+        {
+            context.InputComponent->RemoveBinds( handles );
+        }
     }
 
     BindActionHandles.Reset();
