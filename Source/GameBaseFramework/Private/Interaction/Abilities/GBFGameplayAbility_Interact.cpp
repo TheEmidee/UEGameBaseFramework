@@ -50,6 +50,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTar
 
     UpdateIndicators();
 }
+
 void UGBFGameplayAbility_Interact::ResetAllInteractions()
 {
     UpdateInteractions( FGameplayAbilityTargetDataHandle() );
