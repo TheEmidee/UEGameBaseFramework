@@ -205,8 +205,9 @@ public:
     void AbilitySpecInputPressed( FGameplayAbilitySpec & spec ) override;
     void AbilitySpecInputReleased( FGameplayAbilitySpec & spec ) override;
 
-protected:
     void TryActivateAbilitiesOnSpawn();
+
+protected:
     void NotifyAbilityActivated( const FGameplayAbilitySpecHandle Handle, UGameplayAbility * Ability ) override;
     void NotifyAbilityFailed( const FGameplayAbilitySpecHandle Handle, UGameplayAbility * Ability, const FGameplayTagContainer & FailureReason ) override;
     void NotifyAbilityEnded( FGameplayAbilitySpecHandle handle, UGameplayAbility * ability, bool was_cancelled ) override;
