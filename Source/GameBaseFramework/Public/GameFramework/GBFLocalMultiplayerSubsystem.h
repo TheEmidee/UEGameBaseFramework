@@ -19,6 +19,7 @@ class GAMEBASEFRAMEWORK_API UGBFLocalMultiplayerSubsystem final : public UTickab
 public:
     UGBFLocalMultiplayerSubsystem();
 
+    // The offsets are in % of the viewport size
     UFUNCTION( BlueprintCallable )
     void ApplySplitScreenOffset( FGBFViewPortPlayerOffset offset, FGBFViewportSplitScreenOffsetLerpEndedDelegate on_lerp_ended_delegate, float duration = 0.0f );
 
