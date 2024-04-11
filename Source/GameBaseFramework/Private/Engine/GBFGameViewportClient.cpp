@@ -33,7 +33,7 @@ void UGBFGameViewportClient::LayoutPlayers()
     int top_left_x = viewport_size.X * SplitScreenLayoutOffset.TopLeftX;
     int top_left_y = viewport_size.Y * SplitScreenLayoutOffset.TopLeftY;
     int bottom_right_x = viewport_size.X * SplitScreenLayoutOffset.BottomRightX;
-    int bottom_right_y =  viewport_size.Y * SplitScreenLayoutOffset.BottomRightY;
+    int bottom_right_y = viewport_size.Y * SplitScreenLayoutOffset.BottomRightY;
 
     const FVector2D new_viewport_size(
         viewport_size.X - top_left_x - bottom_right_x,

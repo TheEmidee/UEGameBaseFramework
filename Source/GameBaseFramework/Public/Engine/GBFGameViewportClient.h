@@ -33,16 +33,16 @@ struct FGBFViewPortPlayerOffset
      */
     static FGBFViewPortPlayerOffset Lerp( const FGBFViewPortPlayerOffset & A, const FGBFViewPortPlayerOffset & B, float Alpha );
 
-    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    UPROPERTY( BlueprintReadWrite, meta = ( Units = "%" ) )
     float TopLeftX;
 
-    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    UPROPERTY( BlueprintReadWrite, meta = ( Units = "%" ) )
     float TopLeftY;
 
-    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    UPROPERTY( BlueprintReadWrite, meta = ( Units = "%" ) )
     float BottomRightX;
 
-    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    UPROPERTY( BlueprintReadWrite, meta = ( Units = "%" ) )
     float BottomRightY;
 };
 
@@ -53,7 +53,7 @@ FORCEINLINE bool FGBFViewPortPlayerOffset::IsValid() const
 
 FORCEINLINE FGBFViewPortPlayerOffset FGBFViewPortPlayerOffset::Lerp( const FGBFViewPortPlayerOffset & A, const FGBFViewPortPlayerOffset & B, float Alpha )
 {
-    return FGBFViewPortPlayerOffset{
+    return FGBFViewPortPlayerOffset {
         FMath::Lerp( A.TopLeftX, B.TopLeftX, Alpha ),
         FMath::Lerp( A.TopLeftY, B.TopLeftY, Alpha ),
         FMath::Lerp( A.BottomRightX, B.BottomRightX, Alpha ),
