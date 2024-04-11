@@ -30,14 +30,19 @@ void UGBFGameViewportClient::LayoutPlayers()
     FVector2D viewport_size;
     GetViewportSize( viewport_size );
 
+    int top_left_x = viewport_size.X * SplitScreenLayoutOffset.TopLeftX;
+    int top_left_y = viewport_size.Y * SplitScreenLayoutOffset.TopLeftY;
+    int bottom_right_x = viewport_size.X * SplitScreenLayoutOffset.BottomRightX;
+    int bottom_right_y =  viewport_size.Y * SplitScreenLayoutOffset.BottomRightY;
+
     const FVector2D new_viewport_size(
-        viewport_size.X - SplitScreenLayoutOffset.TopLeftX - SplitScreenLayoutOffset.BottomRightX,
-        viewport_size.Y - SplitScreenLayoutOffset.TopLeftY - SplitScreenLayoutOffset.BottomRightY );
+        viewport_size.X - top_left_x - bottom_right_x,
+        viewport_size.Y - top_left_y - bottom_right_y );
 
     const auto viewport_ratio = new_viewport_size / viewport_size;
     const FVector2D origin_offset(
-        static_cast< float >( SplitScreenLayoutOffset.TopLeftX ) / viewport_size.X,
-        static_cast< float >( SplitScreenLayoutOffset.TopLeftY ) / viewport_size.Y );
+        static_cast< float >( top_left_x ) / viewport_size.X,
+        static_cast< float >( top_left_y ) / viewport_size.Y );
 
     const auto & player_list = GetOuterUEngine()->GetGamePlayers( this );
     const auto player_count = player_list.Num();

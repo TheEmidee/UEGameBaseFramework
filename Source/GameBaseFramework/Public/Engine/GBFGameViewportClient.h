@@ -13,7 +13,7 @@ struct FGBFViewPortPlayerOffset
 
     FGBFViewPortPlayerOffset();
 
-    FGBFViewPortPlayerOffset( int top_left_x, int top_left_y, int bottom_right_x, int bottom_right_y ) :
+    FGBFViewPortPlayerOffset( float top_left_x, float top_left_y, float bottom_right_x, float bottom_right_y ) :
         TopLeftX( top_left_x ),
         TopLeftY( top_left_y ),
         BottomRightX( bottom_right_x ),
@@ -33,27 +33,27 @@ struct FGBFViewPortPlayerOffset
      */
     static FGBFViewPortPlayerOffset Lerp( const FGBFViewPortPlayerOffset & A, const FGBFViewPortPlayerOffset & B, float Alpha );
 
-    UPROPERTY( BlueprintReadWrite )
-    int TopLeftX;
+    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    float TopLeftX;
 
-    UPROPERTY( BlueprintReadWrite )
-    int TopLeftY;
+    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    float TopLeftY;
 
-    UPROPERTY( BlueprintReadWrite )
-    int BottomRightX;
+    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    float BottomRightX;
 
-    UPROPERTY( BlueprintReadWrite )
-    int BottomRightY;
+    UPROPERTY( BlueprintReadWrite, meta=( Units = "%" ) )
+    float BottomRightY;
 };
 
 FORCEINLINE bool FGBFViewPortPlayerOffset::IsValid() const
 {
-    return TopLeftX != 0 || TopLeftY != 0 || BottomRightX != 0 || BottomRightY != 0;
+    return TopLeftX != 0.0f || TopLeftY != 0.0f || BottomRightX != 0.0f || BottomRightY != 0.0f;
 }
 
 FORCEINLINE FGBFViewPortPlayerOffset FGBFViewPortPlayerOffset::Lerp( const FGBFViewPortPlayerOffset & A, const FGBFViewPortPlayerOffset & B, float Alpha )
 {
-    return FGBFViewPortPlayerOffset {
+    return FGBFViewPortPlayerOffset{
         FMath::Lerp( A.TopLeftX, B.TopLeftX, Alpha ),
         FMath::Lerp( A.TopLeftY, B.TopLeftY, Alpha ),
         FMath::Lerp( A.BottomRightX, B.BottomRightX, Alpha ),
