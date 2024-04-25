@@ -19,6 +19,12 @@ static FAutoConsoleVariableRef CVarActionBarIgnoreOptOut(
     TEXT( "If true, the Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
     ECVF_Default );
 
+UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer ),
+    WidgetPool( *this )
+{
+}
+
 void UGBFSplitCommonBoundActionBar::Tick( float delta_time )
 {
     if ( bIsRefreshQueued )
@@ -41,6 +47,7 @@ bool UGBFSplitCommonBoundActionBar::IsTickableWhenPaused() const
 {
     return true;
 }
+
 bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const
 {
     if ( in_entry_class )
@@ -77,7 +84,6 @@ void UGBFSplitCommonBoundActionBar::OnWidgetRebuilt()
             MonitorPlayerActions( local_player );
         }
 
-        // Establish entries (as needed) immediately upon construction
         HandleDeferredDisplayUpdate();
     }
 }
@@ -103,20 +109,12 @@ void UGBFSplitCommonBoundActionBar::ReleaseSlateResources( bool release_children
     }
 }
 
-void UGBFSplitCommonBoundActionBar::AddEntryChild( UUserWidget & child_widget )
-{
-    if ( MyPanelWidget.IsValid() )
-    {
-        child_widget.TakeWidget();
-    }
-}
-
 namespace UGBFSplitCommonBoundActionBarInternal
 {
     TArray< TSubclassOf< UUserWidget >, TInlineAllocator< 4 > > recursive_detection;
 }
 
-UUserWidget * UGBFSplitCommonBoundActionBar::CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class )
+UUserWidget * UGBFSplitCommonBoundActionBar::CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class, bool is_back_action )
 {
     const auto has_recursive_user_widget = UGBFSplitCommonBoundActionBarInternal::recursive_detection.ContainsByPredicate( [ in_entry_class ]( TSubclassOf< UUserWidget > recursive_item ) {
         return in_entry_class->IsChildOf( recursive_item );
@@ -132,19 +130,16 @@ UUserWidget * UGBFSplitCommonBoundActionBar::CreateEntryInternal( TSubclassOf< U
 #endif
         return nullptr;
     }
+
     UGBFSplitCommonBoundActionBarInternal::recursive_detection.Push( in_entry_class );
 
-    UUserWidget * new_entry_widget = EntryWidgetPool.GetOrCreateInstance( in_entry_class );
-    if ( MyPanelWidget.IsValid() )
-    {
-        // If we've already been constructed, immediately add the child to our panel widget
-        AddEntryChild( *new_entry_widget );
-    }
+    const auto content = WidgetPool.GetOrCreateInstance( in_entry_class );
+
+    auto * new_entry_widget = ( is_back_action ? LeftHorizontalBox : RightHorizontalBox )->AddChildToHorizontalBox( content );
 
     UGBFSplitCommonBoundActionBarInternal::recursive_detection.Pop();
-    return new_entry_widget;
 
-    return in_entry_class.GetDefaultObject();
+    return content;
 }
 
 #if WITH_EDITOR
@@ -154,11 +149,11 @@ void UGBFSplitCommonBoundActionBar::ValidateCompiledDefaults( IWidgetCompilerLog
 
     if ( !ActionButtonClass )
     {
-        compile_log.Error( FText::FromString( FString::Printf( TEXT( "Error_BoundActionBar_MissingButtonClass, {0} has no ActionButtonClass specified." ) ) ) );
+        compile_log.Error( FText::FromString( FString::Printf( TEXT( "Error_SplitBoundActionBar_MissingButtonClass, {0} has no ActionButtonClass specified." ) ) ) );
     }
     else if ( compile_log.GetContextClass() && ActionButtonClass->IsChildOf( compile_log.GetContextClass() ) )
     {
-        compile_log.Error( FText::FromString( FString::Printf( TEXT( "Error_BoundActionBar_RecursiveButtonClass, {0} has a recursive ActionButtonClass specified (reference itself)." ) ) ) );
+        compile_log.Error( FText::FromString( FString::Printf( TEXT( "Error_SplitBoundActionBar_RecursiveButtonClass, {0} has a recursive ActionButtonClass specified (reference itself)." ) ) ) );
     }
 }
 #endif
@@ -174,8 +169,9 @@ void UGBFSplitCommonBoundActionBar::HandleBoundActionsUpdated( bool from_owning_
 void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
 {
     bIsRefreshQueued = false;
-    //: TODO: implement a ResetFunction in this class
-    // ResetInternal();
+
+    RightHorizontalBox->ClearChildren();
+    LeftHorizontalBox->ClearChildren();
 
     const auto * game_instance = GetGameInstance();
     check( game_instance );
@@ -187,9 +183,9 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
             return &PlayerA != owning_local_player;
         } );
 
-    for ( const ULocalPlayer * LocalPlayer : sorted_players )
+    for ( const auto * local_player : sorted_players )
     {
-        if ( LocalPlayer == owning_local_player || !bDisplayOwningPlayerActionsOnly )
+        if ( local_player == owning_local_player || !bDisplayOwningPlayerActionsOnly )
         {
             if ( IsEntryClassValid( ActionButtonClass ) )
             {
@@ -237,8 +233,8 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                     } );
 
                     Algo::Sort( filtered_bindings, [ action_router, player_input_type, player_gamepad_name ]( const FUIActionBindingHandle & handle_a, const FUIActionBindingHandle & handle_b ) {
-                        auto binding_a = FUIActionBinding::FindBinding( handle_a );
-                        auto binding_b = FUIActionBinding::FindBinding( handle_b );
+                        const auto binding_a = FUIActionBinding::FindBinding( handle_a );
+                        const auto binding_b = FUIActionBinding::FindBinding( handle_b );
 
                         if ( ensureMsgf( ( binding_a && binding_b ), TEXT( "The array filter above should enforce that there are no null bindings" ) ) )
                         {
@@ -291,8 +287,8 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                                 return 0;
                             };
 
-                            auto legacy_data_a = binding_a->GetLegacyInputActionData();
-                            auto legacy_data_b = binding_b->GetLegacyInputActionData();
+                            const auto legacy_data_a = binding_a->GetLegacyInputActionData();
+                            const auto legacy_data_b = binding_b->GetLegacyInputActionData();
 
                             const UInputAction * input_action_a = nullptr;
                             const UInputAction * input_action_b = nullptr;
@@ -303,21 +299,21 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                                 input_action_b = binding_b->InputAction.Get();
                             }
 
-                            bool is_valid_action_a = legacy_data_a || input_action_a;
-                            bool is_valid_action_b = legacy_data_b || input_action_b;
+                            const bool is_valid_action_a = legacy_data_a || input_action_a;
+                            const bool is_valid_action_b = legacy_data_b || input_action_b;
 
                             if ( ensureMsgf( ( is_valid_action_a && is_valid_action_b ), TEXT( "Action bindings not displayed yet -- array filter enforces they are not included" ) ) )
                             {
-                                bool a_is_back = is_key_back_action( legacy_data_a, input_action_a );
-                                bool b_is_back = is_key_back_action( legacy_data_b, input_action_b );
+                                const bool a_is_back = is_key_back_action( legacy_data_a, input_action_a );
+                                const bool b_is_back = is_key_back_action( legacy_data_b, input_action_b );
 
                                 if ( a_is_back && b_is_back )
                                 {
                                     return false;
                                 }
 
-                                int32 nav_bar_priority_a = get_navbar_priority( legacy_data_a, input_action_a );
-                                int32 nav_bar_priority_b = get_navbar_priority( legacy_data_b, input_action_b );
+                                const int32 nav_bar_priority_a = get_navbar_priority( legacy_data_a, input_action_a );
+                                const int32 nav_bar_priority_b = get_navbar_priority( legacy_data_b, input_action_b );
 
                                 if ( nav_bar_priority_a != nav_bar_priority_b )
                                 {
@@ -331,18 +327,36 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                         return true;
                     } );
 
-                    for ( int binding_index = 0; binding_index < filtered_bindings.Num() - 1; binding_index++ )
+                    for ( auto binding_handle : filtered_bindings )
                     {
-                        auto * action_button = Cast< ICommonBoundActionButtonInterface >( CreateEntryInternal( ActionButtonClass ) );
+                        const auto binding = FUIActionBinding::FindBinding( binding_handle );
 
-                        if ( ensure( action_button ) )
+                        if ( binding->bDisplayInActionBar )
                         {
-                            action_button->SetRepresentedAction( filtered_bindings[ binding_index ] );
-                            NativeOnActionButtonCreated( action_button, filtered_bindings[ binding_index ] );
+                            FKey key;
+                            bool is_back_action;
+
+                            if ( const auto legacy_data = binding->GetLegacyInputActionData() )
+                            {
+                                key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
+                                is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                            }
+                            else
+                            {
+                                const UInputAction * input_action = binding->InputAction.Get();
+                                key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
+                                is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                            }
+
+                            auto * action_button = Cast< ICommonBoundActionButtonInterface >( CreateEntryInternal( ActionButtonClass, is_back_action ) );
+
+                            if ( ensure( action_button ) )
+                            {
+                                action_button->SetRepresentedAction( binding_handle );
+                                NativeOnActionButtonCreated( action_button, binding_handle );
+                            }
                         }
                     }
-
-                    //: TODO: handle the last item of filtered_bindings wich is the back handler
                 }
             }
         }

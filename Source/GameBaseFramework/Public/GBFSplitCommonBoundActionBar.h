@@ -1,6 +1,7 @@
 #pragma once
 
-#include "CommonButtonBase.h"
+#include "Components/HorizontalBox.h"
+#include "UI/Widgets/GBFBoundActionButton.h"
 
 #include <Components/DynamicEntryBoxBase.h>
 #include <CoreMinimal.h>
@@ -20,6 +21,7 @@ class GAMEBASEFRAMEWORK_API UGBFSplitCommonBoundActionBar : public UUserWidget, 
     GENERATED_BODY()
 
 public:
+    explicit UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer );
     // FTickableGameObject Begin
     void Tick( float delta_time ) override;
     ETickableTickType GetTickableTickType() const override;
@@ -28,12 +30,11 @@ public:
     // FTickableGameObject End
 
 protected:
-    bool IsEntryClassValid(TSubclassOf<UUserWidget> in_entry_class) const;
+    bool IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const;
     void OnWidgetRebuilt() override;
     void SynchronizeProperties() override;
     void ReleaseSlateResources( bool release_children ) override;
-    void AddEntryChild(UUserWidget& child_widget);
-    UUserWidget * CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class );
+    UUserWidget * CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class, bool is_back_action );
 
     virtual void NativeOnActionButtonCreated( ICommonBoundActionButtonInterface * ActionButton, const FUIActionBindingHandle & RepresentedAction )
     {}
@@ -42,8 +43,6 @@ protected:
     void ValidateCompiledDefaults( IWidgetCompilerLog & compile_log ) const override;
 #endif
 
-    TSharedPtr<SPanel> MyPanelWidget;
-
 private:
     void HandleBoundActionsUpdated( bool from_owning_player );
     void HandleDeferredDisplayUpdate();
@@ -51,7 +50,7 @@ private:
     void MonitorPlayerActions( const ULocalPlayer * new_player );
 
     UPROPERTY( EditAnywhere, Category = EntryLayout, meta = ( MustImplement = "/Script/CommonUI.CommonBoundActionButtonInterface" ) )
-    TSubclassOf< UCommonButtonBase > ActionButtonClass;
+    TSubclassOf< UGBFBoundActionButton > ActionButtonClass;
 
     UPROPERTY( EditAnywhere, AdvancedDisplay, Category = Display )
     uint8 bIgnoreDuplicateActions : 1;
@@ -59,8 +58,14 @@ private:
     UPROPERTY( EditAnywhere, Category = Display )
     uint8 bDisplayOwningPlayerActionsOnly : 1;
 
-    UPROPERTY(Transient)
-    FUserWidgetPool EntryWidgetPool;
+    UPROPERTY( meta = ( BindWidget ) )
+    TObjectPtr< UHorizontalBox > LeftHorizontalBox;
+
+    UPROPERTY( meta = ( BindWidget ) )
+    TObjectPtr< UHorizontalBox > RightHorizontalBox;
+
+    UPROPERTY( Transient )
+    FUserWidgetPool WidgetPool;
 
     uint8 bIsRefreshQueued : 1;
 };
