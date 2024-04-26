@@ -12,10 +12,10 @@
 #include "InputAction.h"
 #include "OnlineSubsystemUtils.h"
 
-bool bActionBarIgnoreOptOut = false;
-static FAutoConsoleVariableRef CVarActionBarIgnoreOptOut(
+bool bSplitActionBarIgnoreOptOut = false;
+static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
     TEXT( "ActionBar.IgnoreOptOut" ),
-    bActionBarIgnoreOptOut,
+    bSplitActionBarIgnoreOptOut,
     TEXT( "If true, the Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
     ECVF_Default );
 
@@ -199,7 +199,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                     auto filtered_bindings = action_router->GatherActiveBindings().FilterByPredicate( [ action_router, player_input_type, player_gamepad_name, &accepted_bindings ]( const auto & handle ) mutable {
                         if ( auto binding = FUIActionBinding::FindBinding( handle ) )
                         {
-                            if ( !binding->bDisplayInActionBar && !bActionBarIgnoreOptOut )
+                            if ( !binding->bDisplayInActionBar && !bSplitActionBarIgnoreOptOut )
                             {
                                 return false;
                             }
