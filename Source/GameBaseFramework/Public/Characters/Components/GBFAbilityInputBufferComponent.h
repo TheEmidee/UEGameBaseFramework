@@ -3,13 +3,14 @@
 #include "Characters/Components/GBFPawnComponent.h"
 
 #include <CoreMinimal.h>
+#include "Input/GBFInputComponent.h"
 
 #include "GBFAbilityInputBufferComponent.generated.h"
 
 //Enum
 
-UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent : public UGBFPawnComponent
+UCLASS(Blueprintable)
+class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent : public UPawnComponent
 {
     GENERATED_BODY()
 public:
@@ -17,10 +18,8 @@ public:
     void StopMonitoring();
 
 protected:
-    UFUNCTION( BlueprintCallable )
-    //void GetInputMapping();
-    //void FindInputConfig( FGameplayTag input_tag );
-    //void AddInputConfig( const UGBFInputConfig * input_config );
-    //TQueue or TMap AbilityBuffer
-    void Input_AbilityInputTagPressed( FGameplayTag input_tag );
+    void AbilityInputTagPressed();
+
+    int TriggeredInputCount = 0;
+    TArray< uint32 > BindHandles;
 };

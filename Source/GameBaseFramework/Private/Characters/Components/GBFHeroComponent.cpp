@@ -224,6 +224,11 @@ void UGBFHeroComponent::ClearAbilityCameraMode( const FGameplayAbilitySpecHandle
     }
 }
 
+TMap< const UGBFInputConfig *, TArray< uint32 > > UGBFHeroComponent::GetBoundActionsByInputconfig() const
+{
+    return BoundActionsByInputConfig;
+}
+
 void UGBFHeroComponent::OnRegister()
 {
     Super::OnRegister();
