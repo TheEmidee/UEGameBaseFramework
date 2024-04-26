@@ -361,6 +361,8 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
             }
         }
     }
+
+    OnActionBarUpdated();
 }
 
 void UGBFSplitCommonBoundActionBar::HandlePlayerAdded( int32 player_id )

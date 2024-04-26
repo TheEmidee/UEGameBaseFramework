@@ -38,6 +38,9 @@ protected:
 
     virtual void NativeOnActionButtonCreated( ICommonBoundActionButtonInterface * ActionButton, const FUIActionBindingHandle & RepresentedAction )
     {}
+    
+    UFUNCTION( BlueprintImplementableEvent )
+    void OnActionBarUpdated();
 
 #if WITH_EDITOR
     void ValidateCompiledDefaults( IWidgetCompilerLog & compile_log ) const override;
@@ -58,10 +61,10 @@ private:
     UPROPERTY( EditAnywhere, Category = Display )
     uint8 bDisplayOwningPlayerActionsOnly : 1;
 
-    UPROPERTY( meta = ( BindWidget ) )
+    UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess, BindWidget ) )
     TObjectPtr< UHorizontalBox > LeftHorizontalBox;
 
-    UPROPERTY( meta = ( BindWidget ) )
+    UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess, BindWidget ) )
     TObjectPtr< UHorizontalBox > RightHorizontalBox;
 
     UPROPERTY( Transient )
