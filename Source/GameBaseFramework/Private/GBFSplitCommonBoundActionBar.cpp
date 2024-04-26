@@ -14,9 +14,9 @@
 
 bool bSplitActionBarIgnoreOptOut = false;
 static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
-    TEXT( "ActionBar.IgnoreOptOut" ),
+    TEXT( "SplitActionBar.IgnoreOptOut" ),
     bSplitActionBarIgnoreOptOut,
-    TEXT( "If true, the Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
+    TEXT( "If true, the Split Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
     ECVF_Default );
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
