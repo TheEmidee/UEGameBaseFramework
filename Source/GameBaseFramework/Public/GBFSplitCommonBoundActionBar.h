@@ -38,7 +38,7 @@ protected:
 
     virtual void NativeOnActionButtonCreated( ICommonBoundActionButtonInterface * ActionButton, const FUIActionBindingHandle & RepresentedAction )
     {}
-    
+
     UFUNCTION( BlueprintImplementableEvent )
     void OnActionBarUpdated();
 
