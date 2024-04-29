@@ -1,5 +1,4 @@
 #include "Animation/GBFAnimNotifyState_InputBuffer.h"
-#include "Characters/Components/GBFAbilityInputBufferComponent.h"
 
 #include <Components/SkeletalMeshComponent.h>
 
@@ -9,7 +8,7 @@ void UGBFAnimNotifyState_InputBuffer::NotifyBegin( USkeletalMeshComponent * mesh
 
     if ( auto * aibc = GetAbilityInputBufferComponent( mesh_component ) )
     {
-        aibc->StartMonitoring( InputTagContainer );
+        aibc->StartMonitoring( InputTagsToCheck, TriggerPriority );
     }
 }
 

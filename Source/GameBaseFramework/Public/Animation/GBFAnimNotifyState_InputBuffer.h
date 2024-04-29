@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Characters/Components/GBFAbilityInputBufferComponent.h"
+
 #include <Animation/AnimNotifies/AnimNotifyState.h>
 #include <CoreMinimal.h>
 
@@ -21,6 +23,8 @@ protected:
     UGBFAbilityInputBufferComponent * GetAbilityInputBufferComponent( const USkeletalMeshComponent * mesh_component ) const;
 
 private:
+    UPROPERTY( EditAnywhere )
+    ETriggerPriority TriggerPriority;
     UPROPERTY( EditAnywhere, Meta = ( Categories = "Input" ) )
-    FGameplayTagContainer InputTagContainer;
+    FGameplayTagContainer InputTagsToCheck;
 };

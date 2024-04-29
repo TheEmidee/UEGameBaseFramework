@@ -2,16 +2,30 @@
 
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
-#include "Characters/GBFPawnData.h"
-#include "Engine/GBFLocalPlayer.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "Input/GBFInputComponent.h"
 
-#include <EnhancedInputComponent.h>
-#include <EnhancedInputSubsystems.h>
-
-void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tag_container )
+void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority )
 {
-    if ( input_tag_container.IsEmpty() )
+    if ( input_tags_to_check.IsEmpty() )
+    {
+        return;
+    }
+
+    TriggerPriority = trigger_priority;
+    BindActions( input_tags_to_check );
+}
+
+void UGBFAbilityInputBufferComponent::StopMonitoring()
+{
+    RemoveBinds();
+    TryToTriggerAbility();
+    TriggeredTags.Reset();
+}
+
+void UGBFAbilityInputBufferComponent::BindActions( FGameplayTagContainer input_tags_to_check )
+{
+    if ( input_tags_to_check.IsEmpty() )
     {
         return;
     }
@@ -24,24 +38,15 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
 
     if ( const auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn ) )
     {
-        TMap< const UGBFInputConfig *, TArray< uint32 > > input_configs = hero_component->GetBoundActionsByInputconfig();
-        for ( auto & input_config : input_configs )
+        for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
         {
-
             if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
             {
-                for ( auto & tag : input_tag_container )
+                for ( auto & tag : input_tags_to_check )
                 {
                     if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
                     {
-                        BindHandles.Add(
-                            input_component->BindAction(
-                                               input_action,
-                                               ETriggerEvent::Triggered,
-                                               this,
-                                               &ThisClass::AbilityInputTagPressed,
-                                               tag )
-                                .GetHandle() );
+                        BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
                     }
                 }
             }
@@ -49,9 +54,8 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
     }
 }
 
-void UGBFAbilityInputBufferComponent::StopMonitoring()
+void UGBFAbilityInputBufferComponent::RemoveBinds()
 {
-
     auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
     {
@@ -68,27 +72,64 @@ void UGBFAbilityInputBufferComponent::StopMonitoring()
             }
         }
     }
-    if ( AddedTags.IsEmpty() )
+}
+
+void UGBFAbilityInputBufferComponent::AbilityInputTagPressed( FGameplayTag input_tag )
+{
+    TriggeredTags.Add( input_tag );
+}
+
+bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
+{
+    if ( TriggeredTags.IsEmpty() )
     {
-        return;
+        return false;
+    }
+
+    auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return false;
     }
 
     if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
     {
         if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
         {
-            FGameplayTag tag = AddedTags[ 0 ];
-            if ( auto* ability = asc->FindAbilityClassWithInputTag(tag)) {
-
-                asc->CancelAbility( ability );
-                asc->TryActivateAbilityByClass( ability->GetClass() );
+            FGameplayTag tag = TryToGetInputTagWithPriority();
+            if ( tag.IsValid() )
+            {
+                if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
+                {
+                    asc->CancelAbility( ability );
+                    bool activated = asc->TryActivateAbilityByClass( ability->GetClass() );
+                    if ( activated )
+                    {
+                        return true;
+                    }
+                }
             }
-            AddedTags.Reset();
         }
     }
+
+    return false;
 }
 
-void UGBFAbilityInputBufferComponent::AbilityInputTagPressed( FGameplayTag input_tag )
+FGameplayTag UGBFAbilityInputBufferComponent::TryToGetInputTagWithPriority()
 {
-    AddedTags.Add( input_tag );
+    if ( TriggeredTags.IsEmpty() )
+    {
+        return FGameplayTag::EmptyTag;
+    }
+
+    switch ( TriggerPriority )
+    {
+        case ETriggerPriority::LastTriggeredInput:
+            return TriggeredTags[ 0 ];
+        case ETriggerPriority::MostTriggeredInput:
+            //TO DO
+            return FGameplayTag::EmptyTag;
+        default:
+            return FGameplayTag::EmptyTag;
+    }
 }

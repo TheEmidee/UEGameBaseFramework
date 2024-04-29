@@ -3,24 +3,32 @@
 #include "Characters/Components/GBFPawnComponent.h"
 
 #include <CoreMinimal.h>
-#include "Input/GBFInputComponent.h"
 
 #include "GBFAbilityInputBufferComponent.generated.h"
 
-//Enum
+UENUM( BlueprintType )
+enum class ETriggerPriority : uint8
+{
+    LastTriggeredInput = 0 UMETA( DisplayName = "Last Triggered Input" ),
+    MostTriggeredInput = 1 UMETA( DisplayName = "Most Triggered Input" )
+};
 
-UCLASS(Blueprintable)
+UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent : public UPawnComponent
 {
     GENERATED_BODY()
 public:
-    void StartMonitoring( FGameplayTagContainer input_tag_container );
+    void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
     void StopMonitoring();
 
 protected:
+    void BindActions( FGameplayTagContainer input_tags_to_check );
+    void RemoveBinds();
     void AbilityInputTagPressed( FGameplayTag input_tag );
+    bool TryToTriggerAbility();
+    FGameplayTag TryToGetInputTagWithPriority();
 
-    int TriggeredInputCount = 0;
     TArray< uint32 > BindHandles;
-    TArray< FGameplayTag > AddedTags;
+    TArray< FGameplayTag > TriggeredTags;
+    ETriggerPriority TriggerPriority;
 };
