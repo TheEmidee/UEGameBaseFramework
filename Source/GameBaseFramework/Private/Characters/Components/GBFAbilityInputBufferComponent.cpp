@@ -12,6 +12,7 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
         return;
     }
 
+    Reset();
     TriggerPriority = trigger_priority;
     InputTagsToCheck = input_tags_to_check;
     BindActions();
@@ -21,6 +22,11 @@ void UGBFAbilityInputBufferComponent::StopMonitoring()
 {
     RemoveBinds();
     TryToTriggerAbility();
+    Reset();
+}
+
+void UGBFAbilityInputBufferComponent::Reset()
+{
     TriggeredTags.Reset();
     InputTagsToCheck.Reset();
 }
@@ -38,19 +44,24 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    if ( const auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn ) )
+    const auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn );
+    if ( hero_component == nullptr )
     {
-        for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
+        return;
+    }
+
+    for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
+    {
+        auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+        if ( input_component == nullptr )
         {
-            if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
+            continue;
+        }
+        for ( auto & tag : InputTagsToCheck )
+        {
+            if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
             {
-                for ( auto & tag : InputTagsToCheck )
-                {
-                    if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
-                    {
-                        BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
-                    }
-                }
+                BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
             }
         }
     }
@@ -94,37 +105,38 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
         return false;
     }
 
-    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn );
+    if ( pawn_ext_comp == nullptr )
     {
-        if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
-        {
-            for ( auto & tagged_ability_tag : InputTagsToCheck )
-            {
-                auto * tagged_ability = asc->FindAbilityClassWithInputTag( tagged_ability_tag );
-                asc->CancelAbility( tagged_ability );
-            }
-
-            //Try to activate ability in priority order
-            FGameplayTag tag = TryToGetInputTagWithPriority();
-
-            while ( tag.IsValid() )
-            {
-                if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
-                {
-                    asc->CancelAbility( ability );
-                    bool activated = asc->TryActivateAbilityByClass( ability->GetClass() );
-                    if ( activated )
-                    {
-                        return true;
-                    }
-                }
-
-                //Try to go next
-                tag = TryToGetInputTagWithPriority();
-            }
-        }
+        return false;
     }
 
+    if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
+    {
+        for ( auto & tagged_ability_tag : InputTagsToCheck )
+        {
+            auto * tagged_ability = asc->FindAbilityClassWithInputTag( tagged_ability_tag );
+            asc->CancelAbility( tagged_ability );
+        }
+
+        // Try to activate ability in priority order
+        FGameplayTag tag = TryToGetInputTagWithPriority();
+
+        while ( tag.IsValid() )
+        {
+            if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
+            {
+                asc->CancelAbility( ability );
+                bool activated = asc->TryActivateAbilityByClass( ability->GetClass() );
+                if ( activated )
+                {
+                    return true;
+                }
+            }
+
+            tag = TryToGetInputTagWithPriority();
+        }
+    }
     return false;
 }
 
@@ -162,7 +174,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
 {
     TMap< int, FGameplayTag > triggered_tag_map;
 
-    //remove all to get count easily
+    // Remove all to get count easily
     for ( auto & tag_to_remove : InputTagsToCheck )
     {
         int count = TriggeredTags.RemoveAll(
@@ -171,6 +183,8 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
             } );
         triggered_tag_map.Add( count, tag_to_remove );
     }
+
+    // Get most triggered input
     int max = -1;
     for ( auto & i : triggered_tag_map )
     {
@@ -182,7 +196,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
 
     FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
 
-    //sort if first ability fails
+    // Sort to keep order if first ability fails
     triggered_tag_map.Remove( 0 );
     triggered_tag_map.KeySort(
         []( const int & a, const int & b ) {

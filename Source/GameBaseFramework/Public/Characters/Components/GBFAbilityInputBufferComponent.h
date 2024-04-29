@@ -22,6 +22,7 @@ public:
     void StopMonitoring();
 
 protected:
+    void Reset();
     void BindActions();
     void RemoveBinds();
     void AbilityInputTagPressed( FGameplayTag input_tag );
