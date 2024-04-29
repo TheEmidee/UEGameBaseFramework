@@ -41,7 +41,7 @@ UGBFAbilityInputBufferComponent * UGBFAnimNotifyState_InputBuffer::GetAbilityInp
         {
             return aibc;
         }
-        //check all parent
+        // Check all parent
         auto * parent = owner->GetParentActor();
         while ( parent )
         {

@@ -29,6 +29,7 @@ void UGBFAbilityInputBufferComponent::Reset()
 {
     TriggeredTags.Reset();
     InputTagsToCheck.Reset();
+    BindHandles.Reset();
 }
 
 void UGBFAbilityInputBufferComponent::BindActions()
