@@ -9,7 +9,7 @@
 
 class UGBFAbilityInputBufferComponent;
 
-UCLASS( DisplayName = "Input Buffer Window" )
+UCLASS( DisplayName = "Ability Input Buffer Window" )
 class GAMEBASEFRAMEWORK_API UGBFAnimNotifyState_InputBuffer : public UAnimNotifyState
 {
     GENERATED_BODY()

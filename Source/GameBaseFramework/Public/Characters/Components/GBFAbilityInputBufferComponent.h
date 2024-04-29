@@ -18,7 +18,10 @@ class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent : public UPawnCompon
 {
     GENERATED_BODY()
 public:
+    UFUNCTION( BlueprintCallable )
     void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
+
+    UFUNCTION( BlueprintCallable )
     void StopMonitoring();
 
 protected:
