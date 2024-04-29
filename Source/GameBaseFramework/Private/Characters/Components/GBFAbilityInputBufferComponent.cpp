@@ -4,6 +4,7 @@
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Engine/GBFLocalPlayer.h"
+#include "GAS/Components/GBFAbilitySystemComponent.h"
 
 #include <EnhancedInputComponent.h>
 #include <EnhancedInputSubsystems.h>
@@ -38,7 +39,8 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
                                                input_action,
                                                ETriggerEvent::Triggered,
                                                this,
-                                               &ThisClass::AbilityInputTagPressed )
+                                               &ThisClass::AbilityInputTagPressed,
+                                               tag )
                                 .GetHandle() );
                     }
                 }
@@ -49,8 +51,6 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
 
 void UGBFAbilityInputBufferComponent::StopMonitoring()
 {
-    int t = TriggeredInputCount;
-    TriggeredInputCount = 0;
 
     auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
@@ -68,13 +68,27 @@ void UGBFAbilityInputBufferComponent::StopMonitoring()
             }
         }
     }
+    if ( AddedTags.IsEmpty() )
+    {
+        return;
+    }
 
-    //TryToActivateAction
-    //Unbind all actions
+    if ( const auto * pawn_ext_comp = UGBFPawnExtensionComponent::FindPawnExtensionComponent( pawn ) )
+    {
+        if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
+        {
+            FGameplayTag tag = AddedTags[ 0 ];
+            if ( auto* ability = asc->FindAbilityClassWithInputTag(tag)) {
+
+                asc->CancelAbility( ability );
+                asc->TryActivateAbilityByClass( ability->GetClass() );
+            }
+            AddedTags.Reset();
+        }
+    }
 }
 
-//TODO : need to figure out which action has been pressed
-void UGBFAbilityInputBufferComponent::AbilityInputTagPressed()
+void UGBFAbilityInputBufferComponent::AbilityInputTagPressed( FGameplayTag input_tag )
 {
-    TriggeredInputCount++;
+    AddedTags.Add( input_tag );
 }

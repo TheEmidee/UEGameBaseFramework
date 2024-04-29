@@ -112,6 +112,8 @@ public:
 
     UFUNCTION( BlueprintPure )
     FGameplayAbilitySpecHandle FindAbilitySpecHandleForClass( const TSubclassOf< UGameplayAbility > & ability_class );
+    UFUNCTION( BlueprintPure )
+    UGameplayAbility * FindAbilityClassWithInputTag( FGameplayTag input_tag );
 
     UFUNCTION( BlueprintCallable )
     void OurCancelAllAbilities();

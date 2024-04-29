@@ -18,8 +18,9 @@ public:
     void StopMonitoring();
 
 protected:
-    void AbilityInputTagPressed();
+    void AbilityInputTagPressed( FGameplayTag input_tag );
 
     int TriggeredInputCount = 0;
     TArray< uint32 > BindHandles;
+    TArray< FGameplayTag > AddedTags;
 };
