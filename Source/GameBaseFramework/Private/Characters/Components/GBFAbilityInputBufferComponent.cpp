@@ -13,7 +13,8 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
     }
 
     TriggerPriority = trigger_priority;
-    BindActions( input_tags_to_check );
+    InputTagsToCheck = input_tags_to_check;
+    BindActions();
 }
 
 void UGBFAbilityInputBufferComponent::StopMonitoring()
@@ -21,11 +22,12 @@ void UGBFAbilityInputBufferComponent::StopMonitoring()
     RemoveBinds();
     TryToTriggerAbility();
     TriggeredTags.Reset();
+    InputTagsToCheck.Reset();
 }
 
-void UGBFAbilityInputBufferComponent::BindActions( FGameplayTagContainer input_tags_to_check )
+void UGBFAbilityInputBufferComponent::BindActions()
 {
-    if ( input_tags_to_check.IsEmpty() )
+    if ( InputTagsToCheck.IsEmpty() )
     {
         return;
     }
@@ -42,7 +44,7 @@ void UGBFAbilityInputBufferComponent::BindActions( FGameplayTagContainer input_t
         {
             if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
             {
-                for ( auto & tag : input_tags_to_check )
+                for ( auto & tag : InputTagsToCheck )
                 {
                     if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
                     {
@@ -96,8 +98,16 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
     {
         if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
         {
+            for ( auto & tagged_ability_tag : InputTagsToCheck )
+            {
+                auto * tagged_ability = asc->FindAbilityClassWithInputTag( tagged_ability_tag );
+                asc->CancelAbility( tagged_ability );
+            }
+
+            //Try to activate ability in priority order
             FGameplayTag tag = TryToGetInputTagWithPriority();
-            if ( tag.IsValid() )
+
+            while ( tag.IsValid() )
             {
                 if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
                 {
@@ -108,6 +118,9 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
                         return true;
                     }
                 }
+
+                //Try to go next
+                tag = TryToGetInputTagWithPriority();
             }
         }
     }
@@ -125,11 +138,60 @@ FGameplayTag UGBFAbilityInputBufferComponent::TryToGetInputTagWithPriority()
     switch ( TriggerPriority )
     {
         case ETriggerPriority::LastTriggeredInput:
-            return TriggeredTags[ 0 ];
+            return GetLastTriggeredInput();
+
         case ETriggerPriority::MostTriggeredInput:
-            //TO DO
-            return FGameplayTag::EmptyTag;
+            return GetMostTriggeredInput();
+
         default:
             return FGameplayTag::EmptyTag;
     }
+}
+
+FGameplayTag UGBFAbilityInputBufferComponent::GetLastTriggeredInput()
+{
+    FGameplayTag first_tag = TriggeredTags[ 0 ];
+    TriggeredTags.RemoveAll(
+        [ & ]( FGameplayTag & tag ) {
+            return tag.MatchesTagExact( first_tag );
+        } );
+    return first_tag;
+}
+
+FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
+{
+    TMap< int, FGameplayTag > triggered_tag_map;
+
+    //remove all to get count easily
+    for ( auto & tag_to_remove : InputTagsToCheck )
+    {
+        int count = TriggeredTags.RemoveAll(
+            [ & ]( FGameplayTag & tag ) {
+                return tag.MatchesTagExact( tag_to_remove );
+            } );
+        triggered_tag_map.Add( count, tag_to_remove );
+    }
+    int max = -1;
+    for ( auto & i : triggered_tag_map )
+    {
+        if ( i.Key > max )
+        {
+            max = i.Key;
+        }
+    }
+
+    FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
+
+    //sort if first ability fails
+    triggered_tag_map.Remove( 0 );
+    triggered_tag_map.KeySort(
+        []( const int & a, const int & b ) {
+            return a > b;
+        } );
+    for ( auto & i : triggered_tag_map )
+    {
+        TriggeredTags.Add( i.Value );
+    }
+
+    return most_triggered_tag;
 }

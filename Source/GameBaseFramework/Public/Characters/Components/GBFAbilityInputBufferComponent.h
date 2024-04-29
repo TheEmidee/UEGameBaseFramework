@@ -22,13 +22,16 @@ public:
     void StopMonitoring();
 
 protected:
-    void BindActions( FGameplayTagContainer input_tags_to_check );
+    void BindActions();
     void RemoveBinds();
     void AbilityInputTagPressed( FGameplayTag input_tag );
     bool TryToTriggerAbility();
     FGameplayTag TryToGetInputTagWithPriority();
+    FGameplayTag GetLastTriggeredInput();
+    FGameplayTag GetMostTriggeredInput();
 
-    TArray< uint32 > BindHandles;
-    TArray< FGameplayTag > TriggeredTags;
     ETriggerPriority TriggerPriority;
+    FGameplayTagContainer InputTagsToCheck;
+    TArray< FGameplayTag > TriggeredTags;
+    TArray< uint32 > BindHandles;
 };
