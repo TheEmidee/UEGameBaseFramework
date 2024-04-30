@@ -4,13 +4,14 @@
 #include "CommonInputTypeEnum.h"
 #include "CommonUITypes.h"
 #include "Editor/WidgetCompilerLog.h"
-#include "Engine/GameInstance.h"
-#include "Engine/GameViewportClient.h"
 #include "Input/CommonBoundActionButtonInterface.h"
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/UIActionBinding.h"
 #include "InputAction.h"
 #include "OnlineSubsystemUtils.h"
+
+#include <Engine/GameInstance.h>
+#include <Engine/GameViewportClient.h>
 
 bool bSplitActionBarIgnoreOptOut = false;
 static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
@@ -53,9 +54,9 @@ bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( TSubclassOf< UUserWidget 
     if ( in_entry_class )
     {
         // Would InEntryClass create an instance of the same DynamicEntryBox
-        if ( UWidgetTree * widget_tree = Cast< UWidgetTree >( GetOuter() ) )
+        if ( auto * widget_tree = Cast< UWidgetTree >( GetOuter() ) )
         {
-            if ( UUserWidget * user_widget = Cast< UUserWidget >( widget_tree->GetOuter() ) )
+            if ( auto * user_widget = Cast< UUserWidget >( widget_tree->GetOuter() ) )
             {
                 if ( in_entry_class->IsChildOf( user_widget->GetClass() ) )
                 {
@@ -343,7 +344,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                             }
                             else
                             {
-                                const UInputAction * input_action = binding->InputAction.Get();
+                                const auto * input_action = binding->InputAction.Get();
                                 key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
                                 is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
                             }
@@ -367,7 +368,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
 
 void UGBFSplitCommonBoundActionBar::HandlePlayerAdded( int32 player_id )
 {
-    const ULocalPlayer * new_player = GetGameInstance()->GetLocalPlayerByIndex( player_id );
+    const auto * new_player = GetGameInstance()->GetLocalPlayerByIndex( player_id );
     MonitorPlayerActions( new_player );
     HandleBoundActionsUpdated( new_player == GetOwningLocalPlayer() );
 }

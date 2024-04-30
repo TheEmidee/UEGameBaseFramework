@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Components/HorizontalBox.h"
 #include "UI/Widgets/GBFBoundActionButton.h"
 
 #include <Components/DynamicEntryBoxBase.h>
+#include <Components/HorizontalBox.h>
 #include <CoreMinimal.h>
 #include <Tickable.h>
 
