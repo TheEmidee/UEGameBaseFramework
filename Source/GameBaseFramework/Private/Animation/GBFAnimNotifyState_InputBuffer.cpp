@@ -8,9 +8,9 @@ void UGBFAnimNotifyState_InputBuffer::NotifyBegin( USkeletalMeshComponent * mesh
 {
     Super::NotifyBegin( mesh_component, animation, total_duration, event_reference );
 
-    if ( auto * aibc = GetAbilityInputBufferComponent( mesh_component ) )
+    if ( auto * ability_input_buffer_component = GetAbilityInputBufferComponent( mesh_component ) )
     {
-        aibc->StartMonitoring( InputTagsToCheck, TriggerPriority );
+        ability_input_buffer_component->StartMonitoring( InputTagsToCheck, TriggerPriority );
     }
 }
 
@@ -18,9 +18,9 @@ void UGBFAnimNotifyState_InputBuffer::NotifyEnd( USkeletalMeshComponent * mesh_c
 {
     Super::NotifyEnd( mesh_component, animation, event_reference );
 
-    if ( auto * aibc = GetAbilityInputBufferComponent( mesh_component ) )
+    if ( auto * ability_input_buffer_component = GetAbilityInputBufferComponent( mesh_component ) )
     {
-        aibc->StopMonitoring();
+        ability_input_buffer_component->StopMonitoring();
     }
 }
 
@@ -31,41 +31,44 @@ UGBFAbilityInputBufferComponent * UGBFAnimNotifyState_InputBuffer::GetAbilityInp
         return nullptr;
     }
 
-    UGBFAbilityInputBufferComponent * aibc = nullptr;
-
-    if ( const auto * owner = mesh_component->GetOwner() )
+    const auto * owner = mesh_component->GetOwner();
+    if ( owner == nullptr )
     {
-        aibc = owner->FindComponentByClass< UGBFAbilityInputBufferComponent >();
+        UE_LOG( LogGBF, Error, TEXT( "Ability Input Buffer Notify : No Owner found" ) );
+        return nullptr;
+    }
 
-        if ( aibc != nullptr )
-        {
-            return aibc;
-        }
-        // Check all parent
-        auto * parent = owner->GetParentActor();
-        while ( parent )
-        {
-            aibc = parent->FindComponentByClass< UGBFAbilityInputBufferComponent >();
-            if ( aibc != nullptr )
-            {
-                return aibc;
-            }
-            parent = parent->GetParentActor();
-        }
+    auto * ability_input_buffer_component = owner->FindComponentByClass< UGBFAbilityInputBufferComponent >();
 
-        // Check all attached actors
-        TArray< AActor * > actors;
-        owner->GetAttachedActors( actors, true, true );
-        actors.RemoveAll( []( AActor * actor ) {
-            return !Cast< APawn >( actor );
-        } );
-        for ( auto & child : actors )
+    if ( ability_input_buffer_component != nullptr )
+    {
+        return ability_input_buffer_component;
+    }
+
+    // Check all parent
+    auto * parent = owner->GetParentActor();
+    while ( parent )
+    {
+        ability_input_buffer_component = parent->FindComponentByClass< UGBFAbilityInputBufferComponent >();
+        if ( ability_input_buffer_component != nullptr )
         {
-            aibc = child->FindComponentByClass< UGBFAbilityInputBufferComponent >();
-            if ( aibc != nullptr )
-            {
-                return aibc;
-            }
+            return ability_input_buffer_component;
+        }
+        parent = parent->GetParentActor();
+    }
+
+    // Check all attached actors
+    TArray< AActor * > actors;
+    owner->GetAttachedActors( actors, true, true );
+    actors.RemoveAll( []( AActor * actor ) {
+        return !Cast< APawn >( actor );
+    } );
+    for ( auto & child : actors )
+    {
+        ability_input_buffer_component = child->FindComponentByClass< UGBFAbilityInputBufferComponent >();
+        if ( ability_input_buffer_component != nullptr )
+        {
+            return ability_input_buffer_component;
         }
     }
 

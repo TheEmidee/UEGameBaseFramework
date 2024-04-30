@@ -45,6 +45,12 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
+    auto * input_component = Cast< UEnhancedInputComponent >( pawn->InputComponent );
+    if ( input_component == nullptr )
+    {
+        return;
+    }
+
     const auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn );
     if ( hero_component == nullptr )
     {
@@ -53,11 +59,6 @@ void UGBFAbilityInputBufferComponent::BindActions()
 
     for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
     {
-        auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-        if ( input_component == nullptr )
-        {
-            continue;
-        }
         for ( auto & tag : InputTagsToCheck )
         {
             if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
@@ -76,14 +77,11 @@ void UGBFAbilityInputBufferComponent::RemoveBinds()
         return;
     }
 
-    if ( const auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn ) )
+    if ( auto * input_component = Cast< UEnhancedInputComponent >( pawn->InputComponent ) )
     {
-        if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
+        for ( auto & handle : BindHandles )
         {
-            for ( auto & handle : BindHandles )
-            {
-                input_component->RemoveBindingByHandle( handle );
-            }
+            input_component->RemoveBindingByHandle( handle );
         }
     }
 }
@@ -128,8 +126,7 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
             if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
             {
                 asc->CancelAbility( ability );
-                bool activated = asc->TryActivateAbilityByClass( ability->GetClass() );
-                if ( activated )
+                if ( asc->TryActivateAbilityByClass( ability->GetClass() ) )
                 {
                     return true;
                 }
@@ -164,10 +161,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::TryToGetInputTagWithPriority()
 FGameplayTag UGBFAbilityInputBufferComponent::GetLastTriggeredInput()
 {
     FGameplayTag first_tag = TriggeredTags[ 0 ];
-    TriggeredTags.RemoveAll(
-        [ & ]( FGameplayTag & tag ) {
-            return tag.MatchesTagExact( first_tag );
-        } );
+    TriggeredTags.Remove( first_tag );
     return first_tag;
 }
 
@@ -178,20 +172,17 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
     // Remove all to get count easily
     for ( auto & tag_to_remove : InputTagsToCheck )
     {
-        int count = TriggeredTags.RemoveAll(
-            [ & ]( FGameplayTag & tag ) {
-                return tag.MatchesTagExact( tag_to_remove );
-            } );
+        int count = TriggeredTags.Remove( tag_to_remove );
         triggered_tag_map.Add( count, tag_to_remove );
     }
 
     // Get most triggered input
     int max = -1;
-    for ( auto & i : triggered_tag_map )
+    for ( auto & input : triggered_tag_map )
     {
-        if ( i.Key > max )
+        if ( input.Key > max )
         {
-            max = i.Key;
+            max = input.Key;
         }
     }
 
