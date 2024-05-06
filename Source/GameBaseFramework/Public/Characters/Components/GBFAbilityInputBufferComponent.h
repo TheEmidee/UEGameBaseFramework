@@ -17,7 +17,10 @@ UCLASS( Blueprintable )
 class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent : public UPawnComponent
 {
     GENERATED_BODY()
+
 public:
+    UGBFAbilityInputBufferComponent( const FObjectInitializer & ObjectInitializer );
+    void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction ) override;
     UFUNCTION( BlueprintCallable )
     void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
 
@@ -38,4 +41,8 @@ protected:
     FGameplayTagContainer InputTagsToCheck;
     TArray< FGameplayTag > TriggeredTags;
     TArray< uint32 > BindHandles;
+
+    UPROPERTY( EditDefaultsOnly )
+    float MaxMonitoringTime = 5.0f;
+    float MonitoringTime = 0.0f;
 };

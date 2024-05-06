@@ -5,6 +5,24 @@
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "Input/GBFInputComponent.h"
 
+UGBFAbilityInputBufferComponent::UGBFAbilityInputBufferComponent( const FObjectInitializer & ObjectInitializer ) :
+    Super( ObjectInitializer )
+{
+    TriggerPriority = ETriggerPriority::LastTriggeredInput;
+    this->PrimaryComponentTick.bStartWithTickEnabled = false;
+    this->PrimaryComponentTick.bCanEverTick = true;
+}
+
+void UGBFAbilityInputBufferComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction )
+{
+    Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
+    MonitoringTime += DeltaTime;
+    if ( !ensureAlwaysMsgf( MonitoringTime <= MaxMonitoringTime, TEXT( "Ability Input Buffer didn't call Stop Monitor 5 secs after activation, please call it manually !" ) ) )
+    {
+        StopMonitoring();
+    }
+}
+
 void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority )
 {
     if ( input_tags_to_check.IsEmpty() )
@@ -16,6 +34,10 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
     TriggerPriority = trigger_priority;
     InputTagsToCheck = input_tags_to_check;
     BindActions();
+
+#if !UE_BUILD_SHIPPING
+    SetComponentTickEnabled( true );
+#endif
 }
 
 void UGBFAbilityInputBufferComponent::StopMonitoring()
@@ -30,6 +52,11 @@ void UGBFAbilityInputBufferComponent::Reset()
     TriggeredTags.Reset();
     InputTagsToCheck.Reset();
     BindHandles.Reset();
+    MonitoringTime = 0.0f;
+
+#if !UE_BUILD_SHIPPING
+    SetComponentTickEnabled( false );
+#endif
 }
 
 void UGBFAbilityInputBufferComponent::BindActions()
