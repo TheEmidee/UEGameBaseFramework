@@ -7,11 +7,11 @@
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/UIActionBinding.h"
 #include "InputAction.h"
-#include "OnlineSubsystemUtils.h"
 
 #include <Editor/WidgetCompilerLog.h>
 #include <Engine/GameInstance.h>
 #include <Engine/GameViewportClient.h>
+#include <OnlineSubsystemUtils.h>
 
 bool bSplitActionBarIgnoreOptOut = false;
 #if !UE_BUILD_SHIPPING
