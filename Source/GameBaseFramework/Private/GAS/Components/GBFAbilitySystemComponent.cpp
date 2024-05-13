@@ -379,6 +379,24 @@ FGameplayAbilitySpecHandle UGBFAbilitySystemComponent::FindAbilitySpecHandleForC
     return FGameplayAbilitySpecHandle();
 }
 
+UGameplayAbility * UGBFAbilitySystemComponent::FindAbilityByInputTag( const FGameplayTag input_tag ) const
+{
+    if ( !input_tag.IsValid() )
+    {
+        return nullptr;
+    }
+
+    for ( const auto & ability_spec : ActivatableAbilities.Items )
+    {
+        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        {
+            return ability_spec.Ability;
+        }
+    }
+
+    return nullptr;
+}
+
 void UGBFAbilitySystemComponent::OurCancelAllAbilities()
 {
     static const auto GameplayTagContainer = FGameplayTagContainer::CreateFromArray(

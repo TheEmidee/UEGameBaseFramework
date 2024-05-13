@@ -48,6 +48,8 @@ public:
     /** Clears the camera override if it is set */
     void ClearAbilityCameraMode( const FGameplayAbilitySpecHandle & owning_spec_handle );
 
+    const TMap< const UGBFInputConfig *, TArray< uint32 > > & GetBoundActionsByInputconfig() const;
+
 protected:
     void OnRegister() override;
     void BindToRequiredOnActorInitStateChanged() override;
