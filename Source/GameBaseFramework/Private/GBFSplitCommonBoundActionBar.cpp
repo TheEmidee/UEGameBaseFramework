@@ -14,12 +14,15 @@
 #include <OnlineSubsystemUtils.h>
 
 bool bSplitActionBarIgnoreOptOut = false;
-#if !UE_BUILD_SHIPPING
+
+#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+
 static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
     TEXT( "SplitActionBar.IgnoreOptOut" ),
     bSplitActionBarIgnoreOptOut,
     TEXT( "If true, the Split Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
     ECVF_Default );
+
 #endif
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
@@ -183,8 +186,17 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
 
     for ( const auto * local_player : sorted_players )
     {
-        const auto * action_router = ULocalPlayer::GetSubsystem< UCommonUIActionRouterBase >( owning_local_player );
-        if ( IsEntryClassValid( ActionButtonClass ) && ( local_player == owning_local_player || !bDisplayOwningPlayerActionsOnly ) && action_router != nullptr )
+        if ( local_player != owning_local_player && bDisplayOwningPlayerActionsOnly )
+        {
+            continue;
+        }
+
+        if ( !IsEntryClassValid( ActionButtonClass ) )
+        {
+            continue;
+        }
+
+        if ( const auto * action_router = ULocalPlayer::GetSubsystem< UCommonUIActionRouterBase >( owning_local_player ) )
         {
             const auto & input_subsystem = action_router->GetInputSubsystem();
             const auto player_input_type = input_subsystem.GetCurrentInputType();
