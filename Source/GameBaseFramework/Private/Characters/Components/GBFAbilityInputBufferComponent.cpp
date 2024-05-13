@@ -196,7 +196,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetLastTriggeredInput()
 
 FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
 {
-    TMap< int, FGameplayTag > triggered_tag_map;
+    TSortedMap< int, FGameplayTag > triggered_tag_map;
 
     // Remove all to get count easily
     for ( auto & tag_to_remove : InputTagsToCheck )
@@ -206,26 +206,16 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
     }
 
     // Get most triggered input
-    int max = -1;
+    TArray<int> triggered_tag_keys;
+    triggered_tag_map.GetKeys(triggered_tag_keys);
+    int max = triggered_tag_keys[triggered_tag_map.GetMaxIndex()];
+    
+    FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
+    
+    triggered_tag_map.Remove( 0 );
     for ( auto & input : triggered_tag_map )
     {
-        if ( input.Key > max )
-        {
-            max = input.Key;
-        }
-    }
-
-    FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
-
-    // Sort to keep order if first ability fails
-    triggered_tag_map.Remove( 0 );
-    triggered_tag_map.KeySort(
-        []( const int & a, const int & b ) {
-            return a > b;
-        } );
-    for ( auto & i : triggered_tag_map )
-    {
-        TriggeredTags.Add( i.Value );
+        TriggeredTags.Add( input.Value );
     }
 
     return most_triggered_tag;
