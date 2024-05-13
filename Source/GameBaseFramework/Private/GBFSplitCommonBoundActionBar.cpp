@@ -3,22 +3,24 @@
 #include "CommonInputSubsystem.h"
 #include "CommonInputTypeEnum.h"
 #include "CommonUITypes.h"
-#include "Editor/WidgetCompilerLog.h"
 #include "Input/CommonBoundActionButtonInterface.h"
 #include "Input/CommonUIActionRouterBase.h"
 #include "Input/UIActionBinding.h"
 #include "InputAction.h"
 #include "OnlineSubsystemUtils.h"
 
+#include <Editor/WidgetCompilerLog.h>
 #include <Engine/GameInstance.h>
 #include <Engine/GameViewportClient.h>
 
 bool bSplitActionBarIgnoreOptOut = false;
+#if !UE_BUILD_SHIPPING
 static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
     TEXT( "SplitActionBar.IgnoreOptOut" ),
     bSplitActionBarIgnoreOptOut,
     TEXT( "If true, the Split Bound Action Bar will display bindings whether or not they are configured bDisplayInReflector" ),
     ECVF_Default );
+#endif
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
     Super( object_initializer ),
@@ -51,7 +53,7 @@ bool UGBFSplitCommonBoundActionBar::IsTickableWhenPaused() const
 
 bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const
 {
-    if ( in_entry_class )
+    if ( in_entry_class != nullptr )
     {
         // Would InEntryClass create an instance of the same DynamicEntryBox
         if ( auto * widget_tree = Cast< UWidgetTree >( GetOuter() ) )
@@ -87,11 +89,6 @@ void UGBFSplitCommonBoundActionBar::OnWidgetRebuilt()
 
         HandleDeferredDisplayUpdate();
     }
-}
-
-void UGBFSplitCommonBoundActionBar::SynchronizeProperties()
-{
-    Super::SynchronizeProperties();
 }
 
 void UGBFSplitCommonBoundActionBar::ReleaseSlateResources( bool release_children )
@@ -136,7 +133,7 @@ UUserWidget * UGBFSplitCommonBoundActionBar::CreateEntryInternal( TSubclassOf< U
 
     const auto content = WidgetPool.GetOrCreateInstance( in_entry_class );
 
-    auto * new_entry_widget = ( is_back_action ? LeftHorizontalBox : RightHorizontalBox )->AddChildToHorizontalBox( content );
+    auto * new_entry_widget = ( is_back_action ? CancelButtonContainer : ActionButtonsContainer )->AddChild( content );
 
     UGBFSplitCommonBoundActionBarInternal::recursive_detection.Pop();
 
@@ -148,7 +145,7 @@ void UGBFSplitCommonBoundActionBar::ValidateCompiledDefaults( IWidgetCompilerLog
 {
     Super::ValidateCompiledDefaults( compile_log );
 
-    if ( !ActionButtonClass )
+    if ( ActionButtonClass == nullptr )
     {
         compile_log.Error( FText::FromString( FString::Printf( TEXT( "Error_SplitBoundActionBar_MissingButtonClass, {0} has no ActionButtonClass specified." ) ) ) );
     }
@@ -171,8 +168,8 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
 {
     bIsRefreshQueued = false;
 
-    RightHorizontalBox->ClearChildren();
-    LeftHorizontalBox->ClearChildren();
+    ActionButtonsContainer->ClearChildren();
+    CancelButtonContainer->ClearChildren();
 
     const auto * game_instance = GetGameInstance();
     check( game_instance );
@@ -186,177 +183,172 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
 
     for ( const auto * local_player : sorted_players )
     {
-        if ( local_player == owning_local_player || !bDisplayOwningPlayerActionsOnly )
+        const auto * action_router = ULocalPlayer::GetSubsystem< UCommonUIActionRouterBase >( owning_local_player );
+        if ( IsEntryClassValid( ActionButtonClass ) && ( local_player == owning_local_player || !bDisplayOwningPlayerActionsOnly ) && action_router != nullptr )
         {
-            if ( IsEntryClassValid( ActionButtonClass ) )
-            {
-                if ( const auto * action_router = ULocalPlayer::GetSubsystem< UCommonUIActionRouterBase >( owning_local_player ) )
+            const auto & input_subsystem = action_router->GetInputSubsystem();
+            const auto player_input_type = input_subsystem.GetCurrentInputType();
+            const auto & player_gamepad_name = input_subsystem.GetCurrentGamepadName();
+
+            TSet< FName > accepted_bindings;
+            auto filtered_bindings = action_router->GatherActiveBindings().FilterByPredicate( [ action_router, player_input_type, player_gamepad_name, &accepted_bindings ]( const auto & handle ) mutable {
+                if ( auto binding = FUIActionBinding::FindBinding( handle ) )
                 {
-                    const auto & input_subsystem = action_router->GetInputSubsystem();
-                    const auto player_input_type = input_subsystem.GetCurrentInputType();
-                    const auto & player_gamepad_name = input_subsystem.GetCurrentGamepadName();
+                    if ( !binding->bDisplayInActionBar && !bSplitActionBarIgnoreOptOut )
+                    {
+                        return false;
+                    }
 
-                    TSet< FName > accepted_bindings;
-                    auto filtered_bindings = action_router->GatherActiveBindings().FilterByPredicate( [ action_router, player_input_type, player_gamepad_name, &accepted_bindings ]( const auto & handle ) mutable {
-                        if ( auto binding = FUIActionBinding::FindBinding( handle ) )
+                    if ( CommonUI::IsEnhancedInputSupportEnabled() )
+                    {
+                        if ( auto input_action = binding->InputAction.Get() )
                         {
-                            if ( !binding->bDisplayInActionBar && !bSplitActionBarIgnoreOptOut )
-                            {
-                                return false;
-                            }
+                            return CommonUI::ActionValidForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
+                        }
+                    }
 
-                            if ( CommonUI::IsEnhancedInputSupportEnabled() )
+                    if ( auto * legacy_Data = binding->GetLegacyInputActionData() )
+                    {
+                        if ( !legacy_Data->CanDisplayInReflector( player_input_type, player_gamepad_name ) )
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                    bool already_accepted = false;
+                    accepted_bindings.Add( binding->ActionName, &already_accepted );
+                    return !already_accepted;
+                }
+
+                return false;
+            } );
+
+            Algo::Sort( filtered_bindings, [ action_router, player_input_type, player_gamepad_name ]( const FUIActionBindingHandle & handle_a, const FUIActionBindingHandle & handle_b ) {
+                const auto binding_a = FUIActionBinding::FindBinding( handle_a );
+                const auto binding_b = FUIActionBinding::FindBinding( handle_b );
+
+                if ( ensureMsgf( ( binding_a && binding_b ), TEXT( "The array filter above should enforce that there are no null bindings" ) ) )
+                {
+                    auto is_key_back_action = [ action_router, player_input_type, player_gamepad_name ]( FCommonInputActionDataBase * legacy_data, const auto * input_action ) {
+                        if ( legacy_data )
+                        {
+                            auto key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
+
+                            if ( player_input_type == ECommonInputType::Touch )
                             {
-                                if ( auto input_action = binding->InputAction.Get() )
+                                if ( !key.IsValid() )
                                 {
-                                    return CommonUI::ActionValidForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
+                                    key = legacy_data->GetInputTypeInfo( ECommonInputType::MouseAndKeyboard, player_gamepad_name ).GetKey();
                                 }
                             }
 
-                            if ( auto * legacy_Data = binding->GetLegacyInputActionData() )
+                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                        }
+                        else if ( input_action )
+                        {
+                            auto key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
+
+                            if ( player_input_type == ECommonInputType::Touch )
                             {
-                                if ( !legacy_Data->CanDisplayInReflector( player_input_type, player_gamepad_name ) )
+                                if ( !key.IsValid() )
                                 {
-                                    return false;
+                                    key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), ECommonInputType::MouseAndKeyboard, input_action );
                                 }
                             }
-                            else
-                            {
-                                return false;
-                            }
 
-                            bool already_accepted = false;
-                            accepted_bindings.Add( binding->ActionName, &already_accepted );
-                            return !already_accepted;
+                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
                         }
 
                         return false;
-                    } );
+                    };
 
-                    Algo::Sort( filtered_bindings, [ action_router, player_input_type, player_gamepad_name ]( const FUIActionBindingHandle & handle_a, const FUIActionBindingHandle & handle_b ) {
-                        const auto binding_a = FUIActionBinding::FindBinding( handle_a );
-                        const auto binding_b = FUIActionBinding::FindBinding( handle_b );
-
-                        if ( ensureMsgf( ( binding_a && binding_b ), TEXT( "The array filter above should enforce that there are no null bindings" ) ) )
+                    auto get_navbar_priority = []( FCommonInputActionDataBase * legacy_data, const auto * input_action ) {
+                        if ( legacy_data )
                         {
-                            auto is_key_back_action = [ action_router, player_input_type, player_gamepad_name ]( FCommonInputActionDataBase * legacy_data, const auto * input_action ) {
-                                if ( legacy_data )
-                                {
-                                    auto key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
-
-                                    if ( player_input_type == ECommonInputType::Touch )
-                                    {
-                                        if ( !key.IsValid() )
-                                        {
-                                            key = legacy_data->GetInputTypeInfo( ECommonInputType::MouseAndKeyboard, player_gamepad_name ).GetKey();
-                                        }
-                                    }
-
-                                    return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
-                                }
-                                else if ( input_action )
-                                {
-                                    auto key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
-
-                                    if ( player_input_type == ECommonInputType::Touch )
-                                    {
-                                        if ( !key.IsValid() )
-                                        {
-                                            key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), ECommonInputType::MouseAndKeyboard, input_action );
-                                        }
-                                    }
-
-                                    return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
-                                }
-
-                                return false;
-                            };
-
-                            auto get_navbar_priority = []( FCommonInputActionDataBase * legacy_data, const auto * input_action ) {
-                                if ( legacy_data )
-                                {
-                                    return legacy_data->NavBarPriority;
-                                }
-                                else if ( input_action )
-                                {
-                                    if ( auto input_action_meta_data = CommonUI::GetEnhancedInputActionMetadata( input_action ) )
-                                    {
-                                        return input_action_meta_data->NavBarPriority;
-                                    }
-                                }
-
-                                return 0;
-                            };
-
-                            const auto legacy_data_a = binding_a->GetLegacyInputActionData();
-                            const auto legacy_data_b = binding_b->GetLegacyInputActionData();
-
-                            const UInputAction * input_action_a = nullptr;
-                            const UInputAction * input_action_b = nullptr;
-
-                            if ( CommonUI::IsEnhancedInputSupportEnabled() )
+                            return legacy_data->NavBarPriority;
+                        }
+                        else if ( input_action )
+                        {
+                            if ( auto input_action_meta_data = CommonUI::GetEnhancedInputActionMetadata( input_action ) )
                             {
-                                input_action_a = binding_a->InputAction.Get();
-                                input_action_b = binding_b->InputAction.Get();
+                                return input_action_meta_data->NavBarPriority;
                             }
-
-                            const bool is_valid_action_a = legacy_data_a || input_action_a;
-                            const bool is_valid_action_b = legacy_data_b || input_action_b;
-
-                            if ( ensureMsgf( ( is_valid_action_a && is_valid_action_b ), TEXT( "Action bindings not displayed yet -- array filter enforces they are not included" ) ) )
-                            {
-                                const bool a_is_back = is_key_back_action( legacy_data_a, input_action_a );
-                                const bool b_is_back = is_key_back_action( legacy_data_b, input_action_b );
-
-                                if ( a_is_back && b_is_back )
-                                {
-                                    return false;
-                                }
-
-                                const int32 nav_bar_priority_a = get_navbar_priority( legacy_data_a, input_action_a );
-                                const int32 nav_bar_priority_b = get_navbar_priority( legacy_data_b, input_action_b );
-
-                                if ( nav_bar_priority_a != nav_bar_priority_b )
-                                {
-                                    return nav_bar_priority_a < nav_bar_priority_b;
-                                }
-                            }
-
-                            return GetTypeHash( binding_a->Handle ) < GetTypeHash( binding_b->Handle );
                         }
 
-                        return true;
-                    } );
+                        return 0;
+                    };
 
-                    for ( auto binding_handle : filtered_bindings )
+                    const auto legacy_data_a = binding_a->GetLegacyInputActionData();
+                    const auto legacy_data_b = binding_b->GetLegacyInputActionData();
+
+                    const UInputAction * input_action_a = nullptr;
+                    const UInputAction * input_action_b = nullptr;
+
+                    if ( CommonUI::IsEnhancedInputSupportEnabled() )
                     {
-                        const auto binding = FUIActionBinding::FindBinding( binding_handle );
+                        input_action_a = binding_a->InputAction.Get();
+                        input_action_b = binding_b->InputAction.Get();
+                    }
 
-                        if ( binding->bDisplayInActionBar )
+                    const auto is_valid_action_a = legacy_data_a || input_action_a;
+                    const auto is_valid_action_b = legacy_data_b || input_action_b;
+
+                    if ( ensureMsgf( ( is_valid_action_a && is_valid_action_b ), TEXT( "Action bindings not displayed yet -- array filter enforces they are not included" ) ) )
+                    {
+                        const auto a_is_back = is_key_back_action( legacy_data_a, input_action_a );
+                        const auto b_is_back = is_key_back_action( legacy_data_b, input_action_b );
+
+                        if ( a_is_back && b_is_back )
                         {
-                            FKey key;
-                            bool is_back_action;
-
-                            if ( const auto legacy_data = binding->GetLegacyInputActionData() )
-                            {
-                                key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
-                                is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
-                            }
-                            else
-                            {
-                                const auto * input_action = binding->InputAction.Get();
-                                key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
-                                is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
-                            }
-
-                            auto * action_button = Cast< ICommonBoundActionButtonInterface >( CreateEntryInternal( ActionButtonClass, is_back_action ) );
-
-                            if ( ensure( action_button ) )
-                            {
-                                action_button->SetRepresentedAction( binding_handle );
-                                NativeOnActionButtonCreated( action_button, binding_handle );
-                            }
+                            return false;
                         }
+
+                        const auto nav_bar_priority_a = get_navbar_priority( legacy_data_a, input_action_a );
+                        const auto nav_bar_priority_b = get_navbar_priority( legacy_data_b, input_action_b );
+
+                        if ( nav_bar_priority_a != nav_bar_priority_b )
+                        {
+                            return nav_bar_priority_a < nav_bar_priority_b;
+                        }
+                    }
+
+                    return GetTypeHash( binding_a->Handle ) < GetTypeHash( binding_b->Handle );
+                }
+
+                return true;
+            } );
+
+            for ( auto binding_handle : filtered_bindings )
+            {
+                const auto binding = FUIActionBinding::FindBinding( binding_handle );
+
+                if ( binding->bDisplayInActionBar )
+                {
+                    FKey key;
+                    bool is_back_action;
+
+                    if ( const auto legacy_data = binding->GetLegacyInputActionData() )
+                    {
+                        key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
+                        is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                    }
+                    else
+                    {
+                        const auto * input_action = binding->InputAction.Get();
+                        key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
+                        is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                    }
+
+                    auto * action_button = Cast< ICommonBoundActionButtonInterface >( CreateEntryInternal( ActionButtonClass, is_back_action ) );
+
+                    if ( ensure( action_button ) )
+                    {
+                        action_button->SetRepresentedAction( binding_handle );
+                        NativeOnActionButtonCreated( action_button, binding_handle );
                     }
                 }
             }

@@ -32,7 +32,6 @@ public:
 protected:
     bool IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const;
     void OnWidgetRebuilt() override;
-    void SynchronizeProperties() override;
     void ReleaseSlateResources( bool release_children ) override;
     UUserWidget * CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class, bool is_back_action );
 
@@ -55,17 +54,14 @@ private:
     UPROPERTY( EditAnywhere, Category = EntryLayout, meta = ( MustImplement = "/Script/CommonUI.CommonBoundActionButtonInterface" ) )
     TSubclassOf< UGBFBoundActionButton > ActionButtonClass;
 
-    UPROPERTY( EditAnywhere, AdvancedDisplay, Category = Display )
-    uint8 bIgnoreDuplicateActions : 1;
-
     UPROPERTY( EditAnywhere, Category = Display )
     uint8 bDisplayOwningPlayerActionsOnly : 1;
 
     UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess, BindWidget ) )
-    TObjectPtr< UHorizontalBox > LeftHorizontalBox;
+    TObjectPtr< UPanelWidget > CancelButtonContainer;
 
     UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess, BindWidget ) )
-    TObjectPtr< UHorizontalBox > RightHorizontalBox;
+    TObjectPtr< UPanelWidget > ActionButtonsContainer;
 
     UPROPERTY( Transient )
     FUserWidgetPool WidgetPool;
