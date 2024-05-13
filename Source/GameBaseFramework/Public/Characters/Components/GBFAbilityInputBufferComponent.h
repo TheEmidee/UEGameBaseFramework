@@ -20,13 +20,13 @@ class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent final : public UPawn
 
 public:
     UGBFAbilityInputBufferComponent( const FObjectInitializer & object_initializer );
-    
+
     UFUNCTION( BlueprintCallable )
     void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
 
     UFUNCTION( BlueprintCallable )
     void StopMonitoring();
-    
+
 #if !UE_BUILD_SHIPPING
     void TickComponent( float delta_time, ELevelTick tick_type, FActorComponentTickFunction * this_tick_function ) override;
 #endif
@@ -34,22 +34,22 @@ public:
 protected:
     UPROPERTY( EditDefaultsOnly )
     float MaxMonitoringTime = 5.0f;
-    
+
     void Reset();
     void BindActions();
     void RemoveBinds();
     void AbilityInputTagPressed( FGameplayTag input_tag );
     bool TryToTriggerAbility();
-    
+
     FGameplayTag TryToGetInputTagWithPriority();
     FGameplayTag GetLastTriggeredInput();
     FGameplayTag GetMostTriggeredInput();
 
     ETriggerPriority TriggerPriority;
     FGameplayTagContainer InputTagsToCheck;
-    
+
     TArray< FGameplayTag > TriggeredTags;
     TArray< uint32 > BindHandles;
-    
+
     float MonitoringTime = 0.0f;
 };
