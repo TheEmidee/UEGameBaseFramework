@@ -25,6 +25,7 @@ protected:
 private:
     UPROPERTY( EditAnywhere )
     ETriggerPriority TriggerPriority;
+    
     UPROPERTY( EditAnywhere, Meta = ( Categories = "Input" ) )
     FGameplayTagContainer InputTagsToCheck;
 };

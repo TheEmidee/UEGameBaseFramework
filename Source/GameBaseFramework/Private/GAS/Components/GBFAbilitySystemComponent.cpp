@@ -379,7 +379,7 @@ FGameplayAbilitySpecHandle UGBFAbilitySystemComponent::FindAbilitySpecHandleForC
     return FGameplayAbilitySpecHandle();
 }
 
-UGameplayAbility * UGBFAbilitySystemComponent::FindAbilityClassWithInputTag( FGameplayTag input_tag )
+UGameplayAbility * UGBFAbilitySystemComponent::FindAbilityByInputTag( const FGameplayTag input_tag ) const
 {
     if ( !input_tag.IsValid() )
     {

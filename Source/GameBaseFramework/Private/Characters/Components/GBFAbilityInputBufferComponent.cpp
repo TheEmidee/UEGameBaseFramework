@@ -5,23 +5,25 @@
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "Input/GBFInputComponent.h"
 
-UGBFAbilityInputBufferComponent::UGBFAbilityInputBufferComponent( const FObjectInitializer & ObjectInitializer ) :
-    Super( ObjectInitializer )
+UGBFAbilityInputBufferComponent::UGBFAbilityInputBufferComponent( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer )
 {
     TriggerPriority = ETriggerPriority::LastTriggeredInput;
     this->PrimaryComponentTick.bStartWithTickEnabled = false;
     this->PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UGBFAbilityInputBufferComponent::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction * ThisTickFunction )
+#if !UE_BUILD_SHIPPING
+void UGBFAbilityInputBufferComponent::TickComponent( float delta_time, ELevelTick tick_type, FActorComponentTickFunction * this_tick_function )
 {
-    Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-    MonitoringTime += DeltaTime;
-    if ( !ensureAlwaysMsgf( MonitoringTime <= MaxMonitoringTime, TEXT( "Ability Input Buffer didn't call Stop Monitor 5 secs after activation, please call it manually !" ) ) )
+    Super::TickComponent( delta_time, tick_type, this_tick_function );
+    MonitoringTime += delta_time;
+    if ( !ensureAlwaysMsgf( MonitoringTime <= MaxMonitoringTime, TEXT( "Ability Input Buffer didn't call Stop Monitor %f secs after activation, please call it manually !" ), MaxMonitoringTime ) )
     {
         StopMonitoring();
     }
 }
+#endif
 
 void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority )
 {
@@ -141,7 +143,7 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
     {
         for ( auto & tagged_ability_tag : InputTagsToCheck )
         {
-            auto * tagged_ability = asc->FindAbilityClassWithInputTag( tagged_ability_tag );
+            auto * tagged_ability = asc->FindAbilityByInputTag( tagged_ability_tag );
             asc->CancelAbility( tagged_ability );
         }
 
@@ -150,7 +152,7 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
 
         while ( tag.IsValid() )
         {
-            if ( auto * ability = asc->FindAbilityClassWithInputTag( tag ) )
+            if ( auto * ability = asc->FindAbilityByInputTag( tag ) )
             {
                 asc->CancelAbility( ability );
                 if ( asc->TryActivateAbilityByClass( ability->GetClass() ) )
