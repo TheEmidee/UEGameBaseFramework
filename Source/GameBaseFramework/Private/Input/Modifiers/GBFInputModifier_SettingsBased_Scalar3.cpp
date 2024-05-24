@@ -8,7 +8,7 @@ FInputActionValue UGBFInputModifier_SettingsBased_Scalar3::ModifyRaw_Implementat
     {
         if ( const auto * local_player = GBFInputModifiersHelpers::GetLocalPlayer( player_input ) )
         {
-            const auto * settings_class = UGBFSaveGame::StaticClass();
+            const auto * settings_class = UGBFSettingsShared::StaticClass();
             auto * shared_settings = local_player->GetSharedSettings();
 
             const auto has_cached_property = PropertyCache.Num() == 3;
