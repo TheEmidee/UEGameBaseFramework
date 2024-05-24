@@ -45,7 +45,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetMouseSensitivityX ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetMouseSensitivityX ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetMouseSensitivityX() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetMouseSensitivityX() );
             setting->SetDisplayFormat( UGameSettingValueScalarDynamic::RawTwoDecimals );
             setting->SetSourceRangeAndStep( TRange< double >( 0, 10 ), 0.01 );
             setting->SetMinimumLimit( 0.01 );
@@ -63,7 +63,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetMouseSensitivityY ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetMouseSensitivityY ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetMouseSensitivityY() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetMouseSensitivityY() );
             setting->SetDisplayFormat( UGameSettingValueScalarDynamic::RawTwoDecimals );
             setting->SetSourceRangeAndStep( TRange< double >( 0, 10 ), 0.01 );
             setting->SetMinimumLimit( 0.01 );
@@ -81,7 +81,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetTargetingMultiplier ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetTargetingMultiplier ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetTargetingMultiplier() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetTargetingMultiplier() );
             setting->SetDisplayFormat( UGameSettingValueScalarDynamic::RawTwoDecimals );
             setting->SetSourceRangeAndStep( TRange< double >( 0, 10 ), 0.01 );
             setting->SetMinimumLimit( 0.01 );
@@ -99,7 +99,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetInvertVerticalAxis ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetInvertVerticalAxis ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetInvertVerticalAxis() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetInvertVerticalAxis() );
 
             setting->AddEditCondition( when_platform_supports_mouse_and_keyboard );
 
@@ -114,7 +114,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetInvertHorizontalAxis ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetInvertHorizontalAxis ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetInvertHorizontalAxis() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetInvertHorizontalAxis() );
 
             setting->AddEditCondition( when_platform_supports_mouse_and_keyboard );
 

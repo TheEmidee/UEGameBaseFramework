@@ -154,7 +154,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             //        setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetSubtitlesEnabled ) );
             //        setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetSubtitlesEnabled ) );
-            //        setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetSubtitlesEnabled() );
+            //        setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetSubtitlesEnabled() );
 
             //        subtitle_collection->AddSetting( setting );
             //    }
@@ -167,7 +167,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             //        Setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetSubtitlesTextSize ) );
             //        Setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetSubtitlesTextSize ) );
-            //        Setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetSubtitlesTextSize() );
+            //        Setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetSubtitlesTextSize() );
             //        Setting->AddEnumOption( ESubtitleDisplayTextSize::ExtraSmall, LOCTEXT( "ESubtitleTextSize_ExtraSmall", "Extra Small" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayTextSize::Small, LOCTEXT( "ESubtitleTextSize_Small", "Small" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayTextSize::Medium, LOCTEXT( "ESubtitleTextSize_Medium", "Medium" ) );
@@ -185,7 +185,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             //        Setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetSubtitlesTextColor ) );
             //        Setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetSubtitlesTextColor ) );
-            //        Setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetSubtitlesTextColor() );
+            //        Setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetSubtitlesTextColor() );
             //        Setting->AddEnumOption( ESubtitleDisplayTextColor::White, LOCTEXT( "ESubtitleTextColor_White", "White" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayTextColor::Yellow, LOCTEXT( "ESubtitleTextColor_Yellow", "Yellow" ) );
 
@@ -200,7 +200,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             //        Setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetSubtitlesTextBorder ) );
             //        Setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetSubtitlesTextBorder ) );
-            //        Setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetSubtitlesTextBorder() );
+            //        Setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetSubtitlesTextBorder() );
             //        Setting->AddEnumOption( ESubtitleDisplayTextBorder::None, LOCTEXT( "ESubtitleTextBorder_None", "None" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayTextBorder::Outline, LOCTEXT( "ESubtitleTextBorder_Outline", "Outline" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayTextBorder::DropShadow, LOCTEXT( "ESubtitleTextBorder_DropShadow", "Drop Shadow" ) );
@@ -216,7 +216,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             //        Setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetSubtitlesBackgroundOpacity ) );
             //        Setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetSubtitlesBackgroundOpacity ) );
-            //        Setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetSubtitlesBackgroundOpacity() );
+            //        Setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetSubtitlesBackgroundOpacity() );
             //        Setting->AddEnumOption( ESubtitleDisplayBackgroundOpacity::Clear, LOCTEXT( "ESubtitleBackgroundOpacity_Clear", "Clear" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayBackgroundOpacity::Low, LOCTEXT( "ESubtitleBackgroundOpacity_Low", "Low" ) );
             //        Setting->AddEnumOption( ESubtitleDisplayBackgroundOpacity::Medium, LOCTEXT( "ESubtitleBackgroundOpacity_Medium", "Medium" ) );
@@ -253,7 +253,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeAudioSettings( UGBFL
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetAllowAudioInBackgroundSetting ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetAllowAudioInBackgroundSetting ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetAllowAudioInBackgroundSetting() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetAllowAudioInBackgroundSetting() );
 
             setting->AddEnumOption( EGBFAllowBackgroundAudioSetting::Off, LOCTEXT( "EGBFAllowBackgroundAudioSetting_Off", "Off" ) );
             setting->AddEnumOption( EGBFAllowBackgroundAudioSetting::AllSounds, LOCTEXT( "EGBFAllowBackgroundAudioSetting_AllSounds", "All Sounds" ) );

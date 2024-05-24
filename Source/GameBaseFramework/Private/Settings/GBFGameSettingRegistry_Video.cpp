@@ -161,7 +161,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetColorBlindMode ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetColorBlindMode ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetColorBlindMode() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetColorBlindMode() );
             setting->AddEnumOption( EGBFColorBlindMode::Off, LOCTEXT( "ColorBlindRotatorSettingOff", "Off" ) );
             setting->AddEnumOption( EGBFColorBlindMode::Deuteranope, LOCTEXT( "ColorBlindRotatorSettingDeuteranope", "Deuteranope" ) );
             setting->AddEnumOption( EGBFColorBlindMode::Protanope, LOCTEXT( "ColorBlindRotatorSettingProtanope", "Protanope" ) );
@@ -180,7 +180,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeVideoSettings( UGBFL
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetColorBlindStrength ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetColorBlindStrength ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetColorBlindStrength() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetColorBlindStrength() );
             for ( auto index = 0; index <= 10; index++ )
             {
                 setting->AddOption( index, FText::AsNumber( index ) );

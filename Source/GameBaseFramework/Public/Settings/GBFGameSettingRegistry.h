@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GBFGameUserSettings.h"
-#include "GameFramework/GBFSaveGame.h"
+#include "GameFramework/GBFSettingsShared.h"
 
 #include <CoreMinimal.h>
 #include <GameSettingRegistry.h>
@@ -15,7 +15,7 @@ DECLARE_LOG_CATEGORY_EXTERN( LogGBFGameSettingRegistry, Log, Log );
 
 #define GET_SHARED_SETTINGS_FUNCTION_PATH( FunctionOrPropertyName )                                                                           \
     MakeShared< FGameSettingDataSourceDynamic >( TArray< FString >( { GET_FUNCTION_NAME_STRING_CHECKED( UGBFLocalPlayer, GetSharedSettings ), \
-        GET_FUNCTION_NAME_STRING_CHECKED( UGBFSaveGame, FunctionOrPropertyName ) } ) )
+        GET_FUNCTION_NAME_STRING_CHECKED( UGBFSettingsShared, FunctionOrPropertyName ) } ) )
 
 #define GET_LOCAL_SETTINGS_FUNCTION_PATH( FunctionOrPropertyName )                                                                           \
     MakeShared< FGameSettingDataSourceDynamic >( TArray< FString >( { GET_FUNCTION_NAME_STRING_CHECKED( UGBFLocalPlayer, GetLocalSettings ), \

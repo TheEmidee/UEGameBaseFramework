@@ -80,7 +80,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetForceFeedbackEnabled ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetForceFeedbackEnabled ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetForceFeedbackEnabled() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetForceFeedbackEnabled() );
 
             hardware->AddSetting( setting );
         }
@@ -93,7 +93,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetInvertVerticalAxis ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetInvertVerticalAxis ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetInvertVerticalAxis() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetInvertVerticalAxis() );
 
             hardware->AddSetting( setting );
         }
@@ -106,7 +106,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetInvertHorizontalAxis ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetInvertHorizontalAxis ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetInvertHorizontalAxis() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetInvertHorizontalAxis() );
 
             hardware->AddSetting( setting );
         }
@@ -130,7 +130,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetGamepadMoveStickDeadZone ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetGamepadMoveStickDeadZone ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetGamepadMoveStickDeadZone() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetGamepadMoveStickDeadZone() );
             setting->SetDisplayFormat( UGameSettingValueScalarDynamic::ZeroToOnePercent );
             setting->SetMinimumLimit( 0.05 );
             setting->SetMaximumLimit( 0.95 );
@@ -146,7 +146,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
 
             setting->SetDynamicGetter( GET_SHARED_SETTINGS_FUNCTION_PATH( GetGamepadLookStickDeadZone ) );
             setting->SetDynamicSetter( GET_SHARED_SETTINGS_FUNCTION_PATH( SetGamepadLookStickDeadZone ) );
-            setting->SetDefaultValue( GetDefault< UGBFSaveGame >()->GetGamepadLookStickDeadZone() );
+            setting->SetDefaultValue( GetDefault< UGBFSettingsShared >()->GetGamepadLookStickDeadZone() );
             setting->SetDisplayFormat( UGameSettingValueScalarDynamic::ZeroToOnePercent );
             setting->SetMinimumLimit( 0.05 );
             setting->SetMaximumLimit( 0.95 );

@@ -47,7 +47,7 @@ UGBFGameUserSettings * UGBFLocalPlayer::GetLocalSettings() const
     return UGBFGameUserSettings::Get();
 }
 
-UGBFSaveGame * UGBFLocalPlayer::GetSharedSettings() const
+UGBFSettingsShared * UGBFLocalPlayer::GetSharedSettings() const
 {
     if ( SharedSettings == nullptr )
     {
@@ -56,12 +56,12 @@ UGBFSaveGame * UGBFLocalPlayer::GetSharedSettings() const
 
         if ( PLATFORM_DESKTOP )
         {
-            SharedSettings = UGBFSaveGame::LoadOrCreateSettings( this );
+            SharedSettings = UGBFSettingsShared::LoadOrCreateSettings( this );
         }
         else
         {
             // We need to wait for user login to get the real settings so return temp ones
-            SharedSettings = UGBFSaveGame::CreateTemporarySettings( this );
+            SharedSettings = UGBFSettingsShared::CreateTemporarySettings( this );
         }
     }
 
@@ -77,10 +77,10 @@ void UGBFLocalPlayer::LoadSharedSettingsFromDisk( bool force_load )
         return;
     }
 
-    ensure( UGBFSaveGame::AsyncLoadOrCreateSettings( this, GetSaveGameClass(), UGBFSaveGame::FGBFOnSettingsLoadedEvent::CreateUObject( this, &UGBFLocalPlayer::OnSharedSettingsLoaded ) ) );
+    ensure( UGBFSettingsShared::AsyncLoadOrCreateSettings( this, GetSaveGameClass(), UGBFSettingsShared::FGBFOnSettingsLoadedEvent::CreateUObject( this, &UGBFLocalPlayer::OnSharedSettingsLoaded ) ) );
 }
 
-void UGBFLocalPlayer::OnSharedSettingsLoaded( UGBFSaveGame * loaded_or_created_settings )
+void UGBFLocalPlayer::OnSharedSettingsLoaded( UGBFSettingsShared * loaded_or_created_settings )
 {
     // The settings are applied before it gets here
     if ( ensure( loaded_or_created_settings ) )
@@ -99,9 +99,9 @@ void UGBFLocalPlayer::OnAudioOutputDeviceChanged( const FString & audio_output_d
     UAudioMixerBlueprintLibrary::SwapAudioOutputDevice( GetWorld(), audio_output_device_id, devices_swapped_callback );
 }
 
-TSubclassOf< UGBFSaveGame > UGBFLocalPlayer::GetSaveGameClass() const
+TSubclassOf< UGBFSettingsShared > UGBFLocalPlayer::GetSaveGameClass() const
 {
-    return UGBFSaveGame::StaticClass();
+    return UGBFSettingsShared::StaticClass();
 }
 
 void UGBFLocalPlayer::OnCompletedAudioDeviceSwap( const FSwapAudioOutputResult & swap_result )
