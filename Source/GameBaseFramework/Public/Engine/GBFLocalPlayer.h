@@ -8,7 +8,6 @@
 
 struct FSwapAudioOutputResult;
 class UGBFGameUserSettings;
-class UGBFSettingsShared;
 
 UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public UCommonLocalPlayer

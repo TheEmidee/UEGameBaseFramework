@@ -53,7 +53,7 @@ class GAMEBASEFRAMEWORK_API UGBFSettingsShared : public ULocalPlayerSaveGame
     GENERATED_BODY()
 
 public:
-    DECLARE_EVENT_OneParam( UGBFSaveGame, FOnSettingChangedEvent, UGBFSettingsShared * Settings );
+    DECLARE_EVENT_OneParam( UGBFSettingsShared, FOnSettingChangedEvent, UGBFSettingsShared * Settings );
     FOnSettingChangedEvent OnSettingChanged;
 
     UGBFSettingsShared();
