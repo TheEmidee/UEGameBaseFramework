@@ -62,6 +62,11 @@ void FGBFAbilitySet_GrantedHandles::TakeFromAbilitySystem( UAbilitySystemCompone
     GrantedAttributeSets.Reset();
 }
 
+void UGBFAbilitySet::GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles & out_granted_handles, UObject * source_object ) const
+{
+    GiveToAbilitySystem( asc, &out_granted_handles, source_object );
+}
+
 FPrimaryAssetId UGBFAbilitySet::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( TEXT( "AbilitySet" ), GetPackage()->GetFName() );

@@ -79,6 +79,9 @@ class GAMEBASEFRAMEWORK_API UGBFAbilitySet final : public UPrimaryDataAsset
     GENERATED_BODY()
 
 public:
+    UFUNCTION( BlueprintCallable, BlueprintPure = false )
+    void GiveToAbilitySystem( UAbilitySystemComponent * asc, UPARAM( ref ) FGBFAbilitySet_GrantedHandles & out_granted_handles, UObject * source_object = nullptr ) const;
+
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
     void GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles * out_granted_handles, UObject * source_object = nullptr ) const;
