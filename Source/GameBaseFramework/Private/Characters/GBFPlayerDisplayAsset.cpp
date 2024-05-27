@@ -121,7 +121,10 @@ void UGBFPlayerDisplayAsset::ApplyToActor( AActor * target_actor, bool include_c
 
     if ( include_attached_actors )
     {
-        for ( const auto & child : target_actor->Children )
+        TArray< AActor * > attached_actors;
+        target_actor->GetAttachedActors( attached_actors );
+
+        for ( const auto & child : attached_actors )
         {
             apply_to_components( child );
         }
