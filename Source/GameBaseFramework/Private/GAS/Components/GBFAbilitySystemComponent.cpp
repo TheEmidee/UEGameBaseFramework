@@ -491,7 +491,7 @@ float UGBFAbilitySystemComponent::PlayMontageForMesh( UGameplayAbility * animati
                     auto & ability_rep_montage_info = GetGameplayAbilityRepAnimMontageForMesh( mesh );
                     const auto current_rep_play_instance_id = ability_rep_montage_info.RepMontageInfo.PlayInstanceId;
 
-                    ability_rep_montage_info.RepMontageInfo.AnimMontage = new_anim_montage;
+                    ability_rep_montage_info.RepMontageInfo.Animation = new_anim_montage;
                     ability_rep_montage_info.RepMontageInfo.PlayInstanceId = current_rep_play_instance_id < UINT8_MAX ? current_rep_play_instance_id + 1 : 0;
 
                     ability_rep_montage_info.RepMontageInfo.SectionIdToPlay = 0;
@@ -1085,7 +1085,7 @@ void UGBFAbilitySystemComponent::AnimMontage_UpdateReplicatedDataForMesh( FGamep
 
     if ( anim_instance != nullptr && anim_montage_info.LocalMontageInfo.AnimMontage )
     {
-        rep_anim_montage_info.RepMontageInfo.AnimMontage = anim_montage_info.LocalMontageInfo.AnimMontage;
+        rep_anim_montage_info.RepMontageInfo.Animation = anim_montage_info.LocalMontageInfo.AnimMontage;
 
         // Compressed Flags
         const auto is_stopped = anim_instance->Montage_GetIsStopped( anim_montage_info.LocalMontageInfo.AnimMontage );
@@ -1176,23 +1176,23 @@ void UGBFAbilitySystemComponent::OnRep_ReplicatedAnimMontageForMesh()
             if ( must_debug_montage )
             {
                 ABILITY_LOG( Warning, TEXT( "\n\nOnRep_ReplicatedAnimMontage, %s" ), *GetNameSafe( this ) );
-                ABILITY_LOG( Warning, TEXT( "\tAnimMontage: %s\n\tPlayRate: %f\n\tPosition: %f\n\tBlendTime: %f\n\tNextSectionID: %d\n\tIsStopped: %d" ), *GetNameSafe( new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage ), new_rep_montage_info_for_mesh.RepMontageInfo.PlayRate, new_rep_montage_info_for_mesh.RepMontageInfo.Position, new_rep_montage_info_for_mesh.RepMontageInfo.BlendTime, new_rep_montage_info_for_mesh.RepMontageInfo.NextSectionID, new_rep_montage_info_for_mesh.RepMontageInfo.IsStopped );
+                ABILITY_LOG( Warning, TEXT( "\tAnimMontage: %s\n\tPlayRate: %f\n\tPosition: %f\n\tBlendTime: %f\n\tNextSectionID: %d\n\tIsStopped: %d" ), *GetNameSafe( new_rep_montage_info_for_mesh.RepMontageInfo.GetAnimMontage() ), new_rep_montage_info_for_mesh.RepMontageInfo.PlayRate, new_rep_montage_info_for_mesh.RepMontageInfo.Position, new_rep_montage_info_for_mesh.RepMontageInfo.BlendTime, new_rep_montage_info_for_mesh.RepMontageInfo.NextSectionID, new_rep_montage_info_for_mesh.RepMontageInfo.IsStopped );
                 ABILITY_LOG( Warning, TEXT( "\tLocalAnimMontageInfo.AnimMontage: %s\n\tPosition: %f" ), *GetNameSafe( anim_montage_info.LocalMontageInfo.AnimMontage ), anim_instance->Montage_GetPosition( anim_montage_info.LocalMontageInfo.AnimMontage ) );
             }
 
-            if ( new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage )
+            if ( new_rep_montage_info_for_mesh.RepMontageInfo.Animation )
             {
                 // New Montage to play
-                if ( ( anim_montage_info.LocalMontageInfo.AnimMontage != new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage ) ||
+                if ( ( anim_montage_info.LocalMontageInfo.AnimMontage != new_rep_montage_info_for_mesh.RepMontageInfo.Animation ) ||
                      ( anim_montage_info.LocalMontageInfo.PlayInstanceId != new_rep_montage_info_for_mesh.RepMontageInfo.PlayInstanceId ) )
                 {
                     anim_montage_info.LocalMontageInfo.PlayInstanceId = new_rep_montage_info_for_mesh.RepMontageInfo.PlayInstanceId;
-                    PlayMontageSimulatedForMesh( new_rep_montage_info_for_mesh.Mesh, new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage, new_rep_montage_info_for_mesh.RepMontageInfo.PlayRate );
+                    PlayMontageSimulatedForMesh( new_rep_montage_info_for_mesh.Mesh, new_rep_montage_info_for_mesh.RepMontageInfo.GetAnimMontage(), new_rep_montage_info_for_mesh.RepMontageInfo.PlayRate );
                 }
 
                 if ( anim_montage_info.LocalMontageInfo.AnimMontage == nullptr )
                 {
-                    ABILITY_LOG( Warning, TEXT( "OnRep_ReplicatedAnimMontage: PlayMontageSimulated failed. Name: %s, AnimMontage: %s" ), *GetNameSafe( this ), *GetNameSafe( new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage ) );
+                    ABILITY_LOG( Warning, TEXT( "OnRep_ReplicatedAnimMontage: PlayMontageSimulated failed. Name: %s, AnimMontage: %s" ), *GetNameSafe( this ), *GetNameSafe( new_rep_montage_info_for_mesh.RepMontageInfo.GetAnimMontage() ) );
                     return;
                 }
 
@@ -1250,7 +1250,7 @@ void UGBFAbilitySystemComponent::OnRep_ReplicatedAnimMontageForMesh()
                     if ( ( current_section_id == rep_section_id ) && ( FMath::Abs( delta_position ) > montage_rep_pos_err_threshold ) && ( new_rep_montage_info_for_mesh.RepMontageInfo.IsStopped == 0 ) )
                     {
                         // fast forward to server position and trigger notifies
-                        if ( auto * montage_instance = anim_instance->GetActiveInstanceForMontage( new_rep_montage_info_for_mesh.RepMontageInfo.AnimMontage ) )
+                        if ( auto * montage_instance = anim_instance->GetActiveInstanceForMontage( new_rep_montage_info_for_mesh.RepMontageInfo.GetAnimMontage() ) )
                         {
                             // Skip triggering notifies if we're going backwards in time, we've already triggered them.
                             const auto delta_time = !FMath::IsNearlyZero( new_rep_montage_info_for_mesh.RepMontageInfo.PlayRate )
