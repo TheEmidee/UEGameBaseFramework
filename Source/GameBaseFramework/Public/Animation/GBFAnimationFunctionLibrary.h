@@ -14,7 +14,6 @@ class GAMEBASEFRAMEWORK_API UGBFAnimationFunctionLibrary final : public UBluepri
     GENERATED_BODY()
 
 public:
-
     UFUNCTION( BlueprintCallable )
     static TSubclassOf< UAnimInstance > SelectBestLayerFromAnimLayerSelectionSet( const FGBFAnimLayerSelectionSet & anim_layer_selection_set, const FGameplayTagContainer & cosmetic_tags );
 };
