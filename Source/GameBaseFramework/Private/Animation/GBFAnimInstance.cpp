@@ -13,6 +13,16 @@ void UGBFAnimInstance::InitializeWithAbilitySystem( UAbilitySystemComponent * as
     GameplayTagPropertyMap.Initialize( this, asc );
 }
 
+UAbilitySystemComponent * UGBFAnimInstance::GetAbilitySystemComponent_Implementation() const
+{
+    if ( const auto * owning_actor = GetOwningActor() )
+    {
+        return UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor );
+    }
+
+    return nullptr;
+}
+
 #if WITH_EDITOR
 EDataValidationResult UGBFAnimInstance::IsDataValid( FDataValidationContext & context ) const
 {
@@ -28,11 +38,8 @@ void UGBFAnimInstance::NativeInitializeAnimation()
 {
     Super::NativeInitializeAnimation();
 
-    if ( const auto * owning_actor = GetOwningActor() )
+    if ( auto * asc = GetAbilitySystemComponent() )
     {
-        if ( auto * asc = UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor ) )
-        {
-            InitializeWithAbilitySystem( asc );
-        }
+        InitializeWithAbilitySystem( asc );
     }
 }
