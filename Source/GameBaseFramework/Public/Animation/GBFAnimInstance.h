@@ -18,7 +18,7 @@ public:
     virtual void InitializeWithAbilitySystem( UAbilitySystemComponent * asc );
 
 protected:
-    UFUNCTION( BlueprintNativeEvent )
+    UFUNCTION( BlueprintCallable, BlueprintNativeEvent )
     UAbilitySystemComponent * GetAbilitySystemComponent() const;
 
 #if WITH_EDITOR
