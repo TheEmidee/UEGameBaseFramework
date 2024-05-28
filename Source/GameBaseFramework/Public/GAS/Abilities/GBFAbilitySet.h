@@ -82,6 +82,9 @@ public:
     UFUNCTION( BlueprintCallable, BlueprintPure = false )
     void GiveToAbilitySystem( UAbilitySystemComponent * asc, UPARAM( ref ) FGBFAbilitySet_GrantedHandles & out_granted_handles, UObject * source_object = nullptr ) const;
 
+    UFUNCTION( BlueprintCallable )
+    void TakeFromAbilitySystem( UAbilitySystemComponent * asc, UPARAM( ref ) FGBFAbilitySet_GrantedHandles & granted_handles );
+
     FPrimaryAssetId GetPrimaryAssetId() const override;
 
     void GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles * out_granted_handles, UObject * source_object = nullptr ) const;
