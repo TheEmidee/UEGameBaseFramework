@@ -14,9 +14,13 @@ class GAMEBASEFRAMEWORK_API UGBFAnimInstance : public UAnimInstance
     GENERATED_BODY()
 
 public:
+    UFUNCTION( BlueprintCallable )
     virtual void InitializeWithAbilitySystem( UAbilitySystemComponent * asc );
 
 protected:
+    UFUNCTION( BlueprintCallable, BlueprintNativeEvent )
+    UAbilitySystemComponent * GetAbilitySystemComponent() const;
+
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif // WITH_EDITOR

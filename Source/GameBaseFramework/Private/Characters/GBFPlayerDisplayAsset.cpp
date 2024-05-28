@@ -132,7 +132,7 @@ void UGBFPlayerDisplayAsset::ApplyToActor( AActor * target_actor, bool include_c
 
     if ( include_parent_actors )
     {
-        const auto * parent = target_actor->GetParentActor();
+        const auto * parent = target_actor->GetAttachParentActor();
         apply_to_components( parent );
     }
 }
