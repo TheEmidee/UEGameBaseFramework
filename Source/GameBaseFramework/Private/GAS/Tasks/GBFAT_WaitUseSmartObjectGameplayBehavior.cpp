@@ -2,6 +2,7 @@
 
 #include "BlueprintLibraries/CoreExtArrayBlueprintLibrary.h"
 
+#include <AbilitySystemComponent.h>
 #include <GameplayBehavior.h>
 #include <GameplayInteractionSmartObjectBehaviorDefinition.h>
 #include <Misc/ScopeExit.h>
@@ -66,15 +67,19 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Activate()
     }
 }
 
-UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, FSmartObjectRequestFilter user_tags_filter )
+UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, const TArray< TSubclassOf< USmartObjectBehaviorDefinition > > behavior_definition_classes, const FGameplayTagQuery activity_tags )
 {
     auto * smart_object_subsystem = USmartObjectSubsystem::GetCurrent( owning_ability->GetWorld() );
 
     const auto registered_handle = smart_object_component->GetRegisteredHandle();
 
-    TArray< FSmartObjectSlotHandle > slots;
+    FSmartObjectRequestFilter smart_object_request_filter;
+    owning_ability->GetAbilitySystemComponentFromActorInfo()->GetOwnedGameplayTags( smart_object_request_filter.UserTags );
+    smart_object_request_filter.BehaviorDefinitionClasses = behavior_definition_classes;
+    smart_object_request_filter.ActivityRequirements = activity_tags;
 
-    smart_object_subsystem->FindSlots( registered_handle, user_tags_filter, slots );
+    TArray< FSmartObjectSlotHandle > slots;
+    smart_object_subsystem->FindSlots( registered_handle, smart_object_request_filter, slots );
 
     FSmartObjectClaimHandle claim_handle( FSmartObjectClaimHandle::InvalidHandle );
 
