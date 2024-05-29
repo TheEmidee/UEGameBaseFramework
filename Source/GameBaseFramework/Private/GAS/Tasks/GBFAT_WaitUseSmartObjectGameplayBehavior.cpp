@@ -66,14 +66,15 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Activate()
     }
 }
 
-UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection )
+UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, FSmartObjectRequestFilter user_tags_filter )
 {
     auto * smart_object_subsystem = USmartObjectSubsystem::GetCurrent( owning_ability->GetWorld() );
 
     const auto registered_handle = smart_object_component->GetRegisteredHandle();
 
     TArray< FSmartObjectSlotHandle > slots;
-    smart_object_subsystem->GetAllSlots( registered_handle, slots );
+
+    smart_object_subsystem->FindSlots( registered_handle, user_tags_filter, slots );
 
     FSmartObjectClaimHandle claim_handle( FSmartObjectClaimHandle::InvalidHandle );
 

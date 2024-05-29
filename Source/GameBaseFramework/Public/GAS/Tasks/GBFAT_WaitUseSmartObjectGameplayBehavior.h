@@ -46,7 +46,7 @@ public:
     void Activate() override;
 
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
-    static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection );
+    static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, FSmartObjectRequestFilter user_tags_filter );
 
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
     static UGBFAT_WaitUseSmartObjectGameplayBehavior * WaitUseSmartObjectGameplayBehaviorWithSlotHandle( UGameplayAbility * owning_ability, FSmartObjectSlotHandle slot_handle );
