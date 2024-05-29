@@ -62,12 +62,12 @@ void FGBFAbilitySet_GrantedHandles::TakeFromAbilitySystem( UAbilitySystemCompone
     GrantedAttributeSets.Reset();
 }
 
-void UGBFAbilitySet::GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles & out_granted_handles, UObject * source_object ) const
+void UGBFAbilitySet::K2_GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles & out_granted_handles, UObject * source_object ) const
 {
     GiveToAbilitySystem( asc, &out_granted_handles, source_object );
 }
 
-void UGBFAbilitySet::TakeFromAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles & granted_handles )
+void UGBFAbilitySet::K2_TakeFromAbilitySystem( UAbilitySystemComponent * asc, FGBFAbilitySet_GrantedHandles & granted_handles )
 {
     granted_handles.TakeFromAbilitySystem( asc );
 }
