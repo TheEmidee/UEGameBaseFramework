@@ -271,6 +271,30 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         return;
     }
 
+    bool has_a_matching_sub_option = false;
+
+    for ( auto sub_option : option_container.Options )
+    {
+        if ( !sub_option.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
+        {
+            continue;
+        }
+
+        if ( !sub_option.InteractableTargetTagRequirements.RequirementsMet( interactable_target_tags ) )
+        {
+            continue;
+        }
+
+        has_a_matching_sub_option = true;
+
+        break;
+    }
+
+    if ( !has_a_matching_sub_option )
+    {
+        return;
+    }
+
     context.WidgetInfosHandles.Emplace( interactable_target, option_container.CommonWidgetInfos );
 
     if ( const auto * pc = Cast< APlayerController >( pawn->GetController() ) )
