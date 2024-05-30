@@ -286,7 +286,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
 
         has_a_matching_sub_option = true;
-        
+
         break;
     }
 
