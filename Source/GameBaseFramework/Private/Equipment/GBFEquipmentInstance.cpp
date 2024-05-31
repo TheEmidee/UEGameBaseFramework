@@ -3,6 +3,7 @@
 #include "Equipment/GBFEquipmentDefinition.h"
 
 #include <Components/SkeletalMeshComponent.h>
+#include <Components/StaticMeshComponent.h>
 #include <Engine/World.h>
 #include <GameFramework/Character.h>
 #include <GameFramework/Pawn.h>
@@ -58,21 +59,39 @@ void UGBFEquipmentInstance::SpawnEquipmentActors( const TArray< FGBFEquipmentAct
     if ( auto * owning_pawn = GetPawn() )
     {
         auto * attach_target = owning_pawn->GetRootComponent();
+
         if ( const auto * character = Cast< ACharacter >( owning_pawn ) )
         {
             attach_target = character->GetMesh();
         }
 
-        for ( const auto & [ actor_to_spawn, attach_socket, attach_transform ] : actors_to_spawn )
+        for ( const auto & actor_to_spawn : actors_to_spawn )
         {
-            auto * new_actor = GetWorld()->SpawnActorDeferred< AActor >( actor_to_spawn, FTransform::Identity, owning_pawn );
+            auto * new_actor = GetWorld()->SpawnActorDeferred< AActor >( actor_to_spawn.ActorToSpawn, FTransform::Identity, owning_pawn );
             new_actor->FinishSpawning( FTransform::Identity, /*bIsDefaultTransform=*/true );
-            new_actor->SetActorRelativeTransform( attach_transform );
-            new_actor->AttachToComponent( attach_target, FAttachmentTransformRules::KeepRelativeTransform, attach_socket );
+
+            SetEquipmentActorTransform( new_actor, actor_to_spawn, attach_target );
 
             SpawnedActors.Add( new_actor );
         }
     }
+}
+
+void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor, const FGBFEquipmentActorToSpawn & actor_to_spawn, USceneComponent * attach_target )
+{
+    if ( actor_to_spawn.ItemSocket.IsNone() )
+    {
+        equipment_actor->SetActorRelativeTransform( actor_to_spawn.AttachTransform );
+    }
+    else
+    {
+        const auto * equipment_actor_mesh = equipment_actor->FindComponentByClass< UStaticMeshComponent >();
+        const auto item_socket_transform = equipment_actor_mesh->GetSocketTransform( actor_to_spawn.ItemSocket, RTS_Actor );
+        const auto inversed_item_transform = item_socket_transform.Inverse();
+        equipment_actor->SetActorRelativeTransform( inversed_item_transform );
+    }
+
+    equipment_actor->AttachToComponent( attach_target, FAttachmentTransformRules::KeepRelativeTransform, actor_to_spawn.AttachSocket );
 }
 
 void UGBFEquipmentInstance::DestroyEquipmentActors()
