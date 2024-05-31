@@ -3,7 +3,6 @@
 #include "Equipment/GBFEquipmentDefinition.h"
 
 #include <Components/SkeletalMeshComponent.h>
-#include <Components/StaticMeshComponent.h>
 #include <Engine/World.h>
 #include <GameFramework/Character.h>
 #include <GameFramework/Pawn.h>
@@ -85,7 +84,7 @@ void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor
     }
     else
     {
-        const auto * equipment_actor_mesh = equipment_actor->FindComponentByClass< UStaticMeshComponent >();
+        const auto * equipment_actor_mesh = equipment_actor->FindComponentByClass< UMeshComponent >();
         const auto item_socket_transform = equipment_actor_mesh->GetSocketTransform( actor_to_spawn.ItemSocket, RTS_Actor );
         const auto inversed_item_transform = item_socket_transform.Inverse();
         equipment_actor->SetActorRelativeTransform( inversed_item_transform );
