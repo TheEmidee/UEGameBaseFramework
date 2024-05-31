@@ -119,11 +119,12 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
     {
         if ( auto * owning_pawn = new_entry.Instance->GetPawn() )
         {
-            auto * attach_target = owning_pawn->FindComponentByClass< USkeletalMeshComponent >();
-
-            for ( const auto & actor_to_spawn : actors_to_spawn )
+            if ( auto * attach_target = owning_pawn->FindComponentByClass< USkeletalMeshComponent >() )
             {
-                new_entry.Instance->SetEquipmentActorTransform( Cast< AActor >( new_entry.Instance->GetInstigator() ), actor_to_spawn, attach_target );
+                for ( const auto & actor_to_spawn : actors_to_spawn )
+                {
+                    new_entry.Instance->SetEquipmentActorTransform( Cast< AActor >( new_entry.Instance->GetInstigator() ), actor_to_spawn.ItemSocket, actor_to_spawn.AttachSocket, actor_to_spawn.AttachTransform, attach_target );
+                }
             }
         }
     }

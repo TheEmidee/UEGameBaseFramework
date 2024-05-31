@@ -69,28 +69,28 @@ void UGBFEquipmentInstance::SpawnEquipmentActors( const TArray< FGBFEquipmentAct
             auto * new_actor = GetWorld()->SpawnActorDeferred< AActor >( actor_to_spawn.ActorToSpawn, FTransform::Identity, owning_pawn );
             new_actor->FinishSpawning( FTransform::Identity, /*bIsDefaultTransform=*/true );
 
-            SetEquipmentActorTransform( new_actor, actor_to_spawn, attach_target );
+            SetEquipmentActorTransform( new_actor, actor_to_spawn.ItemSocket, actor_to_spawn.AttachSocket, actor_to_spawn.AttachTransform, attach_target );
 
             SpawnedActors.Add( new_actor );
         }
     }
 }
 
-void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor, const FGBFEquipmentActorToSpawn & actor_to_spawn, USceneComponent * attach_target )
+void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor, const FName item_socket, const FName attach_socket, const FTransform attach_transform, USceneComponent * attach_target )
 {
-    if ( actor_to_spawn.ItemSocket.IsNone() )
+    if ( item_socket.IsNone() )
     {
-        equipment_actor->SetActorRelativeTransform( actor_to_spawn.AttachTransform );
+        equipment_actor->SetActorRelativeTransform( attach_transform );
     }
     else
     {
         const auto * equipment_actor_mesh = equipment_actor->FindComponentByClass< UMeshComponent >();
-        const auto item_socket_transform = equipment_actor_mesh->GetSocketTransform( actor_to_spawn.ItemSocket, RTS_Actor );
+        const auto item_socket_transform = equipment_actor_mesh->GetSocketTransform( item_socket, RTS_Actor );
         const auto inversed_item_transform = item_socket_transform.Inverse();
         equipment_actor->SetActorRelativeTransform( inversed_item_transform );
     }
 
-    equipment_actor->AttachToComponent( attach_target, FAttachmentTransformRules::KeepRelativeTransform, actor_to_spawn.AttachSocket );
+    equipment_actor->AttachToComponent( attach_target, FAttachmentTransformRules::KeepRelativeTransform, attach_socket );
 }
 
 void UGBFEquipmentInstance::DestroyEquipmentActors()
