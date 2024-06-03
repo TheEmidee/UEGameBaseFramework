@@ -76,7 +76,7 @@ void UGBFEquipmentInstance::SpawnEquipmentActors( const TArray< FGBFEquipmentAct
     }
 }
 
-void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor, const FName item_socket, const FName attach_socket, const FTransform attach_transform, USceneComponent * attach_target )
+void UGBFEquipmentInstance::SetEquipmentActorTransform( AActor * equipment_actor, const FName item_socket, const FName attach_socket, const FTransform & attach_transform, USceneComponent * attach_target )
 {
     if ( item_socket.IsNone() )
     {

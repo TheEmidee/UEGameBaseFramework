@@ -41,7 +41,7 @@ public:
     uint8 bDestroyWhenUnEquipped : 1;
 
     virtual void SpawnEquipmentActors( const TArray< FGBFEquipmentActorToSpawn > & actors_to_spawn );
-    virtual void SetEquipmentActorTransform( AActor * equipment_actor, const FName item_socket, const FName attach_socket, const FTransform attach_transform, USceneComponent * attach_target );
+    virtual void SetEquipmentActorTransform( AActor * equipment_actor, const FName item_socket, const FName attach_socket, const FTransform & attach_transform, USceneComponent * attach_target );
     virtual void DestroyEquipmentActors();
 
     virtual void OnEquipped();
