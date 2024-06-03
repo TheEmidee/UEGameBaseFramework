@@ -24,6 +24,9 @@ struct FGBFEquipmentActorToSpawn
 
     UPROPERTY( EditAnywhere, Category = Equipment )
     FTransform AttachTransform;
+
+    UPROPERTY( EditAnywhere, Category = Equipment )
+    FName ItemSocket;
 };
 
 /**

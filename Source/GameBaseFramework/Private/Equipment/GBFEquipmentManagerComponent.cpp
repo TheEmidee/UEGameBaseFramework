@@ -6,6 +6,7 @@
 #include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <AbilitySystemGlobals.h>
+#include <Components/SkeletalMeshComponent.h>
 #include <Engine/ActorChannel.h>
 #include <Engine/World.h>
 #include <GameFramework/Controller.h>
@@ -108,9 +109,24 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
         // :TODO: Warning logging?
     }
 
+    auto & actors_to_spawn = new_entry.EquipmentDefinition->GetDefaultObject< UGBFEquipmentDefinition >()->ActorsToSpawn;
+
     if ( spawn_equipment_actors )
     {
-        new_entry.Instance->SpawnEquipmentActors( new_entry.EquipmentDefinition->GetDefaultObject< UGBFEquipmentDefinition >()->ActorsToSpawn );
+        new_entry.Instance->SpawnEquipmentActors( actors_to_spawn );
+    }
+    else
+    {
+        if ( auto * owning_pawn = new_entry.Instance->GetPawn() )
+        {
+            if ( auto * attach_target = owning_pawn->FindComponentByClass< USkeletalMeshComponent >() )
+            {
+                for ( const auto & actor_to_spawn : actors_to_spawn )
+                {
+                    new_entry.Instance->SetEquipmentActorTransform( Cast< AActor >( new_entry.Instance->GetInstigator() ), actor_to_spawn.ItemSocket, actor_to_spawn.AttachSocket, actor_to_spawn.AttachTransform, attach_target );
+                }
+            }
+        }
     }
 
     MarkItemDirty( new_entry );
