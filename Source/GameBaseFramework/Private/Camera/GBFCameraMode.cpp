@@ -477,7 +477,7 @@ void UGBFCameraModeStack::DrawDebug( UCanvas * canvas ) const
 
 void UGBFCameraModeStack::Reset()
 {
-    for ( const auto camera_mode : CameraModeStack )
+    for ( const auto & camera_mode : CameraModeStack )
     {
         camera_mode->Reset();
     }

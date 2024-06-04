@@ -36,7 +36,7 @@ void AGBFActorWithAbilities::BeginPlay()
         return;
     }
 
-    for ( const auto ability_set : AbilitySets )
+    for ( const auto & ability_set : AbilitySets )
     {
         ability_set->GiveToAbilitySystem( AbilitySystemComponent, nullptr );
     }
@@ -49,7 +49,7 @@ void AGBFActorWithAbilities::BeginPlay()
         AbilitySystemComponent->ApplyGameplayEffectSpecToSelf( *spec_handle.Data.Get() );
     }
 
-    for ( const auto attribute_set_class : AttributeSetClasses )
+    for ( const auto & attribute_set_class : AttributeSetClasses )
     {
         auto * attribute_set = NewObject< UAttributeSet >( this, attribute_set_class, NAME_None, RF_Transient );
         AbilitySystemComponent->AddSpawnedAttribute( attribute_set );

@@ -99,7 +99,7 @@ UGBFEquipmentInstance * FGBFEquipmentList::AddEntryInternal( UGBFEquipmentInstan
 
     if ( auto * asc = GetAbilitySystemComponent() )
     {
-        for ( const auto ability_set : equipment_cdo->AbilitySetsToGrant )
+        for ( const auto & ability_set : equipment_cdo->AbilitySetsToGrant )
         {
             ability_set->GiveToAbilitySystem( asc, /*inout*/ &new_entry.GrantedHandles, new_entry.Instance );
         }

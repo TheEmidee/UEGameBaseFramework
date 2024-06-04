@@ -6,7 +6,7 @@ const UGBFInventoryItemFragment * UGBFInventoryItemDefinition::FindFragmentByCla
 {
     if ( fragment_class != nullptr )
     {
-        for ( const auto fragment : Fragments )
+        for ( const auto & fragment : Fragments )
         {
             if ( fragment && fragment->IsA( fragment_class ) )
             {
