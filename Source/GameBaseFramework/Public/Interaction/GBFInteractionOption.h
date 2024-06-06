@@ -8,6 +8,7 @@
 class UInputAction;
 class UInputMappingContext;
 class UGBFInputConfig;
+class UUserWidget;
 class UAbilitySystemComponent;
 class IGBFInteractableTarget;
 
@@ -65,7 +66,7 @@ public:
     FText SubText;
 
     UPROPERTY( EditAnywhere )
-    EGBFInteractionAbilityTarget AbilityTarget;
+    EGBFInteractionAbilityTarget AbilityTarget = EGBFInteractionAbilityTarget::InteractableTarget;
 
     /** The ability to grant the avatar when they get near interactable objects. */
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
@@ -109,7 +110,7 @@ public:
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
 
     UPROPERTY( EditAnywhere )
-    EGBFInteractionGroup InteractionGroup;
+    EGBFInteractionGroup InteractionGroup = EGBFInteractionGroup::Exclusive;
 
     UPROPERTY( EditAnywhere )
     FGameplayTagRequirements InteractableTargetTagRequirements;

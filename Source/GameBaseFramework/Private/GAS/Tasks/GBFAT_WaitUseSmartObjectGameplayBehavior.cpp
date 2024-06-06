@@ -67,7 +67,7 @@ void UGBFAT_WaitUseSmartObjectGameplayBehavior::Activate()
     }
 }
 
-UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, const TArray< TSubclassOf< USmartObjectBehaviorDefinition > > behavior_definition_classes, const FGameplayTagQuery activity_tags )
+UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSmartObjectComponent( UGameplayAbility * owning_ability, USmartObjectComponent * smart_object_component, EGBFATSmartObjectComponentSlotSelection slot_selection, const TArray< TSubclassOf< USmartObjectBehaviorDefinition > > behavior_definition_classes, const FGameplayTagQuery activity_tags, ESmartObjectClaimPriority claim_priority )
 {
     auto * smart_object_subsystem = USmartObjectSubsystem::GetCurrent( owning_ability->GetWorld() );
 
@@ -134,16 +134,16 @@ UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBeh
             }
         }
 
-        claim_handle = smart_object_subsystem->MarkSlotAsClaimed( selected_slot );
+        claim_handle = smart_object_subsystem->MarkSlotAsClaimed( selected_slot, claim_priority );
     }
 
     return WaitUseSmartObjectGameplayBehaviorWithClaimHandle( owning_ability, claim_handle );
 }
 
-UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSlotHandle( UGameplayAbility * owning_ability, FSmartObjectSlotHandle slot_handle )
+UGBFAT_WaitUseSmartObjectGameplayBehavior * UGBFAT_WaitUseSmartObjectGameplayBehavior::WaitUseSmartObjectGameplayBehaviorWithSlotHandle( UGameplayAbility * owning_ability, FSmartObjectSlotHandle slot_handle, ESmartObjectClaimPriority claim_priority )
 {
     auto * smart_object_subsystem = USmartObjectSubsystem::GetCurrent( owning_ability->GetWorld() );
-    const auto claim_handle = smart_object_subsystem->MarkSlotAsClaimed( slot_handle );
+    const auto claim_handle = smart_object_subsystem->MarkSlotAsClaimed( slot_handle, claim_priority );
 
     return WaitUseSmartObjectGameplayBehaviorWithClaimHandle( owning_ability, claim_handle );
 }

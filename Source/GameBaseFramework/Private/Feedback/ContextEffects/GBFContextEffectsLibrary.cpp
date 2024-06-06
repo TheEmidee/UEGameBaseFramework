@@ -9,7 +9,7 @@ void UGBFContextEffectsLibrary::GetEffects( TArray< USoundBase * > & sounds, TAr
     if ( effect.IsValid() && context.IsValid() && EffectsLoadState == EGBFContextEffectsLibraryLoadState::Loaded )
     {
         // Loop through Context Effects
-        for ( const auto active_context_effect : ActiveContextEffects )
+        for ( const auto & active_context_effect : ActiveContextEffects )
         {
             // Make sure the Effect is an exact Tag Match and ensure the Context has all tags in the Effect (and neither or both are empty)
             if ( effect.MatchesTagExact( active_context_effect->EffectTag ) && context.HasAllExact( active_context_effect->Context ) && ( active_context_effect->Context.IsEmpty() == context.IsEmpty() ) )
