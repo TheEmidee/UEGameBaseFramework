@@ -39,6 +39,10 @@ struct GAMEBASEFRAMEWORK_API FGBFContextEffectAnimNotifyTraceSettings
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Trace )
     TEnumAsByte< ECollisionChannel > TraceChannel = ECollisionChannel::ECC_Visibility;
 
+    // Vector offset from Effect start Location
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Trace )
+    FVector StartTraceLocationOffset = FVector::ZeroVector;
+
     // Vector offset from Effect Location
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Trace )
     FVector EndTraceLocationOffset = FVector::ZeroVector;
