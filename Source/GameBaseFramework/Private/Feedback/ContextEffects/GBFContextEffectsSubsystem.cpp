@@ -1,6 +1,7 @@
 ﻿#include "Feedback/ContextEffects/GBFContextEffectsSubsystem.h"
 
 #include "Feedback/ContextEffects/GBFContextEffectsLibrary.h"
+#include "NiagaraComponent.h"
 
 #include <Kismet/GameplayStatics.h>
 #include <NiagaraFunctionLibrary.h>
@@ -67,6 +68,7 @@ void UGBFContextEffectsSubsystem::SpawnContextEffects( const AActor * spawning_a
             {
                 // Spawn Niagara Systems Attached, add Niagara Component to List of NCs
                 auto * niagara_component = UNiagaraFunctionLibrary::SpawnSystemAttached( niagara_system, attach_to_component, attach_point, location_offset, rotation_offset, vfx_scale, EAttachLocation::KeepRelativeOffset, true, ENCPoolMethod::None, true, true );
+                niagara_component->SetOnlyOwnerSee( only_owner_see );
                 niagara_out.Add( niagara_component );
             }
         }
