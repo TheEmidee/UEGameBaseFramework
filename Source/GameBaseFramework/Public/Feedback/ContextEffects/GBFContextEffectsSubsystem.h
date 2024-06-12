@@ -49,6 +49,7 @@ public:
         TArray< UAudioComponent * > & audio_out,
         TArray< UNiagaraComponent * > & niagara_out,
         FVector vfx_scale = FVector( 1 ),
+        const bool only_owner_see = false,
         float audio_volume = 1,
         float audio_pitch = 1 );
 

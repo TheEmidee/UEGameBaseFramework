@@ -27,6 +27,7 @@ FGBFContextEffectInfos::FGBFContextEffectInfos(
     const FHitResult & hit_result,
     const FGameplayTagContainer & contexts,
     const FVector & vfx_scale,
+    const bool only_owner_see,
     const float audio_volume,
     const float audio_pitch ) :
 
@@ -40,6 +41,7 @@ FGBFContextEffectInfos::FGBFContextEffectInfos(
     HitResult( hit_result ),
     Contexts( contexts ),
     VfxScale( vfx_scale ),
+    bOnlyOwnerSee( only_owner_see ),
     AudioVolume( audio_volume ),
     AudioPitch( audio_pitch )
 {
