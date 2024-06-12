@@ -3,6 +3,7 @@
 #include "Feedback/ContextEffects/GBFContextEffectsInterface.h"
 #include "Feedback/ContextEffects/GBFContextEffectsLibrary.h"
 #include "Feedback/ContextEffects/GBFContextEffectsSubsystem.h"
+#include "NiagaraComponent.h"
 
 #include <Components/SkeletalMeshComponent.h>
 #include <Engine/World.h>
@@ -110,6 +111,7 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
                     hit_result,
                     contexts,
                     VFXProperties.Scale,
+                    static_cast< bool >( VFXProperties.bOnlyOwnerSee ),
                     AudioProperties.VolumeMultiplier,
                     AudioProperties.PitchMultiplier } );
         }
@@ -180,7 +182,8 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
                     // Cycle through Niagara Systems and call Spawn System Attached, passing in relevant data
                     for ( auto * niagara_system : total_niagara_systems )
                     {
-                        UNiagaraFunctionLibrary::SpawnSystemAttached( niagara_system, mesh_comp, ( bAttached ? SocketName : FName( "None" ) ), LocationOffset, RotationOffset, VFXProperties.Scale, EAttachLocation::KeepRelativeOffset, true, ENCPoolMethod::None, true, true );
+                        auto * niagara_component = UNiagaraFunctionLibrary::SpawnSystemAttached( niagara_system, mesh_comp, ( bAttached ? SocketName : FName( "None" ) ), LocationOffset, RotationOffset, VFXProperties.Scale, EAttachLocation::KeepRelativeOffset, true, ENCPoolMethod::None, true, true );
+                        niagara_component->SetOnlyOwnerSee( VFXProperties.bOnlyOwnerSee );
                     }
                 }
             }
@@ -204,6 +207,7 @@ void UGBFAnimNotify_ContextEffects::SetParameters( const FGameplayTag effect_in,
     LocationOffset = location_offset_in;
     RotationOffset = rotation_offset_in;
     VFXProperties.Scale = vfx_properties_in.Scale;
+    VFXProperties.bOnlyOwnerSee = vfx_properties_in.bOnlyOwnerSee;
     AudioProperties.PitchMultiplier = audio_properties_in.PitchMultiplier;
     AudioProperties.VolumeMultiplier = audio_properties_in.VolumeMultiplier;
     bAttached = attached_in;

@@ -1,6 +1,7 @@
 ﻿#include "Feedback/ContextEffects/GBFContextEffectsComponent.h"
 
 #include "Feedback/ContextEffects/GBFContextEffectsSubsystem.h"
+#include "NiagaraComponent.h"
 
 #include <Engine/World.h>
 #include <PhysicalMaterials/PhysicalMaterial.h>
@@ -108,7 +109,20 @@ void UGBFContextEffectsComponent::AnimMotionEffect_Implementation( const FGBFCon
             TArray< UNiagaraComponent * > niagara_components;
 
             // Spawn effects
-            context_effects_subsystem->SpawnContextEffects( GetOwner(), context_effect_infos.StaticMeshComponent, context_effect_infos.Bone, context_effect_infos.LocationOffset, context_effect_infos.RotationOffset, context_effect_infos.MotionEffect, total_contexts, audio_components, niagara_components, context_effect_infos.VfxScale, context_effect_infos.AudioVolume, context_effect_infos.AudioPitch );
+            context_effects_subsystem->SpawnContextEffects(
+                GetOwner(),
+                context_effect_infos.StaticMeshComponent,
+                context_effect_infos.Bone,
+                context_effect_infos.LocationOffset,
+                context_effect_infos.RotationOffset,
+                context_effect_infos.MotionEffect,
+                total_contexts,
+                audio_components,
+                niagara_components,
+                context_effect_infos.VfxScale,
+                context_effect_infos.bOnlyOwnerSee,
+                context_effect_infos.AudioVolume,
+                context_effect_infos.AudioPitch );
 
             // Append resultant effects
             audio_components_to_add.Append( audio_components );

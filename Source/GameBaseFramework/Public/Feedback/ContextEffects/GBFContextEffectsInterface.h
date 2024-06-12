@@ -31,6 +31,7 @@ struct FGBFContextEffectInfos
         const FHitResult & hit_result,
         const FGameplayTagContainer & contexts,
         const FVector & vfx_scale = FVector( 1 ),
+        const bool only_owner_see = false,
         float audio_volume = 1,
         float audio_pitch = 1 );
 
@@ -63,6 +64,9 @@ struct FGBFContextEffectInfos
 
     UPROPERTY( EditAnywhere )
     FVector VfxScale = FVector( 1 );
+
+    UPROPERTY( EditAnywhere )
+    uint8 bOnlyOwnerSee : 1;
 
     UPROPERTY( EditAnywhere )
     float AudioVolume = 1;

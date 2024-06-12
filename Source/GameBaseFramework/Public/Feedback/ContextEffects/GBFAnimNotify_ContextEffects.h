@@ -14,6 +14,10 @@ struct GAMEBASEFRAMEWORK_API FGBFContextEffectAnimNotifyVFXSettings
     // Scale to spawn the particle system at
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = FX )
     FVector Scale = FVector( 1.0f, 1.0f, 1.0f );
+
+    // Whether only the owner can see the VFX or everyone
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = FX )
+    uint8 bOnlyOwnerSee : 1;
 };
 
 USTRUCT( BlueprintType )

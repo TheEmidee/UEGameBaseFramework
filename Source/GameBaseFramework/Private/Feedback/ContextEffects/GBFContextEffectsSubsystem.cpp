@@ -16,6 +16,7 @@ void UGBFContextEffectsSubsystem::SpawnContextEffects( const AActor * spawning_a
     TArray< UAudioComponent * > & audio_out,
     TArray< UNiagaraComponent * > & niagara_out,
     const FVector vfx_scale,
+    const bool only_owner_see,
     const float audio_volume,
     const float audio_pitch )
 {
