@@ -77,7 +77,7 @@ void UGBFLocalPlayer::LoadSharedSettingsFromDisk( bool force_load )
         return;
     }
 
-    ensure( UGBFSettingsShared::AsyncLoadOrCreateSettings( this, GetSaveGameClass(), UGBFSettingsShared::FGBFOnSettingsLoadedEvent::CreateUObject( this, &UGBFLocalPlayer::OnSharedSettingsLoaded ) ) );
+    ensure( UGBFSettingsShared::AsyncLoadOrCreateSettings( this, GetSharedSettingsClass(), UGBFSettingsShared::FGBFOnSettingsLoadedEvent::CreateUObject( this, &UGBFLocalPlayer::OnSharedSettingsLoaded ) ) );
 }
 
 void UGBFLocalPlayer::OnSharedSettingsLoaded( UGBFSettingsShared * loaded_or_created_settings )
@@ -99,7 +99,7 @@ void UGBFLocalPlayer::OnAudioOutputDeviceChanged( const FString & audio_output_d
     UAudioMixerBlueprintLibrary::SwapAudioOutputDevice( GetWorld(), audio_output_device_id, devices_swapped_callback );
 }
 
-TSubclassOf< UGBFSettingsShared > UGBFLocalPlayer::GetSaveGameClass() const
+TSubclassOf< UGBFSettingsShared > UGBFLocalPlayer::GetSharedSettingsClass() const
 {
     return UGBFSettingsShared::StaticClass();
 }

@@ -37,7 +37,7 @@ public:
 protected:
     void OnSharedSettingsLoaded( UGBFSettingsShared * loaded_or_created_settings );
     void OnAudioOutputDeviceChanged( const FString & audio_output_device_id );
-    virtual TSubclassOf< UGBFSettingsShared > GetSaveGameClass() const;
+    virtual TSubclassOf< UGBFSettingsShared > GetSharedSettingsClass() const;
 
     UFUNCTION()
     void OnCompletedAudioDeviceSwap( const FSwapAudioOutputResult & swap_result );
