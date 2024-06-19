@@ -86,11 +86,13 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
+    auto & actions_per_input_config = hero_component->GetBoundActionsByInputconfig();
+
+    for ( auto & [ input_config, actions ] : actions_per_input_config )
     {
         for ( auto & tag : InputTagsToCheck )
         {
-            if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
+            if ( const auto * input_action = input_config->FindAbilityInputActionForTag( tag ) )
             {
                 BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
             }

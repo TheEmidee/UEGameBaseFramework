@@ -12,6 +12,16 @@ class UGBFInputComponent;
 class UGBFInputConfig;
 class UGBFCameraMode;
 
+USTRUCT()
+struct FGBFBoundInputHandles
+{
+    GENERATED_BODY()
+
+public:
+    UPROPERTY()
+    TArray< uint32 > Handles;
+};
+
 UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFHeroComponent : public UGBFPawnComponent
 {
@@ -48,7 +58,7 @@ public:
     /** Clears the camera override if it is set */
     void ClearAbilityCameraMode( const FGameplayAbilitySpecHandle & owning_spec_handle );
 
-    const TMap< const UGBFInputConfig *, TArray< uint32 > > & GetBoundActionsByInputconfig() const;
+    const TMap< const UGBFInputConfig *, FGBFBoundInputHandles > & GetBoundActionsByInputconfig() const;
 
 protected:
     void OnRegister() override;
@@ -82,10 +92,11 @@ private:
     UPROPERTY()
     TSubclassOf< UGBFCameraMode > AbilityCameraMode;
 
+    UPROPERTY()
+    TMap< const UGBFInputConfig *, FGBFBoundInputHandles > BoundActionsByInputConfig;
+
     /** Spec handle for the last ability to set a camera mode. */
     FGameplayAbilitySpecHandle AbilityCameraModeOwningSpecHandle;
-
-    TMap< const UGBFInputConfig *, TArray< uint32 > > BoundActionsByInputConfig;
 };
 
 FORCEINLINE bool UGBFHeroComponent::IsReadyToBindInputs() const

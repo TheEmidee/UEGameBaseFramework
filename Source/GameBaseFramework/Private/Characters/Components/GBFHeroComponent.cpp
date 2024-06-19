@@ -175,7 +175,7 @@ void UGBFHeroComponent::AddAdditionalInputConfig( const UGBFInputConfig * input_
         if ( ensureAlways( BoundActionsByInputConfig.Find( input_config ) == nullptr ) )
         {
             auto & bind_handles = BoundActionsByInputConfig.Add( input_config );
-            input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles );
+            input_component->BindAbilityActions( input_config, this, &ThisClass::Input_AbilityInputTagPressed, &ThisClass::Input_AbilityInputTagReleased, /*out*/ bind_handles.Handles );
         }
     }
 }
@@ -196,7 +196,7 @@ void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * inp
 
     if ( auto * bind_handles = BoundActionsByInputConfig.Find( input_config ) )
     {
-        input_component->RemoveBinds( *bind_handles );
+        input_component->RemoveBinds( bind_handles->Handles );
         BoundActionsByInputConfig.Remove( input_config );
     }
 }
@@ -224,7 +224,7 @@ void UGBFHeroComponent::ClearAbilityCameraMode( const FGameplayAbilitySpecHandle
     }
 }
 
-const TMap< const UGBFInputConfig *, TArray< uint32 > > & UGBFHeroComponent::GetBoundActionsByInputconfig() const
+const TMap< const UGBFInputConfig *, FGBFBoundInputHandles > & UGBFHeroComponent::GetBoundActionsByInputconfig() const
 {
     return BoundActionsByInputConfig;
 }
