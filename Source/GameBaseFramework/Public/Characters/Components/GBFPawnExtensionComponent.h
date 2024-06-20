@@ -90,7 +90,7 @@ protected:
     UPROPERTY( EditInstanceOnly, ReplicatedUsing = OnRep_PawnData, Category = "GameBaseFramework|Pawn" )
     const UGBFPawnData * PawnData;
 
-    UPROPERTY()
+    UPROPERTY( Transient )
     UGBFAbilitySystemComponent * AbilitySystemComponent;
 };
 

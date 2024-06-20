@@ -119,24 +119,25 @@ void UGBFAbilitySystemComponent::InitAbilityActorInfo( AActor * owner_actor, AAc
         // Notify all abilities that a new pawn avatar has been set
         for ( const auto & ability_spec : ActivatableAbilities.Items )
         {
-            auto * gas_ext_ability_cdo = CastChecked< UGBFGameplayAbility >( ability_spec.Ability );
-
-            if ( gas_ext_ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
+            if ( auto * gas_ext_ability_cdo = Cast< UGBFGameplayAbility >( ability_spec.Ability ) )
             {
-                const auto & instances = ability_spec.GetAbilityInstances();
-                for ( UGameplayAbility * AbilityInstance : instances )
+                if ( gas_ext_ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
                 {
-                    auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( AbilityInstance );
-                    if ( gas_ext_ability_instance != nullptr )
+                    const auto & instances = ability_spec.GetAbilityInstances();
+                    for ( UGameplayAbility * AbilityInstance : instances )
                     {
-                        // Ability instances may be missing for replays
-                        gas_ext_ability_instance->OnPawnAvatarSet();
+                        auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( AbilityInstance );
+                        if ( gas_ext_ability_instance != nullptr )
+                        {
+                            // Ability instances may be missing for replays
+                            gas_ext_ability_instance->OnPawnAvatarSet();
+                        }
                     }
                 }
-            }
-            else
-            {
-                gas_ext_ability_cdo->OnPawnAvatarSet();
+                else
+                {
+                    gas_ext_ability_cdo->OnPawnAvatarSet();
+                }
             }
         }
 
@@ -271,11 +272,12 @@ void UGBFAbilitySystemComponent::ProcessAbilityInput( float delta_time, bool gam
         {
             if ( ability_spec->Ability && !ability_spec->IsActive() )
             {
-                const auto * ability_cdo = CastChecked< UGBFGameplayAbility >( ability_spec->Ability );
-
-                if ( ability_cdo->GetActivationPolicy() == EGBFAbilityActivationPolicy::WhileInputActive )
+                if ( const auto * ability_cdo = Cast< UGBFGameplayAbility >( ability_spec->Ability ) )
                 {
-                    AbilitiesToActivate.AddUnique( ability_spec->Handle );
+                    if ( ability_cdo->GetActivationPolicy() == EGBFAbilityActivationPolicy::WhileInputActive )
+                    {
+                        AbilitiesToActivate.AddUnique( ability_spec->Handle );
+                    }
                 }
             }
         }
@@ -299,11 +301,12 @@ void UGBFAbilitySystemComponent::ProcessAbilityInput( float delta_time, bool gam
                 }
                 else
                 {
-                    const auto * ability_cdo = CastChecked< UGBFGameplayAbility >( ability_spec->Ability );
-
-                    if ( ability_cdo->GetActivationPolicy() == EGBFAbilityActivationPolicy::OnInputTriggered )
+                    if ( const auto * ability_cdo = Cast< UGBFGameplayAbility >( ability_spec->Ability ) )
                     {
-                        AbilitiesToActivate.AddUnique( ability_spec->Handle );
+                        if ( ability_cdo->GetActivationPolicy() == EGBFAbilityActivationPolicy::OnInputTriggered )
+                        {
+                            AbilitiesToActivate.AddUnique( ability_spec->Handle );
+                        }
                     }
                 }
             }
@@ -882,37 +885,39 @@ void UGBFAbilitySystemComponent::CancelAbilitiesByFunc( const TShouldCancelAbili
             continue;
         }
 
-        auto * ability_cdo = CastChecked< UGBFGameplayAbility >( ability_spec.Ability );
-
-        if ( ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
+        if ( auto * ability_cdo = Cast< UGBFGameplayAbility >( ability_spec.Ability ) )
         {
-            // Cancel all the spawned instances, not the CDO.
-            const auto & instances = ability_spec.GetAbilityInstances();
-            for ( auto * ability_instance : instances )
+            if ( ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
             {
-                auto * gas_ext_ability_instance = CastChecked< UGBFGameplayAbility >( ability_instance );
-
-                if ( predicate( gas_ext_ability_instance, ability_spec.Handle ) )
+                // Cancel all the spawned instances, not the CDO.
+                const auto & instances = ability_spec.GetAbilityInstances();
+                for ( auto * ability_instance : instances )
                 {
-                    if ( gas_ext_ability_instance->CanBeCanceled() )
+                    if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( ability_instance ) )
                     {
-                        gas_ext_ability_instance->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), gas_ext_ability_instance->GetCurrentActivationInfo(), replicate_cancel_ability );
-                    }
-                    else
-                    {
-                        UE_LOG( LogTemp, Error, TEXT( "CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false." ), *gas_ext_ability_instance->GetName() );
+                        if ( predicate( gas_ext_ability_instance, ability_spec.Handle ) )
+                        {
+                            if ( gas_ext_ability_instance->CanBeCanceled() )
+                            {
+                                gas_ext_ability_instance->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), gas_ext_ability_instance->GetCurrentActivationInfo(), replicate_cancel_ability );
+                            }
+                            else
+                            {
+                                UE_LOG( LogTemp, Error, TEXT( "CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false." ), *gas_ext_ability_instance->GetName() );
+                            }
+                        }
                     }
                 }
             }
-        }
-        else
-        {
-            // Cancel the non-instanced ability CDO.
-            if ( predicate( ability_cdo, ability_spec.Handle ) )
+            else
             {
-                // Non-instanced abilities can always be canceled.
-                check( ability_cdo->CanBeCanceled() );
-                ability_cdo->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), FGameplayAbilityActivationInfo(), replicate_cancel_ability );
+                // Cancel the non-instanced ability CDO.
+                if ( predicate( ability_cdo, ability_spec.Handle ) )
+                {
+                    // Non-instanced abilities can always be canceled.
+                    check( ability_cdo->CanBeCanceled() );
+                    ability_cdo->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), FGameplayAbilityActivationInfo(), replicate_cancel_ability );
+                }
             }
         }
     }
@@ -958,8 +963,10 @@ void UGBFAbilitySystemComponent::TryActivateAbilitiesOnSpawn()
     ABILITYLIST_SCOPE_LOCK();
     for ( const FGameplayAbilitySpec & ability_spec : ActivatableAbilities.Items )
     {
-        const auto * ability_cdo = CastChecked< UGBFGameplayAbility >( ability_spec.Ability );
-        ability_cdo->TryActivateAbilityOnSpawn( AbilityActorInfo.Get(), ability_spec );
+        if ( const auto * ability_cdo = Cast< UGBFGameplayAbility >( ability_spec.Ability ) )
+        {
+            ability_cdo->TryActivateAbilityOnSpawn( AbilityActorInfo.Get(), ability_spec );
+        }
     }
 }
 
@@ -967,9 +974,10 @@ void UGBFAbilitySystemComponent::NotifyAbilityActivated( const FGameplayAbilityS
 {
     Super::NotifyAbilityActivated( Handle, Ability );
 
-    auto * ability = CastChecked< UGBFGameplayAbility >( Ability );
-
-    AddAbilityToActivationGroup( ability->GetActivationGroup(), ability );
+    if ( auto * ability = Cast< UGBFGameplayAbility >( Ability ) )
+    {
+        AddAbilityToActivationGroup( ability->GetActivationGroup(), ability );
+    }
 }
 
 void UGBFAbilitySystemComponent::NotifyAbilityFailed( const FGameplayAbilitySpecHandle Handle, UGameplayAbility * Ability, const FGameplayTagContainer & FailureReason )
@@ -996,9 +1004,10 @@ void UGBFAbilitySystemComponent::NotifyAbilityEnded( const FGameplayAbilitySpecH
     // If AnimatingAbility ended, clear the pointer
     ClearAnimatingAbilityForAllMeshes( ability );
 
-    const auto * gas_ext_ability = CastChecked< UGBFGameplayAbility >( ability );
-
-    RemoveAbilityFromActivationGroup( gas_ext_ability->GetActivationGroup(), gas_ext_ability );
+    if ( const auto * gas_ext_ability = Cast< UGBFGameplayAbility >( ability ) )
+    {
+        RemoveAbilityFromActivationGroup( gas_ext_ability->GetActivationGroup(), gas_ext_ability );
+    }
 }
 
 void UGBFAbilitySystemComponent::K2_RemoveGameplayCue( const FGameplayTag gameplay_cue_tag )
