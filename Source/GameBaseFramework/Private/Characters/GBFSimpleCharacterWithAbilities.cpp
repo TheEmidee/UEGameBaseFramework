@@ -3,7 +3,7 @@
 #include "GAS/Abilities/GBFAbilitySet.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 
-AGBFSimpleCharacterWithAbilities::AGBFSimpleCharacterWithAbilities()
+AGBFSimpleCharacterWithAbilities::AGBFSimpleCharacterWithAbilities( const FObjectInitializer & object_initializer )
 {
     PrimaryActorTick.bCanEverTick = true;
 

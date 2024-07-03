@@ -24,7 +24,7 @@ class GAMEBASEFRAMEWORK_API AGBFSimpleCharacterWithAbilities : public ACharacter
     GENERATED_BODY()
 
 public:
-    AGBFSimpleCharacterWithAbilities();
+    explicit AGBFSimpleCharacterWithAbilities( const FObjectInitializer & object_initializer );
 
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
     void PostInitializeComponents() override;
