@@ -140,6 +140,11 @@ void UGBFGameFeatureAction_AddWidget::AddWidgets( AActor * actor, FPerContextDat
 {
     const auto * hud = CastChecked< AGBFHUD >( actor );
 
+    if ( hud->GetOwningPlayerController() == nullptr )
+    {
+        return;
+    }
+
     auto & asset_manager = UGBFAssetManager::Get();
 
     if ( auto * local_player = Cast< ULocalPlayer >( hud->GetOwningPlayerController()->Player ) )

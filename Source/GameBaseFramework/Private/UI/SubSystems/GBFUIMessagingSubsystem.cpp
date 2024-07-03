@@ -17,7 +17,7 @@ void UGBFUIMessagingSubsystem::Initialize( FSubsystemCollectionBase & collection
 
 void UGBFUIMessagingSubsystem::ShowConfirmation( UCommonGameDialogDescriptor * dialog_descriptor, TSubclassOf< UCommonGameDialog > custom_dialog_widget, FCommonMessagingResultDelegate result_callback )
 {
-    if ( const auto * local_player = GetLocalPlayer< UGBFLocalPlayer >() )
+    if ( const auto * local_player = GetLocalPlayer< UCommonLocalPlayer >() )
     {
         if ( auto * root_layout = local_player->GetRootUILayout() )
         {
@@ -30,7 +30,7 @@ void UGBFUIMessagingSubsystem::ShowConfirmation( UCommonGameDialogDescriptor * d
 
 void UGBFUIMessagingSubsystem::ShowError( UCommonGameDialogDescriptor * dialog_descriptor, FCommonMessagingResultDelegate result_callback )
 {
-    if ( const auto * local_player = GetLocalPlayer< UGBFLocalPlayer >() )
+    if ( const auto * local_player = GetLocalPlayer< UCommonLocalPlayer >() )
     {
         if ( auto * root_layout = local_player->GetRootUILayout() )
         {

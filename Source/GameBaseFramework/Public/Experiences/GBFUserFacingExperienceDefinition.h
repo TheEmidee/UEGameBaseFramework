@@ -20,8 +20,8 @@ public:
     static FPrimaryAssetType GetPrimaryAssetType();
 
     /** Create a request object that is used to actually start a session with these settings */
-    UFUNCTION( BlueprintCallable, BlueprintPure = false )
-    UCommonSession_HostSessionRequest * CreateHostingRequest() const;
+    UFUNCTION( BlueprintCallable, BlueprintPure = false, meta = ( WorldContext = "context" ) )
+    UCommonSession_HostSessionRequest * CreateHostingRequest( const UObject * context ) const;
 
     /** The specific map to load */
     UPROPERTY( BlueprintReadWrite, EditAnywhere, Category = Experience, meta = ( AllowedTypes = "Map" ) )

@@ -538,7 +538,7 @@ bool AGBFGameMode::IsExperienceLoaded() const
     return experience_component->IsExperienceLoaded();
 }
 
-void AGBFGameMode::OnUserInitializedForDedicatedServer( const UCommonUserInfo * /*user_info*/, const bool is_successful, FText /*error*/, ECommonUserPrivilege /*requested_privilege*/, ECommonUserOnlineContext /*online_context*/ )
+void AGBFGameMode::OnUserInitializedForDedicatedServer( const UCommonUserInfo * user_info, const bool is_successful, FText /*error*/, ECommonUserPrivilege /*requested_privilege*/, ECommonUserOnlineContext /*online_context*/ )
 {
     if ( const auto * game_instance = GetGameInstance() )
     {
@@ -546,7 +546,7 @@ void AGBFGameMode::OnUserInitializedForDedicatedServer( const UCommonUserInfo * 
         auto * user_subsystem = game_instance->GetSubsystem< UCommonUserSubsystem >();
         user_subsystem->OnUserInitializeComplete.RemoveDynamic( this, &ThisClass::OnUserInitializedForDedicatedServer );
 
-        if ( is_successful )
+        if ( is_successful && ensure( user_info ) )
         {
             // Online login worked, start a full online game
             UE_LOG( LogGBF_Experience, Log, TEXT( "Dedicated server online login succeeded, starting online server" ) );
@@ -626,7 +626,7 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
          ensure( found_experience != nullptr && game_instance != nullptr ) )
     {
         // Actually host the game
-        if ( auto * host_request = found_experience->CreateHostingRequest();
+        if ( auto * host_request = found_experience->CreateHostingRequest( this );
              ensure( host_request != nullptr ) )
         {
             // :TODO: MIKE The experience defines that already
