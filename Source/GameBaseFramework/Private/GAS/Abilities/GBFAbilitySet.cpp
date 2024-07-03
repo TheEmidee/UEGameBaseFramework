@@ -112,26 +112,6 @@ void UGBFAbilitySet::GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbi
         }
     }
 
-    // Grant the gameplay effects.
-    for ( auto effect_index = 0; effect_index < GrantedGameplayEffects.Num(); ++effect_index )
-    {
-        const auto & effect_to_grant = GrantedGameplayEffects[ effect_index ];
-
-        if ( !IsValid( effect_to_grant.GameplayEffect ) )
-        {
-            UE_LOG( LogGBF_GAS, Error, TEXT( "GrantedGameplayEffects[%d] on ability set [%s] is not valid" ), effect_index, *GetNameSafe( this ) );
-            continue;
-        }
-
-        const auto * gameplay_effect = effect_to_grant.GameplayEffect->GetDefaultObject< UGameplayEffect >();
-        const auto gameplay_effect_handle = asc->ApplyGameplayEffectToSelf( gameplay_effect, effect_to_grant.EffectLevel, asc->MakeEffectContext() );
-
-        if ( out_granted_handles != nullptr )
-        {
-            out_granted_handles->AddGameplayEffectHandle( gameplay_effect_handle );
-        }
-    }
-
     // Grant the attribute sets.
     for ( auto set_index = 0; set_index < GrantedAttributes.Num(); ++set_index )
     {
@@ -149,6 +129,26 @@ void UGBFAbilitySet::GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbi
         if ( out_granted_handles != nullptr )
         {
             out_granted_handles->AddAttributeSet( new_set );
+        }
+    }
+
+    // Grant the gameplay effects.
+    for ( auto effect_index = 0; effect_index < GrantedGameplayEffects.Num(); ++effect_index )
+    {
+        const auto & effect_to_grant = GrantedGameplayEffects[ effect_index ];
+
+        if ( !IsValid( effect_to_grant.GameplayEffect ) )
+        {
+            UE_LOG( LogGBF_GAS, Error, TEXT( "GrantedGameplayEffects[%d] on ability set [%s] is not valid" ), effect_index, *GetNameSafe( this ) );
+            continue;
+        }
+
+        const auto * gameplay_effect = effect_to_grant.GameplayEffect->GetDefaultObject< UGameplayEffect >();
+        const auto gameplay_effect_handle = asc->ApplyGameplayEffectToSelf( gameplay_effect, effect_to_grant.EffectLevel, asc->MakeEffectContext() );
+
+        if ( out_granted_handles != nullptr )
+        {
+            out_granted_handles->AddGameplayEffectHandle( gameplay_effect_handle );
         }
     }
 }
