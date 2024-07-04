@@ -144,8 +144,5 @@ private:
     UPROPERTY( EditDefaultsOnly )
     TEnumAsByte< ECollisionChannel > InteractionTraceChannel;
 
-    UPROPERTY( EditDefaultsOnly )
-    TSoftClassPtr< UUserWidget > DefaultInteractionWidgetClass;
-
     TMap< TWeakObjectPtr< AActor >, InteractableTargetContext > InteractableTargetContexts;
 };
