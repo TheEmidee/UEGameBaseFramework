@@ -2,6 +2,7 @@
 
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
+#include "Characters/GBFPawnData.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "Input/GBFInputComponent.h"
 
@@ -32,6 +33,11 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
         return;
     }
 
+    if ( GetPawn< APawn >() == nullptr || GetPawn< APawn >()->IsBotControlled() )
+    {
+        return;
+    }
+
     Reset();
     TriggerPriority = trigger_priority;
     InputTagsToCheck = input_tags_to_check;
@@ -44,6 +50,11 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
 
 void UGBFAbilityInputBufferComponent::StopMonitoring()
 {
+    if ( GetPawn< APawn >() == nullptr || GetPawn< APawn >()->IsBotControlled() )
+    {
+        return;
+    }
+
     RemoveBinds();
     TryToTriggerAbility();
     Reset();
@@ -86,18 +97,19 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    auto & actions_per_input_config = hero_component->GetBoundActionsByInputconfig();
+    // :FIXME: mg Ability input config is null, comment for hotfix
 
-    for ( auto & [ input_config, actions ] : actions_per_input_config )
-    {
-        for ( auto & tag : InputTagsToCheck )
-        {
-            if ( const auto * input_action = input_config->FindAbilityInputActionForTag( tag ) )
-            {
-                BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
-            }
-        }
-    }
+    // for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
+    // {
+    //     for ( auto & tag : InputTagsToCheck )
+    //     {
+    //         if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
+    //         {
+    //             // Need to investigate why input is bind but not triggered
+    //             BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
+    //         }
+    //     }
+    // }
 }
 
 void UGBFAbilityInputBufferComponent::RemoveBinds()

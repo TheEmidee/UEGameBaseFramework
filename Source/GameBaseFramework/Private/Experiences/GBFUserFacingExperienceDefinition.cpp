@@ -42,7 +42,7 @@ UCommonSession_HostSessionRequest * UGBFUserFacingExperienceDefinition::CreateHo
             }
         }
     }
-    
+
     if ( result == nullptr )
     {
         result = NewObject< UCommonSession_HostSessionRequest >();
