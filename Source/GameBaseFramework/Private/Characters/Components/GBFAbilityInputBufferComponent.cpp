@@ -97,7 +97,7 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    // mg Ability input config is null, comment for hotfix
+    // :FIXME: mg Ability input config is null, comment for hotfix
 
     // for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
     // {
