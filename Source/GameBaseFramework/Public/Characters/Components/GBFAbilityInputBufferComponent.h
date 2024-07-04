@@ -21,7 +21,7 @@ class GAMEBASEFRAMEWORK_API UGBFAbilityInputBufferComponent final : public UPawn
 public:
     UGBFAbilityInputBufferComponent( const FObjectInitializer & object_initializer );
 
-    UFUNCTION( BlueprintCallable, Meta = (GameplayTagFilter = "Input") )
+    UFUNCTION( BlueprintCallable, Meta = ( GameplayTagFilter = "Input" ) )
     void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
 
     UFUNCTION( BlueprintCallable )
