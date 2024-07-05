@@ -44,6 +44,9 @@ public:
     UFUNCTION( BlueprintCallable )
     void SetForceDisableSplitscreen( bool disable );
 
+    UFUNCTION( BlueprintCallable )
+    void SetSplitScreenBorderWidth( int width );
+
     void Tick( float delta_time ) override;
     TStatId GetStatId() const override;
 

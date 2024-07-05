@@ -73,9 +73,11 @@ public:
     const FGBFViewPortPlayerOffset & GetSplitScreenLayoutOffset() const;
     void LayoutPlayers() override;
     void RemapControllerInput( FInputKeyEventArgs & key_event ) override;
+    void SetSplitScreenBorderWidth( int border_width );
 
 private:
     FGBFViewPortPlayerOffset SplitScreenLayoutOffset;
+    int SplitScreenBorderWidth;
 };
 
 FORCEINLINE void UGBFGameViewportClient::SetSplitScreenLayoutOffset( const FGBFViewPortPlayerOffset & offset )

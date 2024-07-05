@@ -131,6 +131,17 @@ void UGBFLocalMultiplayerSubsystem::SetForceDisableSplitscreen( bool disable )
     }
 }
 
+void UGBFLocalMultiplayerSubsystem::SetSplitScreenBorderWidth( int width )
+{
+    if ( const auto * world = GetWorld() )
+    {
+        if ( auto * viewport = Cast< UGBFGameViewportClient >( world->GetGameViewport() ) )
+        {
+            viewport->SetSplitScreenBorderWidth( width );
+        }
+    }
+}
+
 void UGBFLocalMultiplayerSubsystem::Tick( float delta_time )
 {
     Super::Tick( delta_time );
