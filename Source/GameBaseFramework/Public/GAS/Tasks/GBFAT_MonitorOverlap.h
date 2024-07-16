@@ -7,7 +7,7 @@
 
 class UPrimitiveComponent;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FOnMonitorOverlapDelegate, AActor *, OtherActor, UPrimitiveComponent *, OtherComponent );
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams( FOnMonitorOverlapDelegate, AActor *, OtherActor, UPrimitiveComponent *, OtherComponent, UPrimitiveComponent *, OverlapedComponent );
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAT_MonitorOverlap final : public UAbilityTask
