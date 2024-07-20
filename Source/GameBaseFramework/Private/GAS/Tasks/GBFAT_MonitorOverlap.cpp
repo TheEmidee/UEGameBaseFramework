@@ -51,19 +51,19 @@ UPrimitiveComponent * UGBFAT_MonitorOverlap::GetPrimitiveComponent()
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFAT_MonitorOverlap::OnComponentBeginOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*hit_result*/ )
+void UGBFAT_MonitorOverlap::OnComponentBeginOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/, bool /*from_sweep*/, const FHitResult & /*hit_result*/ )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
-        OnComponentBeginOverlapDelegate.Broadcast( other_actor, other_component );
+        OnComponentBeginOverlapDelegate.Broadcast( other_actor, other_component, overlapped_component );
     }
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void UGBFAT_MonitorOverlap::OnComponentEndOverlap( UPrimitiveComponent * /*overlapped_component*/, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/ )
+void UGBFAT_MonitorOverlap::OnComponentEndOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 /*other_body_index*/ )
 {
     if ( ShouldBroadcastAbilityTaskDelegates() )
     {
-        OnComponentEndOverlapDelegate.Broadcast( other_actor, other_component );
+        OnComponentEndOverlapDelegate.Broadcast( other_actor, other_component, overlapped_component );
     }
 }
