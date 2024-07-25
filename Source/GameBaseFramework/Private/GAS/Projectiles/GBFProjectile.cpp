@@ -206,7 +206,7 @@ void AGBFProjectile::OnProjectileStop( const FHitResult & hit_result )
     ProcessHit( hit_result );
 }
 
-void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * /*other_actor*/, UPrimitiveComponent * other_component, int32 /* other_body_index */, bool from_sweep, const FHitResult & sweep_hit_result )
+void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * other_actor, UPrimitiveComponent * other_component, int32 /* other_body_index */, bool from_sweep, const FHitResult & sweep_hit_result )
 {
     if ( IsInOverlap )
     {
@@ -224,6 +224,11 @@ void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* ove
     else
     {
         other_component->SweepComponent( hit_result, GetActorLocation() - GetVelocity() * 10.f, GetActorLocation() + GetVelocity(), FQuat::Identity, SphereComponent->GetCollisionShape(), SphereComponent->bTraceComplexOnMove );
+    }
+
+    if ( ImpactDetectionType == EGBFProjectileImpactDetectionType::Overlap && hit_result.GetActor() == nullptr )
+    {
+        hit_result = FHitResult( other_actor, other_component, FVector3d::Zero(), FVector3d::Zero() );
     }
 
     ProcessHit( hit_result );
