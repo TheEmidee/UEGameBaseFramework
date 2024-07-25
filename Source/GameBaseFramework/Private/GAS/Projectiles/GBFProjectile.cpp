@@ -49,6 +49,7 @@ void AGBFProjectile::PostInitializeComponents()
         case EGBFProjectileImpactDetectionType::Overlap:
         {
             SphereComponent->OnComponentBeginOverlap.AddDynamic( this, &AGBFProjectile::OnSphereComponentBeginOverlap );
+            SphereComponent->OnComponentEndOverlap.AddDynamic( this, &AGBFProjectile::OnSphereComponentEndOverlap );
         }
         break;
         default:
@@ -148,7 +149,10 @@ void AGBFProjectile::ProcessHit( const FHitResult & hit_result )
         return;
     }
 
-    SetActorLocation( hit_result.ImpactPoint + hit_result.ImpactNormal );
+    if ( ImpactDetectionType == EGBFProjectileImpactDetectionType::Hit )
+    {
+        SetActorLocation( hit_result.ImpactPoint + hit_result.ImpactNormal );
+    }
 
     if ( ImpactSpawnActorClass != nullptr )
     {
@@ -223,6 +227,11 @@ void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* ove
     }
 
     ProcessHit( hit_result );
+}
+
+void AGBFProjectile::OnSphereComponentEndOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * /*other_actor*/, UPrimitiveComponent * other_component, int32 /* other_body_index */ )
+{
+    IsInOverlap = false;
 }
 
 void AGBFProjectile::ExecuteGameplayCue( const FGameplayTag gameplay_tag, const TFunctionRef< void( FGameplayCueParameters & gameplay_cue_parameters ) > & bp_function ) const
