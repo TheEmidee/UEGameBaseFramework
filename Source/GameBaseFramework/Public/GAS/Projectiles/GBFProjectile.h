@@ -103,6 +103,9 @@ private:
     UFUNCTION()
     void OnSphereComponentBeginOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 other_body_index, bool from_sweep, const FHitResult & sweep_hit_result );
 
+    UFUNCTION()
+    void OnSphereComponentEndOverlap( UPrimitiveComponent * overlapped_component, AActor * other_actor, UPrimitiveComponent * other_component, int32 other_body_index );
+
     UPROPERTY( BlueprintReadOnly, VisibleAnywhere, Category = "Projectile", meta = ( AllowPrivateAccess = true ) )
     USphereComponent * SphereComponent;
 
@@ -134,7 +137,7 @@ private:
     UPROPERTY()
     UGBFAbilitySystemComponent * AbilitySystemComponent;
 
-    bool IsInOverlap;
+    bool bIsInOverlap;
 };
 
 FORCEINLINE UGBFProjectileMovementComponent * AGBFProjectile::GetProjectileMovementComponent() const

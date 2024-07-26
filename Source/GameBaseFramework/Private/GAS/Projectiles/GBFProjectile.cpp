@@ -30,7 +30,7 @@ AGBFProjectile::AGBFProjectile()
 
     ImpactDetectionType = EGBFProjectileImpactDetectionType::Hit;
     bIgnoreImpactWithInstigator = true;
-    IsInOverlap = false;
+    bIsInOverlap = false;
     ApplyGameplayEffectsPhase = EGBFProjectileApplyGameplayEffectsPhase::OnHit;
     bUseHitResultAsLocationForGameplayEffects = true;
 }
@@ -49,6 +49,7 @@ void AGBFProjectile::PostInitializeComponents()
         case EGBFProjectileImpactDetectionType::Overlap:
         {
             SphereComponent->OnComponentBeginOverlap.AddDynamic( this, &AGBFProjectile::OnSphereComponentBeginOverlap );
+            SphereComponent->OnComponentEndOverlap.AddDynamic( this, &AGBFProjectile::OnSphereComponentEndOverlap );
         }
         break;
         default:
@@ -148,7 +149,10 @@ void AGBFProjectile::ProcessHit( const FHitResult & hit_result )
         return;
     }
 
-    SetActorLocation( hit_result.ImpactPoint + hit_result.ImpactNormal );
+    if ( ImpactDetectionType == EGBFProjectileImpactDetectionType::Hit )
+    {
+        SetActorLocation( hit_result.ImpactPoint + hit_result.ImpactNormal );
+    }
 
     if ( ImpactSpawnActorClass != nullptr )
     {
@@ -202,14 +206,14 @@ void AGBFProjectile::OnProjectileStop( const FHitResult & hit_result )
     ProcessHit( hit_result );
 }
 
-void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * /*other_actor*/, UPrimitiveComponent * other_component, int32 /* other_body_index */, bool from_sweep, const FHitResult & sweep_hit_result )
+void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * other_actor, UPrimitiveComponent * other_component, int32 /* other_body_index */, bool from_sweep, const FHitResult & sweep_hit_result )
 {
-    if ( IsInOverlap )
+    if ( bIsInOverlap )
     {
         return;
     }
 
-    TGuardValue< bool > overlap_guard( IsInOverlap, true ); // Sets IsInOverlap to true, and restores it in dtor.
+    TGuardValue< bool > overlap_guard( bIsInOverlap, true ); // Sets IsInOverlap to true, and restores it in dtor.
 
     FHitResult hit_result;
 
@@ -222,7 +226,17 @@ void AGBFProjectile::OnSphereComponentBeginOverlap( UPrimitiveComponent * /* ove
         other_component->SweepComponent( hit_result, GetActorLocation() - GetVelocity() * 10.f, GetActorLocation() + GetVelocity(), FQuat::Identity, SphereComponent->GetCollisionShape(), SphereComponent->bTraceComplexOnMove );
     }
 
+    if ( hit_result.GetActor() == nullptr )
+    {
+        hit_result = FHitResult( other_actor, other_component, FVector::Zero(), FVector::Zero() );
+    }
+
     ProcessHit( hit_result );
+}
+
+void AGBFProjectile::OnSphereComponentEndOverlap( UPrimitiveComponent * /* overlapped_component */, AActor * /*other_actor*/, UPrimitiveComponent * other_component, int32 /* other_body_index */ )
+{
+    bIsInOverlap = false;
 }
 
 void AGBFProjectile::ExecuteGameplayCue( const FGameplayTag gameplay_tag, const TFunctionRef< void( FGameplayCueParameters & gameplay_cue_parameters ) > & bp_function ) const
