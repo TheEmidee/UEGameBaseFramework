@@ -137,7 +137,7 @@ private:
     UPROPERTY()
     UGBFAbilitySystemComponent * AbilitySystemComponent;
 
-    bool IsInOverlap;
+    bool bIsInOverlap;
 };
 
 FORCEINLINE UGBFProjectileMovementComponent * AGBFProjectile::GetProjectileMovementComponent() const
