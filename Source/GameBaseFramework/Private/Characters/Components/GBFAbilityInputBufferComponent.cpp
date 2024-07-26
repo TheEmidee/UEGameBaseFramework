@@ -79,7 +79,7 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    auto * pawn = GetPawn< APawn >();
+    const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
     {
         return;
@@ -97,24 +97,21 @@ void UGBFAbilityInputBufferComponent::BindActions()
         return;
     }
 
-    // :FIXME: mg Ability input config is null, comment for hotfix
-
-    // for ( auto & input_config : hero_component->GetBoundActionsByInputconfig() )
-    // {
-    //     for ( auto & tag : InputTagsToCheck )
-    //     {
-    //         if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
-    //         {
-    //             // Need to investigate why input is bind but not triggered
-    //             BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
-    //         }
-    //     }
-    // }
+    for ( const auto & input_config : hero_component->GetBoundActionsByInputconfig() )
+    {
+        for ( const auto & tag : InputTagsToCheck )
+        {
+            if ( const auto * input_action = input_config.Key->FindAbilityInputActionForTag( tag ) )
+            {
+                BindHandles.Add( input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::AbilityInputTagPressed, tag ).GetHandle() );
+            }
+        }
+    }
 }
 
 void UGBFAbilityInputBufferComponent::RemoveBinds()
 {
-    auto * pawn = GetPawn< APawn >();
+    const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
     {
         return;
@@ -122,7 +119,7 @@ void UGBFAbilityInputBufferComponent::RemoveBinds()
 
     if ( auto * input_component = Cast< UEnhancedInputComponent >( pawn->InputComponent ) )
     {
-        for ( auto & handle : BindHandles )
+        for ( const auto & handle : BindHandles )
         {
             input_component->RemoveBindingByHandle( handle );
         }
@@ -141,7 +138,7 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
         return false;
     }
 
-    auto * pawn = GetPawn< APawn >();
+    const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
     {
         return false;
@@ -213,7 +210,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
     TSortedMap< int, FGameplayTag > triggered_tag_map;
 
     // Remove all to get count easily
-    for ( auto & tag_to_remove : InputTagsToCheck )
+    for ( const auto & tag_to_remove : InputTagsToCheck )
     {
         int count = TriggeredTags.Remove( tag_to_remove );
         triggered_tag_map.Add( count, tag_to_remove );
@@ -227,7 +224,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
     FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
 
     triggered_tag_map.Remove( 0 );
-    for ( auto & input : triggered_tag_map )
+    for ( const auto & input : triggered_tag_map )
     {
         TriggeredTags.Add( input.Value );
     }
