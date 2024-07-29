@@ -10,7 +10,8 @@ UENUM( BlueprintType )
 enum class ETriggerPriority : uint8
 {
     LastTriggeredInput = 0 UMETA( DisplayName = "Last Triggered Input" ),
-    MostTriggeredInput = 1 UMETA( DisplayName = "Most Triggered Input" )
+    MostTriggeredInput = 1 UMETA( DisplayName = "Most Triggered Input" ),
+    StopOnFirstTriggeredInput = 2 UMETA( DisplayName = "Stop On First Triggered Input" )
 };
 
 UCLASS( Blueprintable )

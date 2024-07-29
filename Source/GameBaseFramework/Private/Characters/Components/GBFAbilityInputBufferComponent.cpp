@@ -129,6 +129,11 @@ void UGBFAbilityInputBufferComponent::RemoveBinds()
 void UGBFAbilityInputBufferComponent::AbilityInputTagPressed( FGameplayTag input_tag )
 {
     TriggeredTags.Add( input_tag );
+
+    if ( TriggerPriority == ETriggerPriority::StopOnFirstTriggeredInput )
+    {
+        StopMonitoring();
+    }
 }
 
 bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
