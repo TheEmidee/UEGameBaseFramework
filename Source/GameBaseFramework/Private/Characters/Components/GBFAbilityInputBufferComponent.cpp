@@ -26,7 +26,7 @@ void UGBFAbilityInputBufferComponent::TickComponent( float delta_time, ELevelTic
 }
 #endif
 
-void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority )
+void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer input_tags_to_check, FGameplayTagContainer input_tags_to_cancel, ETriggerPriority trigger_priority )
 {
     if ( input_tags_to_check.IsEmpty() )
     {
@@ -41,6 +41,8 @@ void UGBFAbilityInputBufferComponent::StartMonitoring( FGameplayTagContainer inp
     Reset();
     TriggerPriority = trigger_priority;
     InputTagsToCheck = input_tags_to_check;
+    InputTagsToCancel = input_tags_to_cancel;
+
     BindActions();
 
 #if !UE_BUILD_SHIPPING
@@ -62,6 +64,7 @@ void UGBFAbilityInputBufferComponent::StopMonitoring()
 
 void UGBFAbilityInputBufferComponent::Reset()
 {
+    RemoveBinds();
     TriggeredTags.Reset();
     InputTagsToCheck.Reset();
     BindHandles.Reset();
@@ -157,11 +160,15 @@ bool UGBFAbilityInputBufferComponent::TryToTriggerAbility()
 
     if ( auto * asc = pawn_ext_comp->GetGBFAbilitySystemComponent() )
     {
-        for ( auto & tagged_ability_tag : InputTagsToCheck )
-        {
-            auto * tagged_ability = asc->FindAbilityByInputTag( tagged_ability_tag );
-            asc->CancelAbility( tagged_ability );
-        }
+        auto cancel_abilities_from_input_tags = [ & ]( const FGameplayTagContainer & input_tag_container ) {
+            for ( const auto & tag_to_cancel : input_tag_container )
+            {
+                asc->CancelAbility( asc->FindAbilityByInputTag( tag_to_cancel ) );
+            }
+        };
+
+        cancel_abilities_from_input_tags( InputTagsToCheck );
+        cancel_abilities_from_input_tags( InputTagsToCancel );
 
         // Try to activate ability in priority order
         FGameplayTag tag = TryToGetInputTagWithPriority();

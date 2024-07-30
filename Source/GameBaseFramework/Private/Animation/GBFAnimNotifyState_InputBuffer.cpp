@@ -10,7 +10,7 @@ void UGBFAnimNotifyState_InputBuffer::NotifyBegin( USkeletalMeshComponent * mesh
 
     if ( auto * ability_input_buffer_component = GetAbilityInputBufferComponent( mesh_component ) )
     {
-        ability_input_buffer_component->StartMonitoring( InputTagsToCheck, TriggerPriority );
+        ability_input_buffer_component->StartMonitoring( InputTagsToCheck, InputTagsToCancel, TriggerPriority );
     }
 }
 

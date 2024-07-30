@@ -23,7 +23,7 @@ public:
     UGBFAbilityInputBufferComponent( const FObjectInitializer & object_initializer );
 
     UFUNCTION( BlueprintCallable, Meta = ( GameplayTagFilter = "Input" ) )
-    void StartMonitoring( FGameplayTagContainer input_tags_to_check, ETriggerPriority trigger_priority );
+    void StartMonitoring( FGameplayTagContainer input_tags_to_check, FGameplayTagContainer input_tags_to_cancel, ETriggerPriority trigger_priority );
 
     UFUNCTION( BlueprintCallable )
     void StopMonitoring();
@@ -48,6 +48,7 @@ protected:
 
     ETriggerPriority TriggerPriority;
     FGameplayTagContainer InputTagsToCheck;
+    FGameplayTagContainer InputTagsToCancel;
 
     TArray< FGameplayTag > TriggeredTags;
     TArray< uint32 > BindHandles;

@@ -28,4 +28,7 @@ private:
 
     UPROPERTY( EditAnywhere, Meta = ( Categories = "Input" ) )
     FGameplayTagContainer InputTagsToCheck;
+
+    UPROPERTY( EditAnywhere, Meta = ( Categories = "Input" ) )
+    FGameplayTagContainer InputTagsToCancel;
 };
