@@ -61,3 +61,7 @@ void AGBFSimpleCharacterWithAbilities::GetOwnedGameplayTags( FGameplayTagContain
 {
     tag_container.AppendTags( StaticTags );
 }
+const TArray< TObjectPtr< const UGBFAbilitySet > > & AGBFSimpleCharacterWithAbilities::GetAbilitySets() const
+{
+    return AbilitySets;
+}
