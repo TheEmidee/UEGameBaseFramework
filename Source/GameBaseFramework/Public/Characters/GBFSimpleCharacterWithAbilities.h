@@ -58,3 +58,8 @@ private:
     UPROPERTY( Transient )
     TArray< TObjectPtr< UAttributeSet > > AttributeSets;
 };
+
+FORCEINLINE const TArray< TObjectPtr< const UGBFAbilitySet > > & AGBFSimpleCharacterWithAbilities::GetAbilitySets() const
+{
+    return AbilitySets;
+}
