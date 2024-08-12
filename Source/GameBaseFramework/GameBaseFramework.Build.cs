@@ -60,7 +60,9 @@ namespace UnrealBuildTool.Rules
                     "GameplayBehaviorSmartObjectsModule",
                     "GameplayInteractionsModule",
                     "StateTreeModule",
-                    "StructUtils"
+                    "StructUtils",
+                    "LevelSequence",
+                    "MovieScene"
                 }
             );
         }
