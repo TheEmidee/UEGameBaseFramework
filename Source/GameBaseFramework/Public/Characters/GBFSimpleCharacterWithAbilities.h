@@ -30,6 +30,7 @@ public:
     void PostInitializeComponents() override;
     void BeginPlay() override;
     void GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const override;
+    const TArray< TObjectPtr< const UGBFAbilitySet > > & GetAbilitySets() const;
 
 protected:
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
@@ -57,3 +58,8 @@ private:
     UPROPERTY( Transient )
     TArray< TObjectPtr< UAttributeSet > > AttributeSets;
 };
+
+FORCEINLINE const TArray< TObjectPtr< const UGBFAbilitySet > > & AGBFSimpleCharacterWithAbilities::GetAbilitySets() const
+{
+    return AbilitySets;
+}
