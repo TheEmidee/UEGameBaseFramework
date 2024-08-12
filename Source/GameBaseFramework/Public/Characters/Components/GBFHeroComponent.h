@@ -67,10 +67,9 @@ protected:
     void Input_AbilityInputTagPressed( FGameplayTag input_tag );
     void Input_AbilityInputTagReleased( FGameplayTag input_tag );
     virtual void BindNativeActions( UGBFInputComponent * input_component, const UGBFInputConfig * input_config );
-
-private:
     TSubclassOf< UGBFCameraMode > DetermineCameraMode() const;
 
+private:
     FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;
 
     // True when player input bindings have been applyed, will never be true for non-players
