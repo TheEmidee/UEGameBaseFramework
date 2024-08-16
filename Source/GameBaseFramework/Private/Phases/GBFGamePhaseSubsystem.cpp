@@ -227,7 +227,10 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
 
             if ( !cancel_active_phases )
             {
-                cancel_active_phases = !incoming_phase_tag.MatchesTag( active_phase_tag );
+                int incoming_tag_length = incoming_phase_tag.GetGameplayTagParents().Num();
+                int active_tag_length = active_phase_tag.GetGameplayTagParents().Num();
+
+                cancel_active_phases = ( incoming_tag_length - active_tag_length ) == 0 ? true : incoming_phase_tag.MatchesTagDepth( active_phase_tag ) > active_tag_length;
 
                 // :TODO: Commented because it breaks the default behavior of not cancelling nested phases.
                 // Fix or remove because it may not be a good idea to have multiple phases to run at the same time
@@ -333,6 +336,28 @@ void UGBFGamePhaseSubsystem::EndAllPhases()
 
     PhaseStartObservers.Reset();
     PhaseEndObservers.Reset();
+}
+
+void UGBFGamePhaseSubsystem::EndPhasesWithTags( const FGameplayTagContainer & tags )
+{
+    const auto * world = GetWorld();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+
+    TArray< FGameplayAbilitySpec * > active_phases;
+    GetActivePhases( active_phases, game_state_asc );
+
+    for ( const auto * active_phase : active_phases )
+    {
+        const auto * active_phase_ability = CastChecked< UGBFGamePhaseAbility >( active_phase->Ability );
+        const auto active_phase_tag = active_phase_ability->GetGamePhaseTag();
+        for ( const auto tag : tags )
+        {
+            game_state_asc->CancelAbilitiesByFunc( [ & ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
+                return handle == active_phase->Handle && active_phase_tag.MatchesTag( tag );
+            },
+                true );
+        }
+    }
 }
 
 void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const
