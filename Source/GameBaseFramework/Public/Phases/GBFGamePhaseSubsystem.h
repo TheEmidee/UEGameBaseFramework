@@ -126,6 +126,9 @@ protected:
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase" )
     void EndAllPhases();
 
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( AutoCreateRefTerm = "tags" ) )
+    void EndPhasesWithTags( const FGameplayTagContainer & tags );
+
 private:
     void GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const;
 
