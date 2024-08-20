@@ -20,7 +20,7 @@ void UGBFCameraModifierSpringArmBased::OnViewTargetChanged( AActor * view_target
     }
 }
 
-bool UGBFCameraModifierSpringArmBased::IsDisabled()
+bool UGBFCameraModifierSpringArmBased::IsDisabled() const
 {
     if ( Super::IsDisabled() )
     {

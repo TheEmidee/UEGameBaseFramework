@@ -14,7 +14,7 @@ UGBFCameraModifierSpringArmLengthFromPitch::UGBFCameraModifierSpringArmLengthFro
 {
 }
 
-bool UGBFCameraModifierSpringArmLengthFromPitch::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierSpringArmLengthFromPitch::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
 {
     LastCameraPitch = view_rotation.Pitch;
 
@@ -23,8 +23,6 @@ bool UGBFCameraModifierSpringArmLengthFromPitch::ModifyCamera( float delta_time,
         LastCurveValue = PitchToArmLengthCurve.GetRichCurve()->Eval( LastCameraPitch );
         SpringArmComponent->TargetArmLength = FGBFCameraModifierUtilsLibrary::GetAttributeOperationResult( InitialSpringArmTargetLength, LastCurveValue, Operation );
     }
-
-    return false;
 }
 
 void UGBFCameraModifierSpringArmLengthFromPitch::OnSpringArmComponentSet( USpringArmComponent * spring_arm_component )

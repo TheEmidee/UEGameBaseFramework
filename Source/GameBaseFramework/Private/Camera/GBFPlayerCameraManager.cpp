@@ -14,7 +14,7 @@ void AGBFPlayerCameraManager::PostInitializeComponents()
     Super::PostInitializeComponents();
 
     ForEachCameraStackModifier( [ & ]( auto * modifier ) {
-        modifier->AddedToCameraManager( *this );
+        modifier->AddedToCamera( this );
     },
         false );
 }
@@ -34,7 +34,7 @@ void AGBFPlayerCameraManager::ApplyCameraModifiers( float delta_time, FMinimalVi
     Super::ApplyCameraModifiers( delta_time, pov );
 
     ForEachCameraStackModifier( TFunctionRef< bool( UGBFCameraModifier * ) >( [ & ]( UGBFCameraModifier * modifier ) {
-        return modifier->ModifyCamera( delta_time, pov.Location, pov.Rotation, pov.FOV, pov.Location, pov.Rotation, pov.FOV );
+        return modifier->ModifyCamera( delta_time, pov );
     } ),
         true );
 }
@@ -64,7 +64,7 @@ void AGBFPlayerCameraManager::SetModifierStack( UGBFCameraModifierStack * modifi
     ModifierStack = modifier_stack;
 
     ForEachCameraStackModifier( [ & ]( auto * modifier ) {
-        modifier->AddedToCameraManager( *this );
+        modifier->AddedToCamera( this );
     },
         false );
 }
@@ -95,7 +95,10 @@ void AGBFPlayerCameraManager::DisplayDebug( UCanvas * canvas, const FDebugDispla
         display_debug_manager.DrawString( FString( TEXT( "   --- Modifiers Stack (Begin) ---" ) ) );
 
         ForEachCameraStackModifier( [ & ]( auto * modifier ) {
-            modifier->DisplayDebug( canvas, debug_display, yl, y_pos );
+            if ( modifier->bDebug )
+            {
+                modifier->DisplayDebug( canvas, debug_display, yl, y_pos );
+            }
         },
             true );
 

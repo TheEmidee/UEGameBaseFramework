@@ -16,7 +16,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmTargetOffsetFromVelocity 
 public:
     UGBFCameraModifierSpringArmTargetOffsetFromVelocity();
 
-    bool ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
+    void ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
 
 protected:
     void DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const override;

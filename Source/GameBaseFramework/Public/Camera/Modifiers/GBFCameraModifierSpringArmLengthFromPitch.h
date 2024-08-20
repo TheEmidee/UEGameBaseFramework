@@ -16,7 +16,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmLengthFromPitch : public 
 public:
     UGBFCameraModifierSpringArmLengthFromPitch();
 
-    bool ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
+    void ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
 
 protected:
     void OnSpringArmComponentSet( USpringArmComponent * spring_arm_component ) override;

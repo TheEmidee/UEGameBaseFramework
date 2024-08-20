@@ -1,5 +1,6 @@
 #include "Camera/Modifiers/GBFCameraModifierSpringArmTargetOffsetFromVelocity.h"
 
+#include "Camera/GBFPlayerCameraManager.h"
 #include "Camera/Modifiers/GBFCameraModifierUtils.h"
 
 #include <DrawDebugHelpers.h>
@@ -21,9 +22,15 @@ UGBFCameraModifierSpringArmTargetOffsetFromVelocity::UGBFCameraModifierSpringArm
 {
 }
 
-bool UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
 {
     auto * view_target = GetViewTarget();
+
+    if ( view_target == nullptr )
+    {
+        return;
+    }
+
     TargetOffset = view_target->GetVelocity();
 
     const auto direction = TargetOffset.GetSafeNormal();
@@ -57,8 +64,6 @@ bool UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( float de
 
     CurrentOffset = FMath::VInterpTo( CurrentOffset, TargetOffset, delta_time, InterpolationSpeed );
     SpringArmComponent->TargetOffset = CurrentOffset;
-
-    return false;
 }
 
 void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const
@@ -87,10 +92,10 @@ void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::DisplayDebugInternal( 
     }
 
     display_debug_manager.DrawString( FString::Printf( TEXT( "Target Offset: %s" ), *TargetOffset.ToCompactString() ) );
-    DrawDebugSphere( GetViewTarget()->GetWorld(), SpringArmComponent->GetComponentLocation() + TargetOffset, 15.0f, 12, FColor::Cyan );
+    DrawDebugSphere( CameraOwner->GetWorld(), SpringArmComponent->GetComponentLocation() + TargetOffset, 15.0f, 12, FColor::Cyan );
 
     display_debug_manager.DrawString( FString::Printf( TEXT( "Current Offset: %s" ), *CurrentOffset.ToCompactString() ) );
-    DrawDebugSphere( GetViewTarget()->GetWorld(), SpringArmComponent->GetComponentLocation() + CurrentOffset, 15.0f, 12, FColor::Blue );
+    DrawDebugSphere( CameraOwner->GetWorld(), SpringArmComponent->GetComponentLocation() + CurrentOffset, 15.0f, 12, FColor::Blue );
 }
 
 void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::OnSpringArmComponentSet( USpringArmComponent * spring_arm_component )

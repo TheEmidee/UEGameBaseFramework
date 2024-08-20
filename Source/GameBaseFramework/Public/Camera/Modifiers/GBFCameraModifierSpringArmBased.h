@@ -15,7 +15,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmBased : public UGBFCamera
 
 public:
     void OnViewTargetChanged( AActor * view_target ) override;
-    bool IsDisabled() override;
+    bool IsDisabled() const override;
 
 protected:
     virtual void OnSpringArmComponentSet( USpringArmComponent * spring_arm_component );
