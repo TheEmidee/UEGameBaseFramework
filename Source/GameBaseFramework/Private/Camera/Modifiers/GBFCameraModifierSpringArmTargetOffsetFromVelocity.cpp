@@ -49,7 +49,7 @@ void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( float de
         const auto actor_yaw = view_target->GetActorRotation().Yaw;
         const auto view_yaw = view_rotation.Yaw;
 
-        RotationDifference = FGBFCameraModifierUtilsLibrary::ClampAngle( actor_yaw - view_yaw );
+        RotationDifference = FMath::Abs( FGBFCameraModifierUtilsLibrary::ClampAngle( actor_yaw - view_yaw ) );
         RotationDifferenceMultiplier = YawDifferenceMultiplierCurve.GetRichCurveConst()->Eval( RotationDifference );
         TargetOffset *= RotationDifferenceMultiplier;
     }

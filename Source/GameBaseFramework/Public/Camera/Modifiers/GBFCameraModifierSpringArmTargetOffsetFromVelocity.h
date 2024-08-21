@@ -45,7 +45,7 @@ private:
     uint8 bUseInterpolationSpeedCurve : 1;
 
     /* A multiplier applied to OffsetInterpolationSpeed, based on the distance between the target and the original location of the component.
-     * Should be between 0 and 1 on the Y axis. */
+    Should be between 0 and 1 on the Y axis. */
     UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseInterpolationSpeedCurve" ) )
     FRuntimeFloatCurve InterpolationSpeedCurve;
 
@@ -53,7 +53,10 @@ private:
     uint8 bUseYawDifferenceCurve : 1;
 
     /* A multiplier applied to the target offset, based on the difference between the view target rotation and the camera rotation.
-     * Useful to limit the offset when the camera is in the same orientation as the view target */
+    Useful to limit the offset when the camera is in the same orientation as the view target
+    0.0f is when both the camera and the view target face the same direction
+    It increases when the camera rotates around, up to 180 degrees when they face opposite directions
+    */
     UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseYawDifferenceCurve" ) )
     FRuntimeFloatCurve YawDifferenceMultiplierCurve;
 
