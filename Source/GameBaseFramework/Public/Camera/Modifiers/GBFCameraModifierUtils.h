@@ -35,4 +35,6 @@ public:
 
         return source_value;
     }
+
+    static bool LineTraceSingleByChannel( AActor * view_target, FHitResult & hit_result, const FVector & start, const FVector & end, const TEnumAsByte< ECollisionChannel > collision_channel, bool draw_debug );
 };
