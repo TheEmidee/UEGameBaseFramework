@@ -2,6 +2,7 @@
 
 #include <CoreMinimal.h>
 #include <GameFramework/WorldSettings.h>
+#include <GameplayTagContainer.h>
 
 #include "GBFWorldSettings.generated.h"
 
@@ -24,6 +25,7 @@ public:
     FPrimaryAssetId GetDefaultGameplayExperience() const;
 
     const TArray< TSubclassOf< UGBFGamePhaseAbility > > & GetDefaultGamePhases() const;
+    const FGameplayTagContainer & GetGameplayTags() const;
 
 protected:
     // The default experience to use when a server opens this map if it is not overridden by the user-facing experience
@@ -32,6 +34,9 @@ protected:
 
     UPROPERTY( EditDefaultsOnly, Category = "Gameplay Phases" )
     TArray< TSubclassOf< UGBFGamePhaseAbility > > DefaultGamePhases;
+
+    UPROPERTY( EditDefaultsOnly )
+    FGameplayTagContainer GameplayTags;
 
 #if WITH_EDITORONLY_DATA
     // Is this level part of a front-end or other standalone experience?
@@ -51,4 +56,9 @@ FORCEINLINE bool AGBFWorldSettings::ForceStandaloneNetMode() const
 FORCEINLINE const TArray< TSubclassOf< UGBFGamePhaseAbility > > & AGBFWorldSettings::GetDefaultGamePhases() const
 {
     return DefaultGamePhases;
+}
+
+FORCEINLINE const FGameplayTagContainer & AGBFWorldSettings::GetGameplayTags() const
+{
+    return GameplayTags;
 }
