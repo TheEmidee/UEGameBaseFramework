@@ -7,100 +7,266 @@
 #include <GameFramework/CharacterMovementComponent.h>
 
 UGBFCameraModifierSlopeWalkingPitch::UGBFCameraModifierSlopeWalkingPitch() :
+    MinSlopeAngle( 20.0f ),
     SlopeDetectionStartLocationOffset( 0.0f, 0.0f, 50.0f ),
     SlopeDetectionLineTraceLength( 1000.0f ),
     SlopeDetectionCollisionChannel( ECC_WorldStatic ),
-    MinSlopeZ( 0.0f ),
-    bIsOnASlope( false ),
-    bIsDescendingSlope( false )
+    InterpolationSpeed( 2.0f ),
+    LeavingSlopeInterpolationSpeed( 2.0f ),
+    bUseManualRotationCooldown( true ),
+    ManualRotationCooldownBeforeSlope( 2.50f ),
+    ManualRotationCooldownWhileOnSlope( 10.0f ),
+    State( EModifierState::WaitingForSlope ),
+    PlayerToSlopeState( EPlayerToSlopeState::Traversing ),
+    CurrentSlopeAngle( 0.0f ),
+    CameraToSlopeState( ECameraToSlopeState::Facing ),
+    TargetPitch( 0.0f ),
+    CurrentPitch( 0.0f ),
+    PitchBeforeAdjustment( 0.0f ),
+    ManualRotationCooldownRemainingTime( 0.0f )
 {
-    SetMinSlopeAngle( 30.0f );
 }
 
 bool UGBFCameraModifierSlopeWalkingPitch::ProcessViewRotation( AActor * view_target, float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
 {
-    auto * character = Cast< ACharacter >( GetViewTarget() );
-    const auto * cmc = character->GetCharacterMovement();
+    auto * vt = GetViewTarget();
+    if ( vt == nullptr )
+    {
+        return false;
+    }
 
+    auto * character = Cast< ACharacter >( vt );
     if ( character == nullptr )
     {
         return false;
     }
 
+    const auto * cmc = character->GetCharacterMovement();
+
     const auto floor_impact_normal = cmc->CurrentFloor.HitResult.ImpactNormal;
 
-    // Not walking on a slope steep enough. Reset camera pitch
-    if ( floor_impact_normal.Z >= MinSlopeZ )
+    CurrentSlopeAngle = FMath::RadiansToDegrees( FMath::Acos( floor_impact_normal.Z ) );
+
+    if ( bUseManualRotationCooldown )
     {
-        bIsOnASlope = false;
-        return false;
-    }
-
-    FHitResult hit_result;
-    const auto character_forward_vector = character->GetActorForwardVector();
-    const auto line_trace_start = character->GetActorLocation() + SlopeDetectionStartLocationOffset;
-    const auto line_trace_end = line_trace_start + character_forward_vector * SlopeDetectionLineTraceLength;
-
-    bool is_climbing;
-
-    if ( !FGBFCameraModifierUtilsLibrary::LineTraceSingleByChannel( character, hit_result, line_trace_start, line_trace_end, SlopeDetectionCollisionChannel, bDebug ) )
-    {
-        const auto reverse_line_trace_end = line_trace_start + character_forward_vector * -SlopeDetectionLineTraceLength;
-        FGBFCameraModifierUtilsLibrary::LineTraceSingleByChannel( character, hit_result, line_trace_start, reverse_line_trace_end, SlopeDetectionCollisionChannel, bDebug );
-
-        if ( !hit_result.bBlockingHit )
+        if ( !FMath::IsNearlyZero( delta_rotation.Pitch ) )
         {
-            // We are on a slope, but none of the two traces hit something. Chances are we starting to descend the hill
-            const auto is_player_descending_slope = FVector::DotProduct( character_forward_vector, floor_impact_normal ) > 0.0f;
-
-            if ( !is_player_descending_slope )
-            {
-                // Climbing a slope, but traces did not hit. We are near the top of the hill
-                return false;
-            }
+            ManualRotationCooldownRemainingTime = IsOnSlopeSteepEnough() ? ManualRotationCooldownWhileOnSlope : ManualRotationCooldownBeforeSlope;
+            PitchBeforeAdjustment = FGBFCameraModifierUtilsLibrary::ClampAngle( view_rotation.Pitch );
+            CurrentPitch = PitchBeforeAdjustment;
+            return false;
         }
 
-        is_climbing = false;
+        if ( ManualRotationCooldownRemainingTime >= 0.0f )
+        {
+            ManualRotationCooldownRemainingTime -= delta_time;
+            return false;
+        }
     }
-    else
+
+    switch ( State )
     {
-        bIsOnASlope = true;
-        is_climbing = true;
+        case EModifierState::WaitingForSlope:
+        {
+            HandleStateWaitingForSlope( view_rotation.Pitch );
+        }
+        break;
+        case EModifierState::OnASlope:
+        {
+            HandleStateOnASlope( view_rotation, { delta_time, floor_impact_normal, vt } );
+        }
+        break;
+        case EModifierState::LeavingSlope:
+        {
+            HandleStateLeavingSlope( view_rotation, delta_time );
+        }
+        break;
+        default:
+        {
+            checkNoEntry();
+        }
+        break;
     }
-
-    const auto is_camera_facing_slope = FVector::DotProduct( out_view_rotation.Vector(), floor_impact_normal ) < 0.0f;
-
-    const auto target_pitch = is_climbing
-                                  ? ( is_camera_facing_slope ? ClimbSlopeCameraBehindPitch : ClimbSlopeCameraInFrontPitch )
-                                  : ( is_camera_facing_slope ? DescendSlopeCameraInFrontPitch : DescendSlopeCameraBehindPitch );
 
     return false;
 }
-
-#if WITH_EDITOR
-void UGBFCameraModifierSlopeWalkingPitch::PostEditChangeProperty( FPropertyChangedEvent & property_changed_event )
-{
-    Super::PostEditChangeProperty( property_changed_event );
-
-    const auto * property_that_changed = property_changed_event.MemberProperty;
-
-    if ( property_that_changed != nullptr &&
-         property_that_changed->GetFName() == GET_MEMBER_NAME_CHECKED( UGBFCameraModifierSlopeWalkingPitch, MinSlopeAngle ) )
-    {
-        SetMinSlopeAngle( MinSlopeAngle );
-    }
-}
-#endif
 
 void UGBFCameraModifierSlopeWalkingPitch::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const
 {
     auto & display_debug_manager = canvas->DisplayDebugManager;
 
+    static const FString PlayerToSlopeStateString[] = {
+        TEXT( "Ascending" ),
+        TEXT( "Descending" ),
+        TEXT( "Traversing" )
+    };
+
+    static const FString CameraToSlopeStateString[] = {
+        TEXT( "Facing" ),
+        TEXT( "Opposing" ),
+        TEXT( "Traversing" )
+    };
+
     display_debug_manager.DrawString( FString::Printf( TEXT( "MinSlopeAngle: %s" ), *FString::SanitizeFloat( MinSlopeAngle ) ) );
+    display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentSlopeAngle: %s" ), *FString::SanitizeFloat( CurrentSlopeAngle ) ) );
+    display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentPitch: %s" ), *FString::SanitizeFloat( CurrentPitch ) ) );
+
+    if ( bUseManualRotationCooldown && ManualRotationCooldownRemainingTime > 0.0f )
+    {
+        display_debug_manager.DrawString( TEXT( "UseManualRotationCooldown" ) );
+        display_debug_manager.DrawString( FString::Printf( TEXT( "ManualRotationCooldownRemainingTime: %s" ), *FString::SanitizeFloat( ManualRotationCooldownRemainingTime ) ) );
+        return;
+    }
+
+    switch ( State )
+    {
+        case EModifierState::WaitingForSlope:
+        {
+            display_debug_manager.DrawString( TEXT( "State : Waiting for slope" ) );
+        }
+        break;
+        case EModifierState::OnASlope:
+        {
+            display_debug_manager.DrawString( TEXT( "State : On a slope" ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "PlayerToSlopeState: %s" ), *PlayerToSlopeStateString[ static_cast< uint8 >( PlayerToSlopeState ) ] ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "CameraToSlopeState: %s" ), *CameraToSlopeStateString[ static_cast< uint8 >( CameraToSlopeState ) ] ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "TargetPitch: %s" ), *FString::SanitizeFloat( TargetPitch ) ) );
+        }
+        break;
+        case EModifierState::LeavingSlope:
+        {
+            display_debug_manager.DrawString( TEXT( "State : Leaving slope" ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "TargetPitch: %s" ), *FString::SanitizeFloat( TargetPitch ) ) );
+        }
+        break;
+        default:
+        {
+            checkNoEntry();
+        }
+        break;
+    }
 }
 
-void UGBFCameraModifierSlopeWalkingPitch::SetMinSlopeAngle( const float min_floor_angle )
+bool UGBFCameraModifierSlopeWalkingPitch::IsOnSlopeSteepEnough() const
 {
-    MinSlopeAngle = FMath::Clamp( min_floor_angle, 0.f, 90.0f );
-    MinSlopeZ = FMath::Cos( FMath::DegreesToRadians( MinSlopeAngle ) );
+    return CurrentSlopeAngle >= MinSlopeAngle;
+}
+
+void UGBFCameraModifierSlopeWalkingPitch::HandleStateWaitingForSlope( float view_rotation_pitch )
+{
+    if ( !IsOnSlopeSteepEnough() )
+    {
+        PitchBeforeAdjustment = FGBFCameraModifierUtilsLibrary::ClampAngle( view_rotation_pitch );
+        CurrentPitch = PitchBeforeAdjustment;
+    }
+    else
+    {
+        State = EModifierState::OnASlope;
+    }
+}
+
+void UGBFCameraModifierSlopeWalkingPitch::HandleStateOnASlope( FRotator & view_rotation, const FOnASlopeParameters & parameters )
+{
+    if ( !IsOnSlopeSteepEnough() )
+    {
+        State = EModifierState::LeavingSlope;
+        TargetPitch = PitchBeforeAdjustment;
+        return;
+    }
+
+    FHitResult hit_result;
+    const auto character_forward_vector = parameters.ViewTarget->GetActorForwardVector();
+    const auto line_trace_start = parameters.ViewTarget->GetActorLocation() + SlopeDetectionStartLocationOffset;
+    const auto line_trace_end = line_trace_start + character_forward_vector * SlopeDetectionLineTraceLength;
+
+    if ( !FGBFCameraModifierUtilsLibrary::LineTraceSingleByChannel( parameters.ViewTarget.Get(), hit_result, line_trace_start, line_trace_end, SlopeDetectionCollisionChannel, bDebug ) )
+    {
+        const auto reverse_line_trace_end = line_trace_start + character_forward_vector * -SlopeDetectionLineTraceLength;
+        FGBFCameraModifierUtilsLibrary::LineTraceSingleByChannel( parameters.ViewTarget.Get(), hit_result, line_trace_start, reverse_line_trace_end, SlopeDetectionCollisionChannel, bDebug );
+
+        if ( !hit_result.bBlockingHit )
+        {
+            const auto dot = FVector::DotProduct( character_forward_vector, parameters.FloorImpactNormal );
+
+            if ( FMath::Abs( dot ) < 0.1f )
+            {
+                PlayerToSlopeState = EPlayerToSlopeState::Traversing;
+                return;
+            }
+
+            // We are on a slope, but none of the two traces hit something. Chances are we starting to descend the hill
+            const auto is_player_descending_slope = dot > 0.0f;
+
+            if ( !is_player_descending_slope )
+            {
+                // Ascending a slope, but traces did not hit. We are near the top of the hill
+                PlayerToSlopeState = EPlayerToSlopeState::Ascending;
+                return;
+            }
+        }
+
+        PlayerToSlopeState = EPlayerToSlopeState::Descending;
+    }
+    else
+    {
+        PlayerToSlopeState = EPlayerToSlopeState::Ascending;
+    }
+
+    const auto camera_dot = FVector::DotProduct( view_rotation.Vector().GetSafeNormal2D(), parameters.FloorImpactNormal.GetSafeNormal2D() );
+
+    if ( FMath::Abs( camera_dot ) < 0.1f )
+    {
+        CameraToSlopeState = ECameraToSlopeState::Traversing;
+    }
+    else if ( camera_dot > 0.0f )
+    {
+        CameraToSlopeState = ECameraToSlopeState::Opposing;
+    }
+    else
+    {
+        CameraToSlopeState = ECameraToSlopeState::Facing;
+    }
+
+    switch ( CameraToSlopeState )
+    {
+        case ECameraToSlopeState::Facing:
+        {
+            TargetPitch = CurrentSlopeAngle;
+        }
+        break;
+        case ECameraToSlopeState::Opposing:
+        {
+            TargetPitch = -CurrentSlopeAngle;
+        }
+        break;
+        case ECameraToSlopeState::Traversing:
+        {
+            TargetPitch = PitchBeforeAdjustment;
+        }
+        break;
+        default:
+        {
+            checkNoEntry();
+        }
+        break;
+    }
+
+    CurrentPitch = FMath::FInterpTo( CurrentPitch, TargetPitch, parameters.DeltaTime, InterpolationSpeed );
+    view_rotation.Pitch = CurrentPitch;
+}
+
+void UGBFCameraModifierSlopeWalkingPitch::HandleStateLeavingSlope( FRotator & view_rotation, float delta_time )
+{
+    CurrentPitch = FMath::FInterpTo( CurrentPitch, TargetPitch, delta_time, InterpolationSpeed );
+    view_rotation.Pitch = CurrentPitch;
+
+    if ( FMath::IsNearlyEqual( CurrentPitch, TargetPitch, 1.0f ) )
+    {
+        State = EModifierState::WaitingForSlope;
+    }
+
+    if ( IsOnSlopeSteepEnough() )
+    {
+        State = EModifierState::OnASlope;
+    }
 }
