@@ -94,6 +94,9 @@ protected:
     UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile", meta = ( AllowPrivateAccess = true ) )
     EGBFProjectileImpactDetectionType ImpactDetectionType;
 
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile", meta = ( EditCondition = "ImpactDetectionType == EGBFProjectileImpactDetectionType::Overlap" ) )
+    uint8 bIgnoreImpactWithInstigator : 1;
+
 private:
     FGameplayCueParameters CreateGameplayCueParameters() const;
 
@@ -111,9 +114,6 @@ private:
 
     UPROPERTY( BlueprintReadOnly, VisibleAnywhere, Category = "Projectile", meta = ( AllowPrivateAccess = true ) )
     UGBFProjectileMovementComponent * ProjectileMovementComponent;
-
-    UPROPERTY( EditDefaultsOnly, Category = "Projectile", meta = ( EditCondition = "ImpactDetectionType == EGBFProjectileImpactDetectionType::Overlap" ) )
-    uint8 bIgnoreImpactWithInstigator : 1;
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile", meta = ( AllowPrivateAccess = true ) )
     FGameplayTag FireGameplayCue;
