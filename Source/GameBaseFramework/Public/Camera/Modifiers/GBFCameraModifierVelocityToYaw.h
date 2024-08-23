@@ -7,7 +7,7 @@
 
 #include "GBFCameraModifierVelocityToYaw.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Update Yaw From Velocity" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierVelocityToYaw final : public UGBFCameraModifier
 {
     GENERATED_BODY()

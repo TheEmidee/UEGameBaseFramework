@@ -8,7 +8,7 @@
 
 #include "GBFCameraModifierSpringArmTargetOffsetFromVelocity.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Update Spring Arm Target Offset From Velocity" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmTargetOffsetFromVelocity final : public UGBFCameraModifierSpringArmBased
 {
     GENERATED_BODY()

@@ -7,7 +7,7 @@
 
 #include "GBFCameraModifierDynamicZ.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Dynamic Z" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierDynamicZ final : public UGBFCameraModifier
 {
     GENERATED_BODY()

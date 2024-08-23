@@ -6,7 +6,7 @@
 
 #include "GBFCameraModifierSlopeWalkingPitch.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Update Pitch When Walking On Slopes" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierSlopeWalkingPitch final : public UGBFCameraModifier
 {
     GENERATED_BODY()

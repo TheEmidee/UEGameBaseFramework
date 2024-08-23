@@ -23,7 +23,14 @@ UGBFCameraModifierFallingPitch::UGBFCameraModifierFallingPitch() :
 
 bool UGBFCameraModifierFallingPitch::ProcessViewRotation( AActor * view_target, float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
 {
-    const auto velocity = GetViewTarget()->GetVelocity();
+    const auto * vt = GetViewTarget();
+
+    if ( vt == nullptr )
+    {
+        return false;
+    }
+
+    const auto velocity = vt->GetVelocity();
     CurrentVelocityZ = velocity.Z;
 
     const auto * character = Cast< ACharacter >( GetViewTarget() );

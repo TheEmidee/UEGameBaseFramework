@@ -7,7 +7,7 @@
 
 #include "GBFCameraModifierFallingPitch.generated.h"
 
-UCLASS()
+UCLASS( DisplayName = "Update Pitch When Falling" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierFallingPitch final : public UGBFCameraModifier
 {
     GENERATED_BODY()
