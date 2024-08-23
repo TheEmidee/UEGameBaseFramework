@@ -37,4 +37,5 @@ public:
     }
 
     static bool LineTraceSingleByChannel( AActor * view_target, FHitResult & hit_result, const FVector & start, const FVector & end, const TEnumAsByte< ECollisionChannel > collision_channel, bool draw_debug );
+    static bool SphereTraceSingleByChannel(AActor * view_target, FHitResult & hit_result, const FVector & start, const FVector & end, float radius, const TEnumAsByte< ECollisionChannel > collision_channel, bool draw_debug);
 };
