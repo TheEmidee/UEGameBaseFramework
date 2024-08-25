@@ -58,7 +58,15 @@ private:
     UPROPERTY( EditAnywhere )
     float InterpolationSpeed;
 
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUseManualRotationCooldown : 1;
+
+    /* The amount of time to skip correcting the camera pitch after the player manually moved the camera BEFORE being on a slope */
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseManualRotationCooldown" ) )
+    float ManualRotationCooldown;
+
     float CurrentYaw;
     float TargetYaw;
     float AngleCorrection;
+    float ManualRotationCooldownRemainingTime;
 };

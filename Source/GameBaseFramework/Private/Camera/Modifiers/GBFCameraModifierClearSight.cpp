@@ -12,9 +12,12 @@ UGBFCameraModifierClearSight::UGBFCameraModifierClearSight() :
     MaximumAngle( 90.0f ),
     StepSizeAngle( 15.0f ),
     InterpolationSpeed( 2.0f ),
+    bUseManualRotationCooldown( true ),
+    ManualRotationCooldown( 5.0f ),
     CurrentYaw( 0.0f ),
     TargetYaw( 0.0f ),
-    AngleCorrection( 0.0f )
+    AngleCorrection( 0.0f ),
+    ManualRotationCooldownRemainingTime( 0.0f )
 {
 }
 
@@ -27,7 +30,20 @@ bool UGBFCameraModifierClearSight::ProcessViewRotation( AActor * view_target, fl
         return false;
     }
 
-    TODO : Dont update if there was player input
+    if ( bUseManualRotationCooldown )
+    {
+        if ( !FMath::IsNearlyZero( delta_rotation.Pitch ) )
+        {
+            ManualRotationCooldownRemainingTime = ManualRotationCooldown;
+            return false;
+        }
+
+        if ( ManualRotationCooldownRemainingTime >= 0.0f )
+        {
+            ManualRotationCooldownRemainingTime -= delta_time;
+            return false;
+        }
+    }
 
     CurrentYaw = view_rotation.Yaw;
 
