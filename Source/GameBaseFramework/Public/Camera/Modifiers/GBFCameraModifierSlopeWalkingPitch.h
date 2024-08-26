@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Camera/Modifiers/GBFCameraModifier.h"
+#include "Curves/CurveFloat.h"
 
 #include <CoreMinimal.h>
 
@@ -73,6 +74,13 @@ private:
 
     UPROPERTY( EditAnywhere )
     TEnumAsByte< ECollisionChannel > SlopeDetectionCollisionChannel;
+
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUseSlopeAngleToPitchCurve : 1;
+
+    // Determines the target pitch based on the angle of the slope the player is walking on. If not set, then the pitch equals the slope angle
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseSlopeAngleToPitchCurve" ) )
+    FRuntimeFloatCurve SlopeAngleToPitchCurve;
 
     // The speed at which we interpolate the pitch when the view target is on a slope
     UPROPERTY( EditAnywhere )

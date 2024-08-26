@@ -43,6 +43,11 @@ bool UGBFCameraModifierSlopeWalkingPitch::ProcessViewRotation( AActor * view_tar
 
     const auto * cmc = character->GetCharacterMovement();
 
+    if ( !cmc->CurrentFloor.bBlockingHit )
+    {
+        return false;
+    }
+
     const auto floor_impact_normal = cmc->CurrentFloor.HitResult.ImpactNormal;
 
     CurrentSlopeAngle = FMath::RadiansToDegrees( FMath::Acos( floor_impact_normal.Z ) );
@@ -227,16 +232,19 @@ void UGBFCameraModifierSlopeWalkingPitch::HandleStateOnASlope( FRotator & view_r
         CameraToSlopeState = ECameraToSlopeState::Facing;
     }
 
+    TargetPitch = bUseSlopeAngleToPitchCurve
+                      ? SlopeAngleToPitchCurve.GetRichCurveConst()->Eval( CurrentSlopeAngle )
+                      : CurrentSlopeAngle;
+
     switch ( CameraToSlopeState )
     {
         case ECameraToSlopeState::Facing:
         {
-            TargetPitch = CurrentSlopeAngle;
         }
         break;
         case ECameraToSlopeState::Opposing:
         {
-            TargetPitch = -CurrentSlopeAngle;
+            TargetPitch *= -1.0f;
         }
         break;
         case ECameraToSlopeState::Traversing:
