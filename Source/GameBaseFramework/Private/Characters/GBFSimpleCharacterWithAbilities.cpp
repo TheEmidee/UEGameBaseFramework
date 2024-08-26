@@ -3,7 +3,8 @@
 #include "GAS/Abilities/GBFAbilitySet.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFTags.h"
-#include "GameFramework/CharacterMovementComponent.h"
+
+#include <GameFramework/CharacterMovementComponent.h>
 
 AGBFSimpleCharacterWithAbilities::AGBFSimpleCharacterWithAbilities( const FObjectInitializer & object_initializer )
 {
