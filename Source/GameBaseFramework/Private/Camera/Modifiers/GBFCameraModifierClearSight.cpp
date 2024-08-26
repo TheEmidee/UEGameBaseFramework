@@ -1,8 +1,8 @@
 #include "Camera/Modifiers/GBFCameraModifierClearSight.h"
 
 #include "Camera/Modifiers/GBFCameraModifierUtils.h"
-#include "Camera/PlayerCameraManager.h"
 
+#include <Camera/PlayerCameraManager.h>
 #include <Engine/Canvas.h>
 #include <Engine/HitResult.h>
 
@@ -12,12 +12,15 @@ UGBFCameraModifierClearSight::UGBFCameraModifierClearSight() :
     MaximumAngle( 90.0f ),
     StepSizeAngle( 15.0f ),
     InterpolationSpeed( 2.0f ),
+    bUseVelocitySpeedInterpolationMultiplier( false ),
     bUseManualRotationCooldown( true ),
     ManualRotationCooldown( 5.0f ),
     CurrentYaw( 0.0f ),
     TargetYaw( 0.0f ),
     AngleCorrection( 0.0f ),
-    ManualRotationCooldownRemainingTime( 0.0f )
+    ManualRotationCooldownRemainingTime( 0.0f ),
+    CurrentInterpolationSpeed( 0.0f ),
+    ViewTargetVelocity( 0.0f )
 {
 }
 
@@ -85,7 +88,16 @@ bool UGBFCameraModifierClearSight::ProcessViewRotation( AActor * view_target, fl
 
     TargetYaw = AngleCorrection;
 
-    const auto applied_angle = FMath::Clamp( AngleCorrection, -InterpolationSpeed * delta_time, +InterpolationSpeed * delta_time );
+    CurrentInterpolationSpeed = InterpolationSpeed;
+
+    if ( bUseVelocitySpeedInterpolationMultiplier )
+    {
+        ViewTargetVelocity = vt->GetVelocity().Size2D();
+        VelocityInterpolationSpeedMultiplier = VelocitySpeedInterpolationMultiplierCurve.GetRichCurveConst()->Eval( ViewTargetVelocity );
+        CurrentInterpolationSpeed *= VelocityInterpolationSpeedMultiplier;
+    }
+
+    const auto applied_angle = FMath::Clamp( AngleCorrection, -CurrentInterpolationSpeed * delta_time, CurrentInterpolationSpeed * delta_time );
     delta_rotation.Yaw += FMath::RadiansToDegrees( applied_angle );
 
     return false;
@@ -99,7 +111,22 @@ void UGBFCameraModifierClearSight::DisplayDebugInternal( UCanvas * canvas, const
     display_debug_manager.DrawString( FString::Printf( TEXT( "MaximumAngle: %s" ), *FString::SanitizeFloat( MaximumAngle ) ) );
     display_debug_manager.DrawString( FString::Printf( TEXT( "StepSizeAngle: %s" ), *FString::SanitizeFloat( StepSizeAngle ) ) );
     display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentYaw: %s" ), *FString::SanitizeFloat( CurrentYaw ) ) );
+
+    if ( ManualRotationCooldownRemainingTime > 0.0f )
+    {
+        display_debug_manager.DrawString( FString::Printf( TEXT( "ManualRotationCooldownRemainingTime: %s" ), *FString::SanitizeFloat( ManualRotationCooldownRemainingTime ) ) );
+        return;
+    }
+
     display_debug_manager.DrawString( FString::Printf( TEXT( "AngleCorrection: %s" ), *FString::SanitizeFloat( AngleCorrection ) ) );
+
+    if ( bUseVelocitySpeedInterpolationMultiplier )
+    {
+        display_debug_manager.DrawString( FString::Printf( TEXT( "ViewTargetVelocity: %s" ), *FString::SanitizeFloat( ViewTargetVelocity ) ) );
+        display_debug_manager.DrawString( FString::Printf( TEXT( "VelocityInterpolationSpeedMultiplier: %s" ), *FString::SanitizeFloat( VelocityInterpolationSpeedMultiplier ) ) );
+    }
+
+    display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentInterpolationSpeed: %s" ), *FString::SanitizeFloat( CurrentInterpolationSpeed ) ) );
 
     if ( !FMath::IsNearlyZero( AngleCorrection ) )
     {

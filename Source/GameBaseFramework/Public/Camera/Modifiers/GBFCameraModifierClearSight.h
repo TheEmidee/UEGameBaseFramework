@@ -3,6 +3,7 @@
 #include "Camera/Modifiers/GBFCameraModifier.h"
 
 #include <CoreMinimal.h>
+#include <Curves/CurveFloat.h>
 
 #include "GBFCameraModifierClearSight.generated.h"
 
@@ -59,6 +60,13 @@ private:
     float InterpolationSpeed;
 
     UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUseVelocitySpeedInterpolationMultiplier : 1;
+
+    // Curve to apply a multiplier to the interpolation speed, based on the view target velocity
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseVelocitySpeedInterpolationMultiplier" ) )
+    FRuntimeFloatCurve VelocitySpeedInterpolationMultiplierCurve;
+
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
     uint8 bUseManualRotationCooldown : 1;
 
     /* The amount of time to skip correcting the camera pitch after the player manually moved the camera BEFORE being on a slope */
@@ -69,4 +77,7 @@ private:
     float TargetYaw;
     float AngleCorrection;
     float ManualRotationCooldownRemainingTime;
+    float CurrentInterpolationSpeed;
+    float ViewTargetVelocity;
+    float VelocityInterpolationSpeedMultiplier;
 };
