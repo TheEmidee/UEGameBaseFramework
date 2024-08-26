@@ -3,12 +3,12 @@
 #include "Characters/Components/GBFHealthComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "GBFTags.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <AbilitySystemGlobals.h>
 #include <Components/CapsuleComponent.h>
 #include <Engine/World.h>
-#include <GBFTags.h>
 #include <GameFramework/CharacterMovementComponent.h>
 #include <GameFramework/Controller.h>
 #include <TimerManager.h>
