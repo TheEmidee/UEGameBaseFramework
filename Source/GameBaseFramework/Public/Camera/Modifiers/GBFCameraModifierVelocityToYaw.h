@@ -56,7 +56,7 @@ private:
     /* Curve to multiply the correction, based on distance.
      This allows to reduce the correction at low speed, and increase it at high speed
      Y should be between 0 and 1 */
-    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseInterpolationSpeedMultiplierFromDistance" ) )
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseYawCorrectionMultiplierFromVelocity" ) )
     FRuntimeFloatCurve YawCorrectionMultiplierFromVelocityCurve;
 
     UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )

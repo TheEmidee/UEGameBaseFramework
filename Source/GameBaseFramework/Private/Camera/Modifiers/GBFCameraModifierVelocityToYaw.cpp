@@ -81,7 +81,13 @@ bool UGBFCameraModifierVelocityToYaw::ProcessViewRotation( AActor * view_target,
         FinalInterpolationSpeed *= InterpolationSpeedMultiplierFromTime;
     }
 
-    auto rot = FMath::RInterpTo( FRotator( 0.0f, CurrentYaw, 0.0f ), FRotator( 0.0f, TargetYaw, 0.0f ), delta_time, FinalInterpolationSpeed );
+    if ( bUseYawCorrectionMultiplierFromVelocity )
+    {
+        YawCorrectionMultiplierFromVelocity = YawCorrectionMultiplierFromVelocityCurve.GetRichCurveConst()->Eval( ViewTargetVelocity );
+        FinalInterpolationSpeed *= YawCorrectionMultiplierFromVelocity;
+    }
+
+    const auto rot = FMath::RInterpTo( FRotator( 0.0f, CurrentYaw, 0.0f ), FRotator( 0.0f, TargetYaw, 0.0f ), delta_time, FinalInterpolationSpeed );
     delta_rotation.Yaw = rot.Yaw - CurrentYaw;
 
     return false;
