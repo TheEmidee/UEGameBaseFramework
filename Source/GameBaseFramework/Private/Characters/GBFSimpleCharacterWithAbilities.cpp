@@ -2,6 +2,9 @@
 
 #include "GAS/Abilities/GBFAbilitySet.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "GBFTags.h"
+
+#include <GameFramework/CharacterMovementComponent.h>
 
 AGBFSimpleCharacterWithAbilities::AGBFSimpleCharacterWithAbilities( const FObjectInitializer & object_initializer )
 {
@@ -60,4 +63,35 @@ void AGBFSimpleCharacterWithAbilities::BeginPlay()
 void AGBFSimpleCharacterWithAbilities::GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const
 {
     tag_container.AppendTags( StaticTags );
+}
+
+void AGBFSimpleCharacterWithAbilities::OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode )
+{
+    Super::OnMovementModeChanged( prev_movement_mode, previous_custom_mode );
+
+    const auto * character_movement_component = GetCharacterMovement();
+
+    SetMovementModeTag( prev_movement_mode, previous_custom_mode, false );
+    SetMovementModeTag( character_movement_component->MovementMode, character_movement_component->CustomMovementMode, true );
+}
+
+void AGBFSimpleCharacterWithAbilities::SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled )
+{
+    if ( auto * asc = GetAbilitySystemComponent() )
+    {
+        const FGameplayTag * movement_mode_tag = nullptr;
+        if ( movement_mode == MOVE_Custom )
+        {
+            movement_mode_tag = CustomMovementModeTagMap.Find( custom_movement_mode );
+        }
+        else
+        {
+            movement_mode_tag = MovementModeTagMap.Find( movement_mode );
+        }
+
+        if ( movement_mode_tag && movement_mode_tag->IsValid() )
+        {
+            asc->SetLooseGameplayTagCount( *movement_mode_tag, ( is_tag_enabled ? 1 : 0 ) );
+        }
+    }
 }

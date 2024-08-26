@@ -32,11 +32,17 @@ public:
     void GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const override;
     const TArray< TObjectPtr< const UGBFAbilitySet > > & GetAbilitySets() const;
 
+    void OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode ) override;
+
 protected:
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
     TObjectPtr< UGBFAbilitySystemComponent > AbilitySystemComponent;
 
+    TMap< uint8, FGameplayTag > CustomMovementModeTagMap;
+
 private:
+    void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
+
     UPROPERTY( EditDefaultsOnly )
     TObjectPtr< UGBFAbilityTagRelationshipMapping > TagRelationshipMapping;
 
