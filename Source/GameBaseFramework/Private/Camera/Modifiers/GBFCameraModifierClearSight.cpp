@@ -35,7 +35,7 @@ bool UGBFCameraModifierClearSight::ProcessViewRotation( AActor * view_target, fl
 
     if ( bUseManualRotationCooldown )
     {
-        if ( !FMath::IsNearlyZero( delta_rotation.Pitch ) )
+        if ( !delta_rotation.IsNearlyZero( 0.01f ) )
         {
             ManualRotationCooldownRemainingTime = ManualRotationCooldown;
             return false;
@@ -164,5 +164,5 @@ bool UGBFCameraModifierClearSight::IsLineOfSightObstructed( const LineOfSightChe
 
     const auto dot = FVector::DotProduct( hit_result.Normal, FVector::UpVector );
 
-    return FMath::IsNearlyZero( dot );
+    return dot < 0.1f;
 }
