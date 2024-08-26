@@ -95,10 +95,8 @@ void AGBFPlayerCameraManager::DisplayDebug( UCanvas * canvas, const FDebugDispla
         display_debug_manager.DrawString( FString( TEXT( "   --- Modifiers Stack (Begin) ---" ) ) );
 
         ForEachCameraStackModifier( [ & ]( auto * modifier ) {
-            if ( modifier->bDebug )
-            {
-                modifier->DisplayDebug( canvas, debug_display, yl, y_pos );
-            }
+            display_debug_manager.DrawString( modifier->GetName() );
+            modifier->DisplayDebug( canvas, debug_display, yl, y_pos );
         },
             true );
 

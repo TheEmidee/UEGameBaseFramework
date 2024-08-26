@@ -47,7 +47,6 @@ void UGBFCameraModifier::RemovedFromCameraManager()
 void UGBFCameraModifier::DisplayDebug( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos )
 {
     auto & display_debug_manager = canvas->DisplayDebugManager;
-    display_debug_manager.DrawString( GetName() );
 
     if ( IsDisabled() )
     {
@@ -57,7 +56,10 @@ void UGBFCameraModifier::DisplayDebug( UCanvas * canvas, const FDebugDisplayInfo
         return;
     }
 
-    DisplayDebugInternal( canvas, debug_display, yl, y_pos );
+    if ( bDebug )
+    {
+        DisplayDebugInternal( canvas, debug_display, yl, y_pos );
+    }
 }
 
 void UGBFCameraModifier::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const
