@@ -1,7 +1,6 @@
 #pragma once
 
-#include "Camera/CameraModifier.h"
-
+#include <Camera/CameraModifier.h>
 #include <CoreMinimal.h>
 #include <GameplayEffectTypes.h>
 

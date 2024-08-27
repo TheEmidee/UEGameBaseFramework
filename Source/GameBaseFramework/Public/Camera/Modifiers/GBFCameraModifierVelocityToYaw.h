@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Camera/Modifiers/GBFCameraModifier.h"
-#include "Curves/CurveFloat.h"
 
 #include <CoreMinimal.h>
+#include <Curves/CurveFloat.h>
 
 #include "GBFCameraModifierVelocityToYaw.generated.h"
 
