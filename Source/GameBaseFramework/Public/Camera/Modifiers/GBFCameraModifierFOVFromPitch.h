@@ -8,7 +8,7 @@
 
 #include "GBFCameraModifierFOVFromPitch.generated.h"
 
-UCLASS( DisplayName = "Update FOV From Pitch")
+UCLASS( DisplayName = "Update FOV From Pitch" )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierFOVFromPitch final : public UGBFCameraModifier
 {
     GENERATED_BODY()

@@ -44,7 +44,7 @@ private:
 
     struct FOnASlopeParameters
     {
-        FOnASlopeParameters( float delta_time, const FVector& floor_impact_normal, const TWeakObjectPtr<AActor>& view_target ) :
+        FOnASlopeParameters( float delta_time, const FVector & floor_impact_normal, const TWeakObjectPtr< AActor > & view_target ) :
             DeltaTime( delta_time ),
             FloorImpactNormal( floor_impact_normal ),
             ViewTarget( view_target )
@@ -57,9 +57,9 @@ private:
     };
 
     bool IsOnSlopeSteepEnough() const;
-    void HandleStateWaitingForSlope(float view_rotation_pitch);
+    void HandleStateWaitingForSlope( float view_rotation_pitch );
     void HandleStateOnASlope( FRotator & view_rotation, const FOnASlopeParameters & parameters );
-    void HandleStateLeavingSlope(FRotator& view_rotation, float delta_time);
+    void HandleStateLeavingSlope( FRotator & view_rotation, float delta_time );
 
     /** Minimum angle of the slope the character is standing on to activate this modifier */
     UPROPERTY( EditAnywhere )
