@@ -30,7 +30,10 @@ bool UGBFCameraModifier::IsDisabled() const
 
 void UGBFCameraModifier::AddedToCamera( APlayerCameraManager * player_camera_manager )
 {
-    Super::AddedToCamera( player_camera_manager );
+    // :NOTE: Don't call Super, as this binds functions to when the manager is destroyed, because modifiers are statically added to it
+    // Here we can dynamically add and remove modifiers
+    CameraOwner = player_camera_manager;
+    
     ReceiveAddedToCameraManager( CameraOwner );
 }
 
