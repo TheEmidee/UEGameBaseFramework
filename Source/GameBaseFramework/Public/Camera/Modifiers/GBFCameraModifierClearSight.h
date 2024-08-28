@@ -23,7 +23,7 @@ protected:
 private:
     struct LineOfSightCheckParameters
     {
-        LineOfSightCheckParameters( AActor * view_target, const FVector & camera_location, const FRotator & camera_rotation, float trace_angle ) :
+        LineOfSightCheckParameters( AActor * view_target, const FVector & camera_location, const FRotator & camera_rotation, const float trace_angle ) :
             ViewTarget( view_target ),
             CameraLocation( camera_location ),
             CameraRotation( camera_rotation ),

@@ -11,6 +11,7 @@ UGBFCameraModifierSlopeWalkingPitch::UGBFCameraModifierSlopeWalkingPitch() :
     SlopeDetectionStartLocationOffset( 0.0f, 0.0f, 50.0f ),
     SlopeDetectionLineTraceLength( 1000.0f ),
     SlopeDetectionCollisionChannel( ECC_WorldStatic ),
+    bUseSlopeAngleToPitchCurve( false ),
     InterpolationSpeed( 2.0f ),
     LeavingSlopeInterpolationSpeed( 2.0f ),
     bUseManualRotationCooldown( true ),
@@ -27,7 +28,7 @@ UGBFCameraModifierSlopeWalkingPitch::UGBFCameraModifierSlopeWalkingPitch() :
 {
 }
 
-bool UGBFCameraModifierSlopeWalkingPitch::ProcessViewRotation( AActor * view_target, float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
+bool UGBFCameraModifierSlopeWalkingPitch::ProcessViewRotation( AActor * view_target, float const delta_time, FRotator & view_rotation, FRotator & delta_rotation )
 {
     auto * vt = GetViewTarget();
     if ( vt == nullptr )
@@ -35,7 +36,7 @@ bool UGBFCameraModifierSlopeWalkingPitch::ProcessViewRotation( AActor * view_tar
         return false;
     }
 
-    auto * character = Cast< ACharacter >( vt );
+    const auto * character = Cast< ACharacter >( vt );
     if ( character == nullptr )
     {
         return false;
@@ -157,7 +158,7 @@ bool UGBFCameraModifierSlopeWalkingPitch::IsOnSlopeSteepEnough() const
     return CurrentSlopeAngle >= MinSlopeAngle;
 }
 
-void UGBFCameraModifierSlopeWalkingPitch::HandleStateWaitingForSlope( float view_rotation_pitch )
+void UGBFCameraModifierSlopeWalkingPitch::HandleStateWaitingForSlope( const float view_rotation_pitch )
 {
     if ( !IsOnSlopeSteepEnough() )
     {
@@ -263,9 +264,9 @@ void UGBFCameraModifierSlopeWalkingPitch::HandleStateOnASlope( FRotator & view_r
     view_rotation.Pitch = CurrentPitch;
 }
 
-void UGBFCameraModifierSlopeWalkingPitch::HandleStateLeavingSlope( FRotator & view_rotation, float delta_time )
+void UGBFCameraModifierSlopeWalkingPitch::HandleStateLeavingSlope( FRotator & view_rotation, const float delta_time )
 {
-    CurrentPitch = FMath::FInterpTo( CurrentPitch, TargetPitch, delta_time, InterpolationSpeed );
+    CurrentPitch = FMath::FInterpTo( CurrentPitch, TargetPitch, delta_time, LeavingSlopeInterpolationSpeed );
     view_rotation.Pitch = CurrentPitch;
 
     if ( FMath::IsNearlyEqual( CurrentPitch, TargetPitch, 1.0f ) )

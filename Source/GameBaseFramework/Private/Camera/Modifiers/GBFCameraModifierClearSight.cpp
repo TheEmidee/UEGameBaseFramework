@@ -20,11 +20,12 @@ UGBFCameraModifierClearSight::UGBFCameraModifierClearSight() :
     AngleCorrection( 0.0f ),
     ManualRotationCooldownRemainingTime( 0.0f ),
     CurrentInterpolationSpeed( 0.0f ),
-    ViewTargetVelocity( 0.0f )
+    ViewTargetVelocity( 0.0f ),
+    VelocityInterpolationSpeedMultiplier( 0.0f )
 {
 }
 
-bool UGBFCameraModifierClearSight::ProcessViewRotation( AActor * view_target, float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
+bool UGBFCameraModifierClearSight::ProcessViewRotation( AActor * view_target, const float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
 {
     const auto view_location = CameraOwner->GetCameraLocation();
     auto * vt = GetViewTarget();

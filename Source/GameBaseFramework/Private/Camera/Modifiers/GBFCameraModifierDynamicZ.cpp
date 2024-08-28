@@ -24,9 +24,14 @@ bool UGBFCameraModifierDynamicZ::IsDisabled() const
     return Cast< ACharacter >( GetViewTarget() ) == nullptr;
 }
 
-void UGBFCameraModifierDynamicZ::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierDynamicZ::ModifyCamera( const float delta_time, const FVector view_location, FRotator /* view_rotation */, float /* fov */, FVector & new_view_location, FRotator & /* new_view_rotation */, float & /* new_fov */ )
 {
     const auto * character = Cast< ACharacter >( GetViewTarget() );
+
+    if ( character == nullptr )
+    {
+        return;
+    }
 
     const auto current_movement_mode = character->GetCharacterMovement()->MovementMode;
 

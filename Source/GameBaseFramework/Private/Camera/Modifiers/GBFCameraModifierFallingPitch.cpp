@@ -21,7 +21,7 @@ UGBFCameraModifierFallingPitch::UGBFCameraModifierFallingPitch() :
 {
 }
 
-bool UGBFCameraModifierFallingPitch::ProcessViewRotation( AActor * view_target, float delta_time, FRotator & view_rotation, FRotator & delta_rotation )
+bool UGBFCameraModifierFallingPitch::ProcessViewRotation( AActor * view_target, const float delta_time, FRotator & view_rotation, FRotator & /* delta_rotation */ )
 {
     const auto * vt = GetViewTarget();
 

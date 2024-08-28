@@ -19,7 +19,7 @@ void AGBFPlayerCameraManager::PostInitializeComponents()
         false );
 }
 
-void AGBFPlayerCameraManager::ProcessViewRotation( float delta_time, FRotator & view_rotation, FRotator & delta_rot )
+void AGBFPlayerCameraManager::ProcessViewRotation( const float delta_time, FRotator & view_rotation, FRotator & delta_rot )
 {
     ForEachCameraStackModifier( TFunctionRef< bool( UGBFCameraModifier * ) >( [ & ]( UGBFCameraModifier * modifier ) {
         return modifier->ProcessViewRotation( ViewTarget.Target, delta_time, view_rotation, delta_rot );
@@ -29,7 +29,7 @@ void AGBFPlayerCameraManager::ProcessViewRotation( float delta_time, FRotator & 
     Super::ProcessViewRotation( delta_time, view_rotation, delta_rot );
 }
 
-void AGBFPlayerCameraManager::ApplyCameraModifiers( float delta_time, FMinimalViewInfo & pov )
+void AGBFPlayerCameraManager::ApplyCameraModifiers( const float delta_time, FMinimalViewInfo & pov )
 {
     Super::ApplyCameraModifiers( delta_time, pov );
 
@@ -39,7 +39,7 @@ void AGBFPlayerCameraManager::ApplyCameraModifiers( float delta_time, FMinimalVi
         true );
 }
 
-void AGBFPlayerCameraManager::SetViewTarget( AActor * new_view_target, FViewTargetTransitionParams transition_params )
+void AGBFPlayerCameraManager::SetViewTarget( AActor * new_view_target, const FViewTargetTransitionParams transition_params )
 {
     Super::SetViewTarget( new_view_target, transition_params );
 

@@ -3,7 +3,6 @@
 #include "Camera/Modifiers/GBFCameraModifierUtils.h"
 
 #include <Engine/Canvas.h>
-#include <Engine/Engine.h>
 #include <GameFramework/SpringArmComponent.h>
 
 UGBFCameraModifierSpringArmLengthFromPitch::UGBFCameraModifierSpringArmLengthFromPitch() :
@@ -14,7 +13,7 @@ UGBFCameraModifierSpringArmLengthFromPitch::UGBFCameraModifierSpringArmLengthFro
 {
 }
 
-void UGBFCameraModifierSpringArmLengthFromPitch::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierSpringArmLengthFromPitch::ModifyCamera( float /* delta_time */, FVector /* view_location */, FRotator view_rotation, float /* fov */, FVector & /* new_view_location */, FRotator & /* new_view_rotation */, float & /* new_fov */ )
 {
     LastCameraPitch = view_rotation.Pitch;
 

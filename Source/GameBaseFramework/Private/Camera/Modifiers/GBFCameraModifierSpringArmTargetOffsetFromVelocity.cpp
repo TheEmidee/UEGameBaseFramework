@@ -22,9 +22,9 @@ UGBFCameraModifierSpringArmTargetOffsetFromVelocity::UGBFCameraModifierSpringArm
 {
 }
 
-void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierSpringArmTargetOffsetFromVelocity::ModifyCamera( const float delta_time, FVector /* view_location */, const FRotator view_rotation, float /* fov */, FVector & /* new_view_location */, FRotator & /* new_view_rotation */, float & /* new_fov */ )
 {
-    auto * view_target = GetViewTarget();
+    const auto * view_target = GetViewTarget();
 
     if ( view_target == nullptr )
     {
