@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Camera/Modifiers/GBFCameraModifierStack.h"
+
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 #include <GameFramework/Pawn.h>
@@ -49,4 +51,8 @@ public:
     // Default camera mode used by player controlled pawns.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
     TSubclassOf< UGBFCameraMode > DefaultCameraMode;
+
+    // Camera modifiers to add to the player camera manager
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )
+    TObjectPtr< UGBFCameraModifierStack > CameraModifierStack;
 };

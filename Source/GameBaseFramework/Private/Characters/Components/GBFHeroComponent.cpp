@@ -2,6 +2,7 @@
 
 #include "Camera/GBFCameraComponent.h"
 #include "Camera/GBFCameraMode.h"
+#include "Camera/GBFPlayerCameraManager.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFPawnData.h"
 #include "Engine/GBFLocalPlayer.h"
@@ -133,6 +134,11 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
                     {
                         player_camera_manager->AddNewCameraModifier( modifier );
                     }
+                }
+
+                if ( auto * gbf_player_camera_manager = Cast< AGBFPlayerCameraManager >( pc->PlayerCameraManager ) )
+                {
+                    gbf_player_camera_manager->SetModifierStack( pawn_data->CameraModifierStack );
                 }
 
                 if ( auto * camera_component = UGBFCameraComponent::FindCameraComponent( pawn ) )
