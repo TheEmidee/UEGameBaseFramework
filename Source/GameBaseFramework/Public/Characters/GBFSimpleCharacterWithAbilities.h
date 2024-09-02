@@ -43,22 +43,22 @@ protected:
 private:
     void SetMovementModeTag( EMovementMode movement_mode, uint8 custom_movement_mode, bool is_tag_enabled );
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     TObjectPtr< UGBFAbilityTagRelationshipMapping > TagRelationshipMapping;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     TArray< TObjectPtr< const UGBFAbilitySet > > AbilitySets;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     EGameplayEffectReplicationMode GameplayEffectReplicationMode;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     TArray< TSubclassOf< UGameplayEffect > > AdditionalDefaultEffects;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     TArray< TSubclassOf< UAttributeSet > > AttributeSetClasses;
 
-    UPROPERTY( EditDefaultsOnly )
+    UPROPERTY( EditAnywhere )
     FGameplayTagContainer StaticTags;
 
     UPROPERTY( Transient )
