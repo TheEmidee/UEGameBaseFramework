@@ -47,7 +47,7 @@ void UGBFAT_ActivateAbilityFromEvent::OnDestroy( bool in_owner_finished )
 
 UAbilitySystemComponent * UGBFAT_ActivateAbilityFromEvent::GetAbilitySystemComponent() const
 {
-    const auto asc_to_use = OptionalAbilitySystemComponent != nullptr ? OptionalAbilitySystemComponent : AbilitySystemComponent;
+    const auto * asc_to_use = OptionalAbilitySystemComponent != nullptr ? OptionalAbilitySystemComponent : AbilitySystemComponent;
 
     if ( asc_to_use.IsValid() )
     {
