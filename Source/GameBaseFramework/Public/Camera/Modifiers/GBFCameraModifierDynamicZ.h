@@ -22,13 +22,26 @@ protected:
     void DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const override;
 
 private:
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUpdateFromDistanceFromLastGroundedLocation : 1;
+
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUpdateFromDistanceFromLastGroundedLocation" ) )
     FRuntimeFloatCurve DistanceFromLastGroundedLocationInterpolationSpeedCurve;
 
-    float LastGroundedPositionZ;
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUpdateCameraZOnLanding : 1;
+
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUpdateCameraZOnLanding" ) )
+    float LandingInterpolationTime;
+
+    float LastGroundedCharacterPositionZ;
+    float LastGroundedCameraPositionZ;
     float CurrentViewLocationZ;
     float TargetViewLocationZ;
     float CurrentInterpolationSpeed;
     float DeltaLastGroundedPositionZ;
     float VelocityZ;
+    EMovementMode PreviousMovementMode;
+    bool bInterpolateLanding;
+    float LandingInterpolationRemainingTime;
 };
