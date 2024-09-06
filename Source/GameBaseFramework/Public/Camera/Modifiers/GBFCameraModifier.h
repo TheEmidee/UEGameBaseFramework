@@ -8,7 +8,7 @@
 
 class AGBFPlayerCameraManager;
 
-UCLASS( BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced )
+UCLASS( abstract, BlueprintType, Blueprintable, EditInlineNew, DefaultToInstanced )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifier : public UCameraModifier
 {
     GENERATED_BODY()
