@@ -279,7 +279,8 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
 
         for ( const auto & ability_set_ptr : abilities_entry.GrantedAbilitySets )
         {
-            if ( const auto * ability_set = ability_set_ptr.Get() )
+            if ( const auto * ability_set = ability_set_ptr.LoadSynchronous();
+                 ability_set != nullptr )
             {
                 ability_set->GiveToAbilitySystem( ability_system_component, &AddedExtensions.AbilitySetHandles.AddDefaulted_GetRef() );
             }
