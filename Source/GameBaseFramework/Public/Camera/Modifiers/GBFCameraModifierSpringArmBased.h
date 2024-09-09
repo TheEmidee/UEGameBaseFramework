@@ -8,7 +8,7 @@
 
 class USpringArmComponent;
 
-UCLASS()
+UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmBased : public UGBFCameraModifier
 {
     GENERATED_BODY()
