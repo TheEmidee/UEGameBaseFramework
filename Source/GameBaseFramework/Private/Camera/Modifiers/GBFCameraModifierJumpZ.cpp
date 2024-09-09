@@ -1,10 +1,9 @@
 #include "Camera/Modifiers/GBFCameraModifierJumpZ.h"
 
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
-
 #include <Engine/Canvas.h>
 #include <GameFramework/Character.h>
+#include <GameFramework/CharacterMovementComponent.h>
+#include <GameFramework/SpringArmComponent.h>
 
 UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     LandingTransitionTime( 0.5f ),
@@ -84,7 +83,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
                 CurrentState = EState::WaitingForJump;
                 return;
             }
-            
+
             new_view_location.Z = LastGroundedCameraZPosition;
         }
         break;
