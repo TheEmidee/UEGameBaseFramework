@@ -175,6 +175,13 @@ void UGBFTargetingHelperLibrary::AimFromStartLocation( FVector & trace_start, FV
 
     switch ( aim_infos.StartLocationInfos.LocationType )
     {
+        case EGameplayAbilityTargetingLocationType::LiteralTransform:
+        {
+            forward_vector = aim_infos.StartLocationInfos.LiteralTransform.Rotator().Vector();
+            right_vector = aim_infos.StartLocationInfos.LiteralTransform.GetRotation().GetRightVector();
+            up_vector = aim_infos.StartLocationInfos.LiteralTransform.GetRotation().GetUpVector();
+        }
+        break;
         case EGameplayAbilityTargetingLocationType::ActorTransform:
         {
             if ( aim_infos.StartLocationInfos.SourceActor != nullptr )
