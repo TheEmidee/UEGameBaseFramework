@@ -4,7 +4,7 @@
 
 #include <CoreMinimal.h>
 
-class FGBFCameraModifierUtilsLibrary
+class GAMEBASEFRAMEWORK_API FGBFCameraModifierUtilsLibrary
 {
 public:
     static float ClampAngle( float angle );
