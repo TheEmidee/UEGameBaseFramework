@@ -9,7 +9,7 @@
 #include "GBFCameraModifierSpringArmLengthFromPitch.generated.h"
 
 UCLASS( DisplayName = "Update Spring Arm Length From Pitch" )
-class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmLengthFromPitch : public UGBFCameraModifierSpringArmBased
+class GAMEBASEFRAMEWORK_API UGBFCameraModifierSpringArmLengthFromPitch final : public UGBFCameraModifierSpringArmBased
 {
     GENERATED_BODY()
 
