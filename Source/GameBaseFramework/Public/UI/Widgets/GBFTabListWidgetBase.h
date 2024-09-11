@@ -6,6 +6,8 @@
 
 #include "GBFTabListWidgetBase.generated.h"
 
+class UCommonButtonStyle;
+
 USTRUCT( BlueprintType )
 struct FGBFTabDescriptor
 {
@@ -31,6 +33,9 @@ public:
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UCommonButtonBase > TabButtonType;
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    TSubclassOf< UCommonButtonStyle > TabButtonStyle;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UCommonUserWidget > TabContentType;
