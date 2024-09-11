@@ -65,6 +65,7 @@ void AGBFPlayerCameraManager::SetModifierStack( UGBFCameraModifierStack * modifi
 
     ForEachCameraStackModifier( [ & ]( auto * modifier ) {
         modifier->AddedToCamera( this );
+        modifier->OnViewTargetChanged( GetViewTarget() );
     },
         false );
 }
