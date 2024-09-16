@@ -7,7 +7,7 @@
 
 class UGBFCameraModifier;
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFCameraModifierStack final : public UDataAsset
 {
     GENERATED_BODY()
