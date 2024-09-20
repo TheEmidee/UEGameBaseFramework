@@ -6,11 +6,14 @@
 
 UGBFCameraModifierFOVFromVelocity::UGBFCameraModifierFOVFromVelocity() :
     VelocityScale( 1.0f, 1.0f, 0.0f ),
+    bUseInterpolationSpeedCurve( false ),
     Operation( EGBFCameraModifierAttributeOperation::Add ),
+    FOVInterpolationSpeed( 2.0f ),
     ViewTargetVelocity( 0.0f ),
     InitialFOV( 0.0f ),
     CurveFloatFOV( 0.0f ),
-    FinalFOV( 0.0f )
+    FinalFOV( 0.0f ),
+    InterpolationSpeed( 0.0f )
 {
 }
 
@@ -30,6 +33,14 @@ void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector 
     CurveFloatFOV = VelocityToFOVCurve.GetRichCurveConst()->Eval( ViewTargetVelocity );
     FinalFOV = FGBFCameraModifierUtilsLibrary::GetAttributeOperationResult( InitialFOV, CurveFloatFOV, Operation );
 
+    InterpolationSpeed = FOVInterpolationSpeed;
+
+    if ( bUseInterpolationSpeedCurve )
+    {
+        InterpolationSpeed *= InterpolationSpeedCurve.GetRichCurveConst()->Eval( FinalFOV );
+    }
+
+    FinalFOV = FMath::FInterpTo( fov, FinalFOV, delta_time, InterpolationSpeed );
     new_fov = FinalFOV;
 }
 

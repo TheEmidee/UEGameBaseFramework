@@ -30,11 +30,21 @@ private:
     UPROPERTY( EditAnywhere )
     FRuntimeFloatCurve VelocityToFOVCurve;
 
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUseInterpolationSpeedCurve : 1;
+
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseInterpolationSpeedCurve" ) )
+    FRuntimeFloatCurve InterpolationSpeedCurve;
+
     UPROPERTY( EditAnywhere )
     EGBFCameraModifierAttributeOperation Operation;
+
+    UPROPERTY( EditAnywhere )
+    float FOVInterpolationSpeed;
 
     float ViewTargetVelocity;
     float InitialFOV;
     float CurveFloatFOV;
     float FinalFOV;
+    float InterpolationSpeed;
 };
