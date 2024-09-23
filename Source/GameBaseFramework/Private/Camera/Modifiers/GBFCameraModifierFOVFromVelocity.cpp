@@ -2,6 +2,7 @@
 
 #include "Camera/Modifiers/GBFCameraModifierUtils.h"
 
+#include <Camera/PlayerCameraManager.h>
 #include <Engine/Canvas.h>
 
 UGBFCameraModifierFOVFromVelocity::UGBFCameraModifierFOVFromVelocity() :
@@ -17,6 +18,13 @@ UGBFCameraModifierFOVFromVelocity::UGBFCameraModifierFOVFromVelocity() :
 {
 }
 
+void UGBFCameraModifierFOVFromVelocity::AddedToCamera( APlayerCameraManager * camera )
+{
+    Super::AddedToCamera( camera );
+
+    InitialFOV = camera->GetFOVAngle();
+}
+
 void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
 {
     const auto * vt = GetViewTarget();
@@ -29,7 +37,6 @@ void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector 
     const auto vt_velocity = vt->GetVelocity() * VelocityScale;
     ViewTargetVelocity = vt_velocity.Size();
 
-    InitialFOV = fov;
     CurveFloatFOV = VelocityToFOVCurve.GetRichCurveConst()->Eval( ViewTargetVelocity );
     FinalFOV = FGBFCameraModifierUtilsLibrary::GetAttributeOperationResult( InitialFOV, CurveFloatFOV, Operation );
 
@@ -40,8 +47,9 @@ void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector 
         InterpolationSpeed *= InterpolationSpeedCurve.GetRichCurveConst()->Eval( FinalFOV );
     }
 
-    FinalFOV = FMath::FInterpTo( fov, FinalFOV, delta_time, InterpolationSpeed );
+    FinalFOV = FMath::FInterpTo( InitialFOV, FinalFOV, delta_time, InterpolationSpeed );
     new_fov = FinalFOV;
+    InitialFOV = FinalFOV;
 }
 
 void UGBFCameraModifierFOVFromVelocity::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const

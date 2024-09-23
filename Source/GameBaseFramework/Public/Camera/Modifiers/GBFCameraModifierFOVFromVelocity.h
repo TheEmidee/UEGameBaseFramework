@@ -16,6 +16,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifierFOVFromVelocity final : public UGB
 public:
     UGBFCameraModifierFOVFromVelocity();
 
+    void AddedToCamera( APlayerCameraManager * camera ) override;
     void ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
 
 protected:
