@@ -20,6 +20,7 @@ void UGBFAT_PlayLevelSequenceFromActorAndWait::Activate()
     }
 
     LevelSequenceActor->PlaybackSettings.bPauseAtEnd = bPauseAtEnd;
+    LevelSequenceActor->GetSequencePlayer()->SetPlaybackSettings( LevelSequenceActor->PlaybackSettings );
     LevelSequenceActor->GetSequencePlayer()->OnFinished.AddDynamic( this, &UGBFAT_PlayLevelSequenceFromActorAndWait::OnSequenceEnded );
     LevelSequenceActor->GetSequencePlayer()->Play();
 }
