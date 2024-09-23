@@ -16,6 +16,7 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifierFOVFromVelocity final : public UGB
 public:
     UGBFCameraModifierFOVFromVelocity();
 
+    void AddedToCamera( APlayerCameraManager * camera ) override;
     void ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov ) override;
 
 protected:
@@ -30,11 +31,21 @@ private:
     UPROPERTY( EditAnywhere )
     FRuntimeFloatCurve VelocityToFOVCurve;
 
+    UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
+    uint8 bUseInterpolationSpeedCurve : 1;
+
+    UPROPERTY( EditAnywhere, meta = ( EditCondition = "bUseInterpolationSpeedCurve" ) )
+    FRuntimeFloatCurve InterpolationSpeedCurve;
+
     UPROPERTY( EditAnywhere )
     EGBFCameraModifierAttributeOperation Operation;
+
+    UPROPERTY( EditAnywhere )
+    float FOVInterpolationSpeed;
 
     float ViewTargetVelocity;
     float InitialFOV;
     float CurveFloatFOV;
     float FinalFOV;
+    float InterpolationSpeed;
 };
