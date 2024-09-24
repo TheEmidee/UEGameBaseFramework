@@ -12,11 +12,13 @@ UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     CurrentState( EState::WaitingForJump ),
     LastGroundedCameraZPosition( 0.0f ),
     LastGroundedCharacterZPosition( 0.0f ),
+    DeltaLastGroundedCharacterToCameraZ( 0.0f ),
     CurrentCharacterZPosition( 0.0f ),
     CurrentCameraZPosition( 0.0f ),
     LerpStartCameraZPosition( 0.0f ),
     LerpEndCameraZPosition( 0.0f ),
-    LandingTransitionRemainingTime( 0.0f )
+    LandingTransitionRemainingTime( 0.0f ),
+    bShouldInterpolateWhenJumping( false )
 {
 }
 
@@ -54,6 +56,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
             {
                 LastGroundedCharacterZPosition = CurrentCharacterZPosition;
                 LastGroundedCameraZPosition = view_location.Z;
+                DeltaLastGroundedCharacterToCameraZ = LastGroundedCameraZPosition - LastGroundedCharacterZPosition;
             }
         }
         break;
@@ -61,30 +64,31 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
         {
             if ( cmc->MovementMode == MOVE_Walking )
             {
+                bShouldInterpolateWhenJumping = false;
                 CurrentState = EState::Landing;
                 LandingTransitionRemainingTime = LandingTransitionTime;
 
                 if ( FMath::IsNearlyEqual( CurrentCharacterZPosition, LastGroundedCharacterZPosition, LandOnSameHeightCheckTolerance ) )
                 {
                     LerpStartCameraZPosition = LastGroundedCameraZPosition;
-                    LerpEndCameraZPosition = LastGroundedCameraZPosition;
 
-                    SpringArmComponent->bEnableCameraLag = false;
+                    //SpringArmComponent->bEnableCameraLag = false;
                 }
                 else
                 {
                     LerpStartCameraZPosition = LastGroundedCameraZPosition;
-                    LerpEndCameraZPosition = view_location.Z;
                 }
             }
 
             if ( character->GetVelocity().Z <= 0.0f && CurrentCharacterZPosition < LastGroundedCharacterZPosition - DistanceFromLastGroundedPositionToResetModifier )
             {
                 CurrentState = EState::WaitingForJump;
+                bShouldInterpolateWhenJumping = false;
                 return;
             }
 
-            new_view_location.Z = LastGroundedCameraZPosition;
+            const auto offset = bShouldInterpolateWhenJumping ? DeltaLastGroundedCharacterToCameraZ : 0.0f;
+            new_view_location.Z = FMath::FInterpTo( new_view_location.Z, LastGroundedCameraZPosition + offset, delta_time, 2.0f );
         }
         break;
         case EState::Landing:
@@ -92,7 +96,9 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
             if ( character->bWasJumping )
             {
                 CurrentState = EState::Jumping;
+                LastGroundedCharacterZPosition = CurrentCharacterZPosition;
                 LastGroundedCameraZPosition = view_location.Z;
+                bShouldInterpolateWhenJumping = true;
             }
             else
             {
@@ -102,10 +108,11 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
                 {
                     LandingTransitionRemainingTime = 0.0f;
                     CurrentState = EState::WaitingForJump;
-                    SpringArmComponent->bEnableCameraLag = true;
+                    //SpringArmComponent->bEnableCameraLag = false; //true;
                 }
                 else
                 {
+                    LerpEndCameraZPosition = view_location.Z;
                     new_view_location.Z = FMath::Lerp( LerpStartCameraZPosition, LerpEndCameraZPosition, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
                 }
             }
@@ -145,6 +152,8 @@ void UGBFCameraModifierJumpZ::DisplayDebugInternal( UCanvas * canvas, const FDeb
             display_debug_manager.DrawString( TEXT( "State : Landing" ) );
             display_debug_manager.DrawString( FString::Printf( TEXT( "LandingTransitionRemainingTime: %s" ), *FString::SanitizeFloat( LandingTransitionRemainingTime ) ) );
             display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentCameraZPosition: %s" ), *FString::SanitizeFloat( CurrentCameraZPosition ) ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "LerpStartCameraZPosition: %s" ), *FString::SanitizeFloat( LerpStartCameraZPosition ) ) );
+            display_debug_manager.DrawString( FString::Printf( TEXT( "LerpEndCameraZPosition: %s" ), *FString::SanitizeFloat( LerpEndCameraZPosition ) ) );
         }
         break;
         default:
