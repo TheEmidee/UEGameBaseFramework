@@ -71,8 +71,6 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
                 if ( FMath::IsNearlyEqual( CurrentCharacterZPosition, LastGroundedCharacterZPosition, LandOnSameHeightCheckTolerance ) )
                 {
                     LerpStartCameraZPosition = LastGroundedCameraZPosition;
-
-                    //SpringArmComponent->bEnableCameraLag = false;
                 }
                 else
                 {
@@ -108,7 +106,6 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
                 {
                     LandingTransitionRemainingTime = 0.0f;
                     CurrentState = EState::WaitingForJump;
-                    //SpringArmComponent->bEnableCameraLag = false; //true;
                 }
                 else
                 {
