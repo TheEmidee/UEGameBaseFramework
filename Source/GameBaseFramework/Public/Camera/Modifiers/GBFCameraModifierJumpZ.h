@@ -46,9 +46,11 @@ private:
     EState CurrentState;
     float LastGroundedCameraZPosition;
     float LastGroundedCharacterZPosition;
+    float DeltaLastGroundedCharacterToCameraZ;
     float CurrentCharacterZPosition;
     float CurrentCameraZPosition;
     float LerpStartCameraZPosition;
     float LerpEndCameraZPosition;
     float LandingTransitionRemainingTime;
+    bool bShouldInterpolateWhenJumping;
 };
