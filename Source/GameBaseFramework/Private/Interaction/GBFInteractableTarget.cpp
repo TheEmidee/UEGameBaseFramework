@@ -1,7 +1,6 @@
 #include "Interaction/GBFInteractableTarget.h"
 
-#include "Interaction/GBFInteractionOption.h"
-
-void IGBFInteractableTarget::CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, FGameplayEventData & in_out_event_data )
-{
-}
+//FGameplayEventData IGBFInteractableTarget::CustomizeInteractionEventData_Implementation( const FGameplayTag & interaction_event_tag, const FGameplayEventData & in_out_event_data )
+//{
+//    return in_out_event_data;
+//}
