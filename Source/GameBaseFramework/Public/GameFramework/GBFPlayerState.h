@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GAS/Abilities/GBFAbilitySet.h"
 #include "GAS/Tags/GBFGameplayTagStack.h"
 
 #include <AbilitySystemInterface.h>
@@ -57,6 +58,7 @@ public:
         return Cast< T >( PawnData );
     }
 
+    UFUNCTION( BlueprintCallable )
     void SetPawnData( const UGBFPawnData * new_pawn_data );
 
     void PostInitializeComponents() override;
@@ -88,6 +90,7 @@ protected:
     const UGBFPawnData * PawnData;
 
     FString ConnectionOptions;
+    TArray< FGBFAbilitySet_GrantedHandles > GrantedAbilities;
 };
 
 FORCEINLINE UGBFAbilitySystemComponent * AGBFPlayerState::GetGBFAbilitySystemComponent() const

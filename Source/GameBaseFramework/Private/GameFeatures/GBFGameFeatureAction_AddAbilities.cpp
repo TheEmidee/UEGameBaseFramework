@@ -14,6 +14,7 @@
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"
 
 const FName UGBFGameFeatureAction_AddAbilities::NAME_AbilityReady( "AbilitiesReady" );
+const FName UGBFGameFeatureAction_AddAbilities::NAME_AbilityRemoved( "AbilitiesRemoved" );
 
 void UGBFGameFeatureAction_AddAbilities::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
@@ -199,7 +200,7 @@ void UGBFGameFeatureAction_AddAbilities::HandleActorExtension( AActor * actor, F
 
     const auto & entry = AbilitiesList[ entry_index ];
 
-    if ( event_name == UGameFrameworkComponentManager::NAME_ExtensionRemoved || event_name == UGameFrameworkComponentManager::NAME_ReceiverRemoved )
+    if ( event_name == UGameFrameworkComponentManager::NAME_ExtensionRemoved || event_name == UGameFrameworkComponentManager::NAME_ReceiverRemoved || event_name == UGBFGameFeatureAction_AddAbilities::NAME_AbilityRemoved )
     {
         RemoveActorAbilities( actor, *active_data );
     }
