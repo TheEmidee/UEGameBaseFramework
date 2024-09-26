@@ -1,13 +1,20 @@
 #include "Camera/Modifiers/GBFCameraModifier.h"
 
-#include "Camera/GBFPlayerCameraManager.h"
-
 #include <Engine/Canvas.h>
+#include <GameFramework/PlayerController.h>
 #include <GameplayTagAssetInterface.h>
 
 bool UGBFCameraModifier::IsDisabled() const
 {
     if ( Super::IsDisabled() )
+    {
+        return true;
+    }
+
+    // Check these variables otherwise the following code will assert on GetViewTarget for multiplayer games
+    if ( CameraOwner == nullptr ||
+         CameraOwner->PCOwner == nullptr ||
+         CameraOwner->PCOwner->PlayerCameraManager == nullptr )
     {
         return true;
     }
@@ -67,4 +74,10 @@ void UGBFCameraModifier::DisplayDebug( UCanvas * canvas, const FDebugDisplayInfo
 
 void UGBFCameraModifier::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const
 {
+}
+
+bool UGBFCameraModifier::ModifyCameraForOwner( APlayerCameraManager * camera_owner, float delta_time, FMinimalViewInfo & in_out_pov )
+{
+    CameraOwner = camera_owner;
+    return ModifyCamera( delta_time, in_out_pov );
 }
