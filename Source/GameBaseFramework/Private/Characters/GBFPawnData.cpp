@@ -4,6 +4,8 @@
 
 #include <UObject/Package.h>
 
+const FGuid FGBFPawnDataObjectVersion::GUID( 0xDF2EDE03, 0xB6C04878, 0x84770B08, 0x1B0C34BE );
+
 UGBFPawnData::UGBFPawnData()
 {
     PawnClass = nullptr;
@@ -13,6 +15,19 @@ UGBFPawnData::UGBFPawnData()
 FPrimaryAssetId UGBFPawnData::GetPrimaryAssetId() const
 {
     return FPrimaryAssetId( TEXT( "PawnData" ), GetPackage()->GetFName() );
+}
+
+void UGBFPawnData::Serialize( FArchive & archive )
+{
+    Super::Serialize( archive );
+
+    archive.UsingCustomVersion( FGBFPawnDataObjectVersion::GUID );
+
+    if ( archive.CustomVer( FGBFPawnDataObjectVersion::GUID ) < FGBFPawnDataObjectVersion::MultipleInputConfigs )
+    {
+        InputConfigs.AddUnique( InputConfig );
+        InputConfig = nullptr;
+    }
 }
 
 #if WITH_EDITOR
