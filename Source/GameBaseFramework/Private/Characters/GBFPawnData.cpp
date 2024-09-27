@@ -25,7 +25,11 @@ void UGBFPawnData::Serialize( FArchive & archive )
 
     if ( archive.CustomVer( FGBFPawnDataObjectVersion::GUID ) < FGBFPawnDataObjectVersion::MultipleInputConfigs )
     {
-        InputConfigs.AddUnique( InputConfig );
+        if ( InputConfig != nullptr )
+        {
+            InputConfigs.AddUnique( InputConfig );
+        }
+
         InputConfig = nullptr;
     }
 }

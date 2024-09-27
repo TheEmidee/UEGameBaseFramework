@@ -61,11 +61,10 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
     TObjectPtr< UGBFAbilityTagRelationshipMapping > TagRelationshipMapping;
 
-    // Input configuration used by player controlled pawns to create input mappings and bind input actions.
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
+    UPROPERTY( meta = ( DeprecatedProperty, DeprecationMessage = "Use InputConfigs instead" ) )
     TObjectPtr< UGBFInputConfig > InputConfig;
 
-    // Input configuration used by player controlled pawns to create input mappings and bind input actions.
+    // Input configurations used by player controlled pawns to create input mappings and bind input actions.
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
     TArray< TObjectPtr< UGBFInputConfig > > InputConfigs;
 

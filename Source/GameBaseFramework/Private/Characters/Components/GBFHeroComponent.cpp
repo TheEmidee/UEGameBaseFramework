@@ -286,44 +286,47 @@ void UGBFHeroComponent::InitializePlayerInput( UInputComponent * player_input_co
     {
         if ( const auto * pawn_data = pawn_ext_comp->GetPawnData< UGBFPawnData >() )
         {
-            if ( const auto * input_config = pawn_data->InputConfig.Get() )
+            for ( const auto & input_config_ptr : pawn_data->InputConfigs )
             {
-                FModifyContextOptions options = {};
-                options.bIgnoreAllPressedKeysUntilRelease = false;
-
-                for ( const auto & mapping : DefaultInputMappings )
+                if ( const auto * input_config = input_config_ptr.Get() )
                 {
-                    if ( const auto * imc = mapping.InputMapping.LoadSynchronous() )
+                    FModifyContextOptions options = {};
+                    options.bIgnoreAllPressedKeysUntilRelease = false;
+
+                    for ( const auto & mapping : DefaultInputMappings )
                     {
-                        if ( mapping.bRegisterWithSettings )
+                        if ( const auto * imc = mapping.InputMapping.LoadSynchronous() )
                         {
-                            if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                            if ( mapping.bRegisterWithSettings )
                             {
-                                settings->RegisterInputMappingContext( imc );
-                            }
+                                if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                                {
+                                    settings->RegisterInputMappingContext( imc );
+                                }
 
-                            enhanced_input_local_player_subsystem->AddMappingContext( imc, mapping.Priority, options );
-                        }
-                        else
-                        {
-                            if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                                enhanced_input_local_player_subsystem->AddMappingContext( imc, mapping.Priority, options );
+                            }
+                            else
                             {
-                                settings->UnregisterInputMappingContext( imc );
-                            }
+                                if ( auto * settings = enhanced_input_local_player_subsystem->GetUserSettings() )
+                                {
+                                    settings->UnregisterInputMappingContext( imc );
+                                }
 
-                            enhanced_input_local_player_subsystem->RemoveMappingContext( imc, options );
+                                enhanced_input_local_player_subsystem->RemoveMappingContext( imc, options );
+                            }
                         }
                     }
-                }
 
-                auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
+                    auto * input_component = CastChecked< UGBFInputComponent >( player_input_component );
 
-                if ( ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
-                {
-                    input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
+                    if ( ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The Gameplay Abilities will not be bound to their inputs. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+                    {
+                        input_component->AddInputMappings( input_config, enhanced_input_local_player_subsystem );
 
-                    AddAdditionalInputConfig( input_config );
-                    BindNativeActions( input_component, input_config );
+                        AddAdditionalInputConfig( input_config );
+                        BindNativeActions( input_component, input_config );
+                    }
                 }
             }
         }
