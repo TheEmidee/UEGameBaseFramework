@@ -21,8 +21,6 @@ class GAMEBASEFRAMEWORK_API IGBFInteractableTarget
     GENERATED_BODY()
 
 public:
-    //virtual void CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, FGameplayEventData & in_out_event_data );
-
     UFUNCTION( BlueprintNativeEvent )
     FGameplayEventData CustomizeInteractionEventData( const FGameplayTag & interaction_event_tag, const FGameplayEventData & in_out_event_data );
 
