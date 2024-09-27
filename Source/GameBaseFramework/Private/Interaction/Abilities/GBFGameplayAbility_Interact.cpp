@@ -113,7 +113,7 @@ void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_opt
     // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
     // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
     // door actor.
-    interaction_option.InteractableTarget->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
+    payload = IGBFInteractableTarget::Execute_CustomizeInteractionEventData( interaction_option.InteractableTarget.GetObject(), TAG_Ability_Interaction_Activate, payload );
 
     // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
     // source InteractableTarget actor as the owner actor.
