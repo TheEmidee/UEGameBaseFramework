@@ -5,6 +5,7 @@
 #include <UObject/Package.h>
 
 const FGuid FGBFPawnDataObjectVersion::GUID( 0xDF2EDE03, 0xB6C04878, 0x84770B08, 0x1B0C34BE );
+FCustomVersionRegistration GRegisterPawnDataObjectVersion( FGBFPawnDataObjectVersion::GUID, FGBFPawnDataObjectVersion::LatestVersion, TEXT( "GBFPawnData" ) );
 
 UGBFPawnData::UGBFPawnData()
 {
