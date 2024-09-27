@@ -93,7 +93,9 @@ public:
     EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
 #endif
 
-    static const FName NAME_AbilityReady;
+    static const FName
+        NAME_AbilityReady,
+        NAME_AbilityRemoved;
 
 private:
     struct FActorExtensions

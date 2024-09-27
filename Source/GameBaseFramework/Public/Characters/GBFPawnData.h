@@ -14,6 +14,25 @@ class UCameraModifier;
 class UGBFInputConfig;
 class UGBFCameraMode;
 
+struct GAMEBASEFRAMEWORK_API FGBFPawnDataObjectVersion
+{
+    enum Type
+    {
+        MultipleInputConfigs,
+
+        // -----<new versions can be added above this line>-------------------------------------------------
+        VersionPlusOne,
+        LatestVersion = VersionPlusOne - 1
+    };
+
+    // The GUID for this custom version number
+    const static FGuid GUID;
+
+private:
+    FGBFPawnDataObjectVersion()
+    {}
+};
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFPawnData : public UPrimaryDataAsset
 {
@@ -23,6 +42,8 @@ public:
     UGBFPawnData();
 
     FPrimaryAssetId GetPrimaryAssetId() const override;
+
+    void Serialize( FArchive & archive ) override;
 
 #if WITH_EDITOR
     EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
@@ -40,9 +61,12 @@ public:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Abilities" )
     TObjectPtr< UGBFAbilityTagRelationshipMapping > TagRelationshipMapping;
 
-    // Input configuration used by player controlled pawns to create input mappings and bind input actions.
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
+    UPROPERTY( meta = ( DeprecatedProperty, DeprecationMessage = "Use InputConfigs instead" ) )
     TObjectPtr< UGBFInputConfig > InputConfig;
+
+    // Input configurations used by player controlled pawns to create input mappings and bind input actions.
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Input" )
+    TArray< TObjectPtr< UGBFInputConfig > > InputConfigs;
 
     // Camera modifiers to add to the player camera manager
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, Category = "Camera" )

@@ -71,18 +71,25 @@ void AGBFPlayerState::SetPawnData( const UGBFPawnData * new_pawn_data )
 
     if ( PawnData != nullptr )
     {
-        UE_LOG( LogGBF, Error, TEXT( "Trying to set PawnData [%s] on player state [%s] that already has valid PawnData [%s]." ), *GetNameSafe( new_pawn_data ), *GetNameSafe( this ), *GetNameSafe( PawnData ) );
-        return;
+        for ( auto & ability_handles : GrantedAbilities )
+        {
+            ability_handles.TakeFromAbilitySystem( AbilitySystemComponent );
+        }
+
+        UGameFrameworkComponentManager::SendGameFrameworkComponentExtensionEvent( this, UGBFGameFeatureAction_AddAbilities::NAME_AbilityRemoved );
+
+        GrantedAbilities.Reset();
     }
 
-    // MARK_PROPERTY_DIRTY_FROM_NAME( ThisClass, PawnData, this );
     PawnData = new_pawn_data;
+
+    GrantedAbilities.Reserve( PawnData->AbilitySets.Num() );
 
     for ( const auto & ability_set : PawnData->AbilitySets )
     {
         if ( ability_set != nullptr )
         {
-            ability_set->GiveToAbilitySystem( AbilitySystemComponent, nullptr );
+            ability_set->GiveToAbilitySystem( AbilitySystemComponent, &GrantedAbilities.AddDefaulted_GetRef() );
         }
     }
 
