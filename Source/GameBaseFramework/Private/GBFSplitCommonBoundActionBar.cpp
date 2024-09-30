@@ -165,6 +165,8 @@ void UGBFSplitCommonBoundActionBar::HandleBoundActionsUpdated( bool from_owning_
     {
         bIsRefreshQueued = true;
     }
+
+    GEngine->ForceGarbageCollection();
 }
 
 void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
