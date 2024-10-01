@@ -31,6 +31,11 @@ void AGBFPlayerCameraManager::ProcessViewRotation( const float delta_time, FRota
 
 void AGBFPlayerCameraManager::ApplyCameraModifiers( const float delta_time, FMinimalViewInfo & pov )
 {
+    ForEachCameraStackModifier( TFunctionRef< void( UGBFCameraModifier * ) >( [ & ]( UGBFCameraModifier * modifier ) {
+        return modifier->CameraOwner = this;
+    } ),
+        false );
+
     Super::ApplyCameraModifiers( delta_time, pov );
 
     ForEachCameraStackModifier( TFunctionRef< bool( UGBFCameraModifier * ) >( [ & ]( UGBFCameraModifier * modifier ) {

@@ -14,6 +14,8 @@ class GAMEBASEFRAMEWORK_API UGBFCameraModifier : public UCameraModifier
     GENERATED_BODY()
 
 public:
+    friend class AGBFPlayerCameraManager;
+
     bool IsDisabled() const override;
     void AddedToCamera( APlayerCameraManager * player_camera_manager ) override;
     virtual void OnViewTargetChanged( AActor * view_target );
