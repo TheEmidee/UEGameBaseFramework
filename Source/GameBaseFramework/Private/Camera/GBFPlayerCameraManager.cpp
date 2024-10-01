@@ -34,7 +34,7 @@ void AGBFPlayerCameraManager::ApplyCameraModifiers( const float delta_time, FMin
     Super::ApplyCameraModifiers( delta_time, pov );
 
     ForEachCameraStackModifier( TFunctionRef< bool( UGBFCameraModifier * ) >( [ & ]( UGBFCameraModifier * modifier ) {
-        return modifier->ModifyCameraForOwner( this, delta_time, pov );
+        return modifier->ModifyCamera( delta_time, pov );
     } ),
         true );
 }
