@@ -32,8 +32,6 @@ protected:
     void ReceiveRemovedFromCameraManager();
 
 private:
-    bool ModifyCameraForOwner( APlayerCameraManager * camera_owner, float delta_time, FMinimalViewInfo & in_out_pov );
-
     UPROPERTY( EditDefaultsOnly )
     FGameplayTagRequirements TagRequirements;
 };

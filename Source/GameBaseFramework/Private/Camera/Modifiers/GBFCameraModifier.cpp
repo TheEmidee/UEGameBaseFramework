@@ -75,9 +75,3 @@ void UGBFCameraModifier::DisplayDebug( UCanvas * canvas, const FDebugDisplayInfo
 void UGBFCameraModifier::DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const
 {
 }
-
-bool UGBFCameraModifier::ModifyCameraForOwner( APlayerCameraManager * camera_owner, float delta_time, FMinimalViewInfo & in_out_pov )
-{
-    CameraOwner = camera_owner;
-    return ModifyCamera( delta_time, in_out_pov );
-}
