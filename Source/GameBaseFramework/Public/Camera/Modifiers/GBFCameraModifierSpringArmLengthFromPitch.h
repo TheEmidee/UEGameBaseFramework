@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GBFCameraModifierSpringArmBased.h"
-#include "GBFCameraModifierTypes.h"
 
 #include <CoreMinimal.h>
 #include <Curves/CurveFloat.h>
@@ -24,11 +23,13 @@ protected:
 private:
     void DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const override;
 
+    // Defines the spring arm length based on the pitch of the camera
     UPROPERTY( EditAnywhere )
     FRuntimeFloatCurve PitchToArmLengthCurve;
 
+    // The speed at which we interpolate the new position of the spring arm length
     UPROPERTY( EditAnywhere )
-    EGBFCameraModifierAttributeOperation Operation;
+    float InterpolationSpeed;
 
     float InitialSpringArmTargetLength;
     float LastCameraPitch;
