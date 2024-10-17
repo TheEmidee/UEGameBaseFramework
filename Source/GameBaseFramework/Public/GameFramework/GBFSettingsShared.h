@@ -47,6 +47,17 @@ enum class EGBFGamepadSensitivity : uint8
     MAX UMETA( Hidden ),
 };
 
+UENUM( BlueprintType )
+enum class ESubtitleDisplayTextSize : uint8
+{
+    Off = 0,
+    Small UMETA( DisplayName = "Small" ),
+    Medium UMETA( DisplayName = "Medium" ),
+    Large UMETA( DisplayName = "Large" ),
+    Big UMETA( DisplayName = "Big" ),
+    MAX UMETA( Hidden )
+};
+
 UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFSettingsShared : public ULocalPlayerSaveGame
 {
@@ -54,6 +65,7 @@ class GAMEBASEFRAMEWORK_API UGBFSettingsShared : public ULocalPlayerSaveGame
 
 public:
     DECLARE_EVENT_OneParam( UGBFSettingsShared, FOnSettingChangedEvent, UGBFSettingsShared * Settings );
+
     FOnSettingChangedEvent OnSettingChanged;
 
     UGBFSettingsShared();
@@ -64,6 +76,7 @@ public:
     {
         return bIsDirty;
     }
+
     void ClearDirtyFlag()
     {
         bIsDirty = false;
@@ -174,6 +187,7 @@ public:
     {
         return bTriggerHapticsEnabled;
     }
+
     UFUNCTION()
     void SetTriggerHapticsEnabled( const bool NewValue )
     {
@@ -185,6 +199,7 @@ public:
     {
         return bTriggerPullUsesHapticThreshold;
     }
+
     UFUNCTION()
     void SetTriggerPullUsesHapticThreshold( const bool NewValue )
     {
@@ -196,6 +211,7 @@ public:
     {
         return TriggerHapticStrength;
     }
+
     UFUNCTION()
     void SetTriggerHapticStrength( const uint8 NewValue )
     {
@@ -207,6 +223,7 @@ public:
     {
         return TriggerHapticStartPosition;
     }
+
     UFUNCTION()
     void SetTriggerHapticStartPosition( const uint8 NewValue )
     {
@@ -229,7 +246,7 @@ private:
 
     ////////////////////////////////////////////////////////
     // Subtitles
-    // public:
+public:
     //     UFUNCTION()
     //     bool GetSubtitlesEnabled() const
     //     {
@@ -240,19 +257,20 @@ private:
     //     {
     //         ChangeValueAndDirty( bEnableSubtitles, Value );
     //     }
-    //
-    //     UFUNCTION()
-    //     ESubtitleDisplayTextSize GetSubtitlesTextSize() const
-    //     {
-    //         return SubtitleTextSize;
-    //     }
-    //     UFUNCTION()
-    //     void SetSubtitlesTextSize( ESubtitleDisplayTextSize Value )
-    //     {
-    //         ChangeValueAndDirty( SubtitleTextSize, Value );
-    //         ApplySubtitleOptions();
-    //     }
-    //
+
+    UFUNCTION()
+    ESubtitleDisplayTextSize GetSubtitlesTextSize() const
+    {
+        return SubtitleTextSize;
+    }
+
+    UFUNCTION()
+    void SetSubtitlesTextSize( ESubtitleDisplayTextSize Value )
+    {
+        ChangeValueAndDirty( SubtitleTextSize, Value );
+        // ApplySubtitleOptions();
+    }
+
     //     UFUNCTION()
     //     ESubtitleDisplayTextColor GetSubtitlesTextColor() const
     //     {
@@ -294,10 +312,10 @@ private:
     // private:
     //     UPROPERTY()
     //     bool bEnableSubtitles = true;
-    //
-    //     UPROPERTY()
-    //     ESubtitleDisplayTextSize SubtitleTextSize = ESubtitleDisplayTextSize::Medium;
-    //
+
+    UPROPERTY()
+    ESubtitleDisplayTextSize SubtitleTextSize = ESubtitleDisplayTextSize::Medium;
+
     //     UPROPERTY()
     //     ESubtitleDisplayTextColor SubtitleTextColor = ESubtitleDisplayTextColor::White;
     //
@@ -315,6 +333,7 @@ public:
     {
         return AllowAudioInBackground;
     }
+
     UFUNCTION()
     void SetAllowAudioInBackgroundSetting( EGBFAllowBackgroundAudioSetting NewValue );
 
@@ -342,6 +361,7 @@ public:
     bool IsUsingDefaultCulture() const;
 
     void ResetToDefaultCulture();
+
     bool ShouldResetToDefaultCulture() const
     {
         return bResetToDefaultCulture;
@@ -366,6 +386,7 @@ public:
     {
         return MouseSensitivityX;
     }
+
     UFUNCTION()
     void SetMouseSensitivityX( double NewValue )
     {
@@ -378,6 +399,7 @@ public:
     {
         return MouseSensitivityY;
     }
+
     UFUNCTION()
     void SetMouseSensitivityY( double NewValue )
     {
@@ -390,6 +412,7 @@ public:
     {
         return TargetingMultiplier;
     }
+
     UFUNCTION()
     void SetTargetingMultiplier( double NewValue )
     {
@@ -402,6 +425,7 @@ public:
     {
         return bInvertVerticalAxis;
     }
+
     UFUNCTION()
     void SetInvertVerticalAxis( bool NewValue )
     {
@@ -414,6 +438,7 @@ public:
     {
         return bInvertHorizontalAxis;
     }
+
     UFUNCTION()
     void SetInvertHorizontalAxis( bool NewValue )
     {
