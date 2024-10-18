@@ -2,8 +2,14 @@
 
 #include "Equipment/GBFEquipmentDefinition.h"
 #include "Equipment/GBFEquipmentInstance.h"
+#include "Interaction/GBFInteractableComponent.h"
 
 #include <DVEDataValidator.h>
+
+AGBFPickupable::AGBFPickupable()
+{
+    InteractableComponent = CreateDefaultSubobject< UGBFInteractableComponent >( TEXT( "InteractableComponent" ) );
+}
 
 void AGBFPickupable::PostInitializeComponents()
 {
