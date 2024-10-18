@@ -114,6 +114,9 @@ public:
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    TObjectPtr< const UInputAction > DefaultInputAction = nullptr;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     EGBFInteractionGroup InteractionGroup = EGBFInteractionGroup::Exclusive;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
