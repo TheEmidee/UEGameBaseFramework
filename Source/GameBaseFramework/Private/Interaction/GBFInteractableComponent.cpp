@@ -40,3 +40,7 @@ void UGBFInteractableComponent::RemoveInteractions()
 {
     InteractionOptionContainer.Options.Reset();
 }
+
+void UGBFInteractableComponent::CustomizeInteractionEventData_Implementation( FGameplayEventData & event_data, FGameplayTag event_tag )
+{
+}
