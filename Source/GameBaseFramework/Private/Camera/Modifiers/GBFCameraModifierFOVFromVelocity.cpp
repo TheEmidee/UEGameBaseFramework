@@ -25,16 +25,21 @@ void UGBFCameraModifierFOVFromVelocity::AddedToCamera( APlayerCameraManager * ca
     InitialFOV = camera->GetFOVAngle();
 }
 
-void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+FVector UGBFCameraModifierFOVFromVelocity::GetVelocity_Implementation() const
 {
     const auto * vt = GetViewTarget();
 
     if ( vt == nullptr )
     {
-        return;
+        return FVector::Zero();
     }
 
-    const auto vt_velocity = vt->GetVelocity() * VelocityScale;
+    return vt->GetVelocity();
+}
+
+void UGBFCameraModifierFOVFromVelocity::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+{
+    const auto vt_velocity = GetVelocity() * VelocityScale;
     ViewTargetVelocity = vt_velocity.Size();
 
     CurveFloatFOV = VelocityToFOVCurve.GetRichCurveConst()->Eval( ViewTargetVelocity );

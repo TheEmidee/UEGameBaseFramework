@@ -22,6 +22,9 @@ public:
 protected:
     void DisplayDebugInternal( UCanvas * canvas, const FDebugDisplayInfo & debug_display, float & yl, float & y_pos ) const override;
 
+    UFUNCTION( BlueprintNativeEvent )
+    FVector GetVelocity() const;
+
 private:
     /* Allows to filter out some axis of the velocity to compute the correction. Typically, Z should be 0 */
     UPROPERTY( EditAnywhere )
