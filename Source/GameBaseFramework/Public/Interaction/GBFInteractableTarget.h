@@ -21,7 +21,7 @@ class GAMEBASEFRAMEWORK_API IGBFInteractableTarget
     GENERATED_BODY()
 
 public:
-    virtual void CustomizeInteractionEventData( FGameplayEventData  & event_data, const FGameplayTag & interaction_event_tag );
+    virtual void CustomizeInteractionEventData( FGameplayEventData & event_data, const FGameplayTag & interaction_event_tag );
 
     virtual const FGBFInteractionOptionContainer & GetInteractableOptions() const = 0;
 };
