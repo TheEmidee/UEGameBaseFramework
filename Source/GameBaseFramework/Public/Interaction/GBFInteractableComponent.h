@@ -7,6 +7,7 @@
 
 #include "GBFInteractableComponent.generated.h"
 
+class UGBFInteractionOptionsData;
 class UInputMappingContext;
 class UGBFInputConfig;
 
@@ -20,7 +21,13 @@ public:
 
     const FGBFInteractionOptionContainer & GetInteractableOptions() const override;
 
+    UFUNCTION( BlueprintCallable )
+    void UpdateInteractions( UGBFInteractionOptionsData * options_data );
+
+    UFUNCTION( BlueprintCallable )
+    void RemoveInteractions();
+
 private:
-    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
     FGBFInteractionOptionContainer InteractionOptionContainer;
 };

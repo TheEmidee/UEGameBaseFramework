@@ -3,6 +3,7 @@
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Input/GBFInputComponent.h"
 #include "Interaction/GBFInteractableTarget.h"
+#include "Interaction/GBFInteractionEventCustomization.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
 #include "UI/IndicatorSystem/GBFIndicatorDescriptor.h"
@@ -113,7 +114,12 @@ void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_opt
     // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
     // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
     // door actor.
-    payload = IGBFInteractableTarget::Execute_CustomizeInteractionEventData( interaction_option.InteractableTarget.GetObject(), TAG_Ability_Interaction_Activate, payload );
+    interaction_option.InteractableTarget->CustomizeInteractionEventData( payload, TAG_Ability_Interaction_Activate );
+
+    if ( interaction_option.EventCustomization.IsValid() )
+    {
+        payload = interaction_option.EventCustomization->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
+    }
 
     // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
     // source InteractableTarget actor as the owner actor.
@@ -369,11 +375,17 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
             continue;
         }
 
-        if ( option.InputAction != nullptr )
+        option_handle.EventCustomization = option.EventCustomization;
+
+        auto input_action = option.InputAction != nullptr
+                                ? option.InputAction
+                                : option_container.DefaultInputAction;
+
+        if ( input_action != nullptr )
         {
             if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
             {
-                context.BindActionHandles.Emplace( input_component, input_component->BindAction( option.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
+                context.BindActionHandles.Emplace( input_component, input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
             }
         }
 
