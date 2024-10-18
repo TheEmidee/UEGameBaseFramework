@@ -72,16 +72,18 @@ private:
     {
         OptionHandle() = default;
 
-        OptionHandle( const TScriptInterface< IGBFInteractableTarget > & InteractableTarget, const TWeakObjectPtr< UAbilitySystemComponent > & TargetAbilitySystem, const FGameplayAbilitySpecHandle & InteractionAbilityHandle ) :
+        OptionHandle( const TScriptInterface< IGBFInteractableTarget > & InteractableTarget, const TWeakObjectPtr< UAbilitySystemComponent > & TargetAbilitySystem, const FGameplayAbilitySpecHandle & InteractionAbilityHandle, const TWeakObjectPtr< UGBFInteractionEventCustomization > & event_customization ) :
             InteractableTarget( InteractableTarget ),
             TargetAbilitySystem( TargetAbilitySystem ),
-            InteractionAbilityHandle( InteractionAbilityHandle )
+            InteractionAbilityHandle( InteractionAbilityHandle ),
+            EventCustomization( event_customization )
         {
         }
 
         TScriptInterface< IGBFInteractableTarget > InteractableTarget;
         TWeakObjectPtr< UAbilitySystemComponent > TargetAbilitySystem;
         FGameplayAbilitySpecHandle InteractionAbilityHandle;
+        TWeakObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
     };
 
     struct WidgetInfosHandle
