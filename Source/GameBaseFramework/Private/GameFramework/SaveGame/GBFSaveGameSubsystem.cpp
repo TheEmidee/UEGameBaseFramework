@@ -42,6 +42,22 @@ void UGBFSaveGameSubsystem::Save()
     }
 }
 
+void UGBFSaveGameSubsystem::RegisterSaveable( IGBFSavableInterface * saveable )
+{
+    if ( SaveGame != nullptr )
+    {
+        SaveGame->RegisterSavable( saveable );
+    }
+}
+
+void UGBFSaveGameSubsystem::UnRegisterSaveable( IGBFSavableInterface * saveable )
+{
+    if ( SaveGame != nullptr )
+    {
+        SaveGame->UnRegisterSavable( saveable );
+    }
+}
+
 void UGBFSaveGameSubsystem::WhenSaveGameIsLoaded( const FGBFOnSaveGameLoadedDelegate & when_save_game_is_loaded )
 {
     if ( SaveGame != nullptr )

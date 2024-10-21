@@ -5,6 +5,7 @@
 
 #include "GBFSaveGameSubsystem.generated.h"
 
+class IGBFSavableInterface;
 class UGBFSaveGame;
 
 DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFOnSaveGameLoadedDynamicDelegate, UGBFSaveGame *, SaveGame );
@@ -24,6 +25,9 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void Save();
+
+    void RegisterSaveable( IGBFSavableInterface * saveable );
+    void UnRegisterSaveable( IGBFSavableInterface * saveable );
 
     template < typename _SAVE_GAME_CLASS_ >
     _SAVE_GAME_CLASS_ * GetSaveGame() const;
