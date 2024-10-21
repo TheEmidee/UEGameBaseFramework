@@ -16,4 +16,5 @@ class GAMEBASEFRAMEWORK_API UGBFGameInstance : public UCommonGameInstance
 public:
     void Init() override;
     void HandlerUserInitialized( const UCommonUserInfo * user_info, bool success, FText error, ECommonUserPrivilege requested_privilege, ECommonUserOnlineContext online_context ) override;
+    int32 AddLocalPlayer( ULocalPlayer * new_player, FPlatformUserId controller_id ) override;
 };

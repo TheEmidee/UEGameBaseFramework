@@ -3,6 +3,7 @@
 #include "CommonUserSubsystem.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFTags.h"
+#include "GameFramework/GBFSaveGameSubsystem.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 
@@ -35,4 +36,16 @@ void UGBFGameInstance::HandlerUserInitialized( const UCommonUserInfo * user_info
             local_player->LoadSharedSettingsFromDisk();
         }
     }
+}
+
+int32 UGBFGameInstance::AddLocalPlayer( ULocalPlayer * new_player, FPlatformUserId controller_id )
+{
+    const auto result = Super::AddLocalPlayer( new_player, controller_id );
+
+    if ( result != INDEX_NONE )
+    {
+        GetSubsystem< UGBFSaveGameSubsystem >()->NotifyPlayerAdded( new_player );
+    }
+
+    return result;
 }
