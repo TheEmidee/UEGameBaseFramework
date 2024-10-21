@@ -6,7 +6,6 @@
 #include "GBFPickupable.generated.h"
 
 class UGBFInteractableComponent;
-class AGBFInteractableActor;
 class UGBFEquipmentInstance;
 class UGBFEquipmentDefinition;
 
