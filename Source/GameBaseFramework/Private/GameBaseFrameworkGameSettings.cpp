@@ -1,6 +1,6 @@
 #include "GameBaseFrameworkGameSettings.h"
 
-#include "GBFSaveGame.h"
+#include "GameFramework/SaveGame/GBFSaveGame.h"
 
 #include <Misc/App.h>
 

@@ -3,7 +3,7 @@
 #include "CommonUserSubsystem.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "GBFTags.h"
-#include "GameFramework/GBFSaveGameSubsystem.h"
+#include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 
