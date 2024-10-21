@@ -5,6 +5,7 @@
 
 #include "GBFInteractionOption.generated.h"
 
+class UGBFInteractionEventCustomization;
 class UInputAction;
 class UInputMappingContext;
 class UGBFInputConfig;
@@ -59,18 +60,21 @@ public:
 
     /** Simple text the interaction might return */
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    FText Text;
+    FText Text = FText::GetEmpty();
 
     /** Simple sub-text the interaction might return */
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    FText SubText;
+    FText SubText = FText::GetEmpty();
 
     UPROPERTY( EditAnywhere )
     EGBFInteractionAbilityTarget AbilityTarget = EGBFInteractionAbilityTarget::InteractableTarget;
 
     /** The ability to grant the avatar when they get near interactable objects. */
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TSubclassOf< UGameplayAbility > InteractionAbility;
+
+    UPROPERTY( EditAnywhere, Instanced )
+    TObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
 
     UPROPERTY( EditAnywhere )
     FGameplayTagRequirements InteractableTargetTagRequirements;
@@ -78,7 +82,7 @@ public:
     UPROPERTY( EditAnywhere )
     FGameplayTagRequirements InstigatorTagRequirements;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
@@ -106,19 +110,22 @@ struct FGBFInteractionOptionContainer
 public:
     FGBFInteractionOptionContainer() = default;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    TObjectPtr< const UInputAction > DefaultInputAction = nullptr;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     EGBFInteractionGroup InteractionGroup = EGBFInteractionGroup::Exclusive;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FGameplayTagRequirements InteractableTargetTagRequirements;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FGameplayTagRequirements InstigatorTagRequirements;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TArray< FGBFInteractionOption > Options;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
