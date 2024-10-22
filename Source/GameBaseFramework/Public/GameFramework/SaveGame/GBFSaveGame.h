@@ -12,6 +12,15 @@ struct FGBFSavableData
 {
     GENERATED_BODY()
 
+    FGBFSavableData() = default;
+
+    FGBFSavableData( const TObjectPtr< UObject > & object, const FSoftClassPath & class_path, const TArray< uint8 > & data ) :
+        Object( object ),
+        ClassPath( class_path ),
+        Data( data )
+    {
+    }
+
     UPROPERTY( Transient )
     TObjectPtr< UObject > Object;
 
