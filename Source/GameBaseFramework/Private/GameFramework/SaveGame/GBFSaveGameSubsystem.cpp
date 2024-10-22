@@ -42,19 +42,19 @@ void UGBFSaveGameSubsystem::Save()
     }
 }
 
-void UGBFSaveGameSubsystem::RegisterSaveable( IGBFSavableInterface * saveable )
+void UGBFSaveGameSubsystem::RegisterSavable( UObject * savable )
 {
     if ( SaveGame != nullptr )
     {
-        SaveGame->RegisterSavable( saveable );
+        SaveGame->RegisterSavable( savable );
     }
 }
 
-void UGBFSaveGameSubsystem::UnRegisterSaveable( IGBFSavableInterface * saveable )
+void UGBFSaveGameSubsystem::UnRegisterSavable( UObject * savable )
 {
     if ( SaveGame != nullptr )
     {
-        SaveGame->UnRegisterSavable( saveable );
+        SaveGame->UnRegisterSavable( savable );
     }
 }
 

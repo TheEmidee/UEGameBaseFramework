@@ -12,6 +12,12 @@ struct FGBFSavableData
 {
     GENERATED_BODY()
 
+    UPROPERTY( Transient )
+    TObjectPtr< UObject > Object;
+
+    UPROPERTY()
+    FSoftClassPath ClassPath;
+
     UPROPERTY()
     TArray< uint8 > Data;
 };
@@ -24,8 +30,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public ULocalPlayerSaveGame
     GENERATED_BODY()
 
 public:
-    void RegisterSavable( IGBFSavableInterface * savable );
-    void UnRegisterSavable( IGBFSavableInterface * savable );
+    void RegisterSavable( UObject * savable );
+    void UnRegisterSavable( UObject * savable );
 
     void HandlePreSave() override;
     void HandlePostLoad() override;
@@ -35,14 +41,8 @@ public:
     void ResetToDefault() override;
 
 private:
-    void SaveSavable( FName identifier, UObject * object );
-    void LoadSavable( FName identifier, UObject * object );
-
-    UPROPERTY( Transient )
-    TMap< FName, TObjectPtr< UObject > > Savables;
-
     UPROPERTY( SaveGame )
-    TMap< FName, FGBFSavableData > SavablesData;
+    TArray< FGBFSavableData > SavablesData;
 
     FGBFOnOnSaveGameResetDelegate OnSaveGameResetDelegate;
 };
