@@ -26,8 +26,8 @@ public:
     UFUNCTION( BlueprintCallable )
     void Save();
 
-    void RegisterSavable(UObject* savable);
-    void UnRegisterSavable(UObject* savable);
+    void RegisterSavable( UObject * savable );
+    void UnRegisterSavable( UObject * savable );
 
     template < typename _SAVE_GAME_CLASS_ >
     _SAVE_GAME_CLASS_ * GetSaveGame() const;
