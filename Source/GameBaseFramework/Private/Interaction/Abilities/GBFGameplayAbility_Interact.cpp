@@ -2,7 +2,8 @@
 
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Input/GBFInputComponent.h"
-#include "Interaction/GBFInteractableTarget.h"
+#include "Interaction/GBFInteractableComponent.h"
+#include "Interaction/GBFInteractionEventCustomization.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
 #include "UI/IndicatorSystem/GBFIndicatorDescriptor.h"
@@ -43,10 +44,10 @@ void UGBFGameplayAbility_Interact::EndAbility( const FGameplayAbilitySpecHandle 
 
 void UGBFGameplayAbility_Interact::UpdateInteractions( const FGameplayAbilityTargetDataHandle & target_data_handle )
 {
-    TArray< TScriptInterface< IGBFInteractableTarget > > interactable_targets;
-    UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( target_data_handle, interactable_targets );
+    TArray< UGBFInteractableComponent * > interactable_components;
+    UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( interactable_components, target_data_handle );
 
-    UpdateInteractableOptions( interactable_targets );
+    UpdateInteractableOptions( interactable_components );
 
     UpdateIndicators();
 }
@@ -89,11 +90,11 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
     OptionHandles.Reset();
 }
 
-void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets )
+void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBFInteractableComponent * > & interactable_components )
 {
     TArray< InteractableTargetInfos > target_infos;
 
-    GetTargetInfos( target_infos, interactable_targets );
+    GetTargetInfos( target_infos, interactable_components );
     ResetUnusedInteractions( target_infos );
     RegisterInteractions( target_infos );
 }
@@ -101,7 +102,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
 void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_option )
 {
     auto * instigator = GetAvatarActorFromActorInfo();
-    auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interaction_option.InteractableTarget );
+    auto * interactable_target_actor = interaction_option.InteractableComponent->GetOwner();
 
     // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
     // that only the actor knows.
@@ -113,7 +114,12 @@ void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_opt
     // If needed we allow the interactable target to manipulate the event data so that for example, a button on the wall
     // may want to specify a door actor to execute the ability on, so it might choose to override Target to be the
     // door actor.
-    payload = IGBFInteractableTarget::Execute_CustomizeInteractionEventData( interaction_option.InteractableTarget.GetObject(), TAG_Ability_Interaction_Activate, payload );
+    interaction_option.InteractableComponent->CustomizeInteractionEventData( payload, TAG_Ability_Interaction_Activate );
+
+    if ( interaction_option.EventCustomization.IsValid() )
+    {
+        payload = interaction_option.EventCustomization->CustomizeInteractionEventData( TAG_Ability_Interaction_Activate, payload );
+    }
 
     // Grab the target actor off the payload we're going to use it as the 'avatar' for the interaction, and the
     // source InteractableTarget actor as the owner actor.
@@ -144,13 +150,13 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
             }
             Indicators.Reset();
 
-            const auto add_indicator = [ & ]( TScriptInterface< IGBFInteractableTarget > interactable_target, const FGBFInteractionWidgetInfos & widget_infos ) {
+            const auto add_indicator = [ & ]( const UGBFInteractableComponent * interactable_component, const FGBFInteractionWidgetInfos & widget_infos ) {
                 if ( widget_infos.InteractionWidgetClass == nullptr )
                 {
                     return;
                 }
 
-                auto * interactable_target_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interactable_target );
+                auto * interactable_target_actor = interactable_component->GetOwner();
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
                 indicator->SetDataObject( interactable_target_actor );
                 indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
@@ -165,26 +171,26 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
             {
                 for ( const auto & option_container : context.WidgetInfosHandles )
                 {
-                    add_indicator( option_container.InteractableTarget, option_container.WidgetInfos );
+                    add_indicator( option_container.InteractableComponent.Get(), option_container.WidgetInfos );
                 }
             }
         }
     }
 }
 
-void UGBFGameplayAbility_Interact::GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets ) const
+void UGBFGameplayAbility_Interact::GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const
 {
-    for ( const auto & interactable_target : interactable_targets )
+    for ( auto * interactable_component : interactable_components )
     {
-        if ( !ensureAlways( interactable_target.GetInterface() != nullptr ) )
+        if ( !ensureAlways( interactable_component != nullptr ) )
         {
             continue;
         }
 
-        auto * interactable_actor = UGBFInteractionStatics::GetActorFromInteractableTarget( interactable_target );
-        const auto & option_container = interactable_target->GetInteractableOptions();
+        auto * interactable_actor = interactable_component->GetOwner();
+        const auto & option_container = interactable_component->GetInteractableOptions();
 
-        target_infos.Emplace( interactable_actor, interactable_target, option_container.InteractionGroup );
+        target_infos.Emplace( interactable_actor, interactable_component, option_container.InteractionGroup );
     }
 
     target_infos.Sort( [ instigator = GetAvatarActorFromActorInfo() ]( const InteractableTargetInfos & left, const InteractableTargetInfos & right ) {
@@ -246,9 +252,9 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
     const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
 
     auto & context = InteractableTargetContexts.Add( target_infos.Actor );
-    auto interactable_target = target_infos.InteractableTarget;
+    auto interactable_component = target_infos.InteractableComponent;
     auto * asc_from_actor_info = GetAbilitySystemComponentFromActorInfo_Checked();
-    auto * asc_from_interactable_target = UGBFInteractionStatics::GetASCFromInteractableTarget( interactable_target );
+    auto * asc_from_interactable_target = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( interactable_component.Get()->GetOwner() );
 
     FGameplayTagContainer actor_info_tags;
     asc_from_actor_info->GetOwnedGameplayTags( actor_info_tags );
@@ -259,7 +265,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         asc_from_interactable_target->GetOwnedGameplayTags( interactable_target_tags );
     }
 
-    const auto & option_container = interactable_target->GetInteractableOptions();
+    const auto & option_container = interactable_component->GetInteractableOptions();
 
     if ( !option_container.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
     {
@@ -295,7 +301,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         return;
     }
 
-    context.WidgetInfosHandles.Emplace( interactable_target, option_container.CommonWidgetInfos );
+    context.WidgetInfosHandles.Emplace( interactable_component, option_container.CommonWidgetInfos );
 
     if ( const auto * pc = Cast< APlayerController >( pawn->GetController() ) )
     {
@@ -325,7 +331,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
 
         auto & option_handle = context.OptionHandles.AddZeroed_GetRef();
-        option_handle.InteractableTarget = interactable_target;
+        option_handle.InteractableComponent = interactable_component;
 
         const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
 
@@ -369,14 +375,20 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
             continue;
         }
 
-        if ( option.InputAction != nullptr )
+        option_handle.EventCustomization = option.EventCustomization;
+
+        auto input_action = option.InputAction != nullptr
+                                ? option.InputAction
+                                : option_container.DefaultInputAction;
+
+        if ( input_action != nullptr )
         {
             if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
             {
-                context.BindActionHandles.Emplace( input_component, input_component->BindAction( option.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
+                context.BindActionHandles.Emplace( input_component, input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
             }
         }
 
-        context.WidgetInfosHandles.Emplace( interactable_target, option.WidgetInfos );
+        context.WidgetInfosHandles.Emplace( interactable_component, option.WidgetInfos );
     }
 }

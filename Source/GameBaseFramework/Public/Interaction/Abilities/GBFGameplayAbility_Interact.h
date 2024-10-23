@@ -5,6 +5,7 @@
 
 #include "GBFGameplayAbility_Interact.generated.h"
 
+class UGBFInteractableComponent;
 class UGBFInputComponent;
 class UEnhancedInputLocalPlayerSubsystem;
 class UEnhancedInputUserSettings;
@@ -72,29 +73,31 @@ private:
     {
         OptionHandle() = default;
 
-        OptionHandle( const TScriptInterface< IGBFInteractableTarget > & InteractableTarget, const TWeakObjectPtr< UAbilitySystemComponent > & TargetAbilitySystem, const FGameplayAbilitySpecHandle & InteractionAbilityHandle ) :
-            InteractableTarget( InteractableTarget ),
-            TargetAbilitySystem( TargetAbilitySystem ),
-            InteractionAbilityHandle( InteractionAbilityHandle )
+        OptionHandle( const TWeakObjectPtr< UGBFInteractableComponent > & interactable_component, const TWeakObjectPtr< UAbilitySystemComponent > & target_ability_system, const FGameplayAbilitySpecHandle & interaction_ability_handle, const TWeakObjectPtr< UGBFInteractionEventCustomization > & event_customization ) :
+            InteractableComponent( interactable_component ),
+            TargetAbilitySystem( target_ability_system ),
+            InteractionAbilityHandle( interaction_ability_handle ),
+            EventCustomization( event_customization )
         {
         }
 
-        TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+        TWeakObjectPtr< UGBFInteractableComponent > InteractableComponent;
         TWeakObjectPtr< UAbilitySystemComponent > TargetAbilitySystem;
         FGameplayAbilitySpecHandle InteractionAbilityHandle;
+        TWeakObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
     };
 
     struct WidgetInfosHandle
     {
         WidgetInfosHandle() = default;
 
-        WidgetInfosHandle( const TScriptInterface< IGBFInteractableTarget > & InteractableTarget, const FGBFInteractionWidgetInfos & WidgetInfos ) :
-            InteractableTarget( InteractableTarget ),
-            WidgetInfos( WidgetInfos )
+        WidgetInfosHandle( const TWeakObjectPtr< UGBFInteractableComponent > & interactable_component, const FGBFInteractionWidgetInfos & widget_infos ) :
+            InteractableComponent( interactable_component ),
+            WidgetInfos( widget_infos )
         {
         }
 
-        TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+        TWeakObjectPtr< UGBFInteractableComponent > InteractableComponent;
         FGBFInteractionWidgetInfos WidgetInfos;
     };
 
@@ -112,22 +115,22 @@ private:
     {
         InteractableTargetInfos() = default;
 
-        InteractableTargetInfos( const TWeakObjectPtr< AActor > & actor, TScriptInterface< IGBFInteractableTarget > interactable_target, const EGBFInteractionGroup group ) :
+        InteractableTargetInfos( const TWeakObjectPtr< AActor > & actor, const TWeakObjectPtr< UGBFInteractableComponent > & interactable_component, const EGBFInteractionGroup group ) :
             Actor( actor ),
-            InteractableTarget( interactable_target ),
+            InteractableComponent( interactable_component ),
             Group( group )
         {
         }
 
         TWeakObjectPtr< AActor > Actor;
-        TScriptInterface< IGBFInteractableTarget > InteractableTarget;
+        TWeakObjectPtr< UGBFInteractableComponent > InteractableComponent;
         EGBFInteractionGroup Group;
     };
 
-    void UpdateInteractableOptions( const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets );
+    void UpdateInteractableOptions( const TArray< UGBFInteractableComponent * > & interactable_components );
     void OnPressCallBack( OptionHandle interaction_option );
     void UpdateIndicators();
-    void GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< TScriptInterface< IGBFInteractableTarget > > & interactable_targets ) const;
+    void GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const;
     void ResetUnusedInteractions( const TArray< InteractableTargetInfos > & target_infos );
     void RegisterInteractions( const TArray< InteractableTargetInfos > & target_infos );
     void RegisterInteraction( const InteractableTargetInfos & target_infos );
