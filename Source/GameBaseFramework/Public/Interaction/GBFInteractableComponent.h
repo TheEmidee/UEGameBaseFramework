@@ -31,6 +31,6 @@ public:
     void CustomizeInteractionEventData( UPARAM( ref ) FGameplayEventData & event_data, FGameplayTag event_tag );
 
 private:
-    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
     FGBFInteractionOptionContainer InteractionOptionContainer;
 };
