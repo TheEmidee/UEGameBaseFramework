@@ -5,7 +5,18 @@
 
 #include "GBFSaveGame.generated.h"
 
-class IGBFSavableInterface;
+UINTERFACE( MinimalAPI, meta = ( CannotImplementInterfaceInBlueprint ) )
+class UGBFSaveGameSystemSavableInterface : public UInterface
+{
+    GENERATED_UINTERFACE_BODY()
+};
+
+class GAMEBASEFRAMEWORK_API IGBFSaveGameSystemSavableInterface
+{
+    GENERATED_IINTERFACE_BODY()
+
+    virtual void OnSaveGameReset();
+};
 
 USTRUCT()
 struct FGBFSavableData
@@ -14,15 +25,15 @@ struct FGBFSavableData
 
     FGBFSavableData() = default;
 
-    FGBFSavableData( const TObjectPtr< UObject > & object, const FSoftClassPath & class_path, const TArray< uint8 > & data ) :
-        Object( object ),
+    FGBFSavableData( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable, const FSoftClassPath & class_path, const TArray< uint8 > & data ) :
+        Savable( savable ),
         ClassPath( class_path ),
         Data( data )
     {
     }
 
     UPROPERTY( Transient )
-    TObjectPtr< UObject > Object;
+    TScriptInterface< IGBFSaveGameSystemSavableInterface > Savable;
 
     UPROPERTY()
     FSoftClassPath ClassPath;
@@ -39,8 +50,7 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGame : public ULocalPlayerSaveGame
     GENERATED_BODY()
 
 public:
-    void RegisterSavable( UObject * savable );
-    void UnRegisterSavable( UObject * savable );
+    friend class UGBFSaveGameSubsystem;
 
     void HandlePreSave() override;
     void HandlePostLoad() override;
@@ -50,6 +60,9 @@ public:
     void ResetToDefault() override;
 
 private:
+    void RegisterSavable( TScriptInterface< IGBFSaveGameSystemSavableInterface > savable );
+    void UnRegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable );
+
     UPROPERTY( SaveGame )
     TArray< FGBFSavableData > SavablesData;
 

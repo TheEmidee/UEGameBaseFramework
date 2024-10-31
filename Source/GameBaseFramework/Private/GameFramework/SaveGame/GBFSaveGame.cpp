@@ -1,5 +1,7 @@
 #include "GameFramework/SaveGame/GBFSaveGame.h"
 
+#include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
+
 #include <Serialization/MemoryReader.h>
 #include <Serialization/MemoryWriter.h>
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
@@ -12,38 +14,17 @@ namespace
         FObjectAndNameAsStringProxyArchive archive( memory_reader, false );
         archive.ArIsSaveGame = true;
 
-        savable_data.Object->Serialize( archive );
+        savable_data.Savable.GetObject()->Serialize( archive );
     }
 }
 
-void UGBFSaveGame::RegisterSavable( UObject * savable )
+UGBFSaveGameSystemSavableInterface::UGBFSaveGameSystemSavableInterface( const FObjectInitializer & object_initializer ) :
+    Super( object_initializer )
 {
-    if ( savable == nullptr )
-    {
-        return;
-    }
-
-    if ( auto * savable_ptr = SavablesData.FindByPredicate( [ & ]( const auto & savable_data ) {
-             return savable_data.ClassPath == FSoftClassPath( savable->GetClass() );
-         } ) )
-    {
-        savable_ptr->Object = savable;
-        LoadSavable( *savable_ptr );
-    }
-    else
-    {
-        SavablesData.Emplace_GetRef( savable, FSoftClassPath( savable->GetClass() ), TArray< uint8 >() );
-    }
 }
 
-void UGBFSaveGame::UnRegisterSavable( UObject * savable )
+void IGBFSaveGameSystemSavableInterface::OnSaveGameReset()
 {
-    if ( auto * savable_ptr = SavablesData.FindByPredicate( [ & ]( const auto & savable_data ) {
-             return savable_data.Object == savable;
-         } ) )
-    {
-        savable_ptr->Object = nullptr;
-    }
 }
 
 void UGBFSaveGame::HandlePreSave()
@@ -52,7 +33,7 @@ void UGBFSaveGame::HandlePreSave()
 
     for ( auto & savable_data : SavablesData )
     {
-        if ( savable_data.Object == nullptr )
+        if ( savable_data.Savable == nullptr )
         {
             continue;
         }
@@ -61,7 +42,7 @@ void UGBFSaveGame::HandlePreSave()
         FObjectAndNameAsStringProxyArchive archive( memory_writer, false );
         archive.ArIsSaveGame = true;
 
-        savable_data.Object->Serialize( archive );
+        savable_data.Savable.GetObject()->Serialize( archive );
     }
 }
 
@@ -71,7 +52,7 @@ void UGBFSaveGame::HandlePostLoad()
 
     for ( auto & savable_data : SavablesData )
     {
-        if ( savable_data.Object == nullptr )
+        if ( savable_data.Savable == nullptr )
         {
             continue;
         }
@@ -89,5 +70,35 @@ void UGBFSaveGame::ResetToDefault()
     for ( auto & savable_data : SavablesData )
     {
         savable_data.Data.Reset();
+    }
+}
+
+void UGBFSaveGame::RegisterSavable( TScriptInterface< IGBFSaveGameSystemSavableInterface > savable )
+{
+    if ( savable == nullptr )
+    {
+        return;
+    }
+
+    if ( auto * savable_ptr = SavablesData.FindByPredicate( [ & ]( const auto & savable_data ) {
+             return savable_data.ClassPath == FSoftClassPath( savable.GetObject()->GetClass() );
+         } ) )
+    {
+        savable_ptr->Savable = savable;
+        LoadSavable( *savable_ptr );
+    }
+    else
+    {
+        SavablesData.Emplace_GetRef( savable, FSoftClassPath( savable.GetObject()->GetClass() ), TArray< uint8 >() );
+    }
+}
+
+void UGBFSaveGame::UnRegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable )
+{
+    if ( auto * savable_ptr = SavablesData.FindByPredicate( [ & ]( const auto & savable_data ) {
+             return savable_data.Savable.GetObject() == savable.GetObject();
+         } ) )
+    {
+        savable_ptr->Savable = nullptr;
     }
 }
