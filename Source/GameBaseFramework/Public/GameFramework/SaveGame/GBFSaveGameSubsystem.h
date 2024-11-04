@@ -35,7 +35,7 @@ private:
 
     UPROPERTY()
     TArray< TScriptInterface< IGBFSaveGameSystemSavableInterface > > PendingSavables;
-    
+
     TWeakObjectPtr< ULocalPlayer > PrimaryPlayer;
 };
 
