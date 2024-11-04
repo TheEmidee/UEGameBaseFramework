@@ -6,11 +6,6 @@
 #include <Engine/LocalPlayer.h>
 #include <Engine/World.h>
 
-void UGBFSaveGameSubsystem::Initialize( FSubsystemCollectionBase & collection )
-{
-    Super::Initialize( collection );
-}
-
 void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 {
     if ( PrimaryPlayer == nullptr )
@@ -27,11 +22,12 @@ void UGBFSaveGameSubsystem::Load()
 
     SaveGame = Cast< UGBFSaveGame >( UGBFSaveGame::LoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName ) );
 
-    for ( auto index = SaveGameLoadedObservers.Num() - 1; index >= 0; --index )
+    for ( const auto & pending_savable : PendingSavables )
     {
-        SaveGameLoadedObservers[ index ].ExecuteIfBound( SaveGame );
-        SaveGameLoadedObservers.RemoveAt( index );
+        SaveGame->RegisterSavable( pending_savable );
     }
+
+    PendingSavables.Reset();
 }
 
 void UGBFSaveGameSubsystem::Save()
@@ -42,31 +38,28 @@ void UGBFSaveGameSubsystem::Save()
     }
 }
 
-void UGBFSaveGameSubsystem::RegisterSavable( UObject * savable )
+void UGBFSaveGameSubsystem::RegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable )
 {
     if ( SaveGame != nullptr )
     {
         SaveGame->RegisterSavable( savable );
     }
+    else
+    {
+        PendingSavables.Add( savable );
+    }
 }
 
-void UGBFSaveGameSubsystem::UnRegisterSavable( UObject * savable )
+void UGBFSaveGameSubsystem::UnRegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable )
 {
     if ( SaveGame != nullptr )
     {
         SaveGame->UnRegisterSavable( savable );
     }
-}
-
-void UGBFSaveGameSubsystem::WhenSaveGameIsLoaded( const FGBFOnSaveGameLoadedDelegate & when_save_game_is_loaded )
-{
-    if ( SaveGame != nullptr )
+    else
     {
-        when_save_game_is_loaded.ExecuteIfBound( SaveGame );
-        return;
+        PendingSavables.Add( savable );
     }
-
-    SaveGameLoadedObservers.Emplace( when_save_game_is_loaded );
 }
 
 UGBFSaveGameSubsystem * UGBFSaveGameSubsystem::Get( const UObject * world_context )
