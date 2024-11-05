@@ -16,7 +16,7 @@ void AGBFChaosCachePlayer::AddNewObservedComponentFromCacheCollectionIndex( UPri
 
     auto & caches = CacheCollection->GetCaches();
 
-    if ( !ensureMsgf( caches.IsValidIndex( collection_index ), TEXT( "Index %f is not a valid index in cache collection %s" ), collection_index, CacheCollection.GetFName() ) )
+    if ( !ensureMsgf( caches.IsValidIndex( collection_index ), TEXT( "Index %i is not a valid index in cache collection %s" ), collection_index, *CacheCollection.GetFName().ToString() ) )
     {
         return;
     }
