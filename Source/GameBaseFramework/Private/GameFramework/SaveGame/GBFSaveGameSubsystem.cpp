@@ -1,6 +1,8 @@
 #include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
 
+#include "GBFTags.h"
 #include "GameBaseFrameworkGameSettings.h"
+#include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/SaveGame/GBFSaveGame.h"
 
 #include <Engine/LocalPlayer.h>
@@ -18,6 +20,14 @@ void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 
 void UGBFSaveGameSubsystem::Load()
 {
+    const auto * world = GetWorld();
+
+    const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
+    if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
+    {
+        return;
+    }
+    
     auto * settings = GetDefault< UGameBaseFrameworkGameSettings >();
 
     SaveGame = Cast< UGBFSaveGame >( UGBFSaveGame::LoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName ) );
