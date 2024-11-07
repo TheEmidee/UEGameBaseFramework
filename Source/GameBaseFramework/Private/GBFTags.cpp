@@ -1,9 +1,14 @@
 #include "GBFTags.h"
 
+#include <Engine/EngineTypes.h>
+
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_InitState_Spawned, TEXT( "InitState.Spawned" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_InitState_DataAvailable, TEXT( "InitState.DataAvailable" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_InitState_DataInitialized, TEXT( "InitState.DataInitialized" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_InitState_GameplayReady, TEXT( "InitState.GameplayReady" ) );
+
+UE_DEFINE_GAMEPLAY_TAG( GBFTag_WorldSettings_NoSaveGame, TEXT( "WorldSettings.NoSaveGame" ) );
+
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_Game, TEXT( "UI.Layer.Game" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_GameMenu, TEXT( "UI.Layer.GameMenu" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_Menu, TEXT( "UI.Layer.Menu" ) );
