@@ -27,7 +27,7 @@ void UGBFSaveGameSubsystem::Load()
     {
         return;
     }
-    
+
     auto * settings = GetDefault< UGameBaseFrameworkGameSettings >();
 
     SaveGame = Cast< UGBFSaveGame >( UGBFSaveGame::LoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName ) );
