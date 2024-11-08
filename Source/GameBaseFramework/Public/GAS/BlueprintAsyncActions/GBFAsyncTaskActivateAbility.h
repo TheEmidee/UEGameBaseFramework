@@ -10,14 +10,14 @@ struct FAbilityEndedData;
 class UGBFAbilitySystemComponent;
 class UGameplayAbility;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FSWOnAbilityEndedDelegate, bool, WasActivated, bool, WasCancelled );
-
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFAsyncTaskActivateAbility : public UCancellableAsyncAction
 {
     GENERATED_BODY()
 
 public:
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnAbilityEndedDelegate, bool, WasActivated, bool, WasCancelled );
+
     UFUNCTION( BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true" ) )
     static UGBFAsyncTaskActivateAbility * ActivateAbility( UGBFAbilitySystemComponent * ability_system_component, TSubclassOf< UGameplayAbility > ability_class );
 
@@ -25,7 +25,7 @@ public:
 
 protected:
     UPROPERTY( BlueprintAssignable )
-    FSWOnAbilityEndedDelegate OnAbilityEndedDelegate;
+    FGBFOnAbilityEndedDelegate OnAbilityEndedDelegate;
 
 private:
     void OnAbilityEnded( const FAbilityEndedData & ability_ended_data );
