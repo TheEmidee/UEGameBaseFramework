@@ -187,6 +187,11 @@ void UGBFGameplayAbility_Interact::GatherTargetInfos( TArray< InteractableTarget
             continue;
         }
 
+        if ( !interactable_component->IsEnabled() )
+        {
+            continue;
+        }
+
         auto * interactable_actor = interactable_component->GetOwner();
         const auto & option_container = interactable_component->GetInteractableOptions();
 

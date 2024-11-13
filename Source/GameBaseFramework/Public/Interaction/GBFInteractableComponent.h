@@ -20,6 +20,7 @@ public:
     UGBFInteractableComponent();
 
     const FGBFInteractionOptionContainer & GetInteractableOptions() const;
+    bool IsEnabled() const;
 
     UFUNCTION( BlueprintCallable )
     void UpdateInteractions( UGBFInteractionOptionsData * options_data );
@@ -33,4 +34,12 @@ public:
 private:
     UPROPERTY( EditAnywhere, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
     FGBFInteractionOptionContainer InteractionOptionContainer;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, meta = ( AllowPrivateAccess = true ) )
+    uint8 bIsEnabled : 1;
 };
+
+FORCEINLINE bool UGBFInteractableComponent::IsEnabled() const
+{
+    return bIsEnabled;
+}

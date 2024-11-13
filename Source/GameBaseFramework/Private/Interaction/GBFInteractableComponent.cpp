@@ -6,11 +6,8 @@ UGBFInteractableComponent::UGBFInteractableComponent()
 {
     PrimaryComponentTick.bStartWithTickEnabled = false;
     PrimaryComponentTick.bCanEverTick = false;
-}
 
-const FGBFInteractionOptionContainer & UGBFInteractableComponent::GetInteractableOptions() const
-{
-    return InteractionOptionContainer;
+    bIsEnabled = true;
 }
 
 void UGBFInteractableComponent::UpdateInteractions( UGBFInteractionOptionsData * options_data )
