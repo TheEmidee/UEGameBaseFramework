@@ -88,13 +88,14 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
     BindActionHandles.Reset();
     WidgetInfosHandles.Reset();
     OptionHandles.Reset();
+    InteractionsId = INDEX_NONE;
 }
 
 void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBFInteractableComponent * > & interactable_components )
 {
     TArray< InteractableTargetInfos > target_infos;
 
-    GetTargetInfos( target_infos, interactable_components );
+    GatherTargetInfos( target_infos, interactable_components );
     ResetUnusedInteractions( target_infos );
     RegisterInteractions( target_infos );
 }
@@ -178,11 +179,16 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
     }
 }
 
-void UGBFGameplayAbility_Interact::GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const
+void UGBFGameplayAbility_Interact::GatherTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const
 {
     for ( auto * interactable_component : interactable_components )
     {
         if ( !ensureAlways( interactable_component != nullptr ) )
+        {
+            continue;
+        }
+
+        if ( !interactable_component->IsEnabled() )
         {
             continue;
         }
@@ -216,7 +222,24 @@ void UGBFGameplayAbility_Interact::ResetUnusedInteractions( const TArray< Intera
     for ( auto index = 0; index < target_infos.Num(); ++index )
     {
         const auto & infos = target_infos[ index ];
-        actors_to_unregister.Remove( infos.Actor );
+
+        auto remove_actor = false;
+
+        if ( auto * context = InteractableTargetContexts.Find( infos.Actor.Get() ) )
+        {
+            if ( context->InteractionsId == infos.InteractableComponent->GetInteractableOptions().GetInteractionsId() )
+            {
+                remove_actor = true;
+            }
+        }
+        else
+        {
+            remove_actor = true;
+        }
+        if ( remove_actor )
+        {
+            actors_to_unregister.Remove( infos.Actor );
+        }
 
         if ( infos.Group == EGBFInteractionGroup::Exclusive )
         {
@@ -253,6 +276,10 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
 
     auto & context = InteractableTargetContexts.Add( target_infos.Actor );
     auto interactable_component = target_infos.InteractableComponent;
+
+    const auto & option_container = interactable_component->GetInteractableOptions();
+    context.InteractionsId = option_container.GetInteractionsId();
+
     auto * asc_from_actor_info = GetAbilitySystemComponentFromActorInfo_Checked();
     auto * asc_from_interactable_target = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( interactable_component.Get()->GetOwner() );
 
@@ -264,8 +291,6 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
     {
         asc_from_interactable_target->GetOwnedGameplayTags( interactable_target_tags );
     }
-
-    const auto & option_container = interactable_component->GetInteractableOptions();
 
     if ( !option_container.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
     {
@@ -279,7 +304,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
 
     bool has_a_matching_sub_option = false;
 
-    for ( auto sub_option : option_container.Options )
+    for ( auto sub_option : option_container.GetOptions() )
     {
         if ( !sub_option.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
         {
@@ -292,7 +317,6 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
 
         has_a_matching_sub_option = true;
-
         break;
     }
 
@@ -318,7 +342,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
     }
 
-    for ( auto & option : option_container.Options )
+    for ( auto & option : option_container.GetOptions() )
     {
         if ( !option.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
         {

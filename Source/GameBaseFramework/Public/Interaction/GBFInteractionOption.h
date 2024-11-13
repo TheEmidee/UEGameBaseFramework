@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Abilities/GameplayAbility.h>
-#include <GameplayAbilitySpecHandle.h>
 
 #include "GBFInteractionOption.generated.h"
 
@@ -50,27 +49,30 @@ enum class EGBFInteractionGroup : uint8
     Additive
 };
 
+// All the properties in this structure and in FGBFInteractionOption are not blueprint writeable on purpose because it would make it impossible to detect when an interaction has been updated
+// other than by moving out of the interaction detection circle, and moving in again
+// By using functions on the container, we can call the function IncrementId() when needed, which ensures that the gameplay ability that detects interaction will invalidate the current interactions
+// and will create the new ones
 USTRUCT( BlueprintType )
 struct FGBFInteractionOption
 {
     GENERATED_BODY()
 
-public:
     FGBFInteractionOption() = default;
 
     /** Simple text the interaction might return */
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FText Text = FText::GetEmpty();
 
     /** Simple sub-text the interaction might return */
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FText SubText = FText::GetEmpty();
 
     UPROPERTY( EditAnywhere )
     EGBFInteractionAbilityTarget AbilityTarget = EGBFInteractionAbilityTarget::InteractableTarget;
 
     /** The ability to grant the avatar when they get near interactable objects. */
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSubclassOf< UGameplayAbility > InteractionAbility;
 
     UPROPERTY( EditAnywhere, Instanced )
@@ -82,10 +84,10 @@ public:
     UPROPERTY( EditAnywhere )
     FGameplayTagRequirements InstigatorTagRequirements;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGBFInteractionWidgetInfos WidgetInfos;
 
     FORCEINLINE bool operator==( const FGBFInteractionOption & other ) const
@@ -107,28 +109,79 @@ struct FGBFInteractionOptionContainer
 {
     GENERATED_BODY()
 
-public:
-    FGBFInteractionOptionContainer() = default;
+    FGBFInteractionOptionContainer() :
+        InteractionsId( INDEX_NONE )
+    {}
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FGBFInteractionOptionContainer( const FGBFInteractionOptionContainer & other ) :
+        InputMappingContext( other.InputMappingContext ),
+        DefaultInputAction( other.DefaultInputAction ),
+        InteractionGroup( other.InteractionGroup ),
+        InteractableTargetTagRequirements( other.InteractableTargetTagRequirements ),
+        InstigatorTagRequirements( other.InstigatorTagRequirements ),
+        CommonWidgetInfos( other.CommonWidgetInfos ),
+        Options( other.Options ),
+        // :NOTE: Increment the id to make sure we invalidate this container and force a full refresh of the options
+        InteractionsId( other.InteractionsId + 1 )
+    {}
+
+    FGBFInteractionOptionContainer & operator=( const FGBFInteractionOptionContainer & other )
+    {
+        if ( this == &other )
+        {
+            return *this;
+        }
+
+        InputMappingContext = other.InputMappingContext;
+        DefaultInputAction = other.DefaultInputAction;
+        InteractionGroup = other.InteractionGroup;
+        InteractableTargetTagRequirements = other.InteractableTargetTagRequirements;
+        InstigatorTagRequirements = other.InstigatorTagRequirements;
+        Options = other.Options;
+        CommonWidgetInfos = other.CommonWidgetInfos;
+
+        IncrementId();
+        return *this;
+    }
+
+    void AddOptions( const TArray< FGBFInteractionOption > & options )
+    {
+        Options.Append( options );
+        IncrementId();
+    }
+
+    void ResetOptions()
+    {
+        Options.Reset();
+        IncrementId();
+    }
+
+    const TArray< FGBFInteractionOption > & GetOptions() const
+    {
+        return Options;
+    }
+
+    int GetInteractionsId() const
+    {
+        return InteractionsId;
+    }
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > DefaultInputAction = nullptr;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     EGBFInteractionGroup InteractionGroup = EGBFInteractionGroup::Exclusive;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InteractableTargetTagRequirements;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InstigatorTagRequirements;
 
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
-    TArray< FGBFInteractionOption > Options;
-
-    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGBFInteractionWidgetInfos CommonWidgetInfos;
 
     FORCEINLINE bool operator==( const FGBFInteractionOptionContainer & other ) const
@@ -142,4 +195,16 @@ public:
     {
         return !operator==( other );
     }
+
+private:
+    // :NOTE: Increment the id to make sure we invalidate this container and force a full refresh of the options
+    void IncrementId()
+    {
+        InteractionsId++;
+    }
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
+    TArray< FGBFInteractionOption > Options;
+
+    int InteractionsId;
 };

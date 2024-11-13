@@ -6,11 +6,8 @@ UGBFInteractableComponent::UGBFInteractableComponent()
 {
     PrimaryComponentTick.bStartWithTickEnabled = false;
     PrimaryComponentTick.bCanEverTick = false;
-}
 
-const FGBFInteractionOptionContainer & UGBFInteractableComponent::GetInteractableOptions() const
-{
-    return InteractionOptionContainer;
+    bIsEnabled = true;
 }
 
 void UGBFInteractableComponent::UpdateInteractions( UGBFInteractionOptionsData * options_data )
@@ -30,15 +27,15 @@ void UGBFInteractableComponent::UpdateInteractions( UGBFInteractionOptionsData *
 
     if ( remove_all_options )
     {
-        InteractionOptionContainer.Options.Reset();
+        InteractionOptionContainer.ResetOptions();
     }
 
-    InteractionOptionContainer.Options.Append( options_data->Options );
+    InteractionOptionContainer.AddOptions( options_data->Options );
 }
 
 void UGBFInteractableComponent::RemoveInteractions()
 {
-    InteractionOptionContainer.Options.Reset();
+    InteractionOptionContainer.ResetOptions();
 }
 
 void UGBFInteractableComponent::CustomizeInteractionEventData_Implementation( FGameplayEventData & event_data, FGameplayTag event_tag )
