@@ -105,6 +105,7 @@ private:
     {
         void Reset();
 
+        int InteractionsId;
         TArray< WidgetInfosHandle > WidgetInfosHandles;
         TArray< OptionHandle > OptionHandles;
         TArray< InputMappingContextInfos > InputMappingContextInfos;
