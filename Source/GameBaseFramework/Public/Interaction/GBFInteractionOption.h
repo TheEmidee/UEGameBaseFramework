@@ -24,12 +24,14 @@ struct FGBFInteractionWidgetInfos
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
 
-    FORCEINLINE bool operator==( const FGBFInteractionWidgetInfos & other ) const
-    {
-        return InteractionWidgetClass == other.InteractionWidgetClass &&
-               InteractionWidgetOffset == other.InteractionWidgetOffset;
-    }
+    bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };
+
+FORCEINLINE bool FGBFInteractionWidgetInfos::operator==( const FGBFInteractionWidgetInfos & other ) const
+{
+    return InteractionWidgetClass == other.InteractionWidgetClass &&
+           InteractionWidgetOffset == other.InteractionWidgetOffset;
+}
 
 UENUM()
 enum class EGBFInteractionAbilityTarget : uint8
@@ -90,81 +92,35 @@ struct FGBFInteractionOption
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGBFInteractionWidgetInfos WidgetInfos;
 
-    FORCEINLINE bool operator==( const FGBFInteractionOption & other ) const
-    {
-        return InteractionAbility == other.InteractionAbility &&
-               Text.IdenticalTo( other.Text ) &&
-               SubText.IdenticalTo( other.SubText ) &&
-               WidgetInfos == other.WidgetInfos;
-    }
-
-    FORCEINLINE bool operator!=( const FGBFInteractionOption & other ) const
-    {
-        return !operator==( other );
-    }
+    bool operator==( const FGBFInteractionOption & other ) const;
+    bool operator!=( const FGBFInteractionOption & other ) const;
 };
+
+FORCEINLINE bool FGBFInteractionOption::operator==( const FGBFInteractionOption & other ) const
+{
+    return InteractionAbility == other.InteractionAbility &&
+           Text.IdenticalTo( other.Text ) &&
+           SubText.IdenticalTo( other.SubText ) &&
+           WidgetInfos == other.WidgetInfos;
+}
+
+FORCEINLINE bool FGBFInteractionOption::operator!=( const FGBFInteractionOption & other ) const
+{
+    return !operator==( other );
+}
 
 USTRUCT( BlueprintType )
 struct FGBFInteractionOptionContainer
 {
     GENERATED_BODY()
 
-    FGBFInteractionOptionContainer() :
-        InteractionsId( INDEX_NONE )
-    {}
+    FGBFInteractionOptionContainer();
+    FGBFInteractionOptionContainer( const FGBFInteractionOptionContainer & other );
 
-    FGBFInteractionOptionContainer( const FGBFInteractionOptionContainer & other ) :
-        InputMappingContext( other.InputMappingContext ),
-        DefaultInputAction( other.DefaultInputAction ),
-        InteractionGroup( other.InteractionGroup ),
-        InteractableTargetTagRequirements( other.InteractableTargetTagRequirements ),
-        InstigatorTagRequirements( other.InstigatorTagRequirements ),
-        CommonWidgetInfos( other.CommonWidgetInfos ),
-        Options( other.Options ),
-        // :NOTE: Increment the id to make sure we invalidate this container and force a full refresh of the options
-        InteractionsId( other.InteractionsId + 1 )
-    {}
-
-    FGBFInteractionOptionContainer & operator=( const FGBFInteractionOptionContainer & other )
-    {
-        if ( this == &other )
-        {
-            return *this;
-        }
-
-        InputMappingContext = other.InputMappingContext;
-        DefaultInputAction = other.DefaultInputAction;
-        InteractionGroup = other.InteractionGroup;
-        InteractableTargetTagRequirements = other.InteractableTargetTagRequirements;
-        InstigatorTagRequirements = other.InstigatorTagRequirements;
-        Options = other.Options;
-        CommonWidgetInfos = other.CommonWidgetInfos;
-
-        IncrementId();
-        return *this;
-    }
-
-    void AddOptions( const TArray< FGBFInteractionOption > & options )
-    {
-        Options.Append( options );
-        IncrementId();
-    }
-
-    void ResetOptions()
-    {
-        Options.Reset();
-        IncrementId();
-    }
-
-    const TArray< FGBFInteractionOption > & GetOptions() const
-    {
-        return Options;
-    }
-
-    int GetInteractionsId() const
-    {
-        return InteractionsId;
-    }
+    void AddOptions( const TArray< FGBFInteractionOption > & options );
+    void ResetOptions();
+    const TArray< FGBFInteractionOption > & GetOptions() const;
+    int GetInteractionsId() const;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;
@@ -184,27 +140,62 @@ struct FGBFInteractionOptionContainer
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGBFInteractionWidgetInfos CommonWidgetInfos;
 
-    FORCEINLINE bool operator==( const FGBFInteractionOptionContainer & other ) const
-    {
-        return InputMappingContext == other.InputMappingContext &&
-               Options == other.Options &&
-               CommonWidgetInfos == other.CommonWidgetInfos;
-    }
-
-    FORCEINLINE bool operator!=( const FGBFInteractionOptionContainer & other ) const
-    {
-        return !operator==( other );
-    }
+    FGBFInteractionOptionContainer & operator=( const FGBFInteractionOptionContainer & other );
+    bool operator==( const FGBFInteractionOptionContainer & other ) const;
+    bool operator!=( const FGBFInteractionOptionContainer & other ) const;
 
 private:
     // :NOTE: Increment the id to make sure we invalidate this container and force a full refresh of the options
-    void IncrementId()
-    {
-        InteractionsId++;
-    }
+    void IncrementId();
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     TArray< FGBFInteractionOption > Options;
 
     int InteractionsId;
 };
+
+FORCEINLINE FGBFInteractionOptionContainer & FGBFInteractionOptionContainer::operator=( const FGBFInteractionOptionContainer & other )
+{
+    if ( this == &other )
+    {
+        return *this;
+    }
+
+    InputMappingContext = other.InputMappingContext;
+    DefaultInputAction = other.DefaultInputAction;
+    InteractionGroup = other.InteractionGroup;
+    InteractableTargetTagRequirements = other.InteractableTargetTagRequirements;
+    InstigatorTagRequirements = other.InstigatorTagRequirements;
+    Options = other.Options;
+    CommonWidgetInfos = other.CommonWidgetInfos;
+
+    IncrementId();
+    return *this;
+}
+
+FORCEINLINE bool FGBFInteractionOptionContainer::operator==( const FGBFInteractionOptionContainer & other ) const
+{
+    return InputMappingContext == other.InputMappingContext &&
+           Options == other.Options &&
+           CommonWidgetInfos == other.CommonWidgetInfos;
+}
+
+FORCEINLINE bool FGBFInteractionOptionContainer::operator!=( const FGBFInteractionOptionContainer & other ) const
+{
+    return !operator==( other );
+}
+
+FORCEINLINE const TArray< FGBFInteractionOption > & FGBFInteractionOptionContainer::GetOptions() const
+{
+    return Options;
+}
+
+FORCEINLINE int FGBFInteractionOptionContainer::GetInteractionsId() const
+{
+    return InteractionsId;
+}
+
+FORCEINLINE void FGBFInteractionOptionContainer::IncrementId()
+{
+    InteractionsId++;
+}
