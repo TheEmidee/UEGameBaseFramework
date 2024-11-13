@@ -6,7 +6,7 @@
 #include "GBFChaosCachePlayer.generated.h"
 
 // This class allows to add new observed components to the cache manager at runtime.
-// This allows to set and play different caches during gameplay, 
+// This allows to set and play different caches during gameplay,
 // rather than only playing caches pre-placed in the map.
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFChaosCachePlayer : public AChaosCachePlayer
