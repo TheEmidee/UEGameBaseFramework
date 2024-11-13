@@ -14,7 +14,7 @@ class GAMEBASEFRAMEWORK_API UGBFAT_WaitAbilityEnd final : public UAbilityTask
 
 public:
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnAbilityEndedDelegate, bool, was_cancelled );
-    
+
     UFUNCTION( BlueprintCallable, Category = "Ability|Tasks", meta = ( HidePin = "owning_ability", DefaultToSelf = "owning_ability", BlueprintInternalUseOnly = "TRUE" ) )
     static UGBFAT_WaitAbilityEnd * WaitAbilityEnd( UGameplayAbility * owning_ability,
         const FGameplayAbilitySpecHandle & ability_spec_handle,
