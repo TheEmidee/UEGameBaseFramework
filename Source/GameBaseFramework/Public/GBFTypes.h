@@ -25,3 +25,11 @@ class GAMEBASEFRAMEWORK_API UGBFTypes2 : public UObject
 };
 
 GAMEBASEFRAMEWORK_API FString GetClientServerContextString( UObject * context_object = nullptr );
+
+UENUM( BlueprintType, meta = ( ScriptName = "EGBFDifficultyLevel" ) )
+enum class EGBFDifficultyLevel : uint8
+{
+    Easy,
+    Normal,
+    Hard
+};
