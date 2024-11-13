@@ -130,7 +130,7 @@ private:
     void UpdateInteractableOptions( const TArray< UGBFInteractableComponent * > & interactable_components );
     void OnPressCallBack( OptionHandle interaction_option );
     void UpdateIndicators();
-    void GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const;
+    void GatherTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const;
     void ResetUnusedInteractions( const TArray< InteractableTargetInfos > & target_infos );
     void RegisterInteractions( const TArray< InteractableTargetInfos > & target_infos );
     void RegisterInteraction( const InteractableTargetInfos & target_infos );

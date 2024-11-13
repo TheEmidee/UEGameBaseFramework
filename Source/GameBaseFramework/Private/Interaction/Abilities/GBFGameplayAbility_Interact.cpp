@@ -94,7 +94,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
 {
     TArray< InteractableTargetInfos > target_infos;
 
-    GetTargetInfos( target_infos, interactable_components );
+    GatherTargetInfos( target_infos, interactable_components );
     ResetUnusedInteractions( target_infos );
     RegisterInteractions( target_infos );
 }
@@ -178,7 +178,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
     }
 }
 
-void UGBFGameplayAbility_Interact::GetTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const
+void UGBFGameplayAbility_Interact::GatherTargetInfos( TArray< InteractableTargetInfos > & target_infos, const TArray< UGBFInteractableComponent * > & interactable_components ) const
 {
     for ( auto * interactable_component : interactable_components )
     {
