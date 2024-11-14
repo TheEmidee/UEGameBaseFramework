@@ -21,6 +21,9 @@ public:
     UFUNCTION( BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true" ) )
     static UGBFAsyncTaskActivateAbility * ActivateAbility( UGBFAbilitySystemComponent * ability_system_component, TSubclassOf< UGameplayAbility > ability_class );
 
+    UFUNCTION( BlueprintCallable, meta = ( BlueprintInternalUseOnly = "true" ) )
+    static UGBFAsyncTaskActivateAbility * ActivateAbilityWithEvent( UGBFAbilitySystemComponent * ability_system_component, TSubclassOf< UGameplayAbility > ability_class, FGameplayEventData payload );
+
     void Activate() override;
 
 protected:
@@ -37,4 +40,5 @@ private:
     TSubclassOf< UGameplayAbility > AbilityClass;
     FGameplayAbilitySpecHandle AbilitySpecHandle;
     FDelegateHandle DelegateHandle;
+    TOptional< FGameplayEventData > EventPayload;
 };
