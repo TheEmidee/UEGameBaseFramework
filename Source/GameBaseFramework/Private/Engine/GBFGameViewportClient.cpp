@@ -52,14 +52,14 @@ void UGBFGameViewportClient::LayoutPlayers()
         case ESplitScreenType::ThreePlayer_Horizontal:
         case ESplitScreenType::FourPlayer_Horizontal:
         {
-            border_negative_offset.X = SplitScreenBorderWidth * ( player_count - 1 );
+            border_negative_offset.Y = SplitScreenBorderWidth * ( player_count - 1 );
         }
         break;
         case ESplitScreenType::TwoPlayer_Vertical:
         case ESplitScreenType::ThreePlayer_Vertical:
         case ESplitScreenType::FourPlayer_Vertical:
         {
-            border_negative_offset.Y = SplitScreenBorderWidth * ( player_count - 1 );
+            border_negative_offset.X = SplitScreenBorderWidth * ( player_count - 1 );
         }
         break;
         case ESplitScreenType::ThreePlayer_FavorTop:
