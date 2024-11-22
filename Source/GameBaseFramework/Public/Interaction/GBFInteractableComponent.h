@@ -21,6 +21,7 @@ public:
 
     const FGBFInteractionOptionContainer & GetInteractableOptions() const;
     bool IsEnabled() const;
+    void SetEnabled( bool enabled );
 
     UFUNCTION( BlueprintCallable )
     void UpdateInteractions( UGBFInteractionOptionsData * options_data );
@@ -47,4 +48,9 @@ FORCEINLINE const FGBFInteractionOptionContainer & UGBFInteractableComponent::Ge
 FORCEINLINE bool UGBFInteractableComponent::IsEnabled() const
 {
     return bIsEnabled;
+}
+
+FORCEINLINE void UGBFInteractableComponent::SetEnabled( bool enabled )
+{
+    bIsEnabled = enabled;
 }
