@@ -63,6 +63,7 @@ void AGBFSimpleCharacterWithAbilities::BeginPlay()
 void AGBFSimpleCharacterWithAbilities::GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const
 {
     tag_container.AppendTags( StaticTags );
+    AbilitySystemComponent->GetOwnedGameplayTags( tag_container );
 }
 
 void AGBFSimpleCharacterWithAbilities::OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode )
