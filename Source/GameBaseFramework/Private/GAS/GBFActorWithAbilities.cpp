@@ -59,6 +59,6 @@ void AGBFActorWithAbilities::BeginPlay()
 
 void AGBFActorWithAbilities::GetOwnedGameplayTags( FGameplayTagContainer & tag_container ) const
 {
-    tag_container.AppendTags( StaticTags );
     AbilitySystemComponent->GetOwnedGameplayTags( tag_container );
+    tag_container.AppendTags( StaticTags );
 }
