@@ -93,7 +93,7 @@ class GAMEBASEFRAMEWORK_API UGBFGamePhaseSubsystem : public UWorldSubsystem
     GENERATED_BODY()
 
 public:
-    void StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, FGBFGamePhaseDelegate phase_ended_callback = FGBFGamePhaseDelegate() );
+    void StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, FGBFGamePhaseDelegate phase_ended_callback = FGBFGamePhaseDelegate(), const FGameplayEventData * gameplay_event_data = nullptr );
 
     FGBFGamePhaseObserverHandle WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_active, bool trigger_once = false );
     FGBFGamePhaseObserverHandle WhenPhaseEnds( FGameplayTag phase_tag, EPhaseTagMatchType match_type, const FGBFGamePhaseTagDelegate & when_phase_end, bool trigger_once = false );
@@ -113,6 +113,9 @@ protected:
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "Start Phase", AutoCreateRefTerm = "phase_ended_delegate" ) )
     void K2_StartPhase( TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDynamicDelegate & phase_ended_delegate );
+
+    UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "Start Phase With Event", AutoCreateRefTerm = "phase_ended_delegate" ) )
+    void K2_StartPhaseWithEvent( TSubclassOf< UGBFGamePhaseAbility > phase_ability, FGameplayEventData event_data, const FGBFGamePhaseDynamicDelegate & phase_ended_delegate );
 
     UFUNCTION( BlueprintCallable, BlueprintAuthorityOnly, Category = "Game Phase", meta = ( DisplayName = "When Phase Starts or Is Active", AutoCreateRefTerm = "when_phase_active" ) )
     FGBFGamePhaseObserverHandle K2_WhenPhaseStartsOrIsActive( FGameplayTag phase_tag, EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active, bool trigger_once = false );
