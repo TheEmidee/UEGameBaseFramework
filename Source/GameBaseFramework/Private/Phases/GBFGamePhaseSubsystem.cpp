@@ -21,7 +21,7 @@ static FAutoConsoleCommand ListActivePhasesCommand(
     } ) );
 #endif
 
-void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDelegate phase_ended_callback )
+void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility > phase_ability, const FGBFGamePhaseDelegate phase_ended_callback /* = FGBFGamePhaseDelegate() */, const FGameplayEventData * gameplay_event_data /* = nullptr */ )
 {
     if ( !ensureAlwaysMsgf( phase_ability != nullptr, TEXT( "StartPhase was called with a null phase ability" ) ) )
     {
@@ -57,7 +57,7 @@ void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility
         }
 
         FGameplayAbilitySpec phase_spec( phase_ability, 1, 0, this );
-        const auto spec_handle = game_state_asc->GiveAbilityAndActivateOnce( phase_spec );
+        const auto spec_handle = game_state_asc->GiveAbilityAndActivateOnce( phase_spec, gameplay_event_data );
         const auto * found_spec = game_state_asc->FindAbilitySpecFromHandle( spec_handle );
 
         if ( found_spec != nullptr && found_spec->IsActive() )
@@ -149,6 +149,14 @@ void UGBFGamePhaseSubsystem::K2_StartPhase( const TSubclassOf< UGBFGamePhaseAbil
     } );
 
     StartPhase( phase_ability, ended_delegate );
+}
+void UGBFGamePhaseSubsystem::K2_StartPhaseWithEvent( TSubclassOf< UGBFGamePhaseAbility > phase_ability, FGameplayEventData event_data, const FGBFGamePhaseDynamicDelegate & phase_ended_delegate )
+{
+    const auto ended_delegate = FGBFGamePhaseDelegate::CreateWeakLambda( const_cast< UObject * >( phase_ended_delegate.GetUObject() ), [ phase_ended_delegate ]( const auto * phase_ability ) {
+        phase_ended_delegate.ExecuteIfBound( phase_ability );
+    } );
+
+    StartPhase( phase_ability, ended_delegate, &event_data );
 }
 
 FGBFGamePhaseObserverHandle UGBFGamePhaseSubsystem::K2_WhenPhaseStartsOrIsActive( const FGameplayTag phase_tag, const EPhaseTagMatchType match_type, FGBFGamePhaseTagDynamicDelegate when_phase_active, bool trigger_once /*= false*/ )
@@ -326,7 +334,7 @@ void UGBFGamePhaseSubsystem::EndAllPhases()
     auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
 
     for ( auto copy = ActivePhaseMap;
-          auto & item : copy )
+         auto & item : copy )
     {
         game_state_asc->CancelAbilitiesByFunc( [ &item ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
             return handle == item.Key;
