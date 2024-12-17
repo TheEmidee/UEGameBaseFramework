@@ -206,6 +206,12 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
             auto filtered_bindings = action_router->GatherActiveBindings().FilterByPredicate( [ action_router, player_input_type, player_gamepad_name, &accepted_bindings ]( const auto & handle ) mutable {
                 if ( auto binding = FUIActionBinding::FindBinding( handle ) )
                 {
+                    if ( binding->BoundWidget.Get()->GetParent() == nullptr )
+                    {
+                        auto key = binding->GetLegacyInputActionData()->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
+                        return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                    }
+
                     if ( !binding->bDisplayInActionBar && !bSplitActionBarIgnoreOptOut )
                     {
                         return false;
