@@ -334,7 +334,7 @@ void UGBFGamePhaseSubsystem::EndAllPhases()
     auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
 
     for ( auto copy = ActivePhaseMap;
-         auto & item : copy )
+          auto & item : copy )
     {
         game_state_asc->CancelAbilitiesByFunc( [ &item ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle handle ) {
             return handle == item.Key;
