@@ -17,10 +17,10 @@ public:
 
     FName GetCategoryName() const override;
 
-    UPROPERTY( EditDefaultsOnly, config, Category = "UI" )
+    UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "UI" )
     TSoftClassPtr< UCommonGameDialog > ConfirmationDialogClass;
 
-    UPROPERTY( EditDefaultsOnly, config, Category = "UI" )
+    UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "UI" )
     TSoftClassPtr< UCommonGameDialog > ErrorDialogClass;
 
     UPROPERTY( EditDefaultsOnly, config, Category = "SaveGame" )
