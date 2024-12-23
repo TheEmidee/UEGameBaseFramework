@@ -70,7 +70,7 @@ public:
     UFUNCTION( BlueprintPure, Category = "Ability|GameplayEffects" )
     static TSubclassOf< UGameplayEffect > GetGameplayEffectClassFromSpecHandle( FGameplayEffectSpecHandle spec_handle );
     
-    UFUNCTION( BlueprintCallable, Category = "Core|GameplayTags" )
+    UFUNCTION( BlueprintCallable, Category = "Ability|GameplayTags" )
     static bool AreGameplayTagRequirementsMet( const FGameplayTagRequirements & requirements, const FGameplayTagContainer & container );
 
     static void CopySetByCallerTagMagnitudesFromSpecToConditionalEffects( FGameplayEffectSpec * gameplay_effect_spec );
