@@ -69,7 +69,7 @@ public:
 
     UFUNCTION( BlueprintPure, Category = "Ability|GameplayEffects" )
     static TSubclassOf< UGameplayEffect > GetGameplayEffectClassFromSpecHandle( FGameplayEffectSpecHandle spec_handle );
-    
+
     UFUNCTION( BlueprintCallable, Category = "Ability|GameplayTags" )
     static bool AreGameplayTagRequirementsMet( const FGameplayTagRequirements & requirements, const FGameplayTagContainer & container );
 
