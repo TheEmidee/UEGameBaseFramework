@@ -236,6 +236,11 @@ TSubclassOf< UGameplayEffect > UGBFAbilitySystemFunctionLibrary::GetGameplayEffe
     return nullptr;
 }
 
+bool UGBFAbilitySystemFunctionLibrary::AreGameplayTagRequirementsMet( const FGameplayTagRequirements & requirements, const FGameplayTagContainer & container )
+{
+    return requirements.RequirementsMet( container );
+}
+
 // :NOTE: Warning ! This function has not been tested !!!
 void UGBFAbilitySystemFunctionLibrary::CopySetByCallerTagMagnitudesFromSpecToConditionalEffects( FGameplayEffectSpec * gameplay_effect_spec )
 {
