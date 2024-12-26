@@ -208,8 +208,14 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                 {
                     if ( binding->BoundWidget.Get()->GetParent() == nullptr )
                     {
-                        auto key = binding->GetLegacyInputActionData()->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
-                        return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                        if ( auto * legacy_input_action_data = binding->GetLegacyInputActionData() )
+                        {
+                            auto key = legacy_input_action_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
+
+                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                        }
+
+                        return false;
                     }
 
                     if ( !binding->bDisplayInActionBar && !bSplitActionBarIgnoreOptOut )
