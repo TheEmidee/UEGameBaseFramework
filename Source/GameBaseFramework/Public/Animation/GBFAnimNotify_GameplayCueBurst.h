@@ -7,7 +7,7 @@
 #include "GBFAnimNotify_GameplayCueBurst.generated.h"
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFAnimNotify_GameplayCueBurst : public UAnimNotify
+class GAMEBASEFRAMEWORK_API UGBFAnimNotify_GameplayCueBurst final : public UAnimNotify
 {
     GENERATED_BODY()
 

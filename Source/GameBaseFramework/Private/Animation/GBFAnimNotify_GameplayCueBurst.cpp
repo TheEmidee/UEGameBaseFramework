@@ -1,7 +1,7 @@
 #include "Animation/GBFAnimNotify_GameplayCueBurst.h"
 
-#include "Components/SkeletalMeshComponent.h"
-#include "GameplayCueFunctionLibrary.h"
+#include <Components/SkeletalMeshComponent.h>
+#include <GameplayCueFunctionLibrary.h>
 
 void UGBFAnimNotify_GameplayCueBurst::Notify( USkeletalMeshComponent * mesh_component, UAnimSequenceBase * animation, const FAnimNotifyEventReference & event_reference )
 {
