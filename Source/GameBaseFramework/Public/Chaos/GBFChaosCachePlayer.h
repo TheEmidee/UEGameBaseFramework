@@ -16,4 +16,7 @@ class GAMEBASEFRAMEWORK_API AGBFChaosCachePlayer : public AChaosCachePlayer
 public:
     UFUNCTION( BlueprintCallable )
     void AddNewObservedComponentFromCacheCollectionIndex( UPrimitiveComponent * observed_component, int32 collection_index );
+
+    UFUNCTION( BlueprintCallable )
+    void ResetObservedComponents();
 };
