@@ -6,7 +6,7 @@
 
 #include "GBFAnimNotify_GameplayCueLooping.generated.h"
 
-UCLASS()
+UCLASS( editinlinenew, Const, hideCategories = Object, collapseCategories, Meta = ( DisplayName = "GBFGameplayCue (Looping)" ) )
 class GAMEBASEFRAMEWORK_API UGBFAnimNotify_GameplayCueLooping final : public UAnimNotifyState
 {
     GENERATED_BODY()
@@ -14,7 +14,7 @@ class GAMEBASEFRAMEWORK_API UGBFAnimNotify_GameplayCueLooping final : public UAn
 public:
     UGBFAnimNotify_GameplayCueLooping() = default;
 
-    void NotifyBegin(USkeletalMeshComponent * mesh_component, UAnimSequenceBase * animation, float total_duration, const FAnimNotifyEventReference & event_reference) override;
+    void NotifyBegin( USkeletalMeshComponent * mesh_component, UAnimSequenceBase * animation, float total_duration, const FAnimNotifyEventReference & event_reference ) override;
 
 private:
     UPROPERTY( EditAnywhere, Category = "GameplayCue", meta = ( Categories = "GameplayCue", AllowPrivateAccess ) )

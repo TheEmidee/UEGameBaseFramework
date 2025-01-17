@@ -6,7 +6,7 @@
 
 #include "GBFAnimNotify_GameplayCueBurst.generated.h"
 
-UCLASS()
+UCLASS( editinlinenew, Const, hideCategories = Object, collapseCategories, Meta = ( DisplayName = "GBFGameplayCue (Burst)" ) )
 class GAMEBASEFRAMEWORK_API UGBFAnimNotify_GameplayCueBurst final : public UAnimNotify
 {
     GENERATED_BODY()
