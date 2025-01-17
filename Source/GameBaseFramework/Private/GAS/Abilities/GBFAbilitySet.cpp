@@ -102,7 +102,7 @@ void UGBFAbilitySet::GiveToAbilitySystem( UAbilitySystemComponent * asc, FGBFAbi
 
         FGameplayAbilitySpec ability_spec( ability_cdo, ability_to_grant.AbilityLevel );
         ability_spec.SourceObject = source_object;
-        ability_spec.DynamicAbilityTags.AddTag( ability_to_grant.InputTag );
+        ability_spec.GetDynamicSpecSourceTags().AddTag( ability_to_grant.InputTag );
 
         const auto ability_spec_handle = asc->GiveAbility( ability_spec );
 

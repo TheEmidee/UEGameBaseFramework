@@ -230,7 +230,7 @@ bool UGBFGameplayAbility::DoesAbilitySatisfyTagRequirements( const UAbilitySyste
     const auto & missing_tag = ability_system_globals.ActivateFailTagsMissingTag;
 
     // Check if any of this ability's tags are currently blocked
-    if ( ability_system_component.AreAbilityTagsBlocked( AbilityTags ) )
+    if ( ability_system_component.AreAbilityTagsBlocked( GetAssetTags() ) )
     {
         blocked = true;
     }
@@ -244,7 +244,7 @@ bool UGBFGameplayAbility::DoesAbilitySatisfyTagRequirements( const UAbilitySyste
     // Expand our ability tags to add additional required/blocked tags
     if ( const auto * gas_ext_asc = Cast< UGBFAbilitySystemComponent >( &ability_system_component ) )
     {
-        gas_ext_asc->GetAdditionalActivationTagRequirements( AbilityTags, AllRequiredTags, AllBlockedTags );
+        gas_ext_asc->GetAdditionalActivationTagRequirements( GetAssetTags(), AllRequiredTags, AllBlockedTags );
     }
 
     // Check to see the required/blocked tags for this ability

@@ -225,7 +225,7 @@ void UGBFAbilitySystemComponent::AbilityInputTagPressed( FGameplayTag input_tag 
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             InputPressedSpecHandles.AddUnique( ability_spec.Handle );
             InputHeldSpecHandles.AddUnique( ability_spec.Handle );
@@ -242,7 +242,7 @@ void UGBFAbilitySystemComponent::AbilityInputTagReleased( FGameplayTag input_tag
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             InputReleasedSpecHandles.AddUnique( ability_spec.Handle );
             InputHeldSpecHandles.Remove( ability_spec.Handle );
@@ -391,7 +391,7 @@ UGameplayAbility * UGBFAbilitySystemComponent::FindAbilityByInputTag( const FGam
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             return ability_spec.Ability;
         }
