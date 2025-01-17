@@ -5,6 +5,7 @@
 
 #include <Abilities/GameplayAbility.h>
 #include <CoreMinimal.h>
+#include <NativeGameplayTags.h>
 
 #include "GBFGameplayAbility.generated.h"
 
@@ -36,6 +37,45 @@ struct GAMEBASEFRAMEWORK_API FGBFAbilityMeshMontage
 
     UPROPERTY()
     UAnimMontage * Montage;
+};
+
+UE_DECLARE_GAMEPLAY_TAG_EXTERN( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE );
+
+USTRUCT( BlueprintType )
+struct FGBFAbilitySimpleFailureMessage
+{
+    GENERATED_BODY()
+
+    UPROPERTY( BlueprintReadWrite )
+    TObjectPtr< APlayerController > PlayerController = nullptr;
+
+    UPROPERTY( BlueprintReadWrite )
+    FGameplayTagContainer FailureTags;
+
+    UPROPERTY( BlueprintReadWrite )
+    FText UserFacingReason;
+};
+
+/** Failure reason that can be used to play an animation montage when a failure occurs */
+USTRUCT( BlueprintType )
+struct FGBFAbilityMontageFailureMessage
+{
+    GENERATED_BODY()
+
+    // Player controller that failed to activate the ability, if the AbilitySystemComponent was player owned
+    UPROPERTY( BlueprintReadWrite )
+    TObjectPtr< APlayerController > PlayerController = nullptr;
+
+    // Avatar actor that failed to activate the ability
+    UPROPERTY( BlueprintReadWrite )
+    TObjectPtr< AActor > AvatarActor = nullptr;
+
+    // All the reasons why this ability has failed
+    UPROPERTY( BlueprintReadWrite )
+    FGameplayTagContainer FailureTags;
+
+    UPROPERTY( BlueprintReadWrite )
+    TObjectPtr< UAnimMontage > FailureMontage = nullptr;
 };
 
 UCLASS()
@@ -109,7 +149,16 @@ public:
     UFUNCTION( BlueprintCallable, Category = "GBF|Ability" )
     void ClearCameraMode();
 
+    void OnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const;
+
 protected:
+    // Called when the ability fails to activate
+    virtual void NativeOnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const;
+
+    // Called when the ability fails to activate
+    UFUNCTION( BlueprintImplementableEvent )
+    void ScriptOnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const;
+
     UFUNCTION( BlueprintImplementableEvent, Category = Ability, DisplayName = "OnPawnAvatarSet" )
     void K2_OnPawnAvatarSet();
 
@@ -167,6 +216,14 @@ private:
     /** Active montages being played by this ability */
     UPROPERTY()
     TArray< FGBFAbilityMeshMontage > CurrentAbilityMeshMontages;
+
+    // Map of failure tags to simple error messages
+    UPROPERTY( EditDefaultsOnly, Category = "Advanced" )
+    TMap< FGameplayTag, FText > FailureTagToUserFacingMessages;
+
+    // Map of failure tags to anim montages that should be played with them
+    UPROPERTY( EditDefaultsOnly, Category = "Advanced" )
+    TMap< FGameplayTag, TObjectPtr< UAnimMontage > > FailureTagToAnimMontage;
 
     TArray< UAbilityTask * > TasksToEndWhenAbilityEnds;
 

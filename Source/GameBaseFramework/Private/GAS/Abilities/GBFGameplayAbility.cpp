@@ -3,13 +3,18 @@
 #include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFHeroComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <Abilities/Tasks/AbilityTask.h>
 #include <AbilitySystemGlobals.h>
 #include <AbilitySystemLog.h>
+#include <Engine/World.h>
 #include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerController.h>
 #include <GameplayTask.h>
+
+UE_DEFINE_GAMEPLAY_TAG( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, "Ability.UserFacingSimpleActivateFail.Message" );
+UE_DEFINE_GAMEPLAY_TAG( TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, "Ability.PlayMontageOnActivateFail.Message" );
 
 #define ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN( FunctionName, ReturnValue )                                                                                \
     {                                                                                                                                                        \
@@ -370,6 +375,46 @@ void UGBFGameplayAbility::ClearCameraMode()
         }
 
         ActiveCameraMode = nullptr;
+    }
+}
+
+void UGBFGameplayAbility::OnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const
+{
+    NativeOnAbilityFailedToActivate( failed_reason );
+    ScriptOnAbilityFailedToActivate( failed_reason );
+}
+
+void UGBFGameplayAbility::NativeOnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const
+{
+    bool bSimpleFailureFound = false;
+    for ( FGameplayTag Reason : failed_reason )
+    {
+        if ( !bSimpleFailureFound )
+        {
+            if ( const auto * user_facing_message = FailureTagToUserFacingMessages.Find( Reason ) )
+            {
+                FGBFAbilitySimpleFailureMessage message;
+                message.PlayerController = GetActorInfo().PlayerController.Get();
+                message.FailureTags = failed_reason;
+                message.UserFacingReason = *user_facing_message;
+
+                auto & message_system = UGameplayMessageSubsystem::Get( GetWorld() );
+                message_system.BroadcastMessage( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, message );
+                bSimpleFailureFound = true;
+            }
+        }
+
+        if ( auto montage = FailureTagToAnimMontage.FindRef( Reason ) )
+        {
+            FGBFAbilityMontageFailureMessage message;
+            message.PlayerController = GetActorInfo().PlayerController.Get();
+            message.AvatarActor = GetActorInfo().AvatarActor.Get();
+            message.FailureTags = failed_reason;
+            message.FailureMontage = montage;
+
+            auto & message_system = UGameplayMessageSubsystem::Get( GetWorld() );
+            message_system.BroadcastMessage( TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, message );
+        }
     }
 }
 

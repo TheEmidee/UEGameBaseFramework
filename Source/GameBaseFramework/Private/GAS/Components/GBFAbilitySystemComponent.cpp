@@ -1000,6 +1000,19 @@ void UGBFAbilitySystemComponent::NotifyAbilityEnded( const FGameplayAbilitySpecH
     }
 }
 
+void UGBFAbilitySystemComponent::HandleAbilityFailed( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason )
+{
+    if ( const auto * gbf_ability = Cast< const UGBFGameplayAbility >( ability ) )
+    {
+        gbf_ability->OnAbilityFailedToActivate( failure_reason );
+    }
+}
+
+void UGBFAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason )
+{
+    HandleAbilityFailed( ability, failure_reason );
+}
+
 void UGBFAbilitySystemComponent::K2_RemoveGameplayCue( const FGameplayTag gameplay_cue_tag )
 {
     RemoveGameplayCue( gameplay_cue_tag );
