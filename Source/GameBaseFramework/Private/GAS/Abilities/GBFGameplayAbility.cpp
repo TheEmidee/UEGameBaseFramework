@@ -461,7 +461,7 @@ void UGBFGameplayAbility::MontageJumpToSectionForMesh( USkeletalMeshComponent * 
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {
@@ -474,7 +474,7 @@ void UGBFGameplayAbility::MontageSetNextSectionNameForMesh( USkeletalMeshCompone
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {
@@ -487,7 +487,7 @@ void UGBFGameplayAbility::MontageStopForMesh( USkeletalMeshComponent * mesh, con
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         // We should only stop the current montage if we are the animating ability
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
@@ -501,7 +501,7 @@ void UGBFGameplayAbility::MontageStopForAllMeshes( const float override_blend_ou
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {
