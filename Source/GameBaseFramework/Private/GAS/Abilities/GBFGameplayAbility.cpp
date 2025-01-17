@@ -190,10 +190,8 @@ void UGBFGameplayAbility::SetCanBeCanceled( const bool can_be_canceled )
 
 void UGBFGameplayAbility::TryActivateAbilityOnSpawn( const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilitySpec & spec ) const
 {
-    const auto is_predicting = ( spec.ActivationInfo.ActivationMode == EGameplayAbilityActivationMode::Predicting );
-
     // Try to activate if activation policy is on spawn.
-    if ( actor_info && !spec.IsActive() && !is_predicting && ( ActivationPolicy == EGBFAbilityActivationPolicy::OnSpawn ) )
+    if ( actor_info && !spec.IsActive() && ( ActivationPolicy == EGBFAbilityActivationPolicy::OnSpawn ) )
     {
         auto * asc = actor_info->AbilitySystemComponent.Get();
         const auto * avatar_actor = actor_info->AvatarActor.Get();
