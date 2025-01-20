@@ -404,7 +404,7 @@ void UGBFAbilitySystemComponent::OurCancelAllAbilities()
 void UGBFAbilitySystemComponent::CancelAbilitiesByTag( const FGameplayTag tag, bool replicate_cancel_ability )
 {
     const auto should_cancel_func = [ this, tag ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle /*ability_handle*/ ) {
-        return ability->AbilityTags.HasTag( tag );
+        return ability->GetAssetTags().HasTag( tag );
     };
 
     CancelAbilitiesByFunc( should_cancel_func, replicate_cancel_ability );
