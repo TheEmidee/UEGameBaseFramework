@@ -15,8 +15,6 @@
 
 #include <Components/HorizontalBox.h>
 
-#include UE_INLINE_GENERATED_CPP_BY_NAME( GBFControllerDisconnectedScreen )
-
 UE_DEFINE_GAMEPLAY_TAG_STATIC( TAG_Platform_Trait_Input_HasStrictControllerPairing, "Platform.Trait.Input.HasStrictControllerPairing" );
 
 UGBFControllerDisconnectedScreen::UGBFControllerDisconnectedScreen( const FObjectInitializer & object_initializer ) :
