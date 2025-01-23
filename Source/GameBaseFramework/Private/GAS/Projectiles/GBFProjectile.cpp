@@ -26,7 +26,7 @@ AGBFProjectile::AGBFProjectile()
 
     bReplicates = true;
     SetReplicatingMovement( true );
-    NetUpdateFrequency = 100.0f;
+    SetNetUpdateFrequency( 100.0f );
 
     ImpactDetectionType = EGBFProjectileImpactDetectionType::Hit;
     bIgnoreImpactWithInstigator = true;

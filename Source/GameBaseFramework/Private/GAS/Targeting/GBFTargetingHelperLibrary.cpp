@@ -169,9 +169,9 @@ void UGBFTargetingHelperLibrary::AimFromStartLocation( FVector & trace_start, FV
 {
     trace_start = aim_infos.StartLocationInfos.GetTargetingTransform().GetLocation() + aim_infos.LocationOffset;
 
-    FVector forward_vector;
-    FVector right_vector;
-    FVector up_vector;
+    FVector forward_vector( ForceInit );
+    FVector right_vector( ForceInit );
+    FVector up_vector( ForceInit );
 
     switch ( aim_infos.StartLocationInfos.LocationType )
     {
@@ -205,8 +205,8 @@ void UGBFTargetingHelperLibrary::AimFromStartLocation( FVector & trace_start, FV
         default:
         {
             checkNoEntry();
+            return;
         }
-        break;
     }
 
     forward_vector = forward_vector.RotateAngleAxis( aim_infos.RotationOffset.Roll, forward_vector );
