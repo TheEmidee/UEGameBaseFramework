@@ -386,12 +386,12 @@ void UGBFGameplayAbility::OnAbilityFailedToActivate( const FGameplayTagContainer
 
 void UGBFGameplayAbility::NativeOnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const
 {
-    bool bSimpleFailureFound = false;
-    for ( FGameplayTag Reason : failed_reason )
+    auto simple_failure_found = false;
+    for ( auto reason : failed_reason )
     {
-        if ( !bSimpleFailureFound )
+        if ( !simple_failure_found )
         {
-            if ( const auto * user_facing_message = FailureTagToUserFacingMessages.Find( Reason ) )
+            if ( const auto * user_facing_message = FailureTagToUserFacingMessages.Find( reason ) )
             {
                 FGBFAbilitySimpleFailureMessage message;
                 message.PlayerController = GetActorInfo().PlayerController.Get();
@@ -400,11 +400,11 @@ void UGBFGameplayAbility::NativeOnAbilityFailedToActivate( const FGameplayTagCon
 
                 auto & message_system = UGameplayMessageSubsystem::Get( GetWorld() );
                 message_system.BroadcastMessage( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, message );
-                bSimpleFailureFound = true;
+                simple_failure_found = true;
             }
         }
 
-        if ( auto montage = FailureTagToAnimMontage.FindRef( Reason ) )
+        if ( auto montage = FailureTagToAnimMontage.FindRef( reason ) )
         {
             FGBFAbilityMontageFailureMessage message;
             message.PlayerController = GetActorInfo().PlayerController.Get();

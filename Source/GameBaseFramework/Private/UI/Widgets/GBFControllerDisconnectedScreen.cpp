@@ -47,8 +47,8 @@ void UGBFControllerDisconnectedScreen::NativeOnActivated()
     {
         // This is the platform user for "unpaired" input devices. Not every platform supports this, so
         // only set this to visible if the unpaired user is valid.
-        const FPlatformUserId UnpairedUserId = IPlatformInputDeviceMapper::Get().GetUserForUnpairedInputDevices();
-        if ( UnpairedUserId.IsValid() )
+        const auto unpaired_user_id = IPlatformInputDeviceMapper::Get().GetUserForUnpairedInputDevices();
+        if ( unpaired_user_id.IsValid() )
         {
             HBox_SwitchUser->SetVisibility( ESlateVisibility::SelfHitTestInvisible );
             Button_ChangeUser->SetVisibility( ESlateVisibility::SelfHitTestInvisible );

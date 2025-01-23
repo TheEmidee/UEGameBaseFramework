@@ -95,7 +95,7 @@ void UGBFHUDLayout::HandleInputDevicePairingChanged( FInputDeviceId input_device
 bool UGBFHUDLayout::ShouldPlatformDisplayControllerDisconnectScreen() const
 {
     // We only want this menu on primarily controller platforms
-    bool has_all_required_tags = ICommonUIModule::GetSettings().GetPlatformTraits().HasAll( PlatformRequiresControllerDisconnectScreen );
+    auto has_all_required_tags = ICommonUIModule::GetSettings().GetPlatformTraits().HasAll( PlatformRequiresControllerDisconnectScreen );
 
     // Check the tags that we may be emulating in the editor too
 #if WITH_EDITOR
@@ -143,7 +143,7 @@ void UGBFHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()
         if ( device_mapper.GetInputDeviceConnectionState( mapped_device ) == EInputDeviceConnectionState::Connected )
         {
             if ( const auto hardware_info = UInputDeviceSubsystem::Get()->GetInputDeviceHardwareIdentifier( mapped_device );
-                hardware_info.PrimaryDeviceType == EHardwareDevicePrimaryType::Gamepad )
+                 hardware_info.PrimaryDeviceType == EHardwareDevicePrimaryType::Gamepad )
             {
                 has_connected_controller = true;
             }

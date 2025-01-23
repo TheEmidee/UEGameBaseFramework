@@ -123,10 +123,9 @@ void UGBFAbilitySystemComponent::InitAbilityActorInfo( AActor * owner_actor, AAc
             ensureMsgf( ability_spec.Ability && ability_spec.Ability->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced, TEXT( "InitAbilityActorInfo: All Abilities should be Instanced (NonInstanced is being deprecated due to usability issues)." ) );
             PRAGMA_ENABLE_DEPRECATION_WARNINGS
 
-            const auto & instances = ability_spec.GetAbilityInstances();
-            for ( UGameplayAbility * AbilityInstance : instances )
+            for ( auto * ability_instance : ability_spec.GetAbilityInstances() )
             {
-                if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( AbilityInstance ) )
+                if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( ability_instance ) )
                 {
                     // Ability instances may be missing for replays
                     gas_ext_ability_instance->OnPawnAvatarSet();
