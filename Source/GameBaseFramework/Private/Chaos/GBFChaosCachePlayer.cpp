@@ -32,3 +32,13 @@ void AGBFChaosCachePlayer::ResetObservedComponents()
     SetStartTime( 0.0f );
     BeginEvaluate();
 }
+
+void AGBFChaosCachePlayer::BeginPlay()
+{
+    Super::BeginPlay();
+
+    if ( !PrimaryActorTick.bStartWithTickEnabled )
+    {
+        SetActorTickEnabled( false );
+    }
+}
