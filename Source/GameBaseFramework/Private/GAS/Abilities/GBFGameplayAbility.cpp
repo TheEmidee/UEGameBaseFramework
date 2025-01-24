@@ -3,13 +3,18 @@
 #include "Camera/GBFCameraMode.h"
 #include "Characters/Components/GBFHeroComponent.h"
 #include "GAS/Components/GBFAbilitySystemComponent.h"
+#include "GameFramework/GameplayMessageSubsystem.h"
 
 #include <Abilities/Tasks/AbilityTask.h>
 #include <AbilitySystemGlobals.h>
 #include <AbilitySystemLog.h>
+#include <Engine/World.h>
 #include <GameFramework/Pawn.h>
 #include <GameFramework/PlayerController.h>
 #include <GameplayTask.h>
+
+UE_DEFINE_GAMEPLAY_TAG( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, "Ability.UserFacingSimpleActivateFail.Message" );
+UE_DEFINE_GAMEPLAY_TAG( TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, "Ability.PlayMontageOnActivateFail.Message" );
 
 #define ENSURE_ABILITY_IS_INSTANTIATED_OR_RETURN( FunctionName, ReturnValue )                                                                                \
     {                                                                                                                                                        \
@@ -190,10 +195,8 @@ void UGBFGameplayAbility::SetCanBeCanceled( const bool can_be_canceled )
 
 void UGBFGameplayAbility::TryActivateAbilityOnSpawn( const FGameplayAbilityActorInfo * actor_info, const FGameplayAbilitySpec & spec ) const
 {
-    const auto is_predicting = ( spec.ActivationInfo.ActivationMode == EGameplayAbilityActivationMode::Predicting );
-
     // Try to activate if activation policy is on spawn.
-    if ( actor_info && !spec.IsActive() && !is_predicting && ( ActivationPolicy == EGBFAbilityActivationPolicy::OnSpawn ) )
+    if ( actor_info && !spec.IsActive() && ( ActivationPolicy == EGBFAbilityActivationPolicy::OnSpawn ) )
     {
         auto * asc = actor_info->AbilitySystemComponent.Get();
         const auto * avatar_actor = actor_info->AvatarActor.Get();
@@ -230,7 +233,7 @@ bool UGBFGameplayAbility::DoesAbilitySatisfyTagRequirements( const UAbilitySyste
     const auto & missing_tag = ability_system_globals.ActivateFailTagsMissingTag;
 
     // Check if any of this ability's tags are currently blocked
-    if ( ability_system_component.AreAbilityTagsBlocked( AbilityTags ) )
+    if ( ability_system_component.AreAbilityTagsBlocked( GetAssetTags() ) )
     {
         blocked = true;
     }
@@ -244,7 +247,7 @@ bool UGBFGameplayAbility::DoesAbilitySatisfyTagRequirements( const UAbilitySyste
     // Expand our ability tags to add additional required/blocked tags
     if ( const auto * gas_ext_asc = Cast< UGBFAbilitySystemComponent >( &ability_system_component ) )
     {
-        gas_ext_asc->GetAdditionalActivationTagRequirements( AbilityTags, AllRequiredTags, AllBlockedTags );
+        gas_ext_asc->GetAdditionalActivationTagRequirements( GetAssetTags(), AllRequiredTags, AllBlockedTags );
     }
 
     // Check to see the required/blocked tags for this ability
@@ -375,6 +378,46 @@ void UGBFGameplayAbility::ClearCameraMode()
     }
 }
 
+void UGBFGameplayAbility::OnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const
+{
+    NativeOnAbilityFailedToActivate( failed_reason );
+    ScriptOnAbilityFailedToActivate( failed_reason );
+}
+
+void UGBFGameplayAbility::NativeOnAbilityFailedToActivate( const FGameplayTagContainer & failed_reason ) const
+{
+    auto simple_failure_found = false;
+    for ( auto reason : failed_reason )
+    {
+        if ( !simple_failure_found )
+        {
+            if ( const auto * user_facing_message = FailureTagToUserFacingMessages.Find( reason ) )
+            {
+                FGBFAbilitySimpleFailureMessage message;
+                message.PlayerController = GetActorInfo().PlayerController.Get();
+                message.FailureTags = failed_reason;
+                message.UserFacingReason = *user_facing_message;
+
+                auto & message_system = UGameplayMessageSubsystem::Get( GetWorld() );
+                message_system.BroadcastMessage( TAG_ABILITY_SIMPLE_FAILURE_MESSAGE, message );
+                simple_failure_found = true;
+            }
+        }
+
+        if ( auto montage = FailureTagToAnimMontage.FindRef( reason ) )
+        {
+            FGBFAbilityMontageFailureMessage message;
+            message.PlayerController = GetActorInfo().PlayerController.Get();
+            message.AvatarActor = GetActorInfo().AvatarActor.Get();
+            message.FailureTags = failed_reason;
+            message.FailureMontage = montage;
+
+            auto & message_system = UGameplayMessageSubsystem::Get( GetWorld() );
+            message_system.BroadcastMessage( TAG_ABILITY_PLAY_MONTAGE_FAILURE_MESSAGE, message );
+        }
+    }
+}
+
 bool UGBFGameplayAbility::CanActivateAbility( const FGameplayAbilitySpecHandle handle, const FGameplayAbilityActorInfo * actor_info, const FGameplayTagContainer * source_tags, const FGameplayTagContainer * target_tags, FGameplayTagContainer * optional_relevant_tags ) const
 {
     if ( !actor_info || !actor_info->AbilitySystemComponent.IsValid() )
@@ -463,7 +506,7 @@ void UGBFGameplayAbility::MontageJumpToSectionForMesh( USkeletalMeshComponent * 
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {
@@ -476,7 +519,7 @@ void UGBFGameplayAbility::MontageSetNextSectionNameForMesh( USkeletalMeshCompone
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {
@@ -489,7 +532,7 @@ void UGBFGameplayAbility::MontageStopForMesh( USkeletalMeshComponent * mesh, con
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         // We should only stop the current montage if we are the animating ability
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
@@ -503,7 +546,7 @@ void UGBFGameplayAbility::MontageStopForAllMeshes( const float override_blend_ou
 {
     check( CurrentActorInfo != nullptr );
 
-    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Checked() ) )
+    if ( auto * ability_system_component = Cast< UGBFAbilitySystemComponent >( GetAbilitySystemComponentFromActorInfo_Ensured() ) )
     {
         if ( ability_system_component->IsAnimatingAbilityForAnyMesh( this ) )
         {

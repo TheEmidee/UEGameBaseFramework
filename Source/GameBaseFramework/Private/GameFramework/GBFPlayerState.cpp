@@ -22,7 +22,7 @@ AGBFPlayerState::AGBFPlayerState( const FObjectInitializer & object_initializer 
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
 
     // AbilitySystemComponent needs to be updated at a high frequency.
-    NetUpdateFrequency = 100.0f;
+    SetNetUpdateFrequency( 100.0f );
 }
 
 AGBFPlayerController * AGBFPlayerState::GetGBFPlayerController() const

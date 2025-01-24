@@ -119,24 +119,16 @@ void UGBFAbilitySystemComponent::InitAbilityActorInfo( AActor * owner_actor, AAc
         // Notify all abilities that a new pawn avatar has been set
         for ( const auto & ability_spec : ActivatableAbilities.Items )
         {
-            if ( auto * gas_ext_ability_cdo = Cast< UGBFGameplayAbility >( ability_spec.Ability ) )
+            PRAGMA_DISABLE_DEPRECATION_WARNINGS
+            ensureMsgf( ability_spec.Ability && ability_spec.Ability->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced, TEXT( "InitAbilityActorInfo: All Abilities should be Instanced (NonInstanced is being deprecated due to usability issues)." ) );
+            PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+            for ( auto * ability_instance : ability_spec.GetAbilityInstances() )
             {
-                if ( gas_ext_ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
+                if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( ability_instance ) )
                 {
-                    const auto & instances = ability_spec.GetAbilityInstances();
-                    for ( UGameplayAbility * AbilityInstance : instances )
-                    {
-                        auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( AbilityInstance );
-                        if ( gas_ext_ability_instance != nullptr )
-                        {
-                            // Ability instances may be missing for replays
-                            gas_ext_ability_instance->OnPawnAvatarSet();
-                        }
-                    }
-                }
-                else
-                {
-                    gas_ext_ability_cdo->OnPawnAvatarSet();
+                    // Ability instances may be missing for replays
+                    gas_ext_ability_instance->OnPawnAvatarSet();
                 }
             }
         }
@@ -225,7 +217,7 @@ void UGBFAbilitySystemComponent::AbilityInputTagPressed( FGameplayTag input_tag 
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             InputPressedSpecHandles.AddUnique( ability_spec.Handle );
             InputHeldSpecHandles.AddUnique( ability_spec.Handle );
@@ -242,7 +234,7 @@ void UGBFAbilitySystemComponent::AbilityInputTagReleased( FGameplayTag input_tag
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             InputReleasedSpecHandles.AddUnique( ability_spec.Handle );
             InputHeldSpecHandles.Remove( ability_spec.Handle );
@@ -391,7 +383,7 @@ UGameplayAbility * UGBFAbilitySystemComponent::FindAbilityByInputTag( const FGam
 
     for ( const auto & ability_spec : ActivatableAbilities.Items )
     {
-        if ( ability_spec.Ability && ability_spec.DynamicAbilityTags.HasTagExact( input_tag ) )
+        if ( ability_spec.Ability && ability_spec.GetDynamicSpecSourceTags().HasTagExact( input_tag ) )
         {
             return ability_spec.Ability;
         }
@@ -411,7 +403,7 @@ void UGBFAbilitySystemComponent::OurCancelAllAbilities()
 void UGBFAbilitySystemComponent::CancelAbilitiesByTag( const FGameplayTag tag, bool replicate_cancel_ability )
 {
     const auto should_cancel_func = [ this, tag ]( const UGBFGameplayAbility * ability, FGameplayAbilitySpecHandle /*ability_handle*/ ) {
-        return ability->AbilityTags.HasTag( tag );
+        return ability->GetAssetTags().HasTag( tag );
     };
 
     CancelAbilitiesByFunc( should_cancel_func, replicate_cancel_ability );
@@ -885,38 +877,26 @@ void UGBFAbilitySystemComponent::CancelAbilitiesByFunc( const TShouldCancelAbili
             continue;
         }
 
-        if ( auto * ability_cdo = Cast< UGBFGameplayAbility >( ability_spec.Ability ) )
+        PRAGMA_DISABLE_DEPRECATION_WARNINGS
+        ensureMsgf( ability_spec.Ability->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced, TEXT( "CancelAbilitiesByFunc: All Abilities should be Instanced (NonInstanced is being deprecated due to usability issues)." ) );
+        PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
+        // Cancel all the spawned instances, not the CDO.
+        const auto & instances = ability_spec.GetAbilityInstances();
+        for ( auto * ability_instance : instances )
         {
-            if ( ability_cdo->GetInstancingPolicy() != EGameplayAbilityInstancingPolicy::NonInstanced )
+            if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( ability_instance ) )
             {
-                // Cancel all the spawned instances, not the CDO.
-                const auto & instances = ability_spec.GetAbilityInstances();
-                for ( auto * ability_instance : instances )
+                if ( predicate( gas_ext_ability_instance, ability_spec.Handle ) )
                 {
-                    if ( auto * gas_ext_ability_instance = Cast< UGBFGameplayAbility >( ability_instance ) )
+                    if ( gas_ext_ability_instance->CanBeCanceled() )
                     {
-                        if ( predicate( gas_ext_ability_instance, ability_spec.Handle ) )
-                        {
-                            if ( gas_ext_ability_instance->CanBeCanceled() )
-                            {
-                                gas_ext_ability_instance->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), gas_ext_ability_instance->GetCurrentActivationInfo(), replicate_cancel_ability );
-                            }
-                            else
-                            {
-                                UE_LOG( LogTemp, Error, TEXT( "CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false." ), *gas_ext_ability_instance->GetName() );
-                            }
-                        }
+                        gas_ext_ability_instance->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), gas_ext_ability_instance->GetCurrentActivationInfo(), replicate_cancel_ability );
                     }
-                }
-            }
-            else
-            {
-                // Cancel the non-instanced ability CDO.
-                if ( predicate( ability_cdo, ability_spec.Handle ) )
-                {
-                    // Non-instanced abilities can always be canceled.
-                    check( ability_cdo->CanBeCanceled() );
-                    ability_cdo->CancelAbility( ability_spec.Handle, AbilityActorInfo.Get(), FGameplayAbilityActivationInfo(), replicate_cancel_ability );
+                    else
+                    {
+                        UE_LOG( LogTemp, Error, TEXT( "CancelAbilitiesByFunc: Can't cancel ability [%s] because CanBeCanceled is false." ), *gas_ext_ability_instance->GetName() );
+                    }
                 }
             }
         }
@@ -940,8 +920,13 @@ void UGBFAbilitySystemComponent::AbilitySpecInputPressed( FGameplayAbilitySpec &
     // Use replicated events instead so that the WaitInputPress ability task works.
     if ( spec.IsActive() )
     {
+        PRAGMA_DISABLE_DEPRECATION_WARNINGS
+        const auto * instance = spec.GetPrimaryInstance();
+        const auto original_prediction_key = instance != nullptr ? instance->GetCurrentActivationInfo().GetActivationPredictionKey() : spec.ActivationInfo.GetActivationPredictionKey();
+        PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
         // Invoke the InputPressed event. This is not replicated here. If someone is listening, they may replicate the InputPressed event to the server.
-        InvokeReplicatedEvent( EAbilityGenericReplicatedEvent::InputPressed, spec.Handle, spec.ActivationInfo.GetActivationPredictionKey() );
+        InvokeReplicatedEvent( EAbilityGenericReplicatedEvent::InputPressed, spec.Handle, original_prediction_key );
     }
 }
 
@@ -953,8 +938,13 @@ void UGBFAbilitySystemComponent::AbilitySpecInputReleased( FGameplayAbilitySpec 
     // Use replicated events instead so that the WaitInputRelease ability task works.
     if ( spec.IsActive() )
     {
+        PRAGMA_DISABLE_DEPRECATION_WARNINGS
+        const auto * instance = spec.GetPrimaryInstance();
+        const auto original_prediction_key = instance != nullptr ? instance->GetCurrentActivationInfo().GetActivationPredictionKey() : spec.ActivationInfo.GetActivationPredictionKey();
+        PRAGMA_ENABLE_DEPRECATION_WARNINGS
+
         // Invoke the InputReleased event. This is not replicated here. If someone is listening, they may replicate the InputReleased event to the server.
-        InvokeReplicatedEvent( EAbilityGenericReplicatedEvent::InputReleased, spec.Handle, spec.ActivationInfo.GetActivationPredictionKey() );
+        InvokeReplicatedEvent( EAbilityGenericReplicatedEvent::InputReleased, spec.Handle, original_prediction_key );
     }
 }
 
@@ -984,7 +974,6 @@ void UGBFAbilitySystemComponent::NotifyAbilityFailed( const FGameplayAbilitySpec
 {
     Super::NotifyAbilityFailed( Handle, Ability, FailureReason );
 
-    /* :TODO: Ability Failure
     if ( APawn * Avatar = Cast< APawn >( GetAvatarActor() ) )
     {
         if ( !Avatar->IsLocallyControlled() && Ability->IsSupportedForNetworking() )
@@ -994,7 +983,7 @@ void UGBFAbilitySystemComponent::NotifyAbilityFailed( const FGameplayAbilitySpec
         }
     }
 
-    HandleAbilityFailed( Ability, FailureReason );*/
+    HandleAbilityFailed( Ability, FailureReason );
 }
 
 void UGBFAbilitySystemComponent::NotifyAbilityEnded( const FGameplayAbilitySpecHandle handle, UGameplayAbility * ability, const bool was_cancelled )
@@ -1008,6 +997,19 @@ void UGBFAbilitySystemComponent::NotifyAbilityEnded( const FGameplayAbilitySpecH
     {
         RemoveAbilityFromActivationGroup( gas_ext_ability->GetActivationGroup(), gas_ext_ability );
     }
+}
+
+void UGBFAbilitySystemComponent::HandleAbilityFailed( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason )
+{
+    if ( const auto * gbf_ability = Cast< const UGBFGameplayAbility >( ability ) )
+    {
+        gbf_ability->OnAbilityFailedToActivate( failure_reason );
+    }
+}
+
+void UGBFAbilitySystemComponent::ClientNotifyAbilityFailed_Implementation( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason )
+{
+    HandleAbilityFailed( ability, failure_reason );
 }
 
 void UGBFAbilitySystemComponent::K2_RemoveGameplayCue( const FGameplayTag gameplay_cue_tag )

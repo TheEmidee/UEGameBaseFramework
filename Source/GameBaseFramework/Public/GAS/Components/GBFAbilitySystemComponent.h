@@ -214,6 +214,10 @@ protected:
     void NotifyAbilityActivated( const FGameplayAbilitySpecHandle Handle, UGameplayAbility * Ability ) override;
     void NotifyAbilityFailed( const FGameplayAbilitySpecHandle Handle, UGameplayAbility * Ability, const FGameplayTagContainer & FailureReason ) override;
     void NotifyAbilityEnded( FGameplayAbilitySpecHandle handle, UGameplayAbility * ability, bool was_cancelled ) override;
+    void HandleAbilityFailed( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason );
+
+    UFUNCTION( Client, Unreliable )
+    void ClientNotifyAbilityFailed( const UGameplayAbility * ability, const FGameplayTagContainer & failure_reason );
 
     UFUNCTION( BlueprintCallable )
     void K2_RemoveGameplayCue( FGameplayTag gameplay_cue_tag );

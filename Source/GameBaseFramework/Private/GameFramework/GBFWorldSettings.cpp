@@ -18,10 +18,11 @@ FPrimaryAssetId AGBFWorldSettings::GetDefaultGameplayExperience() const
     {
         result = UAssetManager::Get().GetPrimaryAssetIdForPath( DefaultGameplayExperience.ToSoftObjectPath() );
 
-        if ( !result.IsValid() )
-        {
-            UE_LOG( LogGBF, Error, TEXT( "%s.DefaultGameplayExperience is %s but that failed to resolve into an asset ID (you might need to add a path to the Asset Rules in your game feature plugin or project settings" ), *GetPathNameSafe( this ), *DefaultGameplayExperience.ToString() );
-        }
+        // :NOTE: Commented out for 5.5 as this generates errors during map checks because for some reasons the primary assets are not loaded from game features
+        // if ( !result.IsValid() )
+        // {
+        //     UE_LOG( LogGBF, Error, TEXT( "%s.DefaultGameplayExperience is %s but that failed to resolve into an asset ID (you might need to add a path to the Asset Rules in your game feature plugin or project settings" ), *GetPathNameSafe( this ), *DefaultGameplayExperience.ToString() );
+        // }
     }
     return result;
 }

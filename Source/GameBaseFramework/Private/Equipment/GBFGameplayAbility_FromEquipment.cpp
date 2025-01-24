@@ -30,7 +30,7 @@ UGBFInventoryItemInstance * UGBFGameplayAbility_FromEquipment::GetAssociatedItem
 EDataValidationResult UGBFGameplayAbility_FromEquipment::IsDataValid( FDataValidationContext & context ) const
 {
     return FDVEDataValidator( context )
-        .AreNotEqual( InstancingPolicy.GetValue(), EGameplayAbilityInstancingPolicy::NonInstanced, FText::FromString( "Equipment ability must be instanced" ) )
+        .AreNotEqual( InstancingPolicy.GetValue(), EGameplayAbilityInstancingPolicy::InstancedPerActor, FText::FromString( "Equipment ability must be instanced" ) )
         .Result();
 }
 #endif

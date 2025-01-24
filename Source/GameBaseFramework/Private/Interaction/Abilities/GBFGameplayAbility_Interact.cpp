@@ -280,7 +280,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
     const auto & option_container = interactable_component->GetInteractableOptions();
     context.InteractionsId = option_container.GetInteractionsId();
 
-    auto * asc_from_actor_info = GetAbilitySystemComponentFromActorInfo_Checked();
+    auto * asc_from_actor_info = GetAbilitySystemComponentFromActorInfo_Ensured();
     auto * asc_from_interactable_target = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( interactable_component.Get()->GetOwner() );
 
     FGameplayTagContainer actor_info_tags;

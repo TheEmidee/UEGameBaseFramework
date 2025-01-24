@@ -48,6 +48,9 @@ UCommonSession_HostSessionRequest * UGBFUserFacingExperienceDefinition::CreateHo
         result = NewObject< UCommonSession_HostSessionRequest >();
         result->OnlineMode = OnlineMode;
         result->bUseLobbies = true;
+        result->bUseLobbiesVoiceChat = false;
+        // We always enable presence on this session because it is the primary session used for matchmaking. For online systems that care about presence, only the primary session should have presence enabled
+        result->bUsePresence = !IsRunningDedicatedServer();
     }
 
     result->MapID = MapID;
