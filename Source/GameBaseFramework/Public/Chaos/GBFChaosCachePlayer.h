@@ -19,4 +19,6 @@ public:
 
     UFUNCTION( BlueprintCallable )
     void ResetObservedComponents();
+
+    void BeginPlay() override;
 };
