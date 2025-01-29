@@ -80,10 +80,10 @@ struct FGBFInteractionOption
     UPROPERTY( EditAnywhere, Instanced )
     TObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InteractableTargetTagRequirements;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InstigatorTagRequirements;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
