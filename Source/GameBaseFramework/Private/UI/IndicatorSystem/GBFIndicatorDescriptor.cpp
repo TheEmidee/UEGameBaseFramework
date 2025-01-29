@@ -12,7 +12,7 @@ bool FGBFIndicatorProjection::Project( const UGBFIndicatorDescriptor & indicator
         TOptional< FVector > world_location;
         if ( indicator_descriptor.GetComponentSocketName() != NAME_None )
         {
-            world_location = component->GetSocketTransform( indicator_descriptor.GetComponentSocketName() ).GetLocation();
+            world_location = component->GetSocketLocation( indicator_descriptor.GetComponentSocketName() );
         }
         else
         {

@@ -160,7 +160,13 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
                 auto * interactable_target_actor = interactable_component->GetOwner();
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
                 indicator->SetDataObject( interactable_target_actor );
-                indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
+
+                static const FName MeshComponentIndicatorTarget( TEXT( "GBFIndicatorTarget" ) );
+
+                const auto target_components = interactable_target_actor->GetComponentsByTag( USceneComponent::StaticClass(), MeshComponentIndicatorTarget );
+
+                indicator->SetSceneComponent( target_components.IsEmpty() ? interactable_target_actor->GetRootComponent() : Cast< USceneComponent >( target_components[ 0 ] ) );
+                indicator->SetComponentSocketName( widget_infos.SocketName );
                 indicator->SetIndicatorClass( widget_infos.InteractionWidgetClass );
                 indicator->SetScreenSpaceOffset( widget_infos.InteractionWidgetOffset );
                 indicator_manager->AddIndicator( indicator );

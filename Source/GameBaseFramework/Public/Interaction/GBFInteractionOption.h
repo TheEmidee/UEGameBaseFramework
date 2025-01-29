@@ -24,6 +24,9 @@ struct FGBFInteractionWidgetInfos
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
 
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
+    FName SocketName;
+
     bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };
 
