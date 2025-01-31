@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UI/IndicatorSystem/GBFIndicatorDescriptor.h"
+
 #include <Abilities/GameplayAbility.h>
 
 #include "GBFInteractionOption.generated.h"
@@ -22,10 +24,16 @@ struct FGBFInteractionWidgetInfos
     TSoftClassPtr< UUserWidget > InteractionWidgetClass;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FVector InteractionWorldOffset = FVector::ZeroVector;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
     FName SocketName;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    EGBFActorCanvasProjectionMode ProjectionMode = EGBFActorCanvasProjectionMode::ActorBoundingBox;
 
     bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };
@@ -92,9 +100,6 @@ struct FGBFInteractionOption
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGBFInteractionWidgetInfos WidgetInfos;
-
     bool operator==( const FGBFInteractionOption & other ) const;
     bool operator!=( const FGBFInteractionOption & other ) const;
 };
@@ -103,8 +108,7 @@ FORCEINLINE bool FGBFInteractionOption::operator==( const FGBFInteractionOption 
 {
     return InteractionAbility == other.InteractionAbility &&
            Text.IdenticalTo( other.Text ) &&
-           SubText.IdenticalTo( other.SubText ) &&
-           WidgetInfos == other.WidgetInfos;
+           SubText.IdenticalTo( other.SubText );
 }
 
 FORCEINLINE bool FGBFInteractionOption::operator!=( const FGBFInteractionOption & other ) const

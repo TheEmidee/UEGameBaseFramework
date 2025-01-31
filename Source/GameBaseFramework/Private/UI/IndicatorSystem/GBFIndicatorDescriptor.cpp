@@ -20,9 +20,8 @@ bool FGBFIndicatorProjection::Project( const UGBFIndicatorDescriptor & indicator
         }
 
         const auto project_world_location = world_location.GetValue() + indicator_descriptor.GetWorldPositionOffset();
-        const auto projection_mode = indicator_descriptor.GetProjectionMode();
 
-        switch ( projection_mode )
+        switch ( const auto projection_mode = indicator_descriptor.GetProjectionMode() )
         {
             case EGBFActorCanvasProjectionMode::ComponentPoint:
             {

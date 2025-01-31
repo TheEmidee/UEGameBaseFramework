@@ -126,6 +126,10 @@
     {
       "Name": "ChaosCaching",
       "Enabled": true
+    },
+    {
+      "Name": "ModelViewViewModel",
+      "Enabled": true
     }
   ]
 }
