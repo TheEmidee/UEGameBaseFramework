@@ -10,7 +10,7 @@ class UMeshComponent;
 class UMaterialInstanceDynamic;
 class UNiagaraComponent;
 
-UCLASS()
+UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFPlayerDisplayAsset : public UDataAsset
 {
     GENERATED_BODY()
