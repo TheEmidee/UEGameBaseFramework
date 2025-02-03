@@ -30,7 +30,7 @@ public:
     float WritingSpeed;
 
 private:
-    UPROPERTY()
+    UPROPERTY( BLueprintReadOnly, meta = ( AllowPrivateAccess ) )
     FText EntireText;
 
     UPROPERTY( meta = ( BindWidget ) )
