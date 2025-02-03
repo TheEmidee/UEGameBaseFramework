@@ -41,3 +41,7 @@ void UGBFInteractableComponent::RemoveInteractions()
 void UGBFInteractableComponent::CustomizeInteractionEventData_Implementation( FGameplayEventData & event_data, FGameplayTag event_tag )
 {
 }
+
+void UGBFInteractableComponent::CustomizeIndicator_Implementation( UGBFIndicatorDescriptor * indicator_descriptor, const TArray< FGBFInteractionOption > & options )
+{
+}

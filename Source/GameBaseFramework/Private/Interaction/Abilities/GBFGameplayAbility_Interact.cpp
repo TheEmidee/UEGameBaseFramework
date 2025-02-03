@@ -3,7 +3,6 @@
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Input/GBFInputComponent.h"
 #include "Interaction/GBFInteractableComponent.h"
-#include "Interaction/GBFInteractableIndicatorCustomizationInterface.h"
 #include "Interaction/GBFInteractionEventCustomization.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
@@ -158,7 +157,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
             }
             Indicators.Reset();
 
-            const auto add_indicator = [ & ]( const UGBFInteractableComponent * interactable_component, const FGBFInteractionWidgetInfos & widget_infos, TArrayView< const OptionHandle > options ) {
+            const auto add_indicator = [ & ]( UGBFInteractableComponent * interactable_component, const FGBFInteractionWidgetInfos & widget_infos, TArrayView< const OptionHandle > options ) {
                 if ( widget_infos.InteractionWidgetClass == nullptr )
                 {
                     return;
@@ -173,19 +172,17 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
                 indicator->SetWorldPositionOffset( widget_infos.InteractionWorldOffset );
                 indicator->SetScreenSpaceOffset( widget_infos.InteractionWidgetOffset );
                 indicator->SetProjectionMode( widget_infos.ProjectionMode );
+                indicator->SetBoundingBoxAnchor( widget_infos.BoundingBoxAnchor );
 
-                if ( interactable_target_actor->Implements< UGBFInteractableIndicatorCustomizationInterface >() )
+                TArray< FGBFInteractionOption > interaction_options;
+                interaction_options.Reserve( options.Num() );
+
+                for ( const auto & option : options )
                 {
-                    TArray< FGBFInteractionOption > interaction_options;
-                    interaction_options.Reserve( options.Num() );
-
-                    for ( const auto & option : options )
-                    {
-                        interaction_options.Emplace( option.InitialInteractionOption );
-                    }
-
-                    IGBFInteractableIndicatorCustomizationInterface::Execute_UpdateIndicator( interactable_target_actor, indicator, interaction_options );
+                    interaction_options.Emplace( option.InitialInteractionOption );
                 }
+
+                interactable_component->CustomizeIndicator( indicator, interaction_options );
 
                 indicator_manager->AddIndicator( indicator );
 

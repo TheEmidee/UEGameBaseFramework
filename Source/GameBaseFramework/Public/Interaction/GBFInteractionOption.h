@@ -29,11 +29,14 @@ struct FGBFInteractionWidgetInfos
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
 
-    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
-    FName SocketName;
-
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     EGBFActorCanvasProjectionMode ProjectionMode = EGBFActorCanvasProjectionMode::ActorBoundingBox;
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( EditCondition = "ProjectionMode != EGBFActorCanvasProjectionMode::ComponentPoint") )
+    FVector BoundingBoxAnchor = { 0.5f, 0.5f, 1.0f };
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
+    FName SocketName;
 
     bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };
