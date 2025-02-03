@@ -45,7 +45,7 @@ public:
     {
         return DataObject;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetDataObject( UObject * data_object )
     {
@@ -57,7 +57,7 @@ public:
     {
         return ViewModel;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetViewModel( UMVVMViewModelBase * view_model )
     {
@@ -69,7 +69,7 @@ public:
     {
         return Component;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetSceneComponent( USceneComponent * component )
     {
@@ -81,7 +81,7 @@ public:
     {
         return ComponentSocketName;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetComponentSocketName( const FName socket_name )
     {
@@ -93,19 +93,19 @@ public:
     {
         return IndicatorWidgetClass;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetIndicatorClass( const TSoftClassPtr< UUserWidget > indicator_widget_class )
     {
         IndicatorWidgetClass = indicator_widget_class;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetAutoRemoveWhenIndicatorComponentIsNull( const bool can_automatically_remove )
     {
         bAutoRemoveWhenIndicatorComponentIsNull = can_automatically_remove;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     bool GetAutoRemoveWhenIndicatorComponentIsNull() const
     {
@@ -116,7 +116,7 @@ public:
     {
         return bAutoRemoveWhenIndicatorComponentIsNull && !IsValid( GetSceneComponent() );
     }
-    
+
     UFUNCTION( BlueprintCallable )
     bool GetIsVisible() const
     {
@@ -134,7 +134,7 @@ public:
     {
         return ProjectionMode;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetProjectionMode( const EGBFActorCanvasProjectionMode projection_mode )
     {
@@ -170,7 +170,7 @@ public:
     {
         return bClampToScreen;
     }
-    
+
     UFUNCTION( BlueprintCallable )
     void SetClampToScreen( const bool value )
     {
@@ -241,7 +241,7 @@ public:
     {
         return ManagerPtr.Get();
     }
-    
+
     void SetIndicatorManagerComponent( UGBFIndicatorManagerComponent * manager );
 
     UFUNCTION( BlueprintCallable )
@@ -249,7 +249,7 @@ public:
 
 private:
     friend class SGBFActorCanvas;
-    
+
     UPROPERTY()
     bool bVisible = true;
     UPROPERTY()
