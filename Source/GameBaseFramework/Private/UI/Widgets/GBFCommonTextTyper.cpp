@@ -1,35 +1,41 @@
-#include "UI/Widgets/GBFTextTyper.h"
+#include "UI/Widgets/GBFCommonTextTyper.h"
 
 #include <CommonTextBlock.h>
 
-UGBFTextTyper::UGBFTextTyper( const FObjectInitializer & object_initializer ) :
+UGBFCommonTextTyper::UGBFCommonTextTyper( const FObjectInitializer & object_initializer ) :
     Super( object_initializer ),
-    bIsFullyDisplayed( true ),
     WritingSpeed( 0.0f ),
     CurrentCharIndex( 0 ),
-    ElapsedTimeSinceLastCharWritten( 0 )
+    ElapsedTimeSinceLastCharWritten( 0 ),
+    bIsFullyDisplayed( true )
 {
 }
 
-void UGBFTextTyper::SetTextToAnimate( FText new_text )
+void UGBFCommonTextTyper::SetTextToAnimate( FText new_text )
 {
     EntireText = new_text;
     CurrentCharIndex = 0;
     bIsFullyDisplayed = false;
 }
 
-void UGBFTextTyper::CompleteTextWritingInstantly()
+void UGBFCommonTextTyper::CompleteTextWritingInstantly()
 {
     AnimatedTextBlock->SetText( EntireText );
     bIsFullyDisplayed = true;
 }
 
-void UGBFTextTyper::NativeTick( const FGeometry & my_geometry, float delta_time )
+void UGBFCommonTextTyper::NativeTick( const FGeometry & my_geometry, float delta_time )
 {
     Super::NativeTick( my_geometry, delta_time );
 
-    if ( bIsFullyDisplayed || WritingSpeed == 0.0f )
+    if ( bIsFullyDisplayed )
     {
+        return;
+    }
+
+    if ( WritingSpeed <= 0.0f )
+    {
+        CompleteTextWritingInstantly();
         return;
     }
 

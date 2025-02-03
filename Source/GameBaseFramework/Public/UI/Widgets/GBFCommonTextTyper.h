@@ -3,16 +3,16 @@
 #include <Blueprint/UserWidget.h>
 #include <CoreMinimal.h>
 
-#include "GBFTextTyper.generated.h"
+#include "GBFCommonTextTyper.generated.h"
 
 class UCommonTextBlock;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFTextTyper : public UUserWidget
+class GAMEBASEFRAMEWORK_API UGBFCommonTextTyper : public UUserWidget
 {
     GENERATED_BODY()
 
-    UGBFTextTyper( const FObjectInitializer & object_initializer );
+    UGBFCommonTextTyper( const FObjectInitializer & object_initializer );
 
 public:
     UFUNCTION( BlueprintCallable )
@@ -41,7 +41,7 @@ private:
     uint8 bIsFullyDisplayed : 1;
 };
 
-FORCEINLINE bool UGBFTextTyper::IsTextFullyDisplayed() const
+FORCEINLINE bool UGBFCommonTextTyper::IsTextFullyDisplayed() const
 {
     return bIsFullyDisplayed;
 }
