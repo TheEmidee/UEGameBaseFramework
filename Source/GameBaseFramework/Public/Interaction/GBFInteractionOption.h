@@ -32,7 +32,7 @@ struct FGBFInteractionWidgetInfos
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     EGBFActorCanvasProjectionMode ProjectionMode = EGBFActorCanvasProjectionMode::ActorBoundingBox;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( EditCondition = "ProjectionMode != EGBFActorCanvasProjectionMode::ComponentPoint") )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( EditCondition = "ProjectionMode != EGBFActorCanvasProjectionMode::ComponentPoint" ) )
     FVector BoundingBoxAnchor = { 0.5f, 0.5f, 1.0f };
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
