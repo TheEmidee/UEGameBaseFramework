@@ -25,8 +25,8 @@ public:
     UFUNCTION( BlueprintCallable, Category = Indicator )
     void RemoveIndicator( UGBFIndicatorDescriptor * indicator_descriptor );
 
-    DECLARE_EVENT_OneParam( UGBFIndicatorManagerComponent, FIndicatorEvent, UGBFIndicatorDescriptor * descriptor )
-        FIndicatorEvent OnIndicatorAdded;
+    DECLARE_EVENT_OneParam( UGBFIndicatorManagerComponent, FIndicatorEvent, UGBFIndicatorDescriptor * descriptor );
+    FIndicatorEvent OnIndicatorAdded;
     FIndicatorEvent OnIndicatorRemoved;
 
     const TArray< UGBFIndicatorDescriptor * > & GetIndicators() const;
