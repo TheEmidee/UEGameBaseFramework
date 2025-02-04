@@ -8,7 +8,7 @@
 class UCommonTextBlock;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFCommonTextTyper : public UUserWidget
+class GAMEBASEFRAMEWORK_API UGBFCommonTextTyper final : public UUserWidget
 {
     GENERATED_BODY()
 
@@ -16,7 +16,7 @@ class GAMEBASEFRAMEWORK_API UGBFCommonTextTyper : public UUserWidget
 
 public:
     UFUNCTION( BlueprintCallable )
-    void SetTextToAnimate( FText new_text );
+    void SetTextToAnimate( const FText & new_text );
 
     UFUNCTION( BlueprintCallable )
     void CompleteTextWritingInstantly();
@@ -26,10 +26,10 @@ public:
 
     virtual void NativeTick( const FGeometry & my_geometry, float delta_time ) override;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = "Texte Typer Setup" )
+private:
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, Category = "Texte Typer Setup", meta = ( AllowPrivateAccess ) )
     float WritingSpeed;
 
-private:
     UPROPERTY( BLueprintReadOnly, meta = ( AllowPrivateAccess ) )
     FText EntireText;
 

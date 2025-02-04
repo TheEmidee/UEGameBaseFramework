@@ -11,7 +11,7 @@ UGBFCommonTextTyper::UGBFCommonTextTyper( const FObjectInitializer & object_init
 {
 }
 
-void UGBFCommonTextTyper::SetTextToAnimate( FText new_text )
+void UGBFCommonTextTyper::SetTextToAnimate( const FText & new_text )
 {
     EntireText = new_text;
     CurrentCharIndex = 0;
