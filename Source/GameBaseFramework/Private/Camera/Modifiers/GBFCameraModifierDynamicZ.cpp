@@ -18,7 +18,6 @@ UGBFCameraModifierDynamicZ::UGBFCameraModifierDynamicZ() :
     DeltaLastGroundedPositionZ( 0.0f ),
     VelocityZ( 0.0f ),
     PreviousMovementMode(),
-    bInterpolateLanding( false ),
     LandingInterpolationRemainingTime( 0.0f )
 {
 }
@@ -124,10 +123,8 @@ void UGBFCameraModifierDynamicZ::DisplayDebugInternal( UCanvas * canvas, const F
     display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentInterpolationSpeed: %s" ), *FString::SanitizeFloat( CurrentInterpolationSpeed ) ) );
     display_debug_manager.DrawString( FString::Printf( TEXT( "UpdateCameraZOnLandingnLanding?: %s" ), *UKismetStringLibrary::Conv_BoolToString( bUpdateCameraZOnLanding ) ) );
 
-    if ( bUpdateCameraZOnLanding )
-    {
-        display_debug_manager.DrawString( FString::Printf( TEXT( "InterpolateLanding: %s" ), *UKismetStringLibrary::Conv_BoolToString( bInterpolateLanding ) ) );
-    }
+    display_debug_manager.DrawString( FString::Printf( TEXT( "UpdateCameraZOnLanding: %s" ), *UKismetStringLibrary::Conv_BoolToString( bUpdateCameraZOnLanding ) ) );
+    display_debug_manager.DrawString( FString::Printf( TEXT( "LandingInterpolationRemainingTime: %s" ), *FString::SanitizeFloat( LandingInterpolationRemainingTime ) ) );
 
     display_debug_manager.DrawString( FString::Printf( TEXT( "CurrentViewLocationZ: %s" ), *FString::SanitizeFloat( CurrentViewLocationZ ) ) );
     display_debug_manager.DrawString( FString::Printf( TEXT( "TargetViewLocationZ: %s" ), *FString::SanitizeFloat( TargetViewLocationZ ) ) );
