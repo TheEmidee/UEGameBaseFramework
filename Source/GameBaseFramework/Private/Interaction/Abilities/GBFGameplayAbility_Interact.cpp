@@ -100,10 +100,43 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
 void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBFInteractableComponent * > & interactable_components )
 {
     TArray< InteractableTargetInfos > target_infos;
-
     GatherTargetInfos( target_infos, interactable_components );
+
+    typedef TMap< TWeakObjectPtr< AActor >, TWeakObjectPtr< UGBFInteractableComponent > > TActorToComponentMap;
+
+    const auto fill_actor_to_component_map = [ & ]( TActorToComponentMap & map ) {
+        map.Reserve( InteractableTargetContexts.Num() );
+
+        for ( const auto & [ actor, context ] : InteractableTargetContexts )
+        {
+            map.Emplace( actor, context.WidgetInfosHandle.InteractableComponent );
+        }
+    };
+
+    TActorToComponentMap previous_active_targets;
+    fill_actor_to_component_map( previous_active_targets );
+
     ResetUnusedInteractions( target_infos );
     RegisterInteractions( target_infos );
+
+    TActorToComponentMap new_active_targets;
+    fill_actor_to_component_map( new_active_targets );
+
+    for ( const auto & [ actor, component ] : previous_active_targets )
+    {
+        if ( !new_active_targets.Contains( actor ) )
+        {
+            component->OnInteractableActorLeftRadius( GetAvatarActorFromActorInfo() );
+        }
+    }
+
+    for ( const auto & [ actor, component ] : new_active_targets )
+    {
+        if ( !previous_active_targets.Contains( actor ) )
+        {
+            component->OnInteractableActorEnteredRadius( GetAvatarActorFromActorInfo() );
+        }
+    }
 }
 
 void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_option )

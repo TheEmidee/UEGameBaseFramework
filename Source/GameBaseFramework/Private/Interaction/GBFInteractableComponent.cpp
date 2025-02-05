@@ -38,6 +38,28 @@ void UGBFInteractableComponent::RemoveInteractions()
     InteractionOptionContainer.ResetOptions();
 }
 
+void UGBFInteractableComponent::OnInteractableActorEnteredRadius( AActor * actor )
+{
+    ActorsInInteractionRadius.AddUnique( actor );
+    OnInteractableActorEnteredRadiusDelegate.Broadcast( actor );
+    K2_OnInteractableActorEnteredRadius( actor );
+}
+
+void UGBFInteractableComponent::OnInteractableActorLeftRadius( AActor * actor )
+{
+    ActorsInInteractionRadius.Remove( actor );
+    OnInteractableActorLeftRadiusDelegate.Broadcast( actor );
+    K2_OnInteractableActorLeftRadius( actor );
+}
+
+void UGBFInteractableComponent::K2_OnInteractableActorEnteredRadius_Implementation( AActor * actor )
+{
+}
+
+void UGBFInteractableComponent::K2_OnInteractableActorLeftRadius_Implementation( AActor * actor )
+{
+}
+
 void UGBFInteractableComponent::CustomizeInteractionEventData_Implementation( FGameplayEventData & event_data, FGameplayTag event_tag )
 {
 }
