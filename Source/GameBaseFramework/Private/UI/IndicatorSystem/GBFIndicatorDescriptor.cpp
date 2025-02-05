@@ -12,7 +12,7 @@ bool FGBFIndicatorProjection::Project( const UGBFIndicatorDescriptor & indicator
         TOptional< FVector > world_location;
         if ( indicator_descriptor.GetComponentSocketName() != NAME_None )
         {
-            world_location = component->GetSocketTransform( indicator_descriptor.GetComponentSocketName() ).GetLocation();
+            world_location = component->GetSocketLocation( indicator_descriptor.GetComponentSocketName() );
         }
         else
         {
@@ -20,9 +20,8 @@ bool FGBFIndicatorProjection::Project( const UGBFIndicatorDescriptor & indicator
         }
 
         const auto project_world_location = world_location.GetValue() + indicator_descriptor.GetWorldPositionOffset();
-        const auto projection_mode = indicator_descriptor.GetProjectionMode();
 
-        switch ( projection_mode )
+        switch ( const auto projection_mode = indicator_descriptor.GetProjectionMode() )
         {
             case EGBFActorCanvasProjectionMode::ComponentPoint:
             {

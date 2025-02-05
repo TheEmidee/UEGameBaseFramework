@@ -62,7 +62,8 @@ namespace UnrealBuildTool.Rules
                     "StateTreeModule",
                     "LevelSequence",
                     "MovieScene",
-                    "ChaosCaching"
+                    "ChaosCaching",
+                    "ModelViewViewModel"
                 }
             );
         }

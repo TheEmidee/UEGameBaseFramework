@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UI/IndicatorSystem/GBFIndicatorDescriptor.h"
+
 #include <Abilities/GameplayAbility.h>
 
 #include "GBFInteractionOption.generated.h"
@@ -22,7 +24,19 @@ struct FGBFInteractionWidgetInfos
     TSoftClassPtr< UUserWidget > InteractionWidgetClass;
 
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    FVector InteractionWorldOffset = FVector::ZeroVector;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
     FVector2D InteractionWidgetOffset = FVector2D::ZeroVector;
+
+    UPROPERTY( EditAnywhere, BlueprintReadWrite )
+    EGBFActorCanvasProjectionMode ProjectionMode = EGBFActorCanvasProjectionMode::ActorBoundingBox;
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( EditCondition = "ProjectionMode != EGBFActorCanvasProjectionMode::ComponentPoint" ) )
+    FVector BoundingBoxAnchor = { 0.5f, 0.5f, 1.0f };
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
+    FName SocketName;
 
     bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };
@@ -80,17 +94,14 @@ struct FGBFInteractionOption
     UPROPERTY( EditAnywhere, Instanced )
     TObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InteractableTargetTagRequirements;
 
-    UPROPERTY( EditAnywhere )
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGameplayTagRequirements InstigatorTagRequirements;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
-
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGBFInteractionWidgetInfos WidgetInfos;
 
     bool operator==( const FGBFInteractionOption & other ) const;
     bool operator!=( const FGBFInteractionOption & other ) const;
@@ -100,8 +111,7 @@ FORCEINLINE bool FGBFInteractionOption::operator==( const FGBFInteractionOption 
 {
     return InteractionAbility == other.InteractionAbility &&
            Text.IdenticalTo( other.Text ) &&
-           SubText.IdenticalTo( other.SubText ) &&
-           WidgetInfos == other.WidgetInfos;
+           SubText.IdenticalTo( other.SubText );
 }
 
 FORCEINLINE bool FGBFInteractionOption::operator!=( const FGBFInteractionOption & other ) const

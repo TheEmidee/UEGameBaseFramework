@@ -5,6 +5,7 @@
 
 #include "GBFIndicatorDescriptor.generated.h"
 
+class UMVVMViewModelBase;
 class SWidget;
 class UGBFIndicatorDescriptor;
 class UGBFIndicatorManagerComponent;
@@ -37,15 +38,14 @@ class GAMEBASEFRAMEWORK_API UGBFIndicatorDescriptor : public UObject
     GENERATED_BODY()
 
 public:
-    UGBFIndicatorDescriptor()
-    {}
+    UGBFIndicatorDescriptor() = default;
 
-public:
     UFUNCTION( BlueprintCallable )
     UObject * GetDataObject() const
     {
         return DataObject;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetDataObject( UObject * data_object )
     {
@@ -53,10 +53,23 @@ public:
     }
 
     UFUNCTION( BlueprintCallable )
+    UMVVMViewModelBase * GetViewModel() const
+    {
+        return ViewModel;
+    }
+
+    UFUNCTION( BlueprintCallable )
+    void SetViewModel( UMVVMViewModelBase * view_model )
+    {
+        ViewModel = view_model;
+    }
+
+    UFUNCTION( BlueprintCallable )
     USceneComponent * GetSceneComponent() const
     {
         return Component;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetSceneComponent( USceneComponent * component )
     {
@@ -68,6 +81,7 @@ public:
     {
         return ComponentSocketName;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetComponentSocketName( const FName socket_name )
     {
@@ -79,22 +93,19 @@ public:
     {
         return IndicatorWidgetClass;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetIndicatorClass( const TSoftClassPtr< UUserWidget > indicator_widget_class )
     {
         IndicatorWidgetClass = indicator_widget_class;
     }
 
-public:
-    // TODO Organize this better.
-    TWeakObjectPtr< UUserWidget > IndicatorWidget;
-
-public:
     UFUNCTION( BlueprintCallable )
     void SetAutoRemoveWhenIndicatorComponentIsNull( const bool can_automatically_remove )
     {
         bAutoRemoveWhenIndicatorComponentIsNull = can_automatically_remove;
     }
+
     UFUNCTION( BlueprintCallable )
     bool GetAutoRemoveWhenIndicatorComponentIsNull() const
     {
@@ -105,10 +116,6 @@ public:
     {
         return bAutoRemoveWhenIndicatorComponentIsNull && !IsValid( GetSceneComponent() );
     }
-
-public:
-    // Layout Properties
-    //=======================
 
     UFUNCTION( BlueprintCallable )
     bool GetIsVisible() const
@@ -127,78 +134,79 @@ public:
     {
         return ProjectionMode;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetProjectionMode( const EGBFActorCanvasProjectionMode projection_mode )
     {
         ProjectionMode = projection_mode;
     }
 
-    // Horizontal alignment to the point in space to place the indicator at.
     UFUNCTION( BlueprintCallable )
     EHorizontalAlignment GetHAlign() const
     {
         return HAlignment;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetHAlign( const EHorizontalAlignment h_alignment )
     {
         HAlignment = h_alignment;
     }
 
-    // Vertical alignment to the point in space to place the indicator at.
     UFUNCTION( BlueprintCallable )
     EVerticalAlignment GetVAlign() const
     {
         return VAlignment;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetVAlign( const EVerticalAlignment v_alignment )
     {
         VAlignment = v_alignment;
     }
 
-    // Clamp the indicator to the edge of the screen?
     UFUNCTION( BlueprintCallable )
     bool GetClampToScreen() const
     {
         return bClampToScreen;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetClampToScreen( const bool value )
     {
         bClampToScreen = value;
     }
 
-    // Show the arrow if clamping to the edge of the screen?
     UFUNCTION( BlueprintCallable )
     bool GetShowClampToScreenArrow() const
     {
         return bShowClampToScreenArrow;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetShowClampToScreenArrow( const bool value )
     {
         bShowClampToScreenArrow = value;
     }
 
-    // The position offset for the indicator in world space.
     UFUNCTION( BlueprintCallable )
     FVector GetWorldPositionOffset() const
     {
         return WorldPositionOffset;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetWorldPositionOffset( const FVector offset )
     {
         WorldPositionOffset = offset;
     }
 
-    // The position offset for the indicator in screen space.
     UFUNCTION( BlueprintCallable )
     FVector2D GetScreenSpaceOffset() const
     {
         return ScreenSpaceOffset;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetScreenSpaceOffset( const FVector2D offset )
     {
@@ -210,40 +218,38 @@ public:
     {
         return BoundingBoxAnchor;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetBoundingBoxAnchor( const FVector bounding_box_anchor )
     {
         BoundingBoxAnchor = bounding_box_anchor;
     }
 
-public:
-    // Sorting Properties
-    //=======================
-
-    // Allows sorting the indicators (after they are sorted by depth), to allow some group of indicators
-    // to always be in front of others.
     UFUNCTION( BlueprintCallable )
     int32 GetPriority() const
     {
         return Priority;
     }
+
     UFUNCTION( BlueprintCallable )
     void SetPriority( const int32 priority )
     {
         Priority = priority;
     }
 
-public:
-    UGBFIndicatorManagerComponent * GetIndicatorManagerComponent()
+    UGBFIndicatorManagerComponent * GetIndicatorManagerComponent() const
     {
         return ManagerPtr.Get();
     }
+
     void SetIndicatorManagerComponent( UGBFIndicatorManagerComponent * manager );
 
     UFUNCTION( BlueprintCallable )
     void UnregisterIndicator();
 
 private:
+    friend class SGBFActorCanvas;
+
     UPROPERTY()
     bool bVisible = true;
     UPROPERTY()
@@ -272,11 +278,11 @@ private:
     UPROPERTY()
     FVector WorldPositionOffset = FVector( 0, 0, 0 );
 
-private:
-    friend class SGBFActorCanvas;
-
     UPROPERTY()
     TObjectPtr< UObject > DataObject;
+
+    UPROPERTY()
+    TObjectPtr< UMVVMViewModelBase > ViewModel;
 
     UPROPERTY()
     TObjectPtr< USceneComponent > Component;
@@ -290,6 +296,7 @@ private:
     UPROPERTY()
     TWeakObjectPtr< UGBFIndicatorManagerComponent > ManagerPtr;
 
+    TWeakObjectPtr< UUserWidget > IndicatorWidget;
     TWeakPtr< SWidget > Content;
     TWeakPtr< SWidget > CanvasHost;
 };

@@ -73,18 +73,11 @@ private:
     {
         OptionHandle() = default;
 
-        OptionHandle( const TWeakObjectPtr< UGBFInteractableComponent > & interactable_component, const TWeakObjectPtr< UAbilitySystemComponent > & target_ability_system, const FGameplayAbilitySpecHandle & interaction_ability_handle, const TWeakObjectPtr< UGBFInteractionEventCustomization > & event_customization ) :
-            InteractableComponent( interactable_component ),
-            TargetAbilitySystem( target_ability_system ),
-            InteractionAbilityHandle( interaction_ability_handle ),
-            EventCustomization( event_customization )
-        {
-        }
-
         TWeakObjectPtr< UGBFInteractableComponent > InteractableComponent;
         TWeakObjectPtr< UAbilitySystemComponent > TargetAbilitySystem;
         FGameplayAbilitySpecHandle InteractionAbilityHandle;
         TWeakObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
+        FGBFInteractionOption InitialInteractionOption;
     };
 
     struct WidgetInfosHandle
@@ -97,6 +90,8 @@ private:
         {
         }
 
+        void Reset();
+
         TWeakObjectPtr< UGBFInteractableComponent > InteractableComponent;
         FGBFInteractionWidgetInfos WidgetInfos;
     };
@@ -106,7 +101,7 @@ private:
         void Reset();
 
         int InteractionsId;
-        TArray< WidgetInfosHandle > WidgetInfosHandles;
+        WidgetInfosHandle WidgetInfosHandle;
         TArray< OptionHandle > OptionHandles;
         TArray< InputMappingContextInfos > InputMappingContextInfos;
         TArray< InputBindingInfos > BindActionHandles;

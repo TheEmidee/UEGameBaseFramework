@@ -36,6 +36,7 @@ void UGBFGameplayAbility_Interact::ActivateAbility( const FGameplayAbilitySpecHa
 
     LookForInteractables();
 }
+
 void UGBFGameplayAbility_Interact::EndAbility( const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo * ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled )
 {
     ResetAllInteractions();
@@ -62,6 +63,11 @@ bool UGBFGameplayAbility_Interact::InputMappingContextInfos::IsValid() const
     return EnhancedSystem.IsValid() && InputMappingContext.IsValid();
 }
 
+void UGBFGameplayAbility_Interact::WidgetInfosHandle::Reset()
+{
+    InteractableComponent = nullptr;
+}
+
 void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
 {
     for ( const auto context : InputMappingContextInfos )
@@ -85,8 +91,8 @@ void UGBFGameplayAbility_Interact::InteractableTargetContext::Reset()
         }
     }
 
+    WidgetInfosHandle.Reset();
     BindActionHandles.Reset();
-    WidgetInfosHandles.Reset();
     OptionHandles.Reset();
     InteractionsId = INDEX_NONE;
 }
@@ -151,7 +157,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
             }
             Indicators.Reset();
 
-            const auto add_indicator = [ & ]( const UGBFInteractableComponent * interactable_component, const FGBFInteractionWidgetInfos & widget_infos ) {
+            const auto add_indicator = [ & ]( UGBFInteractableComponent * interactable_component, const FGBFInteractionWidgetInfos & widget_infos, TArrayView< const OptionHandle > options ) {
                 if ( widget_infos.InteractionWidgetClass == nullptr )
                 {
                     return;
@@ -161,8 +167,23 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
                 indicator->SetDataObject( interactable_target_actor );
                 indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
+                indicator->SetComponentSocketName( widget_infos.SocketName );
                 indicator->SetIndicatorClass( widget_infos.InteractionWidgetClass );
+                indicator->SetWorldPositionOffset( widget_infos.InteractionWorldOffset );
                 indicator->SetScreenSpaceOffset( widget_infos.InteractionWidgetOffset );
+                indicator->SetProjectionMode( widget_infos.ProjectionMode );
+                indicator->SetBoundingBoxAnchor( widget_infos.BoundingBoxAnchor );
+
+                TArray< FGBFInteractionOption > interaction_options;
+                interaction_options.Reserve( options.Num() );
+
+                for ( const auto & option : options )
+                {
+                    interaction_options.Emplace( option.InitialInteractionOption );
+                }
+
+                interactable_component->CustomizeIndicator( indicator, interaction_options );
+
                 indicator_manager->AddIndicator( indicator );
 
                 Indicators.Add( indicator );
@@ -170,10 +191,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
 
             for ( const auto & [ actor, context ] : InteractableTargetContexts )
             {
-                for ( const auto & option_container : context.WidgetInfosHandles )
-                {
-                    add_indicator( option_container.InteractableComponent.Get(), option_container.WidgetInfos );
-                }
+                add_indicator( context.WidgetInfosHandle.InteractableComponent.Get(), context.WidgetInfosHandle.WidgetInfos, context.OptionHandles );
             }
         }
     }
@@ -325,7 +343,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         return;
     }
 
-    context.WidgetInfosHandles.Emplace( interactable_component, option_container.CommonWidgetInfos );
+    context.WidgetInfosHandle = { interactable_component, option_container.CommonWidgetInfos };
 
     if ( const auto * pc = Cast< APlayerController >( pawn->GetController() ) )
     {
@@ -354,10 +372,9 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
             continue;
         }
 
-        auto & option_handle = context.OptionHandles.AddZeroed_GetRef();
+        OptionHandle option_handle;
         option_handle.InteractableComponent = interactable_component;
-
-        const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
+        option_handle.InitialInteractionOption = option;
 
         switch ( option.AbilityTarget )
         {
@@ -384,7 +401,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
 
         // Find the spec
-        interaction_ability_spec = option_handle.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
+        const auto * interaction_ability_spec = option_handle.TargetAbilitySystem->FindAbilitySpecFromClass( option.InteractionAbility );
 
         if ( interaction_ability_spec == nullptr )
         {
@@ -413,6 +430,6 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
             }
         }
 
-        context.WidgetInfosHandles.Emplace( interactable_component, option.WidgetInfos );
+        context.OptionHandles.Emplace( MoveTemp( option_handle ) );
     }
 }

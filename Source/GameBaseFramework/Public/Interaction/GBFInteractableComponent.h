@@ -32,6 +32,9 @@ public:
     UFUNCTION( BlueprintNativeEvent, meta = ( ForceAsFunction ) )
     void CustomizeInteractionEventData( UPARAM( ref ) FGameplayEventData & event_data, FGameplayTag event_tag );
 
+    UFUNCTION( BlueprintNativeEvent, meta = ( ForceAsFunction ) )
+    void CustomizeIndicator( UGBFIndicatorDescriptor * indicator_descriptor, const TArray< FGBFInteractionOption > & options );
+
 private:
     UPROPERTY( EditAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     FGBFInteractionOptionContainer InteractionOptionContainer;
