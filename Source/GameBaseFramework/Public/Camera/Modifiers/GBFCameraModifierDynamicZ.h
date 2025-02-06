@@ -42,6 +42,5 @@ private:
     float DeltaLastGroundedPositionZ;
     float VelocityZ;
     EMovementMode PreviousMovementMode;
-    bool bInterpolateLanding;
     float LandingInterpolationRemainingTime;
 };
