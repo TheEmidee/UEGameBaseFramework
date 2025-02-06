@@ -102,14 +102,17 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
     TArray< InteractableTargetInfos > target_infos;
     GatherTargetInfos( target_infos, interactable_components );
 
-    typedef TMap< TWeakObjectPtr< AActor >, TWeakObjectPtr< UGBFInteractableComponent > > TActorToComponentMap;
+    typedef TMap< TWeakObjectPtr< AActor >, UGBFInteractableComponent * > TActorToComponentMap;
 
     const auto fill_actor_to_component_map = [ & ]( TActorToComponentMap & map ) {
         map.Reserve( InteractableTargetContexts.Num() );
 
         for ( const auto & [ actor, context ] : InteractableTargetContexts )
         {
-            map.Emplace( actor, context.WidgetInfosHandle.InteractableComponent );
+            if ( auto * component = context.WidgetInfosHandle.InteractableComponent.Get() )
+            {
+                map.Emplace( actor, component );                
+            }
         }
     };
 
