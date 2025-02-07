@@ -111,7 +111,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
         {
             if ( auto * component = context.WidgetInfosHandle.InteractableComponent.Get() )
             {
-                map.Emplace( actor, component );                
+                map.Emplace( actor, component );
             }
         }
     };
