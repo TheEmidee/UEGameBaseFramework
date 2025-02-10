@@ -47,10 +47,10 @@ void UGBFCommonTextTyper::NativeTick( const FGeometry & my_geometry, float delta
 
     if ( CurrentCharIndex < EntireText.ToString().Len() )
     {
-        const auto visible_text = EntireText.ToString().Left( CurrentCharIndex );
+        const auto visible_text = EntireText.ToString().Left( CurrentCharIndex + 1 );
         AnimatedTextBlock->SetText( FText::FromString( visible_text ) );
         CurrentCharIndex++;
-        ElapsedTimeSinceLastCharWritten = 0;
+        ElapsedTimeSinceLastCharWritten = 0.0f;
     }
     else
     {
