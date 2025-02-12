@@ -52,5 +52,4 @@ private:
     float LerpStartCameraZPosition;
     float LerpEndCameraZPosition;
     float LandingTransitionRemainingTime;
-    bool bShouldInterpolateWhenJumping;
 };
