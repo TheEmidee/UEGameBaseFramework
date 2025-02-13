@@ -3,8 +3,6 @@
 #include <Engine/Canvas.h>
 #include <GameFramework/Character.h>
 #include <GameFramework/CharacterMovementComponent.h>
-#include <GameFramework/SpringArmComponent.h>
-
 UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     LandingTransitionTime( 0.5f ),
     LandOnSameHeightCheckTolerance( 1.0f ),
@@ -17,8 +15,7 @@ UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     CurrentCameraZPosition( 0.0f ),
     LerpStartCameraZPosition( 0.0f ),
     LerpEndCameraZPosition( 0.0f ),
-    LandingTransitionRemainingTime( 0.0f ),
-    bShouldInterpolateWhenJumping( false )
+    LandingTransitionRemainingTime( 0.0f )
 {
 }
 
@@ -64,29 +61,19 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
         {
             if ( cmc->MovementMode == MOVE_Walking )
             {
-                bShouldInterpolateWhenJumping = false;
                 CurrentState = EState::Landing;
                 LandingTransitionRemainingTime = LandingTransitionTime;
 
-                if ( FMath::IsNearlyEqual( CurrentCharacterZPosition, LastGroundedCharacterZPosition, LandOnSameHeightCheckTolerance ) )
-                {
-                    LerpStartCameraZPosition = LastGroundedCameraZPosition;
-                }
-                else
-                {
-                    LerpStartCameraZPosition = LastGroundedCameraZPosition;
-                }
+                LerpStartCameraZPosition = LastGroundedCameraZPosition;
             }
 
             if ( character->GetVelocity().Z <= 0.0f && CurrentCharacterZPosition < LastGroundedCharacterZPosition - DistanceFromLastGroundedPositionToResetModifier )
             {
                 CurrentState = EState::WaitingForJump;
-                bShouldInterpolateWhenJumping = false;
                 return;
             }
 
-            const auto offset = bShouldInterpolateWhenJumping ? DeltaLastGroundedCharacterToCameraZ : 0.0f;
-            new_view_location.Z = FMath::FInterpTo( new_view_location.Z, LastGroundedCameraZPosition + offset, delta_time, 2.0f );
+            new_view_location.Z = LastGroundedCameraZPosition;
         }
         break;
         case EState::Landing:
@@ -95,8 +82,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
             {
                 CurrentState = EState::Jumping;
                 LastGroundedCharacterZPosition = CurrentCharacterZPosition;
-                LastGroundedCameraZPosition = view_location.Z;
-                bShouldInterpolateWhenJumping = true;
+                LastGroundedCameraZPosition = CurrentCameraZPosition;
             }
             else
             {
@@ -109,7 +95,15 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
                 }
                 else
                 {
-                    LerpEndCameraZPosition = view_location.Z;
+                    if ( FMath::Abs( CurrentCharacterZPosition - LastGroundedCharacterZPosition ) >= DistanceFromLastGroundedPositionToResetModifier )
+                    {
+                        LerpEndCameraZPosition = view_location.Z;
+                    }
+                    else
+                    {
+                        LerpEndCameraZPosition = LastGroundedCameraZPosition;
+                    }
+
                     new_view_location.Z = FMath::Lerp( LerpStartCameraZPosition, LerpEndCameraZPosition, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
                 }
             }
