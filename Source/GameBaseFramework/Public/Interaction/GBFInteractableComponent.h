@@ -18,11 +18,13 @@ class GAMEBASEFRAMEWORK_API UGBFInteractableComponent : public UActorComponent
 
 public:
     DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam( FGBFOnInteractableInteractionRadiusStateChangedDelegate, AActor *, Actor );
+    DECLARE_DYNAMIC_MULTICAST_DELEGATE( FGBFOnInteractionsUpdatedDelegate );
 
     UGBFInteractableComponent();
 
     FGBFOnInteractableInteractionRadiusStateChangedDelegate & OnInteractableActorEnteredRadius();
     FGBFOnInteractableInteractionRadiusStateChangedDelegate & OnInteractableLeftRadius();
+    FGBFOnInteractionsUpdatedDelegate & OnInteractionsUpdated();
 
     const FGBFInteractionOptionContainer & GetInteractableOptions() const;
     bool IsEnabled() const;
@@ -66,6 +68,9 @@ private:
     UPROPERTY( BlueprintAssignable, meta = ( AllowPrivateAccess = true ) )
     FGBFOnInteractableInteractionRadiusStateChangedDelegate OnInteractableActorLeftRadiusDelegate;
 
+    UPROPERTY( BlueprintAssignable, meta = ( AllowPrivateAccess = true ) )
+    FGBFOnInteractionsUpdatedDelegate OnInteractionsUpdatedDelegate;
+
     UPROPERTY()
     TArray< TObjectPtr< AActor > > ActorsInInteractionRadius;
 };
@@ -93,6 +98,11 @@ FORCEINLINE UGBFInteractableComponent::FGBFOnInteractableInteractionRadiusStateC
 FORCEINLINE UGBFInteractableComponent::FGBFOnInteractableInteractionRadiusStateChangedDelegate & UGBFInteractableComponent::OnInteractableLeftRadius()
 {
     return OnInteractableActorLeftRadiusDelegate;
+}
+
+FORCEINLINE UGBFInteractableComponent::FGBFOnInteractionsUpdatedDelegate & UGBFInteractableComponent::OnInteractionsUpdated()
+{
+    return OnInteractionsUpdatedDelegate;
 }
 
 FORCEINLINE bool UGBFInteractableComponent::HasInteractableActorsInRadius() const

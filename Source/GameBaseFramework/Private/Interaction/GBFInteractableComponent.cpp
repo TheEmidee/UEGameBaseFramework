@@ -31,11 +31,13 @@ void UGBFInteractableComponent::UpdateInteractions( UGBFInteractionOptionsData *
     }
 
     InteractionOptionContainer.AddOptions( options_data->Options );
+    OnInteractionsUpdatedDelegate.Broadcast();
 }
 
 void UGBFInteractableComponent::RemoveInteractions()
 {
     InteractionOptionContainer.ResetOptions();
+    OnInteractionsUpdatedDelegate.Broadcast();
 }
 
 void UGBFInteractableComponent::OnInteractableActorEnteredRadius( AActor * actor )
