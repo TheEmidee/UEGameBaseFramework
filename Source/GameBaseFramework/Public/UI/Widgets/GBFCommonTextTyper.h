@@ -24,6 +24,12 @@ public:
     UFUNCTION( BlueprintCallable, BlueprintPure = false, meta = ( ExpandBoolAsExecs = "ReturnValue" ) )
     bool IsTextFullyDisplayed() const;
 
+    UFUNCTION( BlueprintImplementableEvent )
+    void OnTextWriting();
+
+    UFUNCTION( BlueprintImplementableEvent )
+    void OnCompleteTextWriting();
+
     virtual void NativeTick( const FGeometry & my_geometry, float delta_time ) override;
 
 private:

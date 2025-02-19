@@ -22,6 +22,7 @@ void UGBFCommonTextTyper::CompleteTextWritingInstantly()
 {
     AnimatedTextBlock->SetText( EntireText );
     bIsFullyDisplayed = true;
+    OnCompleteTextWriting();
 }
 
 void UGBFCommonTextTyper::NativeTick( const FGeometry & my_geometry, float delta_time )
@@ -51,6 +52,7 @@ void UGBFCommonTextTyper::NativeTick( const FGeometry & my_geometry, float delta
         AnimatedTextBlock->SetText( FText::FromString( visible_text ) );
         CurrentCharIndex++;
         ElapsedTimeSinceLastCharWritten = 0.0f;
+        OnTextWriting();
     }
     else
     {
