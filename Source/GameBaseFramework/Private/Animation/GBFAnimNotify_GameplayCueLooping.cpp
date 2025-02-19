@@ -9,6 +9,7 @@ void UGBFAnimNotify_GameplayCueLooping::NotifyBegin( USkeletalMeshComponent * me
 
     if ( owning_actor != nullptr && GameplayCueTag.GetTagName() != NAME_None )
     {
+        Parameters.TargetAttachComponent = mesh_component;
         UGameplayCueFunctionLibrary::AddGameplayCueOnActor( owning_actor, GameplayCueTag, Parameters );
     }
 }
@@ -21,6 +22,7 @@ void UGBFAnimNotify_GameplayCueLooping::NotifyEnd( USkeletalMeshComponent * mesh
 
     if ( owning_actor != nullptr && GameplayCueTag.GetTagName() != NAME_None )
     {
+        Parameters.TargetAttachComponent = mesh_component;
         UGameplayCueFunctionLibrary::RemoveGameplayCueOnActor( owning_actor, GameplayCueTag, Parameters );
     }
 }

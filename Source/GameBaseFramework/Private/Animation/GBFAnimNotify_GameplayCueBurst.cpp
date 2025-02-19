@@ -9,6 +9,7 @@ void UGBFAnimNotify_GameplayCueBurst::Notify( USkeletalMeshComponent * mesh_comp
 
     if ( owning_actor != nullptr && GameplayCueTag.GetTagName() != NAME_None )
     {
+        Parameters.TargetAttachComponent = mesh_component;
         UGameplayCueFunctionLibrary::ExecuteGameplayCueOnActor( owning_actor, GameplayCueTag, Parameters );
     }
 }
