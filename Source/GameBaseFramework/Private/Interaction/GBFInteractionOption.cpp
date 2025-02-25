@@ -6,7 +6,7 @@
 EDataValidationResult FGBFInteractionWidgetInfos::IsDataValid( FDataValidationContext & context ) const
 {
     return FDVEDataValidator( context )
-        .IsValid( VALIDATOR_GET_PROPERTY( InteractionWidgetClass ) )
+        .NotNull( VALIDATOR_GET_PROPERTY( InteractionWidgetClass ) )
         .Result();
 }
 #endif
