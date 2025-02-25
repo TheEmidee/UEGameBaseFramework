@@ -26,6 +26,10 @@ public:
     FGBFOnInteractableInteractionRadiusStateChangedDelegate & OnInteractableLeftRadius();
     FGBFOnInteractionsUpdatedDelegate & OnInteractionsUpdated();
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
+#endif
+
     const FGBFInteractionOptionContainer & GetInteractableOptions() const;
     bool IsEnabled() const;
     void SetEnabled( bool enabled );

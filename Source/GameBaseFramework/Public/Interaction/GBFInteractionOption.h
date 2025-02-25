@@ -19,6 +19,10 @@ struct FGBFInteractionWidgetInfos
 {
     GENERATED_BODY()
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const;
+#endif
+
     /** The widget to show for this kind of interaction. */
     UPROPERTY( EditAnywhere, BlueprintReadWrite )
     TSoftClassPtr< UUserWidget > InteractionWidgetClass;
@@ -76,6 +80,10 @@ struct FGBFInteractionOption
 
     FGBFInteractionOption() = default;
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const;
+#endif
+
     /** Simple text the interaction might return */
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FText Text = FText::GetEmpty();
@@ -131,6 +139,10 @@ struct FGBFInteractionOptionContainer
     void ResetOptions();
     const TArray< FGBFInteractionOption > & GetOptions() const;
     int GetInteractionsId() const;
+
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const;
+#endif
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TSoftObjectPtr< UInputMappingContext > InputMappingContext;

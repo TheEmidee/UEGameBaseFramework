@@ -10,6 +10,13 @@ UGBFInteractableComponent::UGBFInteractableComponent()
     bIsEnabled = true;
 }
 
+#if WITH_EDITOR
+EDataValidationResult UGBFInteractableComponent::IsDataValid( FDataValidationContext & context ) const
+{
+    return InteractionOptionContainer.IsDataValid( context );
+}
+#endif
+
 void UGBFInteractableComponent::UpdateInteractions( UGBFInteractionOptionsData * options_data )
 {
     if ( options_data == nullptr )
