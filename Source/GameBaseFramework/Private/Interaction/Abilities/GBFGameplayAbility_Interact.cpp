@@ -111,7 +111,10 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
         {
             if ( auto * component = context.WidgetInfosHandle.InteractableComponent.Get() )
             {
-                map.Emplace( actor, component );
+                if ( !context.OptionHandles.IsEmpty() )
+                {
+                    map.Emplace( actor, component );
+                }
             }
         }
     };
@@ -328,7 +331,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
 {
     const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
 
-    auto & context = InteractableTargetContexts.Add( target_infos.Actor );
+    InteractableTargetContext context;
     auto interactable_component = target_infos.InteractableComponent;
 
     const auto & option_container = interactable_component->GetInteractableOptions();
@@ -467,5 +470,10 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
 
         context.OptionHandles.Emplace( MoveTemp( option_handle ) );
+    }
+
+    if ( !context.OptionHandles.IsEmpty() )
+    {
+        InteractableTargetContexts.Emplace( target_infos.Actor, MoveTemp( context ) );
     }
 }
