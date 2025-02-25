@@ -32,16 +32,16 @@ EDataValidationResult UGBFGameFeatureAction_AddLevelInstances::IsDataValid( FDat
 {
     auto result = CombineDataValidationResults( Super::IsDataValid( context ), EDataValidationResult::Valid );
 
-    int32 EntryIndex = 0;
+    auto entry_index = 0;
     for ( const auto & [ level, target_world, location, rotation ] : LevelInstanceList )
     {
         if ( level.IsNull() )
         {
             result = EDataValidationResult::Invalid;
-            context.AddError( FText::Format( LOCTEXT( "LevelEntryNull", "Null level reference at index {0} in LevelInstanceList" ), FText::AsNumber( EntryIndex ) ) );
+            context.AddError( FText::Format( LOCTEXT( "LevelEntryNull", "Null level reference at index {0} in LevelInstanceList" ), FText::AsNumber( entry_index ) ) );
         }
 
-        ++EntryIndex;
+        ++entry_index;
     }
 
     return result;
@@ -53,7 +53,7 @@ void UGBFGameFeatureAction_AddLevelInstances::AddToWorld( const FWorldContext & 
     auto * world = world_context.World();
 
     if ( const auto game_instance = world_context.OwningGameInstance;
-        ensureAlways( bIsActivated ) && ( game_instance != nullptr ) && ( world != nullptr ) && world->IsGameWorld() )
+         ensureAlways( bIsActivated ) && ( game_instance != nullptr ) && ( world != nullptr ) && world->IsGameWorld() )
     {
         AddedLevels.Reserve( AddedLevels.Num() + LevelInstanceList.Num() );
 
@@ -66,7 +66,7 @@ void UGBFGameFeatureAction_AddLevelInstances::AddToWorld( const FWorldContext & 
             if ( !entry.TargetWorld.IsNull() )
             {
                 if ( const auto * target_world = entry.TargetWorld.Get();
-                    target_world != world )
+                     target_world != world )
                 {
                     // This level is intended for a specific world (not this one)
                     continue;
