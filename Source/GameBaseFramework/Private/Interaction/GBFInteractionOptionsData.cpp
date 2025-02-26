@@ -11,7 +11,10 @@ UGBFInteractionOptionsData::UGBFInteractionOptionsData() :
 #if WITH_EDITOR
 EDataValidationResult UGBFInteractionOptionsData::IsDataValid( FDataValidationContext & context ) const
 {
-    OptionContainer.IsDataValid( context );
+    if ( bOverrideContainer )
+    {
+        OptionContainer.IsDataValid( context );
+    }
 
     for ( const auto & option : Options )
     {
