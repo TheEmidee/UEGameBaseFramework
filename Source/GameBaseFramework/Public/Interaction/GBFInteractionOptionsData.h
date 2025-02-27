@@ -15,6 +15,10 @@ class GAMEBASEFRAMEWORK_API UGBFInteractionOptionsData final : public UDataAsset
 public:
     UGBFInteractionOptionsData();
 
+#if WITH_EDITOR
+    EDataValidationResult IsDataValid( FDataValidationContext & context ) const override;
+#endif
+
     UPROPERTY( EditAnywhere, meta = ( InlineEditConditionToggle ) )
     uint8 bOverrideContainer : 1;
 

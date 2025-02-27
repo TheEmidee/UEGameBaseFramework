@@ -49,6 +49,7 @@ EDataValidationResult AGBFPickupable::IsDataValid( FDataValidationContext & cont
     {
         return FDVEDataValidator( context )
             .NotNull( VALIDATOR_GET_PROPERTY( EquipmentDefinition ) )
+            .CombineWith( InteractableComponent )
             .Result();
     }
 
