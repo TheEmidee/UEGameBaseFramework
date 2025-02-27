@@ -141,12 +141,13 @@ void AGBFCharacter::SetupPlayerInputComponent( UInputComponent * player_input_co
 
 void AGBFCharacter::OnMovementModeChanged( EMovementMode prev_movement_mode, uint8 previous_custom_mode )
 {
-    Super::OnMovementModeChanged( prev_movement_mode, previous_custom_mode );
-
+    // Update the tags before calling Super, which calls a delegate, and some code bound to this delegate may require the tags to be up-to-date
     const auto * character_movement_component = GetCharacterMovement();
 
     SetMovementModeTag( prev_movement_mode, previous_custom_mode, false );
     SetMovementModeTag( character_movement_component->MovementMode, character_movement_component->CustomMovementMode, true );
+
+    Super::OnMovementModeChanged( prev_movement_mode, previous_custom_mode );
 }
 
 void AGBFCharacter::OnAbilitySystemInitialized()
