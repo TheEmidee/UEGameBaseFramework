@@ -23,7 +23,6 @@ void AGBFChaosCachePlayer::AddNewObservedComponentFromCacheCollectionIndex( UPri
 
     auto & new_observed_component = AddNewObservedComponent( observed_component );
     new_observed_component.CacheName = caches[ collection_index ]->GetFName();
-    BeginEvaluate();
 }
 
 void AGBFChaosCachePlayer::AddNewObservedComponentsFromCacheCollection( UPrimitiveComponent * observed_component )
