@@ -26,7 +26,7 @@ void AGBFChaosCachePlayer::AddNewObservedComponentFromCacheCollectionIndex( UPri
     BeginEvaluate();
 }
 
-void AGBFChaosCachePlayer::AddAllObservedComponentsFromCacheCollection( UPrimitiveComponent * observed_component )
+void AGBFChaosCachePlayer::AddNewObservedComponentsFromCacheCollection( UPrimitiveComponent * observed_component )
 {
     if ( !ensureMsgf( observed_component != nullptr, TEXT( "Observed component is not valid!" ) ) )
     {
