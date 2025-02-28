@@ -18,7 +18,16 @@ public:
     void AddNewObservedComponentFromCacheCollectionIndex( UPrimitiveComponent * observed_component, int32 collection_index );
 
     UFUNCTION( BlueprintCallable )
+    void AddNewObservedComponentsFromCacheCollection( UPrimitiveComponent * observed_component );
+
+    UFUNCTION( BlueprintCallable )
+    void TriggerComponentByCacheCollectionIndex( int32 collection_index );
+
+    UFUNCTION( BlueprintCallable )
     void ResetObservedComponents();
+
+    UFUNCTION( BlueprintCallable, DisplayName = "BeginEvaluate" )
+    void K2_BeginEvaluate();
 
     void BeginPlay() override;
 };
