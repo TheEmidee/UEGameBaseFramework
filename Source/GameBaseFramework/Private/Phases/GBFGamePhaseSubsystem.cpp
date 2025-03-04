@@ -9,7 +9,7 @@
 
 DEFINE_LOG_CATEGORY( LogGBFGamePhase );
 
-#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+#if !UE_BUILD_SHIPPING
 static FAutoConsoleCommand ListActivePhasesCommand(
     TEXT( "PhaseSystem.ListActivePhases" ),
     TEXT( "Prints the active phases in the log." ),
@@ -126,7 +126,7 @@ void UGBFGamePhaseSubsystem::UnRegisterObserver( FGBFGamePhaseObserverHandle han
     } );
 }
 
-#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+#if !UE_BUILD_SHIPPING
 void UGBFGamePhaseSubsystem::DumpActivePhases( FOutputDevice & output_device )
 {
     output_device.Logf( ELogVerbosity::Verbose, TEXT( "Phase System - Active Phases :" ) );

@@ -15,7 +15,7 @@
 
 bool bSplitActionBarIgnoreOptOut = false;
 
-#if !( UE_BUILD_SHIPPING || UE_BUILD_TEST )
+#if !UE_BUILD_SHIPPING
 
 static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
     TEXT( "SplitActionBar.IgnoreOptOut" ),
