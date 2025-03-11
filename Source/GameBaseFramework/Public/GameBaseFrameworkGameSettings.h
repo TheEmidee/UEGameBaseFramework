@@ -30,6 +30,6 @@ public:
     UPROPERTY( EditDefaultsOnly, config, Category = "SaveGame" )
     FString SaveGameSlotName;
 
-    UPROPERTY( EditDefaultsOnly )
-    TObjectPtr< USoundBase > BackHandlerSound;
+    UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "Sounds" )
+    TSoftObjectPtr< USoundBase > BackHandlerSound;
 };

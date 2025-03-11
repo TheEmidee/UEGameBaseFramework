@@ -2,6 +2,8 @@
 
 #include "GameBaseFrameworkGameSettings.h"
 
+#include <Sound/SoundBase.h>
+
 #if WITH_EDITOR
 #include <Editor/WidgetCompilerLog.h>
 #endif
@@ -34,7 +36,8 @@ TOptional< FUIInputConfig > UGBFActivatableWidget::GetDesiredInputConfig() const
 
 bool UGBFActivatableWidget::NativeOnHandleBackAction()
 {
-    PlaySound( GetDefault< UGameBaseFrameworkGameSettings >()->BackHandlerSound );
+    const auto sound = GetDefault< UGameBaseFrameworkGameSettings >()->BackHandlerSound.LoadSynchronous();
+    PlaySound( sound );
     return Super::NativeOnHandleBackAction();
 }
 
