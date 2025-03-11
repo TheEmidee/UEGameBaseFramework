@@ -22,6 +22,7 @@ class GAMEBASEFRAMEWORK_API UGBFActivatableWidget : public UCommonActivatableWid
 
 public:
     TOptional< FUIInputConfig > GetDesiredInputConfig() const override;
+    bool NativeOnHandleBackAction() override;
 
 #if WITH_EDITOR
     void ValidateCompiledWidgetTree( const UWidgetTree & blueprint_widget_tree, class IWidgetCompilerLog & compile_log ) const override;

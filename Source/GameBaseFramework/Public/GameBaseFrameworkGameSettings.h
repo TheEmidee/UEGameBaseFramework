@@ -5,6 +5,7 @@
 
 #include "GameBaseFrameworkGameSettings.generated.h"
 
+class USoundCue;
 class UGBFSaveGame;
 
 UCLASS( config = Game, MinimalAPI, meta = ( DisplayName = "GameBaseFramework - Settings" ) )
@@ -28,4 +29,7 @@ public:
 
     UPROPERTY( EditDefaultsOnly, config, Category = "SaveGame" )
     FString SaveGameSlotName;
+
+    UPROPERTY( EditDefaultsOnly )
+    TObjectPtr< USoundBase > BackHandlerSound;
 };

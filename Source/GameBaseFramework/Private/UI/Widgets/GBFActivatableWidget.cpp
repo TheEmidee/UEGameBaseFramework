@@ -1,5 +1,7 @@
 #include "UI/Widgets/GBFActivatableWidget.h"
 
+#include "GameBaseFrameworkGameSettings.h"
+
 #if WITH_EDITOR
 #include <Editor/WidgetCompilerLog.h>
 #endif
@@ -28,6 +30,12 @@ TOptional< FUIInputConfig > UGBFActivatableWidget::GetDesiredInputConfig() const
             return TOptional< FUIInputConfig >();
         }
     }
+}
+
+bool UGBFActivatableWidget::NativeOnHandleBackAction()
+{
+    PlaySound( GetDefault< UGameBaseFrameworkGameSettings >()->BackHandlerSound );
+    return Super::NativeOnHandleBackAction();
 }
 
 #if WITH_EDITOR
