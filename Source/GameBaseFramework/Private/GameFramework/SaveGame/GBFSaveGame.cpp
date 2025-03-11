@@ -1,15 +1,23 @@
 #include "GameFramework/SaveGame/GBFSaveGame.h"
 
-#include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
-
 #include <Serialization/MemoryReader.h>
 #include <Serialization/MemoryWriter.h>
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
 namespace
 {
-    void LoadSavable( FGBFSavableData & savable_data )
+    void TryLoadSavable( FGBFSavableData & savable_data )
     {
+        if ( savable_data.Savable == nullptr )
+        {
+            return;
+        }
+
+        if ( !savable_data.Savable->CanBeSerialized() )
+        {
+            return;
+        }
+
         FMemoryReader memory_reader( savable_data.Data );
         FObjectAndNameAsStringProxyArchive archive( memory_reader, false );
         archive.ArIsSaveGame = true;
@@ -27,6 +35,11 @@ void IGBFSaveGameSystemSavableInterface::OnSaveGameReset()
 {
 }
 
+bool IGBFSaveGameSystemSavableInterface::CanBeSerialized() const
+{
+    return true;
+}
+
 void UGBFSaveGame::HandlePreSave()
 {
     Super::HandlePreSave();
@@ -34,6 +47,11 @@ void UGBFSaveGame::HandlePreSave()
     for ( auto & savable_data : SavablesData )
     {
         if ( savable_data.Savable == nullptr )
+        {
+            continue;
+        }
+
+        if ( !savable_data.Savable->CanBeSerialized() )
         {
             continue;
         }
@@ -52,12 +70,7 @@ void UGBFSaveGame::HandlePostLoad()
 
     for ( auto & savable_data : SavablesData )
     {
-        if ( savable_data.Savable == nullptr )
-        {
-            continue;
-        }
-
-        LoadSavable( savable_data );
+        TryLoadSavable( savable_data );
     }
 }
 
@@ -85,7 +98,7 @@ void UGBFSaveGame::RegisterSavable( TScriptInterface< IGBFSaveGameSystemSavableI
          } ) )
     {
         savable_ptr->Savable = savable;
-        LoadSavable( *savable_ptr );
+        TryLoadSavable( *savable_ptr );
     }
     else
     {
