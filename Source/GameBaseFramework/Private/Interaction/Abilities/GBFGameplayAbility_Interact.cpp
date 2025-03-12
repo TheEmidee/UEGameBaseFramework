@@ -457,15 +457,16 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
 
         option_handle.EventCustomization = option.EventCustomization;
 
-        auto input_action = option.InputAction != nullptr
-                                ? option.InputAction
-                                : option_container.DefaultInputAction;
+        option_handle.InitialInteractionOption.InputAction = option.InputAction != nullptr
+                                                                 ? option.InputAction
+                                                                 : option_container.DefaultInputAction;
 
-        if ( input_action != nullptr )
+        if ( option_handle.InitialInteractionOption.InputAction != nullptr )
         {
+
             if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
             {
-                context.BindActionHandles.Emplace( input_component, input_component->BindAction( input_action, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
+                context.BindActionHandles.Emplace( input_component, input_component->BindAction( option_handle.InitialInteractionOption.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
             }
         }
 
