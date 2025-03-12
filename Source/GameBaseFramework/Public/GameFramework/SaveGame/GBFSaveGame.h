@@ -16,6 +16,7 @@ class GAMEBASEFRAMEWORK_API IGBFSaveGameSystemSavableInterface
     GENERATED_IINTERFACE_BODY()
 
     virtual void OnSaveGameReset();
+    virtual bool CanBeSerialized() const;
 };
 
 USTRUCT()
