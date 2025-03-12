@@ -41,6 +41,10 @@ AGBFPlayerState * AGBFCharacter::GetGBFPlayerState() const
 
 UGBFAbilitySystemComponent * AGBFCharacter::GetGBFAbilitySystemComponent() const
 {
+    if ( PawnExtComponent != nullptr )
+    {
+        return nullptr;
+    }
     return PawnExtComponent->GetGBFAbilitySystemComponent();
 }
 
