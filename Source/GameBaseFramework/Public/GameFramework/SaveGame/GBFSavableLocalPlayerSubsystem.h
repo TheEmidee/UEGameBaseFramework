@@ -15,4 +15,6 @@ class GAMEBASEFRAMEWORK_API UGBFSavableLocalPlayerSubsystem : public ULocalPlaye
 public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void Deinitialize() override;
+
+    void PlayerControllerChanged( APlayerController * new_player_controller ) override;
 };

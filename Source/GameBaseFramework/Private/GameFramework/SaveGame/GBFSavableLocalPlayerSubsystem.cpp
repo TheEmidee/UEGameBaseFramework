@@ -23,3 +23,13 @@ void UGBFSavableLocalPlayerSubsystem::Deinitialize()
 
     Super::Deinitialize();
 }
+
+void UGBFSavableLocalPlayerSubsystem::PlayerControllerChanged( APlayerController * new_player_controller )
+{
+    Super::PlayerControllerChanged( new_player_controller );
+
+    if ( auto * save_system = UGBFSaveGameSubsystem::Get( GetLocalPlayer< ULocalPlayer >() ) )
+    {
+        save_system->RegisterSavable( this );
+    }
+}
