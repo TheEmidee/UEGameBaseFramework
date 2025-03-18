@@ -7,7 +7,7 @@
 
 #include "GBFSavableLocalPlayerSubsystem.generated.h"
 
-UCLASS()
+UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFSavableLocalPlayerSubsystem : public ULocalPlayerSubsystem, public IGBFSaveGameSystemSavableInterface
 {
     GENERATED_BODY()
