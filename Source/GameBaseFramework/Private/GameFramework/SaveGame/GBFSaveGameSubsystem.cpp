@@ -48,6 +48,14 @@ void UGBFSaveGameSubsystem::Save()
     }
 }
 
+void UGBFSaveGameSubsystem::Reset()
+{
+    if ( SaveGame != nullptr )
+    {
+        SaveGame->ResetToDefault();
+    }
+}
+
 void UGBFSaveGameSubsystem::RegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable )
 {
     if ( SaveGame != nullptr )

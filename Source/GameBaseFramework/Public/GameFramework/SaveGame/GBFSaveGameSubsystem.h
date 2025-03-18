@@ -21,6 +21,9 @@ public:
     UFUNCTION( BlueprintCallable )
     void Save();
 
+    UFUNCTION( BlueprintCallable )
+    void Reset();
+
     void RegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable );
     void UnRegisterSavable( const TScriptInterface< IGBFSaveGameSystemSavableInterface > & savable );
 

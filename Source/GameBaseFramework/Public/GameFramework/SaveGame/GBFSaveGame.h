@@ -33,6 +33,8 @@ struct FGBFSavableData
     {
     }
 
+    void Reset();
+
     UPROPERTY( Transient )
     TScriptInterface< IGBFSaveGameSystemSavableInterface > Savable;
 
