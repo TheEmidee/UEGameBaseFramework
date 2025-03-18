@@ -3,6 +3,7 @@
 #include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
 
 #include <Engine/LocalPlayer.h>
+#include <GameFramework/Character.h>
 
 void UGBFSavableLocalPlayerSubsystem::Initialize( FSubsystemCollectionBase & collection )
 {
@@ -32,4 +33,20 @@ void UGBFSavableLocalPlayerSubsystem::PlayerControllerChanged( APlayerController
     {
         save_system->RegisterSavable( this );
     }
+
+    new_player_controller->OnPossessedPawnChanged.AddUniqueDynamic( this, &ThisClass::OnPlayerControllerPossessedPawnChanged );
+
+    if ( auto * pawn = new_player_controller->GetCharacter() )
+    {
+        OnPawnChanged( pawn );
+    }
+}
+
+void UGBFSavableLocalPlayerSubsystem::OnPlayerControllerPossessedPawnChanged( APawn * /*old_pawn*/, APawn * new_pawn )
+{
+    OnPawnChanged( new_pawn );
+}
+
+void UGBFSavableLocalPlayerSubsystem::OnPawnChanged( APawn * /*pawn*/ )
+{
 }
