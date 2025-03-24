@@ -7,7 +7,7 @@
 
 #include "GBFSavableWorldSubsystem.generated.h"
 
-UCLASS()
+UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFSavableWorldSubsystem : public UWorldSubsystem, public IGBFSaveGameSystemSavableInterface
 {
     GENERATED_BODY()

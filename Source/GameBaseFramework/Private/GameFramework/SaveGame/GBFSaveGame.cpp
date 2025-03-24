@@ -40,6 +40,12 @@ bool IGBFSaveGameSystemSavableInterface::CanBeSerialized() const
     return true;
 }
 
+void FGBFSavableData::Reset()
+{
+    Savable->OnSaveGameReset();
+    Data.Reset();
+}
+
 void UGBFSaveGame::HandlePreSave()
 {
     Super::HandlePreSave();
@@ -82,7 +88,7 @@ void UGBFSaveGame::ResetToDefault()
 
     for ( auto & savable_data : SavablesData )
     {
-        savable_data.Data.Reset();
+        savable_data.Reset();
     }
 }
 

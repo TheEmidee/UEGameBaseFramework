@@ -30,6 +30,14 @@ void UGBFSaveGameSubsystem::Load()
 
     auto * settings = GetDefault< UGameBaseFrameworkGameSettings >();
 
+    if ( SaveGame != nullptr )
+    {
+        for ( const auto & savable_data : SaveGame->SavablesData )
+        {
+            PendingSavables.Add( savable_data.Savable );
+        }
+    }
+
     SaveGame = Cast< UGBFSaveGame >( UGBFSaveGame::LoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName ) );
 
     for ( const auto & pending_savable : PendingSavables )
@@ -45,6 +53,14 @@ void UGBFSaveGameSubsystem::Save()
     if ( SaveGame != nullptr )
     {
         SaveGame->AsyncSaveGameToSlotForLocalPlayer();
+    }
+}
+
+void UGBFSaveGameSubsystem::Reset()
+{
+    if ( SaveGame != nullptr )
+    {
+        SaveGame->ResetToDefault();
     }
 }
 

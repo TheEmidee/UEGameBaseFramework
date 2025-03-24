@@ -7,7 +7,7 @@
 
 #include "GBFSavableLocalPlayerSubsystem.generated.h"
 
-UCLASS()
+UCLASS( abstract )
 class GAMEBASEFRAMEWORK_API UGBFSavableLocalPlayerSubsystem : public ULocalPlayerSubsystem, public IGBFSaveGameSystemSavableInterface
 {
     GENERATED_BODY()
@@ -15,4 +15,12 @@ class GAMEBASEFRAMEWORK_API UGBFSavableLocalPlayerSubsystem : public ULocalPlaye
 public:
     void Initialize( FSubsystemCollectionBase & collection ) override;
     void Deinitialize() override;
+    void PlayerControllerChanged( APlayerController * new_player_controller ) override;
+
+protected:
+    virtual void OnPawnChanged( APawn * pawn );
+
+private:
+    UFUNCTION()
+    void OnPlayerControllerPossessedPawnChanged( APawn * old_pawn, APawn * new_pawn );
 };
