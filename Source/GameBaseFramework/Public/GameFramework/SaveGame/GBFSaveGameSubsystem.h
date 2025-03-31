@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GBFSaveGame.h"
+#include "Containers/Deque.h"
+#include "Math/MovingAverage.h"
 
 #include <CoreMinimal.h>
 #include <Subsystems/GameInstanceSubsystem.h>
@@ -16,6 +18,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsyste
     GENERATED_BODY()
 
 public:
+    void Initialize( FSubsystemCollectionBase & collection ) override;
+
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )
@@ -49,6 +53,9 @@ private:
     TArray< TScriptInterface< IGBFSaveGameSystemSavableInterface > > PendingSavables;
 
     TWeakObjectPtr< ULocalPlayer > PrimaryPlayer;
+
+    TDeque< float > LoadGameCallTimes;
+    TDeque< float > SaveGameCallTimes;
 };
 
 template < typename _SAVE_GAME_CLASS_ >

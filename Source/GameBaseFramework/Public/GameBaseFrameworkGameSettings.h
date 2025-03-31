@@ -16,19 +16,11 @@ class UGameBaseFrameworkGameSettings final : public UDeveloperSettingsBackedByCV
 public:
     UGameBaseFrameworkGameSettings();
 
-    FName GetCategoryName() const override;
-
     UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "UI" )
     TSoftClassPtr< UCommonGameDialog > ConfirmationDialogClass;
 
     UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "UI" )
     TSoftClassPtr< UCommonGameDialog > ErrorDialogClass;
-
-    UPROPERTY( EditDefaultsOnly, config, Category = "SaveGame" )
-    TSubclassOf< UGBFSaveGame > SaveGameClass;
-
-    UPROPERTY( EditDefaultsOnly, config, Category = "SaveGame" )
-    FString SaveGameSlotName;
 
     UPROPERTY( BlueprintReadOnly, EditDefaultsOnly, config, Category = "Sounds" )
     TSoftObjectPtr< USoundBase > BackHandlerSound;

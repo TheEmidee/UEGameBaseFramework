@@ -86,7 +86,7 @@ public:
     TArray< int32 > MobileFrameRateLimits;
 };
 
-UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "Game Base Framework - Performance Settings" ) )
+UCLASS( config = Game, defaultconfig, meta = ( DisplayName = "GameBaseFramework - Performance Settings" ) )
 class GAMEBASEFRAMEWORK_API UGBFPerformanceSettings : public UDeveloperSettingsBackedByCVars
 {
     GENERATED_BODY()
