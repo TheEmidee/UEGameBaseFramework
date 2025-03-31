@@ -7,6 +7,9 @@
 
 #include "GBFSaveGameSubsystem.generated.h"
 
+DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFOnSaveGameLoaded, UGBFSaveGame *, SaveGame );
+DECLARE_DYNAMIC_DELEGATE_TwoParams( FGBFOnSaveGameSaved, UGBFSaveGame *, SaveGame, bool, Success );
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsystem
 {
@@ -16,10 +19,16 @@ public:
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )
-    void Load();
+    bool Load( FGBFOnSaveGameLoaded on_save_game_loaded );
 
     UFUNCTION( BlueprintCallable )
-    void Save();
+    bool Save( FGBFOnSaveGameSaved on_save_game_saved );
+
+    UFUNCTION( BlueprintCallable )
+    void SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved );
+
+    UFUNCTION( BlueprintCallable )
+    void SaveWithDelay( float delay, FGBFOnSaveGameSaved on_save_game_saved );
 
     UFUNCTION( BlueprintCallable )
     void Reset();

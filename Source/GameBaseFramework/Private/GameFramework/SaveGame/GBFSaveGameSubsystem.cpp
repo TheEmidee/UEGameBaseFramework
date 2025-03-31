@@ -7,6 +7,8 @@
 
 #include <Engine/LocalPlayer.h>
 #include <Engine/World.h>
+#include <Kismet/GameplayStatics.h>
+#include <TimerManager.h>
 
 void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 {
@@ -14,18 +16,18 @@ void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
     {
         PrimaryPlayer = local_player;
 
-        Load();
+        Load( FGBFOnSaveGameLoaded() );
     }
 }
 
-void UGBFSaveGameSubsystem::Load()
+bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 {
     const auto * world = GetWorld();
 
     const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
     if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
     {
-        return;
+        return false;
     }
 
     auto * settings = GetDefault< UGameBaseFrameworkGameSettings >();
@@ -38,22 +40,65 @@ void UGBFSaveGameSubsystem::Load()
         }
     }
 
-    SaveGame = Cast< UGBFSaveGame >( UGBFSaveGame::LoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName ) );
+    auto callback = FOnLocalPlayerSaveGameLoadedNative::CreateLambda( [ & ]( ULocalPlayerSaveGame * save_game ) {
+        SaveGame = Cast< UGBFSaveGame >( save_game );
 
-    for ( const auto & pending_savable : PendingSavables )
-    {
-        SaveGame->RegisterSavable( pending_savable );
-    }
+        for ( const auto & pending_savable : PendingSavables )
+        {
+            SaveGame->RegisterSavable( pending_savable );
+        }
 
-    PendingSavables.Reset();
+        PendingSavables.Reset();
+
+        on_save_game_loaded.ExecuteIfBound( SaveGame );
+    } );
+
+    return UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName, callback );
 }
 
-void UGBFSaveGameSubsystem::Save()
+bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
-    if ( SaveGame != nullptr )
+    if ( SaveGame == nullptr )
     {
-        SaveGame->AsyncSaveGameToSlotForLocalPlayer();
+        return false;
     }
+
+    if ( !ensure( PrimaryPlayer.Get() ) )
+    {
+        return false;
+    }
+
+    const auto request_user_index = SaveGame->GetPlatformUserIndex();
+    const auto request_slot_name = SaveGame->GetSaveSlotName();
+    if ( !ensure( request_slot_name.Len() > 0 ) )
+    {
+        return false;
+    }
+
+    SaveGame->HandlePreSave();
+
+    auto callback = FAsyncSaveGameToSlotDelegate::CreateLambda( [ & ]( const FString & /*slot_name*/, const int32 /*user_index*/, bool success ) {
+        on_save_game_saved.ExecuteIfBound( SaveGame, success );
+    } );
+
+    return true;
+}
+
+void UGBFSaveGameSubsystem::SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved )
+{
+    GetWorld()->GetTimerManager().SetTimerForNextTick( FTimerDelegate::CreateLambda( [ & ]() {
+        Save( on_save_game_saved );
+    } ) );
+}
+
+void UGBFSaveGameSubsystem::SaveWithDelay( float delay, FGBFOnSaveGameSaved on_save_game_saved )
+{
+    FTimerHandle handle;
+    GetWorld()->GetTimerManager().SetTimer( handle, FTimerDelegate::CreateLambda( [ & ]() {
+        Save( on_save_game_saved );
+    } ),
+        delay,
+        false );
 }
 
 void UGBFSaveGameSubsystem::Reset()
