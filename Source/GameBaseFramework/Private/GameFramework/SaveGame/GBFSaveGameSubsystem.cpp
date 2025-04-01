@@ -87,8 +87,10 @@ bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
         PendingSavables.Reset();
 
         delegate.ExecuteIfBound( SaveGame );
+        OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
+    OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Started );
     return UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName, callback );
 }
 
@@ -120,10 +122,13 @@ bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
         return false;
     }
 
+    OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Started );
+
     SaveGame->HandlePreSave();
 
     auto callback = FAsyncSaveGameToSlotDelegate::CreateLambda( [ &, delegate = MoveTemp( on_save_game_saved ) ]( const FString & /*slot_name*/, const int32 /*user_index*/, bool success ) {
         delegate.ExecuteIfBound( SaveGame, success );
+        OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
     UGameplayStatics::AsyncSaveGameToSlot( SaveGame, request_slot_name, request_user_index, callback );

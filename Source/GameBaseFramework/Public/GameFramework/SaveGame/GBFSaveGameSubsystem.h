@@ -1,14 +1,28 @@
 #pragma once
 
-#include "GBFSaveGame.h"
 #include "Containers/Deque.h"
-#include "Math/MovingAverage.h"
+#include "GBFSaveGame.h"
 
 #include <CoreMinimal.h>
 #include <Subsystems/GameInstanceSubsystem.h>
 
 #include "GBFSaveGameSubsystem.generated.h"
 
+UENUM( BlueprintType )
+enum class EGBFSaveGameSubsystemOperation : uint8
+{
+    Load,
+    Save
+};
+
+UENUM( BlueprintType )
+enum class EGBFSaveGameSubsystemOperationEvent : uint8
+{
+    Started,
+    Ended
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnOperationTriggeredDelegate, EGBFSaveGameSubsystemOperation, Operation, EGBFSaveGameSubsystemOperationEvent, Event );
 DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFOnSaveGameLoaded, UGBFSaveGame *, SaveGame );
 DECLARE_DYNAMIC_DELEGATE_TwoParams( FGBFOnSaveGameSaved, UGBFSaveGame *, SaveGame, bool, Success );
 
@@ -51,6 +65,9 @@ private:
 
     UPROPERTY()
     TArray< TScriptInterface< IGBFSaveGameSystemSavableInterface > > PendingSavables;
+
+    UPROPERTY( BlueprintAssignable )
+    FGBFOnOperationTriggeredDelegate OnOperationTriggeredDelegate;
 
     TWeakObjectPtr< ULocalPlayer > PrimaryPlayer;
 
