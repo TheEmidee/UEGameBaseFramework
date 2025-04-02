@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Containers/Deque.h"
 #include "GBFSaveGame.h"
 
 #include <CoreMinimal.h>
@@ -7,19 +8,45 @@
 
 #include "GBFSaveGameSubsystem.generated.h"
 
+UENUM( BlueprintType )
+enum class EGBFSaveGameSubsystemOperation : uint8
+{
+    Load,
+    Save
+};
+
+UENUM( BlueprintType )
+enum class EGBFSaveGameSubsystemOperationEvent : uint8
+{
+    Started,
+    Ended
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnOperationTriggeredDelegate, EGBFSaveGameSubsystemOperation, Operation, EGBFSaveGameSubsystemOperationEvent, Event );
+DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFOnSaveGameLoaded, UGBFSaveGame *, SaveGame );
+DECLARE_DYNAMIC_DELEGATE_TwoParams( FGBFOnSaveGameSaved, UGBFSaveGame *, SaveGame, bool, Success );
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsystem
 {
     GENERATED_BODY()
 
 public:
+    void Initialize( FSubsystemCollectionBase & collection ) override;
+
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )
-    void Load();
+    bool Load( FGBFOnSaveGameLoaded on_save_game_loaded );
 
     UFUNCTION( BlueprintCallable )
-    void Save();
+    bool Save( FGBFOnSaveGameSaved on_save_game_saved );
+
+    UFUNCTION( BlueprintCallable )
+    void SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved );
+
+    UFUNCTION( BlueprintCallable )
+    void SaveWithDelay( float delay, FGBFOnSaveGameSaved on_save_game_saved );
 
     UFUNCTION( BlueprintCallable )
     void Reset();
@@ -39,7 +66,13 @@ private:
     UPROPERTY()
     TArray< TScriptInterface< IGBFSaveGameSystemSavableInterface > > PendingSavables;
 
+    UPROPERTY( BlueprintAssignable )
+    FGBFOnOperationTriggeredDelegate OnOperationTriggeredDelegate;
+
     TWeakObjectPtr< ULocalPlayer > PrimaryPlayer;
+
+    TDeque< float > LoadGameCallTimes;
+    TDeque< float > SaveGameCallTimes;
 };
 
 template < typename _SAVE_GAME_CLASS_ >
