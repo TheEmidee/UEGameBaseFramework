@@ -9,6 +9,7 @@
 #include "DVEDataValidator.h"
 #endif
 
+#include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystemComponent.h>
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"
@@ -224,7 +225,7 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
         return;
     }
 
-    if ( auto * ability_system_component = FindOrAddComponentForActor< UAbilitySystemComponent >( actor, abilities_entry, active_data ) )
+    if ( auto * ability_system_component = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor ) )
     {
         FActorExtensions AddedExtensions;
         AddedExtensions.Abilities.Reserve( abilities_entry.GrantedAbilities.Num() );
@@ -246,7 +247,7 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
             if ( !attributes.AttributeSetType.IsNull() )
             {
                 if ( auto attribute_set_class = attributes.AttributeSetType.LoadSynchronous();
-                     attribute_set_class != nullptr )
+                    attribute_set_class != nullptr )
                 {
                     auto * new_set = NewObject< UAttributeSet >( ability_system_component, attribute_set_class );
                     if ( !attributes.InitializationData.IsNull() )
@@ -268,7 +269,7 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
             if ( !effect.IsNull() )
             {
                 if ( auto gameplay_effect_class = effect.LoadSynchronous();
-                     gameplay_effect_class != nullptr )
+                    gameplay_effect_class != nullptr )
                 {
                     auto effect_context = ability_system_component->MakeEffectContext();
                     const auto spec_handle = ability_system_component->MakeOutgoingSpec( gameplay_effect_class, 1, effect_context );
@@ -281,7 +282,7 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
         for ( const auto & ability_set_ptr : abilities_entry.GrantedAbilitySets )
         {
             if ( const auto * ability_set = ability_set_ptr.LoadSynchronous();
-                 ability_set != nullptr )
+                ability_set != nullptr )
             {
                 ability_set->GiveToAbilitySystem( ability_system_component, &AddedExtensions.AbilitySetHandles.AddDefaulted_GetRef() );
             }
@@ -291,6 +292,10 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
         AddedExtensions.Tags.AppendTags( abilities_entry.LooseGameplayTags );
 
         active_data.ActiveExtensions.Add( actor, AddedExtensions );
+    }
+    else
+    {
+        UE_LOG( LogGameFeatures, Error, TEXT( "Failed to find `AbilitySystemComponent` for given actor. `Add abilities` GameFeature Action will not be processed" ) );
     }
 }
 
