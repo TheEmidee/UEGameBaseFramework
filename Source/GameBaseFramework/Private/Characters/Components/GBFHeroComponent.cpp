@@ -75,7 +75,7 @@ bool UGBFHeroComponent::CanChangeInitState( UGameFrameworkComponentManager * man
         if ( is_locally_controlled && !is_bot )
         {
             if ( const auto * pc = GetController< APlayerController >();
-                 pawn->InputComponent == nullptr || pc == nullptr || pc->GetLocalPlayer() == nullptr )
+                pawn->InputComponent == nullptr || pc == nullptr || pc->GetLocalPlayer() == nullptr )
             {
                 return false;
             }
@@ -205,6 +205,40 @@ void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * inp
         input_component->RemoveBinds( bind_handles->Handles );
         BoundActionsByInputConfig.Remove( input_config );
     }
+}
+
+void UGBFHeroComponent::AddIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+{
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The IMCStackItem will not be added. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    {
+        return;
+    }
+
+    input_component->AddIMCStackItem( imc_stack_item );
+}
+
+void UGBFHeroComponent::RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+{
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
+    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The IMCStackItem will not be removed. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    {
+        return;
+    }
+
+    input_component->RemoveIMCStackItem( imc_stack_item );
 }
 
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )

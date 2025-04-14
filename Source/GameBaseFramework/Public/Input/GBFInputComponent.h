@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GBFIMCStackItem.h"
 #include "GBFInputConfig.h"
 
 #include <CoreMinimal.h>
@@ -7,6 +8,7 @@
 
 #include "GBFInputComponent.generated.h"
 
+class UGBFIMCStackItem;
 class UEnhancedInputLocalPlayerSubsystem;
 
 UCLASS()
@@ -30,6 +32,15 @@ public:
     void BindAbilityAction( const UInputAction * input_action, _USER_CLASS_ * object, _PRESSED_FUNC_ pressed_func, _RELEASED_FUNC_ released_func, TArray< uint32 > & bind_handles );
 
     void RemoveBinds( TArray< uint32 > & bind_handles );
+
+    void AddIMCStackItem( UGBFIMCStackItem * imc_stack_item );
+    void RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item );
+
+private:
+    void ManageStackItems( UGBFIMCStackItem * stack_item_to_remove, UGBFIMCStackItem * stack_item_to_add ) const;
+
+    UPROPERTY()
+    TArray< TObjectPtr< UGBFIMCStackItem > > IMCStackItems;
 };
 
 template < class _USER_CLASS_, typename _FUNC_TYPE_ >
