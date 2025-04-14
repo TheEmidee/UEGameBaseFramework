@@ -216,7 +216,7 @@ void UGBFHeroComponent::AddIMCStackItem( UGBFIMCStackItem * imc_stack_item )
     }
 
     auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The IMCStackItem will not be added. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    if ( input_component == nullptr )
     {
         return;
     }
@@ -233,7 +233,7 @@ void UGBFHeroComponent::RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item )
     }
 
     auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-    if ( !ensureMsgf( input_component != nullptr, TEXT( "Unexpected Input Component class! The IMCStackItem will not be removed. Change the input component to UGBFInputComponent or a subclass of it." ) ) )
+    if ( input_component == nullptr )
     {
         return;
     }
