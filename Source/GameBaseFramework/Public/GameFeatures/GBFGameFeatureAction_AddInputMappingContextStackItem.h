@@ -38,5 +38,10 @@ private:
     UPROPERTY( EditAnywhere, Category = "Input" )
     TObjectPtr< UGBFInputMappingContextStackItem > IMCStackItem;
 
+    // The player controller index of the player that will receive the input mapping stack item.
+    // -1 means all players
+    UPROPERTY( EditAnywhere, Category = "Input" )
+    int32 PlayerControllerIndex = INDEX_NONE;
+
     TMap< FGameFeatureStateChangeContext, FPerContextData > ContextData;
 };

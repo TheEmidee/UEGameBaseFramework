@@ -1,10 +1,12 @@
 #include "GameFeatures/GBFGameFeatureAction_AddInputMappingContextStackItem.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
+#include "Engine/LocalPlayer.h"
 #include "Input/GBFInputComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/GameInstance.h>
+#include <GameFramework/PlayerController.h>
 
 #if WITH_EDITOR
 #include "DVEDataValidator.h"
@@ -82,6 +84,24 @@ void UGBFGameFeatureAction_AddInputMappingContextStackItem::HandlePawnExtension(
 {
     auto * pawn = CastChecked< APawn >( actor );
     auto & active_data = ContextData.FindOrAdd( change_context );
+
+    const auto * player_controller = Cast< APlayerController >( pawn->GetController() );
+    if ( player_controller == nullptr )
+    {
+        return;
+    }
+
+    const auto * local_player = player_controller->GetLocalPlayer();
+    if ( local_player == nullptr )
+    {
+        return;
+    }
+
+    const auto player_index = local_player->GetLocalPlayerIndex();
+    if ( PlayerControllerIndex >= 0 && PlayerControllerIndex != player_index )
+    {
+        return;
+    }
 
     if ( event_name == UGameFrameworkComponentManager::NAME_ExtensionRemoved || event_name == UGameFrameworkComponentManager::NAME_ReceiverRemoved )
     {
