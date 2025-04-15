@@ -54,6 +54,10 @@ struct GAMEBASEFRAMEWORK_API FGBFContextEffectAnimNotifyTraceSettings
     // Ignore this Actor when getting trace result
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Trace )
     bool bIgnoreActor = true;
+
+    // Should the trace follow the rotation of the mesh or socket?
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Trace )
+    bool bUseRelativeRotation = false;
 };
 
 USTRUCT( BlueprintType )
