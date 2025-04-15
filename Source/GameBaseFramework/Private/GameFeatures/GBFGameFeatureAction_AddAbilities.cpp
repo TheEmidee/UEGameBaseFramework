@@ -9,6 +9,7 @@
 #include "DVEDataValidator.h"
 #endif
 
+#include <AbilitySystemBlueprintLibrary.h>
 #include <AbilitySystemComponent.h>
 
 #define LOCTEXT_NAMESPACE "UGBFGameFeatureAction_AddAbilities"
@@ -224,7 +225,7 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
         return;
     }
 
-    if ( auto * ability_system_component = FindOrAddComponentForActor< UAbilitySystemComponent >( actor, abilities_entry, active_data ) )
+    if ( auto * ability_system_component = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( actor ) )
     {
         FActorExtensions AddedExtensions;
         AddedExtensions.Abilities.Reserve( abilities_entry.GrantedAbilities.Num() );
@@ -291,6 +292,10 @@ void UGBFGameFeatureAction_AddAbilities::AddActorAbilities( AActor * actor, cons
         AddedExtensions.Tags.AppendTags( abilities_entry.LooseGameplayTags );
 
         active_data.ActiveExtensions.Add( actor, AddedExtensions );
+    }
+    else
+    {
+        UE_LOG( LogGameFeatures, Error, TEXT( "Failed to find `AbilitySystemComponent` for given actor. `Add abilities` GameFeature Action will not be processed" ) );
     }
 }
 
