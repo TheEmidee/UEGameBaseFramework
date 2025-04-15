@@ -3,17 +3,17 @@
   "Version": 1.1,
   "VersionName": "1.1",
   "FriendlyName": "Game Base Framework",
-  "Description" : "Helper classes",
-  "Category" : "Game Franework",
-  "CreatedBy" : "Michael Delva",
-  "CreatedByURL" : "http://www.emidee.net",
-  "DocsURL" : "",
-  "MarketplaceURL" : "",
-  "SupportURL" : "",
-  "EnabledByDefault" : false,
-  "CanContainContent" : true,
-  "IsBetaVersion" : false,
-  "Installed" : false,
+  "Description": "Helper classes",
+  "Category": "Game Franework",
+  "CreatedBy": "Michael Delva",
+  "CreatedByURL": "http://www.emidee.net",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EnabledByDefault": false,
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": false,
   "Modules": [
     {
       "Name": "GameBaseFramework",
@@ -24,7 +24,7 @@
       "Name": "GameBaseFrameworkEditor",
       "Type": "Editor",
       "LoadingPhase": "Default"
-    },
+    }
   ],
   "Plugins": [
     {
@@ -104,22 +104,6 @@
       "Enabled": true
     },
     {
-      "Name": "SmartObjects",
-      "Enabled": true
-    },
-    {
-      "Name": "GameplayBehaviors",
-      "Enabled": true
-    },
-    {
-      "Name": "GameplayBehaviorSmartObjects",
-      "Enabled": true
-    },
-    {
-      "Name": "GameplayInteractions",
-      "Enabled": true
-    },
-    {
       "Name": "StateTree",
       "Enabled": true
     },
@@ -130,6 +114,5 @@
     {
       "Name": "ModelViewViewModel",
       "Enabled": true
-    }
-  ]
-}
+    } 
+] }
