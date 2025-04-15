@@ -1,6 +1,7 @@
 #include "GameFeatures/GBFGameFeatureAction_AddIMCStackItem.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
+#include "Input/GBFInputComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/GameInstance.h>
@@ -94,24 +95,24 @@ void UGBFGameFeatureAction_AddIMCStackItem::HandlePawnExtension( AActor * actor,
 
 void UGBFGameFeatureAction_AddIMCStackItem::AddIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
 {
-    auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn );
-    if ( hero_component == nullptr )
+    auto * input_component = Cast< UGBFInputComponent >( pawn->InputComponent );
+    if ( input_component == nullptr )
     {
         return;
     }
 
-    hero_component->AddInputMappingContextStackItem( IMCStackItem );
+    input_component->AddInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.AddUnique( pawn );
 }
 
 void UGBFGameFeatureAction_AddIMCStackItem::RemoveIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
 {
-    auto * hero_component = UGBFHeroComponent::FindHeroComponent( pawn );
-    if ( hero_component == nullptr )
+    auto * input_component = Cast< UGBFInputComponent >( pawn->InputComponent );
+    if ( input_component == nullptr )
     {
         return;
     }
 
-    hero_component->RemoveInputMappingContextStackItem( IMCStackItem );
+    input_component->RemoveInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.Remove( pawn );
 }
