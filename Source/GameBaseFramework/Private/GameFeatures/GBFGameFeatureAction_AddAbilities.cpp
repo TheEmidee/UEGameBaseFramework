@@ -90,7 +90,7 @@ EDataValidationResult UGBFGameFeatureAction_AddAbilities::IsDataValid( FDataVali
                     context.AddError( FText::Format( LOCTEXT( "EntryHasNullActor", "Null ActorClass at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
                 }
 
-                if ( entry.GrantedAbilities.Num() == 0 && entry.GrantedAttributes.Num() == 0 && entry.GrantedEffects.Num() == 0 && entry.LooseGameplayTags.IsEmpty() )
+                if ( entry.GrantedAbilities.IsEmpty() && entry.GrantedAttributes.IsEmpty() && entry.GrantedEffects.IsEmpty() && entry.LooseGameplayTags.IsEmpty() && entry.GrantedAbilitySets.IsEmpty() )
                 {
                     context.AddError( FText::Format( LOCTEXT( "EntryHasNoAddOns", "Empty item at index {0} in AbilitiesList" ), FText::AsNumber( entry_index ) ) );
                 }
