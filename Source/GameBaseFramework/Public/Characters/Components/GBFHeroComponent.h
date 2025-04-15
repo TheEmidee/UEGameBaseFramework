@@ -7,7 +7,6 @@
 
 #include "GBFHeroComponent.generated.h"
 
-class UGBFInputMappingContextStackItem;
 struct FGBFInputMappingContextAndPriority;
 class UGBFInputComponent;
 class UGBFInputConfig;
@@ -46,12 +45,6 @@ public:
     /** Removes a mode-specific input config if it has been added */
     UFUNCTION( BlueprintCallable )
     void RemoveAdditionalInputConfig( const UGBFInputConfig * input_config );
-
-    UFUNCTION( BlueprintCallable )
-    void AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
-
-    UFUNCTION( BlueprintCallable )
-    void RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
 
     static const FName NAME_BindInputsNow;
     static const FName NAME_ActorFeatureName;

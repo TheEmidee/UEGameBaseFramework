@@ -33,7 +33,10 @@ public:
 
     void RemoveBinds( TArray< uint32 > & bind_handles );
 
+    UFUNCTION( BlueprintCallable )
     void AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
+
+    UFUNCTION( BlueprintCallable )
     void RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
 
 private:

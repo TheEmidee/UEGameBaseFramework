@@ -14,7 +14,6 @@
 #include "GameFramework/GBFPlayerState.h"
 #include "Input/GBFInputComponent.h"
 
-#include <AbilitySystemBlueprintLibrary.h>
 #include <Components/GameFrameworkComponentManager.h>
 #include <EnhancedInputSubsystemInterface.h>
 #include <EnhancedInputSubsystems.h>
@@ -205,40 +204,6 @@ void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * inp
         input_component->RemoveBinds( bind_handles->Handles );
         BoundActionsByInputConfig.Remove( input_config );
     }
-}
-
-void UGBFHeroComponent::AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
-{
-    const auto * pawn = GetPawn< APawn >();
-    if ( pawn == nullptr )
-    {
-        return;
-    }
-
-    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-    if ( input_component == nullptr )
-    {
-        return;
-    }
-
-    input_component->AddInputMappingContextStackItem( input_mapping_context_stack_item );
-}
-
-void UGBFHeroComponent::RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
-{
-    const auto * pawn = GetPawn< APawn >();
-    if ( pawn == nullptr )
-    {
-        return;
-    }
-
-    auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >();
-    if ( input_component == nullptr )
-    {
-        return;
-    }
-
-    input_component->RemoveInputMappingContextStackItem( input_mapping_context_stack_item );
 }
 
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
