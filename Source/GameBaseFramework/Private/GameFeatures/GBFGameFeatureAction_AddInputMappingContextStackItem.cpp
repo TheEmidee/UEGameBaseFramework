@@ -1,4 +1,4 @@
-#include "GameFeatures/GBFGameFeatureAction_AddIMCStackItem.h"
+#include "GameFeatures/GBFGameFeatureAction_AddInputMappingContextStackItem.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Input/GBFInputComponent.h"
@@ -10,7 +10,7 @@
 #include "DVEDataValidator.h"
 #endif
 
-void UGBFGameFeatureAction_AddIMCStackItem::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
         !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
@@ -22,7 +22,7 @@ void UGBFGameFeatureAction_AddIMCStackItem::OnGameFeatureActivating( FGameFeatur
     Super::OnGameFeatureActivating( context );
 }
 
-void UGBFGameFeatureAction_AddIMCStackItem::OnGameFeatureDeactivating( FGameFeatureDeactivatingContext & context )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::OnGameFeatureDeactivating( FGameFeatureDeactivatingContext & context )
 {
     Super::OnGameFeatureDeactivating( context );
 
@@ -34,7 +34,7 @@ void UGBFGameFeatureAction_AddIMCStackItem::OnGameFeatureDeactivating( FGameFeat
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFGameFeatureAction_AddIMCStackItem::IsDataValid( FDataValidationContext & context ) const
+EDataValidationResult UGBFGameFeatureAction_AddInputMappingContextStackItem::IsDataValid( FDataValidationContext & context ) const
 {
     return FDVEDataValidator( context )
         .NotNull( VALIDATOR_GET_PROPERTY( IMCStackItem ) )
@@ -42,7 +42,7 @@ EDataValidationResult UGBFGameFeatureAction_AddIMCStackItem::IsDataValid( FDataV
 }
 #endif
 
-void UGBFGameFeatureAction_AddIMCStackItem::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context )
 {
     const auto * world = world_context.World();
     const auto game_instance = world_context.OwningGameInstance;
@@ -60,7 +60,7 @@ void UGBFGameFeatureAction_AddIMCStackItem::AddToWorld( const FWorldContext & wo
     }
 }
 
-void UGBFGameFeatureAction_AddIMCStackItem::Reset( FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::Reset( FPerContextData & active_data )
 {
     active_data.ExtensionRequestHandles.Empty();
 
@@ -69,7 +69,7 @@ void UGBFGameFeatureAction_AddIMCStackItem::Reset( FPerContextData & active_data
         if ( auto pawn_ptr = active_data.PawnsAddedTo.Top();
             pawn_ptr.IsValid() )
         {
-            RemoveIMCStackItemForPlayer( pawn_ptr.Get(), active_data );
+            RemoveInputMappingContextStackItemForPlayer( pawn_ptr.Get(), active_data );
         }
         else
         {
@@ -78,41 +78,39 @@ void UGBFGameFeatureAction_AddIMCStackItem::Reset( FPerContextData & active_data
     }
 }
 
-void UGBFGameFeatureAction_AddIMCStackItem::HandlePawnExtension( AActor * actor, const FName event_name, const FGameFeatureStateChangeContext change_context )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::HandlePawnExtension( AActor * actor, const FName event_name, const FGameFeatureStateChangeContext change_context )
 {
     auto * pawn = CastChecked< APawn >( actor );
     auto & active_data = ContextData.FindOrAdd( change_context );
 
     if ( event_name == UGameFrameworkComponentManager::NAME_ExtensionRemoved || event_name == UGameFrameworkComponentManager::NAME_ReceiverRemoved )
     {
-        RemoveIMCStackItemForPlayer( pawn, active_data );
+        RemoveInputMappingContextStackItemForPlayer( pawn, active_data );
     }
     else if ( ( event_name == UGameFrameworkComponentManager::NAME_ExtensionAdded ) || ( event_name == UGBFHeroComponent::NAME_BindInputsNow ) )
     {
-        AddIMCStackItemForPlayer( pawn, active_data );
+        AddInputMappingContextStackItemForPlayer( pawn, active_data );
     }
 }
 
-void UGBFGameFeatureAction_AddIMCStackItem::AddIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::AddInputMappingContextStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
 {
     auto * input_component = Cast< UGBFInputComponent >( pawn->InputComponent );
-    if ( input_component == nullptr )
+    if ( input_component != nullptr )
     {
-        return;
+        input_component->AddInputMappingContextStackItem( IMCStackItem );
     }
 
-    input_component->AddInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.AddUnique( pawn );
 }
 
-void UGBFGameFeatureAction_AddIMCStackItem::RemoveIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
+void UGBFGameFeatureAction_AddInputMappingContextStackItem::RemoveInputMappingContextStackItemForPlayer( APawn * pawn, FPerContextData & active_data )
 {
     auto * input_component = Cast< UGBFInputComponent >( pawn->InputComponent );
-    if ( input_component == nullptr )
+    if ( input_component != nullptr )
     {
-        return;
+        input_component->RemoveInputMappingContextStackItem( IMCStackItem );
     }
 
-    input_component->RemoveInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.Remove( pawn );
 }

@@ -4,13 +4,13 @@
 
 #include <CoreMinimal.h>
 
-#include "GBFGameFeatureAction_AddIMCStackItem.generated.h"
+#include "GBFGameFeatureAction_AddInputMappingContextStackItem.generated.h"
 
 struct FComponentRequestHandle;
 class UGBFInputMappingContextStackItem;
 
-UCLASS( MinimalAPI, DisplayName = "Add IMC Stack Item" )
-class UGBFGameFeatureAction_AddIMCStackItem final : public UGBFGameFeatureAction_WorldActionBase
+UCLASS( MinimalAPI, DisplayName = "Add Input Mapping Context Stack Item" )
+class UGBFGameFeatureAction_AddInputMappingContextStackItem final : public UGBFGameFeatureAction_WorldActionBase
 {
     GENERATED_BODY()
 
@@ -32,8 +32,8 @@ private:
     void AddToWorld( const FWorldContext & world_context, const FGameFeatureStateChangeContext & change_context ) override;
     void Reset( FPerContextData & active_data );
     void HandlePawnExtension( AActor * actor, FName event_name, FGameFeatureStateChangeContext change_context );
-    void AddIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data );
-    void RemoveIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data );
+    void AddInputMappingContextStackItemForPlayer( APawn * pawn, FPerContextData & active_data );
+    void RemoveInputMappingContextStackItemForPlayer( APawn * pawn, FPerContextData & active_data );
 
     UPROPERTY( EditAnywhere, Category = "Input" )
     TObjectPtr< UGBFInputMappingContextStackItem > IMCStackItem;
