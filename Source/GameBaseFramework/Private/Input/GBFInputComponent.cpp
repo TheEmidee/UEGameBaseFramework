@@ -1,9 +1,9 @@
 #include "Input/GBFInputComponent.h"
 
 #include "Engine/GBFLocalPlayer.h"
-#include "GameFramework/Pawn.h"
 
 #include <EnhancedInputSubsystems.h>
+#include <GameFramework/Pawn.h>
 
 UGBFInputComponent::UGBFInputComponent( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )
@@ -35,46 +35,48 @@ void UGBFInputComponent::RemoveBinds( TArray< uint32 > & bind_handles )
     bind_handles.Reset();
 }
 
-void UGBFInputComponent::AddIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+void UGBFInputComponent::AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
 {
-    UGBFIMCStackItem * current_imc_stack_item = nullptr;
+    InternalAddInputMappingContextStackItem( input_mapping_context_stack_item );
 
-    if ( !IMCStackItems.IsEmpty() )
+    if ( !InputMappingContextStackItems.IsEmpty() )
     {
-        current_imc_stack_item = IMCStackItems[ 0 ].Get();
+        InternalRemoveInputMappingContextStackItem( InputMappingContextStackItems.Last().Get() );
     }
 
-    ManageStackItems( current_imc_stack_item, imc_stack_item );
-    IMCStackItems.Insert( imc_stack_item, 0 );
+    InputMappingContextStackItems.Add( input_mapping_context_stack_item );
 }
 
-void UGBFInputComponent::RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+void UGBFInputComponent::RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
 {
-    if ( IMCStackItems.IsEmpty() )
+    if ( InputMappingContextStackItems.IsEmpty() )
     {
         return;
     }
 
-    const auto found_index = IMCStackItems.Find( imc_stack_item );
-    IMCStackItems.Remove( imc_stack_item );
+    const auto was_last = InputMappingContextStackItems.Last() == input_mapping_context_stack_item;
+    InputMappingContextStackItems.Remove( input_mapping_context_stack_item );
 
-    if ( found_index != 0 )
+    if ( !was_last )
     {
         return;
     }
 
-    UGBFIMCStackItem * next_imc_stack_item = nullptr;
+    InternalRemoveInputMappingContextStackItem( input_mapping_context_stack_item );
 
-    if ( !IMCStackItems.IsEmpty() )
+    if ( !InputMappingContextStackItems.IsEmpty() )
     {
-        next_imc_stack_item = IMCStackItems[ 0 ].Get();
+        InternalAddInputMappingContextStackItem( InputMappingContextStackItems.Last().Get() );
     }
-
-    ManageStackItems( imc_stack_item, next_imc_stack_item );
 }
 
-void UGBFInputComponent::ManageStackItems( UGBFIMCStackItem * stack_item_to_remove, UGBFIMCStackItem * stack_item_to_add ) const
+void UGBFInputComponent::InternalAddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const
 {
+    if ( input_mapping_context_stack_item == nullptr )
+    {
+        return;
+    }
+
     const auto * pawn = Cast< APawn >( GetOwner() );
     if ( pawn == nullptr )
     {
@@ -99,13 +101,39 @@ void UGBFInputComponent::ManageStackItems( UGBFIMCStackItem * stack_item_to_remo
         return;
     }
 
-    if ( stack_item_to_remove != nullptr )
+    input_mapping_context_stack_item->AddInputMappings( input_system );
+}
+
+void UGBFInputComponent::InternalRemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const
+{
+    if ( input_mapping_context_stack_item == nullptr )
     {
-        stack_item_to_remove->RemoveInputMappings( input_system );
+        return;
     }
 
-    if ( stack_item_to_add != nullptr )
+    const auto * pawn = Cast< APawn >( GetOwner() );
+    if ( pawn == nullptr )
     {
-        stack_item_to_add->AddInputMappings( input_system );
+        return;
     }
+
+    const auto * pc = pawn->GetController< APlayerController >();
+    if ( pc == nullptr )
+    {
+        return;
+    }
+
+    const auto * local_player = pc->GetLocalPlayer();
+    if ( local_player == nullptr )
+    {
+        return;
+    }
+
+    auto * input_system = local_player->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >();
+    if ( input_system == nullptr )
+    {
+        return;
+    }
+
+    input_mapping_context_stack_item->RemoveInputMappings( input_system );
 }

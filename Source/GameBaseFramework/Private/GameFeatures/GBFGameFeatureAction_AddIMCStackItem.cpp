@@ -100,7 +100,7 @@ void UGBFGameFeatureAction_AddIMCStackItem::AddIMCStackItemForPlayer( APawn * pa
         return;
     }
 
-    hero_component->AddIMCStackItem( IMCStackItem );
+    hero_component->AddInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.AddUnique( pawn );
 }
 
@@ -112,6 +112,6 @@ void UGBFGameFeatureAction_AddIMCStackItem::RemoveIMCStackItemForPlayer( APawn *
         return;
     }
 
-    hero_component->RemoveIMCStackItem( IMCStackItem );
+    hero_component->RemoveInputMappingContextStackItem( IMCStackItem );
     active_data.PawnsAddedTo.Remove( pawn );
 }

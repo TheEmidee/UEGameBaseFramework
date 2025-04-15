@@ -7,7 +7,7 @@
 #include "GBFGameFeatureAction_AddIMCStackItem.generated.h"
 
 struct FComponentRequestHandle;
-class UGBFIMCStackItem;
+class UGBFInputMappingContextStackItem;
 
 UCLASS( MinimalAPI, DisplayName = "Add IMC Stack Item" )
 class UGBFGameFeatureAction_AddIMCStackItem final : public UGBFGameFeatureAction_WorldActionBase
@@ -36,7 +36,7 @@ private:
     void RemoveIMCStackItemForPlayer( APawn * pawn, FPerContextData & active_data );
 
     UPROPERTY( EditAnywhere, Category = "Input" )
-    TObjectPtr< UGBFIMCStackItem > IMCStackItem;
+    TObjectPtr< UGBFInputMappingContextStackItem > IMCStackItem;
 
     TMap< FGameFeatureStateChangeContext, FPerContextData > ContextData;
 };

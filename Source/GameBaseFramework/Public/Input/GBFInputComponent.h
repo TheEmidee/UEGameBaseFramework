@@ -1,14 +1,14 @@
 #pragma once
 
-#include "GBFIMCStackItem.h"
 #include "GBFInputConfig.h"
+#include "GBFInputMappingContextStackItem.h"
 
 #include <CoreMinimal.h>
 #include <EnhancedInputComponent.h>
 
 #include "GBFInputComponent.generated.h"
 
-class UGBFIMCStackItem;
+class UGBFInputMappingContextStackItem;
 class UEnhancedInputLocalPlayerSubsystem;
 
 UCLASS()
@@ -33,14 +33,15 @@ public:
 
     void RemoveBinds( TArray< uint32 > & bind_handles );
 
-    void AddIMCStackItem( UGBFIMCStackItem * imc_stack_item );
-    void RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item );
+    void AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
+    void RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
 
 private:
-    void ManageStackItems( UGBFIMCStackItem * stack_item_to_remove, UGBFIMCStackItem * stack_item_to_add ) const;
+    void InternalAddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const;
+    void InternalRemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const;
 
     UPROPERTY()
-    TArray< TObjectPtr< UGBFIMCStackItem > > IMCStackItems;
+    TArray< TObjectPtr< UGBFInputMappingContextStackItem > > InputMappingContextStackItems;
 };
 
 template < class _USER_CLASS_, typename _FUNC_TYPE_ >

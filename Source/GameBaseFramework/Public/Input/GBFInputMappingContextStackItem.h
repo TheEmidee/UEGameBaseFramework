@@ -5,12 +5,12 @@
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 
-#include "GBFIMCStackItem.generated.h"
+#include "GBFInputMappingContextStackItem.generated.h"
 
 class UInputMappingContext;
 
 UCLASS( BlueprintType )
-class GAMEBASEFRAMEWORK_API UGBFIMCStackItem : public UDataAsset
+class GAMEBASEFRAMEWORK_API UGBFInputMappingContextStackItem : public UDataAsset
 {
     GENERATED_BODY()
 

@@ -1,4 +1,4 @@
-#include "Input/GBFIMCStackItem.h"
+#include "Input/GBFInputMappingContextStackItem.h"
 
 #include <EnhancedInputSubsystems.h>
 
@@ -6,7 +6,7 @@
 #include "DVEDataValidator.h"
 #endif
 
-void UGBFIMCStackItem::AddInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
+void UGBFInputMappingContextStackItem::AddInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
 {
     if ( input_system == nullptr )
     {
@@ -19,7 +19,7 @@ void UGBFIMCStackItem::AddInputMappings( UEnhancedInputLocalPlayerSubsystem * in
     }
 }
 
-void UGBFIMCStackItem::RemoveInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
+void UGBFInputMappingContextStackItem::RemoveInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
 {
     if ( input_system == nullptr )
     {
@@ -33,7 +33,7 @@ void UGBFIMCStackItem::RemoveInputMappings( UEnhancedInputLocalPlayerSubsystem *
 }
 
 #if WITH_EDITOR
-EDataValidationResult UGBFIMCStackItem::IsDataValid( FDataValidationContext & context ) const
+EDataValidationResult UGBFInputMappingContextStackItem::IsDataValid( FDataValidationContext & context ) const
 {
     return FDVEDataValidator( context )
         .NoNullItem( VALIDATOR_GET_PROPERTY( InputMappingContexts ) )

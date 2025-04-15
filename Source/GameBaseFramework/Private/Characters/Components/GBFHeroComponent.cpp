@@ -207,7 +207,7 @@ void UGBFHeroComponent::RemoveAdditionalInputConfig( const UGBFInputConfig * inp
     }
 }
 
-void UGBFHeroComponent::AddIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+void UGBFHeroComponent::AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
 {
     const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
@@ -221,10 +221,10 @@ void UGBFHeroComponent::AddIMCStackItem( UGBFIMCStackItem * imc_stack_item )
         return;
     }
 
-    input_component->AddIMCStackItem( imc_stack_item );
+    input_component->AddInputMappingContextStackItem( input_mapping_context_stack_item );
 }
 
-void UGBFHeroComponent::RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item )
+void UGBFHeroComponent::RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item )
 {
     const auto * pawn = GetPawn< APawn >();
     if ( pawn == nullptr )
@@ -238,7 +238,7 @@ void UGBFHeroComponent::RemoveIMCStackItem( UGBFIMCStackItem * imc_stack_item )
         return;
     }
 
-    input_component->RemoveIMCStackItem( imc_stack_item );
+    input_component->RemoveInputMappingContextStackItem( input_mapping_context_stack_item );
 }
 
 UGBFHeroComponent * UGBFHeroComponent::FindHeroComponent( const AActor * actor )
