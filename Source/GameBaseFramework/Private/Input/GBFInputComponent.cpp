@@ -101,7 +101,7 @@ void UGBFInputComponent::InternalAddInputMappingContextStackItem( UGBFInputMappi
         return;
     }
 
-    input_mapping_context_stack_item->AddInputMappings( input_system );
+    input_mapping_context_stack_item->AddToInputSystem( input_system );
 }
 
 void UGBFInputComponent::InternalRemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const
@@ -135,5 +135,5 @@ void UGBFInputComponent::InternalRemoveInputMappingContextStackItem( UGBFInputMa
         return;
     }
 
-    input_mapping_context_stack_item->RemoveInputMappings( input_system );
+    input_mapping_context_stack_item->RemoveFromInputSystem( input_system );
 }

@@ -6,7 +6,7 @@
 #include "DVEDataValidator.h"
 #endif
 
-void UGBFInputMappingContextStackItem::AddInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
+void UGBFInputMappingContextStackItem::AddToInputSystem( UEnhancedInputLocalPlayerSubsystem * input_system )
 {
     if ( input_system == nullptr )
     {
@@ -19,7 +19,7 @@ void UGBFInputMappingContextStackItem::AddInputMappings( UEnhancedInputLocalPlay
     }
 }
 
-void UGBFInputMappingContextStackItem::RemoveInputMappings( UEnhancedInputLocalPlayerSubsystem * input_system )
+void UGBFInputMappingContextStackItem::RemoveFromInputSystem( UEnhancedInputLocalPlayerSubsystem * input_system )
 {
     if ( input_system == nullptr )
     {

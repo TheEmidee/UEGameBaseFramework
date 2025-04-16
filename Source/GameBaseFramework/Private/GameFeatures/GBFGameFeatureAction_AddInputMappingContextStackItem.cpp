@@ -1,11 +1,11 @@
 #include "GameFeatures/GBFGameFeatureAction_AddInputMappingContextStackItem.h"
 
 #include "Characters/Components/GBFHeroComponent.h"
-#include "Engine/LocalPlayer.h"
 #include "Input/GBFInputComponent.h"
 
 #include <Components/GameFrameworkComponentManager.h>
 #include <Engine/GameInstance.h>
+#include <Engine/LocalPlayer.h>
 #include <GameFramework/PlayerController.h>
 
 #if WITH_EDITOR
