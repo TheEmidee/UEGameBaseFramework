@@ -26,8 +26,8 @@ void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering()
 void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
-         !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
-         !ensure( active_data.ControllersAddedTo.IsEmpty() ) )
+        !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
+        !ensure( active_data.ControllersAddedTo.IsEmpty() ) )
     {
         Reset( active_data );
     }

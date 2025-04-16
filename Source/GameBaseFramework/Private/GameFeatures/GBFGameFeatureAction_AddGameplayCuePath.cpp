@@ -66,7 +66,7 @@ void UGBFGameFeatureObserver_AddGameplayCuePath::OnGameFeatureRegistering( const
                 if ( const auto post_initialize_num_cues = runtime_gameplay_cue_set
                                                                ? runtime_gameplay_cue_set->GameplayCueData.Num()
                                                                : 0;
-                     pre_initialize_num_cues != post_initialize_num_cues )
+                    pre_initialize_num_cues != post_initialize_num_cues )
                 {
                     gameplay_cue_manager->RefreshGameplayCuePrimaryAsset();
                 }

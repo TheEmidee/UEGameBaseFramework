@@ -109,7 +109,7 @@ void AGBFPlayerState::PostInitializeComponents()
 void AGBFPlayerState::OnPlayerInitialized()
 {
     if ( const auto * world = GetWorld();
-         world->IsGameWorld() && world->GetNetMode() != NM_Client )
+        world->IsGameWorld() && world->GetNetMode() != NM_Client )
     {
         // :TODO:
         // In games like Lyra or UT we want bots to have their pawn data the same way as human players

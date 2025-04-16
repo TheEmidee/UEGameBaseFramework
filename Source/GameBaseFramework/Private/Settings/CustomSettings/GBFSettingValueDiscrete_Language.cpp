@@ -70,7 +70,7 @@ int32 UGBFSettingValueDiscrete_Language::GetDiscreteOptionIndex() const
         // Try to find an exact match
         {
             if ( const int32 exact_match_index = AvailableCultureNames.IndexOfByKey( pending_culture );
-                 exact_match_index != INDEX_NONE )
+                exact_match_index != INDEX_NONE )
             {
                 return exact_match_index;
             }
@@ -107,7 +107,7 @@ TArray< FText > UGBFSettingValueDiscrete_Language::GetDiscreteOptions() const
         else
         {
             if ( const auto culture = FInternationalization::Get().GetCulture( culture_name );
-                 ensureMsgf( culture != nullptr, TEXT( "Unable to find Culture '%s'!" ), *culture_name ) )
+                ensureMsgf( culture != nullptr, TEXT( "Unable to find Culture '%s'!" ), *culture_name ) )
             {
                 const auto culture_display_name = culture->GetDisplayName();
                 const auto culture_native_name = culture->GetNativeName();

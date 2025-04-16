@@ -15,8 +15,8 @@
 void UGBFGameFeatureAction_AddInputBinding::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
-         !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
-         !ensure( active_data.PawnsAddedTo.IsEmpty() ) )
+        !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
+        !ensure( active_data.PawnsAddedTo.IsEmpty() ) )
     {
         Reset( active_data );
     }
@@ -28,7 +28,7 @@ void UGBFGameFeatureAction_AddInputBinding::OnGameFeatureDeactivating( FGameFeat
     Super::OnGameFeatureDeactivating( context );
 
     if ( auto * active_data = ContextData.Find( context );
-         ensure( active_data ) )
+        ensure( active_data ) )
     {
         Reset( *active_data );
     }
@@ -68,7 +68,7 @@ void UGBFGameFeatureAction_AddInputBinding::Reset( FPerContextData & active_data
     while ( !active_data.PawnsAddedTo.IsEmpty() )
     {
         if ( auto pawn_ptr = active_data.PawnsAddedTo.Top();
-             pawn_ptr.IsValid() )
+            pawn_ptr.IsValid() )
         {
             RemoveInputMapping( pawn_ptr.Get(), active_data );
         }
@@ -103,7 +103,7 @@ void UGBFGameFeatureAction_AddInputBinding::AddInputMappingForPlayer( APawn * pa
         if ( local_player->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() != nullptr )
         {
             if ( auto * hero_component = pawn->FindComponentByClass< UGBFHeroComponent >();
-                 hero_component != nullptr && hero_component->IsReadyToBindInputs() )
+                hero_component != nullptr && hero_component->IsReadyToBindInputs() )
             {
                 for ( const auto & entry : InputConfigs )
                 {

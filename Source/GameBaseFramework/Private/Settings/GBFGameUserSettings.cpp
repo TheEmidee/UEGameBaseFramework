@@ -970,7 +970,7 @@ void UGBFGameUserSettings::UpdateGameModeDeviceProfileAndFps()
     {
         const auto * settings = GetDefault< UGBFPlatformEmulationSettings >();
         if ( const FName pretend_base_device_profile = settings->GetPretendBaseDeviceProfile();
-             pretend_base_device_profile != NAME_None )
+            pretend_base_device_profile != NAME_None )
         {
             base_platform_name = pretend_base_device_profile.ToString();
         }
@@ -1081,14 +1081,14 @@ void UGBFGameUserSettings::UpdateConsoleFramePacing()
 {
     // Apply device-profile-driven frame sync and frame pace
     if ( const int32 frame_sync_type = CVarDeviceProfileDrivenFrameSyncType.GetValueOnGameThread();
-         frame_sync_type != -1 )
+        frame_sync_type != -1 )
     {
         UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame sync mode to %d." ), frame_sync_type );
         SetSyncTypeCVar( frame_sync_type );
     }
 
     if ( const int32 target_fps = CVarDeviceProfileDrivenTargetFps.GetValueOnGameThread();
-         target_fps != -1 )
+        target_fps != -1 )
     {
         UE_LOG( LogConsoleResponse, Log, TEXT( "Setting frame pace to %d Hz." ), target_fps );
         FPlatformRHIFramePacer::SetFramePace( target_fps );

@@ -155,7 +155,7 @@ void UGBFQuickBarComponent::EquipItemInSlot()
         if ( const UGBFInventoryItemFragment_EquippableItem * equip_info = slot_item->FindFragmentByClass< UGBFInventoryItemFragment_EquippableItem >() )
         {
             if ( const auto equipment_definition = equip_info->EquipmentDefinition;
-                 equipment_definition != nullptr )
+                equipment_definition != nullptr )
             {
                 if ( auto * equipment_manager = UGBFEquipmentManagerComponent::FindEquipmentManagerComponent( GetOwner() ) )
                 {
