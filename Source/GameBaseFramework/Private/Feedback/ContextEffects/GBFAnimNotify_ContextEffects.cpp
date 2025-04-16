@@ -53,7 +53,11 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
     {
         // If trace is needed, set up Start Location to Attached
         const auto offset_start_location = bAttached ? mesh_comp->GetSocketLocation( SocketName ) : mesh_comp->GetComponentLocation();
-        const auto offset_rotation = bAttached ? mesh_comp->GetSocketRotation( SocketName ) : mesh_comp->GetComponentRotation();
+        FRotator offset_rotation = FRotator::ZeroRotator;
+        if ( TraceProperties.bUseRelativeRotation )
+        {
+            offset_rotation = bAttached ? mesh_comp->GetSocketRotation( SocketName ) : mesh_comp->GetComponentRotation();
+        }
 
         const auto trace_start = offset_start_location + offset_rotation.RotateVector( TraceProperties.StartTraceLocationOffset );
         const auto trace_end = offset_start_location + offset_rotation.RotateVector( TraceProperties.EndTraceLocationOffset );
