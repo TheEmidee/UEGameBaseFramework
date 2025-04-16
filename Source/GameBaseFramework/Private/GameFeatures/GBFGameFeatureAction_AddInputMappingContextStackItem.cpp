@@ -15,8 +15,8 @@
 void UGBFGameFeatureAction_AddInputMappingContextStackItem::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
-        !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
-        !ensure( active_data.PawnsAddedTo.IsEmpty() ) )
+         !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
+         !ensure( active_data.PawnsAddedTo.IsEmpty() ) )
     {
         Reset( active_data );
     }
@@ -29,7 +29,7 @@ void UGBFGameFeatureAction_AddInputMappingContextStackItem::OnGameFeatureDeactiv
     Super::OnGameFeatureDeactivating( context );
 
     if ( auto * active_data = ContextData.Find( context );
-        ensure( active_data ) )
+         ensure( active_data ) )
     {
         Reset( *active_data );
     }
@@ -69,7 +69,7 @@ void UGBFGameFeatureAction_AddInputMappingContextStackItem::Reset( FPerContextDa
     while ( !active_data.PawnsAddedTo.IsEmpty() )
     {
         if ( auto pawn_ptr = active_data.PawnsAddedTo.Top();
-            pawn_ptr.IsValid() )
+             pawn_ptr.IsValid() )
         {
             RemoveInputMappingContextStackItemForPlayer( pawn_ptr.Get(), active_data );
         }
