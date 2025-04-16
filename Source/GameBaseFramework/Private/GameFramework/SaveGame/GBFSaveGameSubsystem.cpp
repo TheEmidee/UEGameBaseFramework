@@ -12,6 +12,13 @@
 
 DEFINE_LOG_CATEGORY_STATIC( LogGBFSaveGameSystem, Verbose, Verbose )
 
+#if !UE_BUILD_SHIPPING
+static TAutoConsoleVariable< bool > CVarDisableSave( TEXT( "GBF.SaveGameSystem.DisableSave" ),
+    false,
+    TEXT( "Set to true to disable saving the game." ),
+    ECVF_Default | ECVF_Preview );
+#endif
+
 namespace
 {
     bool IsFrequencyRespected( TDeque< float > & call_times, const float current_time, const float frequency_duration, const int max_frequency )
@@ -96,6 +103,13 @@ bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 
 bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
+#if !UE_BUILD_SHIPPING
+    if ( CVarDisableSave.GetValueOnGameThread() )
+    {
+        return false;
+    }
+#endif
+
     if ( SaveGame == nullptr )
     {
         return false;
