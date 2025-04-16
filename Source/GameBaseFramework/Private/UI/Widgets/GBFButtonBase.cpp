@@ -39,7 +39,7 @@ void UGBFButtonBase::RefreshButtonText()
         if ( InputActionWidget != nullptr )
         {
             if ( const FText action_display_text = InputActionWidget->GetDisplayText();
-                 !action_display_text.IsEmpty() )
+                !action_display_text.IsEmpty() )
             {
                 UpdateButtonText( action_display_text );
                 return;

@@ -143,7 +143,7 @@ void UGBFHUDLayout::ProcessControllerDevicesHavingChangedForDisconnectScreen()
         if ( device_mapper.GetInputDeviceConnectionState( mapped_device ) == EInputDeviceConnectionState::Connected )
         {
             if ( const auto hardware_info = UInputDeviceSubsystem::Get()->GetInputDeviceHardwareIdentifier( mapped_device );
-                 hardware_info.PrimaryDeviceType == EHardwareDevicePrimaryType::Gamepad )
+                hardware_info.PrimaryDeviceType == EHardwareDevicePrimaryType::Gamepad )
             {
                 has_connected_controller = true;
             }

@@ -49,7 +49,7 @@ bool UGBFFrontEndStateComponent::ShouldShowLoadingScreen( FString & reason ) con
         if ( FrontEndFlow.IsValid() )
         {
             if ( const auto step_debug_name = FrontEndFlow->GetCurrentStepDebugName();
-                 step_debug_name.IsSet() )
+                step_debug_name.IsSet() )
             {
                 reason = step_debug_name.GetValue();
             }

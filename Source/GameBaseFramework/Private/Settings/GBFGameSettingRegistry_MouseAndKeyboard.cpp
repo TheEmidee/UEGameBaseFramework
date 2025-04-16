@@ -22,7 +22,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
     const TSharedRef< FWhenCondition > when_platform_supports_mouse_and_keyboard = MakeShared< FWhenCondition >(
         []( const ULocalPlayer *, FGameSettingEditableState & edit_state ) {
             if ( const auto * platform_input = UPlatformSettingsManager::Get().GetSettingsForPlatform< UCommonInputPlatformSettings >();
-                 !platform_input->SupportsInputType( ECommonInputType::MouseAndKeyboard ) )
+                !platform_input->SupportsInputType( ECommonInputType::MouseAndKeyboard ) )
             {
                 edit_state.Kill( TEXT( "Platform does not support mouse and keyboard" ) );
             }

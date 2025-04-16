@@ -52,7 +52,7 @@ namespace
         if ( IGameplayAbilitiesModule::IsAvailable() )
         {
             if ( auto & gameplay_abilities_module = IGameplayAbilitiesModule::Get();
-                 gameplay_abilities_module.IsAbilitySystemGlobalsAvailable() )
+                gameplay_abilities_module.IsAbilitySystemGlobalsAvailable() )
             {
                 auto * ability_system_globals = gameplay_abilities_module.GetAbilitySystemGlobals();
                 check( ability_system_globals != nullptr );
