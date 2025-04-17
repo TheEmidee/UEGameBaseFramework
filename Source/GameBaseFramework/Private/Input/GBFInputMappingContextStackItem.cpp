@@ -15,7 +15,7 @@ void UGBFInputMappingContextStackItem::AddToInputSystem( UEnhancedInputLocalPlay
 
     for ( auto & imc : InputMappingContexts )
     {
-        input_system->AddMappingContext( imc.Get(), 0 );
+        input_system->AddMappingContext( imc.Get(), Priority );
     }
 }
 
