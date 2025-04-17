@@ -24,4 +24,7 @@ public:
 private:
     UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess ) )
     TArray< TObjectPtr< UInputMappingContext > > InputMappingContexts;
+
+    UPROPERTY( EditDefaultsOnly, BlueprintReadOnly, meta = ( AllowPrivateAccess ) )
+    int32 Priority = 0;
 };
