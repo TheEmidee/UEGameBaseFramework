@@ -110,7 +110,7 @@ bool UGBFAsyncTaskWaitAbilityCooldownChanged::GetCooldownRemainingForTag( FGamep
 
         const auto query = FGameplayEffectQuery::MakeQuery_MatchAnyOwningTags( cooldown_tags );
         if ( TArray< TPair< float, float > > duration_and_time_remaining = ASC->GetActiveEffectsTimeRemainingAndDuration( query );
-             duration_and_time_remaining.Num() > 0 )
+            duration_and_time_remaining.Num() > 0 )
         {
             auto best_idx = 0;
             auto longest_time = duration_and_time_remaining[ 0 ].Key;

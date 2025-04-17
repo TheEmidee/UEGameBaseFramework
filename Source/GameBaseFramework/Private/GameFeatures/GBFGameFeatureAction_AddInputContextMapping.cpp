@@ -26,8 +26,8 @@ void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureRegistering()
 void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & active_data = ContextData.FindOrAdd( context );
-         !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
-         !ensure( active_data.ControllersAddedTo.IsEmpty() ) )
+        !ensure( active_data.ExtensionRequestHandles.IsEmpty() ) ||
+        !ensure( active_data.ControllersAddedTo.IsEmpty() ) )
     {
         Reset( active_data );
     }
@@ -39,7 +39,7 @@ void UGBFGameFeatureAction_AddInputContextMapping::OnGameFeatureDeactivating( FG
     Super::OnGameFeatureDeactivating( context );
 
     if ( auto * active_data = ContextData.Find( context );
-         ensure( active_data != nullptr ) )
+        ensure( active_data != nullptr ) )
     {
         Reset( *active_data );
     }
@@ -111,8 +111,15 @@ void UGBFGameFeatureAction_AddInputContextMapping::RegisterInputMappingContextsF
     {
         if ( auto * settings = ei_subsystem->GetUserSettings() )
         {
+            const auto player_index = local_player->GetLocalPlayerIndex();
+
             for ( const auto & entry : InputMappings )
             {
+                if ( entry.PlayerControllerIndex >= 0 && player_index != entry.PlayerControllerIndex )
+                {
+                    continue;
+                }
+
                 // Register this IMC with the settings!
                 if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
                 {
@@ -166,8 +173,15 @@ void UGBFGameFeatureAction_AddInputContextMapping::UnregisterInputMappingContext
     {
         if ( auto * settings = ei_subsystem->GetUserSettings() )
         {
+            const auto player_index = local_player->GetLocalPlayerIndex();
+
             for ( const auto & entry : InputMappings )
             {
+                if ( entry.PlayerControllerIndex >= 0 && player_index != entry.PlayerControllerIndex )
+                {
+                    continue;
+                }
+
                 // Skip entries that don't want to be registered
                 if ( !entry.bRegisterWithSettings )
                 {
@@ -209,7 +223,7 @@ void UGBFGameFeatureAction_AddInputContextMapping::Reset( FPerContextData & acti
     while ( !active_data.ControllersAddedTo.IsEmpty() )
     {
         if ( auto controller_ptr = active_data.ControllersAddedTo.Top();
-             controller_ptr.IsValid() )
+            controller_ptr.IsValid() )
         {
             RemoveInputMapping( controller_ptr.Get(), active_data );
         }
@@ -243,9 +257,15 @@ void UGBFGameFeatureAction_AddInputContextMapping::AddInputMappingForPlayer( UPl
         if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
         {
             auto & asset_manager = UGBFAssetManager::Get();
+            const auto player_index = lp->GetLocalPlayerIndex();
 
             for ( const auto & entry : InputMappings )
             {
+                if ( entry.PlayerControllerIndex >= 0 && player_index != entry.PlayerControllerIndex )
+                {
+                    continue;
+                }
+
                 if ( const auto * imc = asset_manager.GetAsset( entry.InputMapping ) )
                 {
                     input_system->AddMappingContext( imc, entry.Priority );
@@ -265,8 +285,15 @@ void UGBFGameFeatureAction_AddInputContextMapping::RemoveInputMapping( APlayerCo
     {
         if ( auto * input_system = lp->GetSubsystem< UEnhancedInputLocalPlayerSubsystem >() )
         {
+            const auto player_index = lp->GetLocalPlayerIndex();
+
             for ( const auto & entry : InputMappings )
             {
+                if ( entry.PlayerControllerIndex >= 0 && player_index != entry.PlayerControllerIndex )
+                {
+                    continue;
+                }
+
                 if ( const auto * imc = entry.InputMapping.Get() )
                 {
                     input_system->RemoveMappingContext( imc );

@@ -18,7 +18,7 @@ FSlateBrush UGBFActionWidget::GetIcon() const
             FSlateBrush slate_brush;
 
             if ( const auto * common_input_subsystem = GetInputSubsystem();
-                 !bound_keys.IsEmpty() && UCommonInputPlatformSettings::Get()->TryGetInputBrush( slate_brush, bound_keys[ 0 ], common_input_subsystem->GetCurrentInputType(), common_input_subsystem->GetCurrentGamepadName() ) )
+                !bound_keys.IsEmpty() && UCommonInputPlatformSettings::Get()->TryGetInputBrush( slate_brush, bound_keys[ 0 ], common_input_subsystem->GetCurrentInputType(), common_input_subsystem->GetCurrentGamepadName() ) )
             {
                 return slate_brush;
             }

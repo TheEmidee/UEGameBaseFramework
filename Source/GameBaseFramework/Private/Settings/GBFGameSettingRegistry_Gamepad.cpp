@@ -46,7 +46,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
                     if ( TSubclassOf< UCommonInputBaseControllerData > controller_data_class = controller_data_ptr.LoadSynchronous() )
                     {
                         if ( const auto * controller_data = controller_data_class.GetDefaultObject();
-                             controller_data->InputType == ECommonInputType::Gamepad )
+                            controller_data->InputType == ECommonInputType::Gamepad )
                         {
                             setting->AddDynamicOption( controller_data->GamepadName.ToString(), controller_data->GamepadDisplayName );
                         }
@@ -60,7 +60,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeGamepadSettings( UGB
                     hardware->AddSetting( setting );
 
                     if ( const auto current_controller_platform = GetDefault< UGBFGameUserSettings >()->GetControllerPlatform();
-                         current_controller_platform == NAME_None )
+                        current_controller_platform == NAME_None )
                     {
                         setting->SetDiscreteOptionByIndex( 0 );
                     }

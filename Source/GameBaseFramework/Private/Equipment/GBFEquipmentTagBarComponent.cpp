@@ -35,7 +35,7 @@ void FGBFTagBarEquipmentList::PreReplicatedRemove( const TArrayView< int32 > rem
     for ( const auto index : removed_indices )
     {
         if ( const auto & entry = Entries[ index ];
-             entry.InventoryItemInstance != nullptr )
+            entry.InventoryItemInstance != nullptr )
         {
             BroadcastMessage( entry );
         }
@@ -47,7 +47,7 @@ void FGBFTagBarEquipmentList::PostReplicatedAdd( const TArrayView< int32 > added
     for ( const auto index : added_indices )
     {
         if ( const auto & entry = Entries[ index ];
-             entry.InventoryItemInstance != nullptr )
+            entry.InventoryItemInstance != nullptr )
         {
             BroadcastMessage( entry );
         }
@@ -76,7 +76,7 @@ UGBFEquipmentInstance * FGBFTagBarEquipmentList::AddEntry( UGBFInventoryItemInst
         if ( const UGBFInventoryItemFragment_EquippableItem * equip_info = item->FindFragmentByClass< UGBFInventoryItemFragment_EquippableItem >() )
         {
             if ( const auto equipment_definition = equip_info->EquipmentDefinition;
-                 equipment_definition != nullptr )
+                equipment_definition != nullptr )
             {
                 if ( auto * equipped_item_instance = equipment_manager->EquipItem( equipment_definition ) )
                 {
@@ -107,7 +107,7 @@ UGBFEquipmentInstance * FGBFTagBarEquipmentList::RemoveEntry( FGameplayTag type 
         for ( auto entry_it = Entries.CreateIterator(); entry_it; ++entry_it )
         {
             if ( auto & entry = *entry_it;
-                 entry.TypeTag == type )
+                entry.TypeTag == type )
             {
                 equipment_manager->UnequipItem( entry.EquipmentInstance );
 

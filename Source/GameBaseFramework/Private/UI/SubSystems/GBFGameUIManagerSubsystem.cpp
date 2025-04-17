@@ -41,7 +41,7 @@ void UGBFGameUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
             if ( const auto * pc = local_player->GetPlayerController( GetWorld() ) )
             {
                 if ( const auto * hud = pc->GetHUD();
-                     hud != nullptr && !hud->bShowHUD )
+                    hud != nullptr && !hud->bShowHUD )
                 {
                     should_show_ui = false;
                 }
@@ -50,7 +50,7 @@ void UGBFGameUIManagerSubsystem::SyncRootLayoutVisibilityToShowHUD()
             if ( auto * root_layout = policy->GetRootLayout( CastChecked< UCommonLocalPlayer >( local_player ) ) )
             {
                 if ( const auto desired_visibility = should_show_ui ? ESlateVisibility::SelfHitTestInvisible : ESlateVisibility::Collapsed;
-                     desired_visibility != root_layout->GetVisibility() )
+                    desired_visibility != root_layout->GetVisibility() )
                 {
                     root_layout->SetVisibility( desired_visibility );
                 }

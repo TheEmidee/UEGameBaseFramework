@@ -14,7 +14,6 @@
 #include "GameFramework/GBFPlayerState.h"
 #include "Input/GBFInputComponent.h"
 
-#include <AbilitySystemBlueprintLibrary.h>
 #include <Components/GameFrameworkComponentManager.h>
 #include <EnhancedInputSubsystemInterface.h>
 #include <EnhancedInputSubsystems.h>
@@ -75,7 +74,7 @@ bool UGBFHeroComponent::CanChangeInitState( UGameFrameworkComponentManager * man
         if ( is_locally_controlled && !is_bot )
         {
             if ( const auto * pc = GetController< APlayerController >();
-                 pawn->InputComponent == nullptr || pc == nullptr || pc->GetLocalPlayer() == nullptr )
+                pawn->InputComponent == nullptr || pc == nullptr || pc->GetLocalPlayer() == nullptr )
             {
                 return false;
             }

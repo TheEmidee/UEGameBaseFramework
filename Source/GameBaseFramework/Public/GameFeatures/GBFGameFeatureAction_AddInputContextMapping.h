@@ -20,6 +20,11 @@ struct FGBFInputMappingContextAndPriority
     UPROPERTY( EditAnywhere, Category = "Input" )
     int32 Priority = 0;
 
+    // The player controller index of the player that will receive the input mapping
+    // -1 means all players
+    UPROPERTY( EditAnywhere, Category = "Input" )
+    int32 PlayerControllerIndex = INDEX_NONE;
+
     /** If true, then this mapping context will be registered with the settings when this game feature action is registered. */
     UPROPERTY( EditAnywhere, Category = "Input" )
     bool bRegisterWithSettings = true;

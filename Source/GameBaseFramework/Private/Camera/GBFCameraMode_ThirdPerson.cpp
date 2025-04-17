@@ -152,7 +152,7 @@ void UGBFCameraMode_ThirdPerson::PreventCameraPenetration( FVector & camera_loca
     for ( auto ray_idx = 0; ray_idx < num_rays_to_shoot; ++ray_idx )
     {
         if ( auto & feeler = PenetrationAvoidanceFeelers[ ray_idx ];
-             feeler.FramesUntilNextTrace <= 0 )
+            feeler.FramesUntilNextTrace <= 0 )
         {
             // calc ray target
             FVector ray_target;
@@ -185,7 +185,7 @@ void UGBFCameraMode_ThirdPerson::PreventCameraPenetration( FVector & camera_loca
             feeler.FramesUntilNextTrace = feeler.TraceInterval;
 
             if ( const auto * hit_actor = hit_result.GetActor();
-                 has_hit && hit_actor != nullptr )
+                has_hit && hit_actor != nullptr )
             {
                 auto ignore_hit = false;
 
@@ -204,7 +204,7 @@ void UGBFCameraMode_ThirdPerson::PreventCameraPenetration( FVector & camera_loca
                     const auto hit_direction_xy = hit_offset.GetSafeNormal2D();
 
                     if ( const auto dot_hit_direction = FVector::DotProduct( view_target_forward_xy, hit_direction_xy );
-                         dot_hit_direction > 0.0f )
+                        dot_hit_direction > 0.0f )
                     {
                         ignore_hit = true;
                         // Ignore this CameraBlockingVolume on the remaining sweeps.

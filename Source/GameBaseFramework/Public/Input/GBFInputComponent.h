@@ -1,12 +1,14 @@
 #pragma once
 
 #include "GBFInputConfig.h"
+#include "GBFInputMappingContextStackItem.h"
 
 #include <CoreMinimal.h>
 #include <EnhancedInputComponent.h>
 
 #include "GBFInputComponent.generated.h"
 
+class UGBFInputMappingContextStackItem;
 class UEnhancedInputLocalPlayerSubsystem;
 
 UCLASS()
@@ -30,6 +32,19 @@ public:
     void BindAbilityAction( const UInputAction * input_action, _USER_CLASS_ * object, _PRESSED_FUNC_ pressed_func, _RELEASED_FUNC_ released_func, TArray< uint32 > & bind_handles );
 
     void RemoveBinds( TArray< uint32 > & bind_handles );
+
+    UFUNCTION( BlueprintCallable )
+    void AddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
+
+    UFUNCTION( BlueprintCallable )
+    void RemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item );
+
+private:
+    void InternalAddInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const;
+    void InternalRemoveInputMappingContextStackItem( UGBFInputMappingContextStackItem * input_mapping_context_stack_item ) const;
+
+    UPROPERTY()
+    TArray< TObjectPtr< UGBFInputMappingContextStackItem > > InputMappingContextStackItems;
 };
 
 template < class _USER_CLASS_, typename _FUNC_TYPE_ >

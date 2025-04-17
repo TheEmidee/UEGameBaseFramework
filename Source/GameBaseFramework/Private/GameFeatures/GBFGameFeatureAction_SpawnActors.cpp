@@ -17,7 +17,7 @@ FGBFSpawningActorEntry::FGBFSpawningActorEntry() :
 void UGBFGameFeatureAction_SpawnActors::OnGameFeatureActivating( FGameFeatureActivatingContext & context )
 {
     if ( auto & spawned_actors = SpawnedActorsMap.FindOrAdd( context );
-         !ensureAlways( spawned_actors.IsEmpty() ) )
+        !ensureAlways( spawned_actors.IsEmpty() ) )
     {
         Reset( spawned_actors );
     }

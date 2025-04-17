@@ -66,7 +66,7 @@ void FGBFAttributeSetInitterDiscreteLevels::PreloadAttributeSetData( const TArra
     for ( TObjectIterator< UClass > class_it; class_it; ++class_it )
     {
         if ( UClass * test_class = *class_it;
-             test_class->IsChildOf( UAttributeSet::StaticClass() ) )
+            test_class->IsChildOf( UAttributeSet::StaticClass() ) )
         {
             class_list.Add( test_class );
         }
@@ -122,7 +122,7 @@ void FGBFAttributeSetInitterDiscreteLevels::PreloadAttributeSetData( const TArra
             for ( auto iterator = curve->GetKeyHandleIterator(); iterator; ++iterator )
             {
                 if ( const auto & key_handle = *iterator;
-                     key_handle == FKeyHandle::Invalid() )
+                    key_handle == FKeyHandle::Invalid() )
                 {
                     ABILITY_LOG( Verbose, TEXT( "FGBFAttributeSetInitterDiscreteLevels::PreloadAttributeSetData Data contains an invalid key handle (row: %s)" ), *row_name );
                     should_skip = true;

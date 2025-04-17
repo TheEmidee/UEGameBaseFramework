@@ -125,7 +125,7 @@ void FGBFInventoryList::RemoveEntry( UGBFInventoryItemInstance * instance )
     for ( auto entry_it = Entries.CreateIterator(); entry_it; ++entry_it )
     {
         if ( auto & entry = *entry_it;
-             entry.Instance == instance )
+            entry.Instance == instance )
         {
             entry_it.RemoveCurrent();
             MarkArrayDirty();
@@ -207,7 +207,7 @@ UGBFInventoryItemInstance * UGBFInventoryManagerComponent::FindFirstItemStackByD
     for ( const auto & entry : InventoryList.Entries )
     {
         if ( UGBFInventoryItemInstance * instance = entry.Instance;
-             IsValid( instance ) )
+            IsValid( instance ) )
         {
             if ( instance->GetItemDefinition() == item_definition )
             {
@@ -225,7 +225,7 @@ int32 UGBFInventoryManagerComponent::GetTotalItemCountByDefinition( TSubclassOf<
     for ( const auto & entry : InventoryList.Entries )
     {
         if ( const UGBFInventoryItemInstance * instance = entry.Instance;
-             IsValid( instance ) && instance->GetItemDefinition() == item_definition )
+            IsValid( instance ) && instance->GetItemDefinition() == item_definition )
         {
             ++total_count;
         }
@@ -237,7 +237,7 @@ int32 UGBFInventoryManagerComponent::GetTotalItemCountByDefinition( TSubclassOf<
 bool UGBFInventoryManagerComponent::ConsumeItemsByDefinition( TSubclassOf< UGBFInventoryItemDefinition > item_definition, int32 num_to_consume )
 {
     if ( const AActor * owning_actor = GetOwner();
-         owning_actor == nullptr || !owning_actor->HasAuthority() )
+        owning_actor == nullptr || !owning_actor->HasAuthority() )
     {
         return false;
     }
@@ -267,7 +267,7 @@ bool UGBFInventoryManagerComponent::ReplicateSubobjects( UActorChannel * channel
     for ( auto & entry : InventoryList.Entries )
     {
         if ( UGBFInventoryItemInstance * instance = entry.Instance;
-             instance != nullptr && IsValid( instance ) )
+            instance != nullptr && IsValid( instance ) )
         {
             wrote_something |= channel->ReplicateSubobject( instance, *bunch, *rep_flags );
         }
@@ -286,7 +286,7 @@ void UGBFInventoryManagerComponent::ReadyForReplication()
         for ( const auto & entry : InventoryList.Entries )
         {
             if ( UGBFInventoryItemInstance * instance = entry.Instance;
-                 IsValid( instance ) )
+                IsValid( instance ) )
             {
                 AddReplicatedSubObject( instance );
             }

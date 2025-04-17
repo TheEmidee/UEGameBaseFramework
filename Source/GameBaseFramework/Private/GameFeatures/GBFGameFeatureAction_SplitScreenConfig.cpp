@@ -27,7 +27,7 @@ void UGBFGameFeatureAction_SplitScreenConfig::OnGameFeatureDeactivating( FGameFe
         }
 
         if ( auto & vote_count = GlobalDisableVotes[ viewport_key ];
-             vote_count <= 1 )
+            vote_count <= 1 )
         {
             GlobalDisableVotes.Remove( viewport_key );
 

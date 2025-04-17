@@ -82,7 +82,7 @@ void UGBFEquipmentInstance_Weapon::OnDeathStarted( AActor * /*owning_actor*/ )
 void UGBFEquipmentInstance_Weapon::ApplyDeviceProperties()
 {
     if ( const auto user_id = GetOwningUserId();
-         user_id.IsValid() )
+        user_id.IsValid() )
     {
         if ( auto * input_device_subsystem = UInputDeviceSubsystem::Get() )
         {
@@ -108,7 +108,7 @@ void UGBFEquipmentInstance_Weapon::ApplyDeviceProperties()
 void UGBFEquipmentInstance_Weapon::RemoveDeviceProperties()
 {
     if ( const auto user_id = GetOwningUserId();
-         user_id.IsValid() && !DevicePropertyHandles.IsEmpty() )
+        user_id.IsValid() && !DevicePropertyHandles.IsEmpty() )
     {
         // Remove any device properties that have been applied
         if ( auto * input_device_subsystem = UInputDeviceSubsystem::Get() )

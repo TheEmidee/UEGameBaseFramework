@@ -39,7 +39,7 @@ void FGBFEquipmentList::PreReplicatedRemove( const TArrayView< int32 > removed_i
     for ( const auto index : removed_indices )
     {
         if ( const auto & entry = Entries[ index ];
-             entry.Instance != nullptr )
+            entry.Instance != nullptr )
         {
             entry.Instance->OnUnequipped();
         }
@@ -51,7 +51,7 @@ void FGBFEquipmentList::PostReplicatedAdd( const TArrayView< int32 > added_indic
     for ( const auto index : added_indices )
     {
         if ( const auto & entry = Entries[ index ];
-             entry.Instance != nullptr )
+            entry.Instance != nullptr )
         {
             entry.Instance->OnEquipped();
         }
@@ -145,7 +145,7 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
     for ( auto entry_it = Entries.CreateIterator(); entry_it; ++entry_it )
     {
         if ( auto & entry = *entry_it;
-             entry.Instance == instance )
+            entry.Instance == instance )
         {
             if ( auto * asc = GetAbilitySystemComponent() )
             {
@@ -247,7 +247,7 @@ bool UGBFEquipmentManagerComponent::ReplicateSubobjects( UActorChannel * channel
     for ( auto & entry : EquipmentList.Entries )
     {
         if ( UGBFEquipmentInstance * instance = entry.Instance;
-             IsValid( instance ) )
+            IsValid( instance ) )
         {
             wrote_something |= channel->ReplicateSubobject( instance, *bunch, *rep_flags );
         }
@@ -284,7 +284,7 @@ void UGBFEquipmentManagerComponent::ReadyForReplication()
         for ( const auto & entry : EquipmentList.Entries )
         {
             if ( UGBFEquipmentInstance * instance = entry.Instance;
-                 IsValid( instance ) )
+                IsValid( instance ) )
             {
                 AddReplicatedSubObject( instance );
             }

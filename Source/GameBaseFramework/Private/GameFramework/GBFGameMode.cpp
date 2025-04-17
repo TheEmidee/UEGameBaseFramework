@@ -296,7 +296,7 @@ bool AGBFGameMode::TryDedicatedServerLogin()
     const auto default_map = UGameMapsSettings::GetGameDefaultMap();
     const auto * world = GetWorld();
     if ( const auto * game_instance = GetGameInstance();
-         game_instance != nullptr && world != nullptr && world->GetNetMode() == NM_DedicatedServer && world->URL.Map == default_map )
+        game_instance != nullptr && world != nullptr && world->GetNetMode() == NM_DedicatedServer && world->URL.Map == default_map )
     {
         // Only register if this is the default map on a dedicated server
         auto * user_subsystem = game_instance->GetSubsystem< UCommonUserSubsystem >();
@@ -589,7 +589,7 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
     // Search for the matching experience, it's fine to force load them because we're in dedicated server startup
     auto & asset_manager = UGBFAssetManager::Get();
     if ( const TSharedPtr< FStreamableHandle > handle = asset_manager.LoadPrimaryAssetsWithType( user_experience_type );
-         ensure( handle.IsValid() ) )
+        ensure( handle.IsValid() ) )
     {
         handle->WaitUntilComplete();
     }
@@ -602,7 +602,7 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
     for ( auto * object : user_experiences )
     {
         if ( const auto * user_experience = Cast< UGBFUserFacingExperienceDefinition >( object );
-             ensure( user_experience != nullptr ) )
+            ensure( user_experience != nullptr ) )
         {
             if ( user_experience->GetPrimaryAssetId() == user_experience_id )
             {
@@ -623,11 +623,11 @@ void AGBFGameMode::HostDedicatedServerMatch( ECommonSessionOnlineMode online_mod
     }
 
     if ( const auto * game_instance = GetGameInstance();
-         ensure( found_experience != nullptr && game_instance != nullptr ) )
+        ensure( found_experience != nullptr && game_instance != nullptr ) )
     {
         // Actually host the game
         if ( auto * host_request = found_experience->CreateHostingRequest( this );
-             ensure( host_request != nullptr ) )
+            ensure( host_request != nullptr ) )
         {
             // :TODO: MIKE The experience defines that already
             // host_request->OnlineMode = online_mode;
