@@ -12,6 +12,7 @@
 
 DEFINE_LOG_CATEGORY_STATIC( LogGBFSaveGameSystem, Verbose, Verbose )
 
+// :NOTE: Check if this cvar can't be edited by users through console commands or .ini files in shipping builds
 static TAutoConsoleVariable< bool > CVarDisableSave( TEXT( "GBF.SaveGameSystem.DisableSave" ),
     false,
     TEXT( "Set to true to disable saving the game." ),
