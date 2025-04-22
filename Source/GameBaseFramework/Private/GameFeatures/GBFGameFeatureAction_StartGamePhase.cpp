@@ -27,7 +27,7 @@ void UGBFGameFeatureAction_StartGamePhase::AddToWorld( const FWorldContext & wor
         {
             for ( auto phase_soft_class : Phases )
             {
-                if ( auto * phase_class = phase_soft_class.Get() )
+                if ( auto * phase_class = phase_soft_class.LoadSynchronous() )
                 {
                     phase_subsystem->StartPhase( phase_class );
                 }
