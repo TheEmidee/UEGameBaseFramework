@@ -12,12 +12,10 @@
 
 DEFINE_LOG_CATEGORY_STATIC( LogGBFSaveGameSystem, Verbose, Verbose )
 
-#if !UE_BUILD_SHIPPING
 static TAutoConsoleVariable< bool > CVarDisableSave( TEXT( "GBF.SaveGameSystem.DisableSave" ),
     false,
     TEXT( "Set to true to disable saving the game." ),
     ECVF_Default | ECVF_Preview );
-#endif
 
 namespace
 {
@@ -58,6 +56,11 @@ void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 
 bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 {
+    if ( CVarDisableSave.GetValueOnGameThread() )
+    {
+        return false;
+    }
+
     const auto current_time = GetWorld()->GetTimeSeconds();
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
@@ -103,12 +106,10 @@ bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 
 bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
-#if !UE_BUILD_SHIPPING
     if ( CVarDisableSave.GetValueOnGameThread() )
     {
         return false;
     }
-#endif
 
     if ( SaveGame == nullptr )
     {
