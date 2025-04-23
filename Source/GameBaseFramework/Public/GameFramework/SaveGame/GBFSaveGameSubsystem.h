@@ -32,8 +32,6 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsyste
     GENERATED_BODY()
 
 public:
-    void Initialize( FSubsystemCollectionBase & collection ) override;
-
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )

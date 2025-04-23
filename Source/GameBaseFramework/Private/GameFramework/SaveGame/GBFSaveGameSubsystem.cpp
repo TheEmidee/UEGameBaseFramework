@@ -38,13 +38,6 @@ namespace
     }
 }
 
-void UGBFSaveGameSubsystem::Initialize( FSubsystemCollectionBase & collection )
-{
-    Super::Initialize( collection );
-
-    auto * settings = GetDefault< UGBFSaveGameSettings >();
-}
-
 void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 {
     if ( PrimaryPlayer == nullptr )
