@@ -7,14 +7,11 @@
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerState.h"
 
-#include <AbilitySystemComponent.h>
-#include <AbilitySystemGlobals.h>
 #include <Engine/World.h>
-#include <GameFramework/Pawn.h>
-#include <GameFramework/PlayerState.h>
 #include <TimerManager.h>
 
-AGBFPlayerController::AGBFPlayerController()
+AGBFPlayerController::AGBFPlayerController() :
+    LastSeenPlayerState( nullptr )
 {
     PlayerCameraManagerClass = AGBFPlayerCameraManager::StaticClass();
 }
