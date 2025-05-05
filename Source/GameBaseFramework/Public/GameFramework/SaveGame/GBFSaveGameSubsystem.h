@@ -32,6 +32,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsyste
     GENERATED_BODY()
 
 public:
+    FGBFOnOperationTriggeredDelegate & OnOperationTriggered();
+
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )
@@ -77,4 +79,9 @@ template < typename _SAVE_GAME_CLASS_ >
 _SAVE_GAME_CLASS_ * UGBFSaveGameSubsystem::GetSaveGame() const
 {
     return Cast< _SAVE_GAME_CLASS_ >( SaveGame );
+}
+
+FORCEINLINE FGBFOnOperationTriggeredDelegate & UGBFSaveGameSubsystem::OnOperationTriggered()
+{
+    return OnOperationTriggeredDelegate;
 }
