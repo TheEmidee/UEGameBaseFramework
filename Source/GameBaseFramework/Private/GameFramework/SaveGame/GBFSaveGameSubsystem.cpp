@@ -1,5 +1,6 @@
 #include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
 
+#include "Async/Async.h"
 #include "GBFTags.h"
 #include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/SaveGame/GBFSaveGame.h"
@@ -147,19 +148,21 @@ bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 
 void UGBFSaveGameSubsystem::SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved )
 {
-    GetWorld()->GetTimerManager().SetTimerForNextTick( FTimerDelegate::CreateLambda( [ & ]() {
-        Save( on_save_game_saved );
-    } ) );
+    // :NOTE: Using FTimerDelegate to avoid thread-race issues
+    FTimerDelegate delegate;
+    delegate.BindUFunction( this, "Save", on_save_game_saved );
+
+    GetWorld()->GetTimerManager().SetTimerForNextTick( delegate );
 }
 
 void UGBFSaveGameSubsystem::SaveWithDelay( float delay, FGBFOnSaveGameSaved on_save_game_saved )
 {
+    // :NOTE: Using FTimerDelegate to avoid thread-race issues
     FTimerHandle handle;
-    GetWorld()->GetTimerManager().SetTimer( handle, FTimerDelegate::CreateLambda( [ & ]() {
-        Save( on_save_game_saved );
-    } ),
-        delay,
-        false );
+    FTimerDelegate delegate;
+    delegate.BindUFunction( this, "Save", on_save_game_saved );
+
+    GetWorld()->GetTimerManager().SetTimer( handle, delegate, delay, false );
 }
 
 void UGBFSaveGameSubsystem::Reset()
