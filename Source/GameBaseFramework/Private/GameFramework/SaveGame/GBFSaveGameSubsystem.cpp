@@ -44,8 +44,6 @@ void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
     if ( PrimaryPlayer == nullptr )
     {
         PrimaryPlayer = local_player;
-
-        Load( FGBFOnSaveGameLoaded() );
     }
 }
 
