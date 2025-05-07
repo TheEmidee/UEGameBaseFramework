@@ -33,8 +33,10 @@ protected:
     const GameDataClass & GetOrLoadTypedGameData( const TSoftObjectPtr< GameDataClass > & data_path );
 
     void AddStartupJob( const FString & job_name, const TFunction< void() > & function, float weight );
+    void AddStartupJobWithHandle( const FString & job_name, const TFunction< TSharedPtr< FStreamableHandle >() > & function, float weight );
     virtual void LoadGameData();
     void StartInitialLoading() override;
+    virtual void PreDoStartupJobs();
 
 private:
     void InitializeGameplayCueManager();
