@@ -486,8 +486,11 @@ void AGBFGameMode::HandleMatchAssignmentIfNotExpectingOne()
             return;
         }
 
-        experience_id = GetDefault< UGameBaseFrameworkDeveloperSettings >()->DefaultExperience;
-        experience_id_source = TEXT( "Default" );
+        // There's a todo in lyra that says: Pull this from a config setting or something
+        // Do we want that? Shouldn't all maps have an experience defined?
+        /*experience_id = FPrimaryAssetId( FPrimaryAssetType( "LyraExperienceDefinition" ), FName( "B_LyraDefaultExperience" ) );
+        experience_id_source = TEXT( "Default" );*/
+        return;
     }
 
     OnExperienceDefined( experience_id, experience_id_source );
