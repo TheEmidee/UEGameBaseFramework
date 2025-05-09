@@ -58,6 +58,16 @@ void UGBFAssetManager::AddStartupJob( const FString & job_name, const TFunction<
         weight ) );
 }
 
+void UGBFAssetManager::AddStartupJobWithHandle( const FString & job_name, const TFunction< TSharedPtr< FStreamableHandle >() > & function, float weight )
+{
+    StartupJobs.Add( FGBFAssetManagerStartupJob(
+        job_name,
+        [ this, function ]( const FGBFAssetManagerStartupJob & startup_job, TSharedPtr< FStreamableHandle > & load_handle ) {
+            load_handle = function();
+        },
+        weight ) );
+}
+
 void UGBFAssetManager::LoadGameData()
 {
 }
@@ -76,8 +86,14 @@ void UGBFAssetManager::StartInitialLoading()
         },
         1.0f );
 
+    PreDoStartupJobs();
+
     // Run all the queued up startup jobs
     DoAllStartupJobs();
+}
+
+void UGBFAssetManager::PreDoStartupJobs()
+{
 }
 
 void UGBFAssetManager::InitializeGameplayCueManager()
