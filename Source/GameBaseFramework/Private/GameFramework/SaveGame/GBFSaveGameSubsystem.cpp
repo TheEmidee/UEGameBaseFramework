@@ -101,16 +101,19 @@ bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
     if ( CVarDisableSave.GetValueOnGameThread() )
     {
+        on_save_game_saved.Execute( SaveGame, false );
         return false;
     }
 
     if ( SaveGame == nullptr )
     {
+        on_save_game_saved.Execute( SaveGame, false );
         return false;
     }
 
     if ( !ensure( PrimaryPlayer.Get() ) )
     {
+        on_save_game_saved.Execute( SaveGame, false );
         return false;
     }
 
@@ -120,6 +123,7 @@ bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
     if ( !IsFrequencyRespected( SaveGameCallTimes, current_time, settings->MaxSaveFrequencyDuration, settings->MaxSaveFrequency ) )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Too much calls to Save. Max calls : %i in %f seconds" ), settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
+        on_save_game_saved.Execute( SaveGame, false );
         return false;
     }
 
@@ -127,6 +131,7 @@ bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
     const auto & request_slot_name = SaveGame->GetSaveSlotName();
     if ( !ensure( request_slot_name.Len() > 0 ) )
     {
+        on_save_game_saved.Execute( SaveGame, false );
         return false;
     }
 
