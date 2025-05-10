@@ -184,7 +184,7 @@ void UGBFSaveGameSubsystem::RegisterSavable( const TScriptInterface< IGBFSaveGam
     }
     else
     {
-        PendingSavables.Add( savable );
+        PendingSavables.AddUnique( savable );
     }
 }
 
