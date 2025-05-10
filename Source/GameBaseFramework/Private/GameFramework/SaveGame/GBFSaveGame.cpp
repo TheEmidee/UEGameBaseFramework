@@ -108,7 +108,8 @@ void UGBFSaveGame::RegisterSavable( TScriptInterface< IGBFSaveGameSystemSavableI
     }
     else
     {
-        SavablesData.Emplace_GetRef( savable, FSoftClassPath( savable.GetObject()->GetClass() ), TArray< uint8 >() );
+        auto & savable_data = SavablesData.Emplace_GetRef( savable, FSoftClassPath( savable.GetObject()->GetClass() ), TArray< uint8 >() );
+        TryLoadSavable( savable_data );
     }
 }
 
