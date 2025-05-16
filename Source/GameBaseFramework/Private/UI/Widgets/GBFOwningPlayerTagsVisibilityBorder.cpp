@@ -1,9 +1,8 @@
 #include "UI/Widgets/GBFOwningPlayerTagsVisibilityBorder.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "GameFramework/Pawn.h"
-
+#include <AbilitySystemBlueprintLibrary.h>
+#include <AbilitySystemComponent.h>
+#include <GameFramework/Pawn.h>
 #include <GameplayTagAssetInterface.h>
 
 UGBFOwningPlayerTagsVisibilityBorder::UGBFOwningPlayerTagsVisibilityBorder( const FObjectInitializer & object_initializer ) :
@@ -32,17 +31,7 @@ void UGBFOwningPlayerTagsVisibilityBorder::UpdateVisibility()
     {
         if ( auto * pc = lp->GetPlayerController( GetWorld() ) )
         {
-            if ( auto * pawn = pc->GetPawn() )
-            {
-                if ( auto * interface = Cast< IGameplayTagAssetInterface >( pawn ) )
-                {
-                    FGameplayTagContainer tags;
-                    interface->GetOwnedGameplayTags( tags );
-
-                    const auto is_visible = VisibilityQuery.Matches( tags );
-                    SetVisibility( is_visible ? VisibleType : HiddenType );
-                }
-            }
+            RefreshVisibilityForPawn( pc->GetPawn() );
         }
     }
 }
@@ -55,23 +44,12 @@ void UGBFOwningPlayerTagsVisibilityBorder::ListenToTagChanged()
         {
             if ( auto * pawn = pc->GetPawn() )
             {
-                if ( auto * asc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( pawn ) )
-                {
-                    for ( const auto & [ tag, handle ] : GameplayTagListenerHandles )
-                    {
-                        asc->UnregisterGameplayTagEvent( handle, tag );
-                    }
-
-                    GameplayTagListenerHandles.Reset();
-
-                    TArray< FGameplayTag > query_tags;
-                    VisibilityQuery.GetGameplayTagArray( query_tags );
-
-                    for ( auto tag : query_tags )
-                    {
-                        GameplayTagListenerHandles.Add( tag, asc->RegisterGameplayTagEvent( tag ).AddUObject( this, &ThisClass::OnTagsUpdated ) );
-                    }
-                }
+                OnPlayerControllerPawnChanged( nullptr, pawn );
+            }
+            else
+            {
+                pc->OnPossessedPawnChanged.RemoveAll( this );
+                pc->OnPossessedPawnChanged.AddUniqueDynamic( this, &UGBFOwningPlayerTagsVisibilityBorder::OnPlayerControllerPawnChanged );
             }
         }
     }
@@ -80,4 +58,49 @@ void UGBFOwningPlayerTagsVisibilityBorder::ListenToTagChanged()
 void UGBFOwningPlayerTagsVisibilityBorder::OnTagsUpdated( FGameplayTag /*gameplay_tag*/, int /*count*/ )
 {
     UpdateVisibility();
+}
+
+void UGBFOwningPlayerTagsVisibilityBorder::RefreshVisibilityForPawn( APawn * pawn )
+{
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    if ( auto * interface = Cast< IGameplayTagAssetInterface >( pawn ) )
+    {
+        FGameplayTagContainer tags;
+        interface->GetOwnedGameplayTags( tags );
+
+        const auto is_visible = VisibilityQuery.Matches( tags );
+        SetVisibility( is_visible ? VisibleType : HiddenType );
+    }
+}
+
+void UGBFOwningPlayerTagsVisibilityBorder::OnPlayerControllerPawnChanged( APawn * /*old_pawn*/, APawn * new_pawn )
+{
+    if ( new_pawn == nullptr )
+    {
+        return;
+    }
+
+    if ( auto * asc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( new_pawn ) )
+    {
+        for ( const auto & [ tag, handle ] : GameplayTagListenerHandles )
+        {
+            asc->UnregisterGameplayTagEvent( handle, tag );
+        }
+
+        GameplayTagListenerHandles.Reset();
+
+        TArray< FGameplayTag > query_tags;
+        VisibilityQuery.GetGameplayTagArray( query_tags );
+
+        for ( auto tag : query_tags )
+        {
+            GameplayTagListenerHandles.Add( tag, asc->RegisterGameplayTagEvent( tag ).AddUObject( this, &ThisClass::OnTagsUpdated ) );
+        }
+    }
+
+    RefreshVisibilityForPawn( new_pawn );
 }
