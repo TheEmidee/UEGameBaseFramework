@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Containers/Deque.h"
+#include "FrequencyThrottler.h"
 #include "GBFSaveGame.h"
 
 #include <CoreMinimal.h>
@@ -33,6 +34,8 @@ class GAMEBASEFRAMEWORK_API UGBFSaveGameSubsystem : public UGameInstanceSubsyste
 
 public:
     FGBFOnOperationTriggeredDelegate & OnOperationTriggered();
+
+    void Initialize( FSubsystemCollectionBase & collection ) override;
 
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
@@ -71,8 +74,8 @@ private:
 
     TWeakObjectPtr< ULocalPlayer > PrimaryPlayer;
 
-    TDeque< float > LoadGameCallTimes;
-    TDeque< float > SaveGameCallTimes;
+    FFrequencyThrottler SaveGameFrequencyThrottler;
+    FFrequencyThrottler LoadGameFrequencyThrottler;
 };
 
 template < typename _SAVE_GAME_CLASS_ >

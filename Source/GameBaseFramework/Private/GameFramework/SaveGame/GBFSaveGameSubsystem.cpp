@@ -1,6 +1,5 @@
 #include "GameFramework/SaveGame/GBFSaveGameSubsystem.h"
 
-#include "Async/Async.h"
 #include "GBFTags.h"
 #include "GameFramework/GBFWorldSettings.h"
 #include "GameFramework/SaveGame/GBFSaveGame.h"
@@ -39,6 +38,15 @@ namespace
     }
 }
 
+void UGBFSaveGameSubsystem::Initialize( FSubsystemCollectionBase & collection )
+{
+    Super::Initialize( collection );
+
+    auto * settings = GetDefault< UGBFSaveGameSettings >();
+    SaveGameFrequencyThrottler.Reset( settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
+    LoadGameFrequencyThrottler.Reset( settings->MaxLoadFrequency, settings->MaxLoadFrequencyDuration );
+}
+
 void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
 {
     if ( PrimaryPlayer == nullptr )
@@ -67,17 +75,16 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
         return;
     }
 
-    const auto current_time = GetWorld()->GetTimeSeconds();
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
     UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before loading" ) );
-    if ( !IsFrequencyRespected( LoadGameCallTimes, current_time, settings->MaxLoadFrequencyDuration, settings->MaxLoadFrequency ) )
+    if ( !LoadGameFrequencyThrottler.RecordEvent() )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Too much calls to Load. Max calls : %i in %f seconds" ), settings->MaxLoadFrequency, settings->MaxLoadFrequencyDuration );
         on_save_game_loaded.ExecuteIfBound( SaveGame, false );
         return;
     }
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Loaded %i times for the last %lld seconds" ), LoadGameCallTimes.Num(), FMath::RoundToInt( current_time - LoadGameCallTimes.First() ) );
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Loaded %i times for the last %i seconds" ), LoadGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( LoadGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
 
     if ( SaveGame != nullptr )
     {
@@ -164,17 +171,16 @@ void UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
         return;
     }
 
-    const auto current_time = GetWorld()->GetTimeSeconds();
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
     UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before saving" ) );
-    if ( !IsFrequencyRespected( SaveGameCallTimes, current_time, settings->MaxSaveFrequencyDuration, settings->MaxSaveFrequency ) )
+    if ( !SaveGameFrequencyThrottler.RecordEvent() )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : Too much calls to Save. Max calls : %i in %f seconds" ), settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
         return;
     }
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Saved %i times for the last %lld seconds" ), SaveGameCallTimes.Num(), FMath::RoundToInt( current_time - SaveGameCallTimes.First() ) );
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Saved %i times for the last %i seconds" ), SaveGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( SaveGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
 
     OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Started );
 
