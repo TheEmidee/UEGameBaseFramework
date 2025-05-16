@@ -47,29 +47,37 @@ void UGBFSaveGameSubsystem::NotifyPlayerAdded( ULocalPlayer * local_player )
     }
 }
 
-bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
+void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 {
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "UGBFSaveGameSubsystem::Load" ) );
+
     if ( CVarDisableSave.GetValueOnGameThread() )
     {
-        return false;
+        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Failed to load : Loading the game is disabled with the console variable GBF.SaveGameSystem.DisableSave" ) );
+        on_save_game_loaded.ExecuteIfBound( SaveGame, false );
+        return;
+    }
+
+    const auto * world = GetWorld();
+    const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
+    if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
+    {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to load : Tag WorldSettings.NoSaveGame is set on the world settings" ) );
+        on_save_game_loaded.ExecuteIfBound( SaveGame, false );
+        return;
     }
 
     const auto current_time = GetWorld()->GetTimeSeconds();
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before loading" ) );
     if ( !IsFrequencyRespected( LoadGameCallTimes, current_time, settings->MaxLoadFrequencyDuration, settings->MaxLoadFrequency ) )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Too much calls to Load. Max calls : %i in %f seconds" ), settings->MaxLoadFrequency, settings->MaxLoadFrequencyDuration );
-        return false;
+        on_save_game_loaded.ExecuteIfBound( SaveGame, false );
+        return;
     }
-
-    const auto * world = GetWorld();
-
-    const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
-    if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
-    {
-        return false;
-    }
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Loaded %i times for the last %lld seconds" ), LoadGameCallTimes.Num(), FMath::RoundToInt( current_time - LoadGameCallTimes.First() ) );
 
     if ( SaveGame != nullptr )
     {
@@ -80,8 +88,18 @@ bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
     }
 
     auto callback = FOnLocalPlayerSaveGameLoadedNative::CreateLambda( [ &, delegate = MoveTemp( on_save_game_loaded ) ]( ULocalPlayerSaveGame * save_game ) {
+        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "AsyncSaveGameToSlot returned : %i" ), save_game != nullptr );
+
         SaveGame = Cast< UGBFSaveGame >( save_game );
 
+        if ( SaveGame == nullptr )
+        {
+            UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to load : Save game returned by AsyncSaveGameToSlot is null" ) );
+            delegate.ExecuteIfBound( SaveGame, false );
+            return;
+        }
+
+        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Register savables" ) );
         for ( const auto & pending_savable : PendingSavables )
         {
             SaveGame->RegisterSavable( pending_savable );
@@ -89,68 +107,94 @@ bool UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 
         PendingSavables.Reset();
 
-        delegate.ExecuteIfBound( SaveGame );
+        delegate.ExecuteIfBound( SaveGame, true );
         OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Calling AsyncLoadOrCreateSaveGameForLocalPlayer" ) );
     OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Started );
-    return UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName, callback );
+
+    if ( !UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName, callback ) )
+    {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to load : UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer returned false" ) );
+        on_save_game_loaded.ExecuteIfBound( SaveGame, false );
+    }
 }
 
-bool UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
+void UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "UGBFSaveGameSubsystem::Save" ) );
+
     if ( CVarDisableSave.GetValueOnGameThread() )
     {
+        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Failed to save : Saving the game is disabled with the console variable GBF.SaveGameSystem.DisableSave" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
-        return false;
+        return;
     }
 
     if ( SaveGame == nullptr )
     {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : No save game" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
-        return false;
+        return;
     }
 
     if ( !ensure( PrimaryPlayer.Get() ) )
     {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : No primary player" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
-        return false;
+        return;
     }
 
-    const auto current_time = GetWorld()->GetTimeSeconds();
-    auto * settings = GetDefault< UGBFSaveGameSettings >();
-
-    if ( !IsFrequencyRespected( SaveGameCallTimes, current_time, settings->MaxSaveFrequencyDuration, settings->MaxSaveFrequency ) )
+    const auto * world = GetWorld();
+    const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
+    if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
     {
-        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Too much calls to Save. Max calls : %i in %f seconds" ), settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : Tag WorldSettings.NoSaveGame is set on the world settings" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
-        return false;
+        return;
     }
 
     const auto request_user_index = SaveGame->GetPlatformUserIndex();
     const auto & request_slot_name = SaveGame->GetSaveSlotName();
     if ( !ensure( request_slot_name.Len() > 0 ) )
     {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : No slot name" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
-        return false;
+        return;
     }
+
+    const auto current_time = GetWorld()->GetTimeSeconds();
+    auto * settings = GetDefault< UGBFSaveGameSettings >();
+
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before saving" ) );
+    if ( !IsFrequencyRespected( SaveGameCallTimes, current_time, settings->MaxSaveFrequencyDuration, settings->MaxSaveFrequency ) )
+    {
+        UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : Too much calls to Save. Max calls : %i in %f seconds" ), settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
+        on_save_game_saved.ExecuteIfBound( SaveGame, false );
+        return;
+    }
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Saved %i times for the last %lld seconds" ), SaveGameCallTimes.Num(), FMath::RoundToInt( current_time - SaveGameCallTimes.First() ) );
 
     OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Started );
 
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Handle PreSave" ) );
     SaveGame->HandlePreSave();
 
     auto callback = FAsyncSaveGameToSlotDelegate::CreateLambda( [ &, delegate = MoveTemp( on_save_game_saved ) ]( const FString & /*slot_name*/, const int32 /*user_index*/, bool success ) {
+        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "AsyncSaveGameToSlot returned %i" ), success );
         delegate.ExecuteIfBound( SaveGame, success );
         OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
+    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Calling AsyncSaveGameToSlot" ) );
     UGameplayStatics::AsyncSaveGameToSlot( SaveGame, request_slot_name, request_user_index, callback );
-
-    return true;
 }
 
 void UGBFSaveGameSubsystem::SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved )
 {
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "SaveNextTick" ) );
+
     // :NOTE: Using FTimerDelegate to avoid thread-race issues
     FTimerDelegate delegate;
     delegate.BindUFunction( this, "Save", on_save_game_saved );
@@ -160,6 +204,8 @@ void UGBFSaveGameSubsystem::SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved
 
 void UGBFSaveGameSubsystem::SaveWithDelay( float delay, FGBFOnSaveGameSaved on_save_game_saved )
 {
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Save with delay %s" ), *FString::SanitizeFloat( delay ) );
+
     // :NOTE: Using FTimerDelegate to avoid thread-race issues
     FTimerHandle handle;
     FTimerDelegate delegate;
@@ -170,6 +216,8 @@ void UGBFSaveGameSubsystem::SaveWithDelay( float delay, FGBFOnSaveGameSaved on_s
 
 void UGBFSaveGameSubsystem::Reset()
 {
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Reset" ) );
+
     if ( SaveGame != nullptr )
     {
         SaveGame->ResetToDefault();

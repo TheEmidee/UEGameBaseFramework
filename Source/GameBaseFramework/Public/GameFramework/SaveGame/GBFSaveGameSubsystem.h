@@ -23,7 +23,7 @@ enum class EGBFSaveGameSubsystemOperationEvent : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams( FGBFOnOperationTriggeredDelegate, EGBFSaveGameSubsystemOperation, Operation, EGBFSaveGameSubsystemOperationEvent, Event );
-DECLARE_DYNAMIC_DELEGATE_OneParam( FGBFOnSaveGameLoaded, UGBFSaveGame *, SaveGame );
+DECLARE_DYNAMIC_DELEGATE_TwoParams( FGBFOnSaveGameLoaded, UGBFSaveGame *, SaveGame, bool, Success );
 DECLARE_DYNAMIC_DELEGATE_TwoParams( FGBFOnSaveGameSaved, UGBFSaveGame *, SaveGame, bool, Success );
 
 UCLASS()
@@ -37,10 +37,10 @@ public:
     void NotifyPlayerAdded( ULocalPlayer * local_player );
 
     UFUNCTION( BlueprintCallable )
-    bool Load( FGBFOnSaveGameLoaded on_save_game_loaded );
+    void Load( FGBFOnSaveGameLoaded on_save_game_loaded );
 
     UFUNCTION( BlueprintCallable )
-    bool Save( FGBFOnSaveGameSaved on_save_game_saved );
+    void Save( FGBFOnSaveGameSaved on_save_game_saved );
 
     UFUNCTION( BlueprintCallable )
     void SaveNextTick( FGBFOnSaveGameSaved on_save_game_saved );
