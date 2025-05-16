@@ -33,6 +33,10 @@ protected:
 
 private:
     void OnTagsUpdated( FGameplayTag gameplay_tag, int count );
+    void RefreshVisibilityForPawn( APawn * pawn );
+
+    UFUNCTION()
+    void OnPlayerControllerPawnChanged( APawn * old_pawn, APawn * new_pawn );
 
     TMap< FGameplayTag, FDelegateHandle > GameplayTagListenerHandles;
 };
