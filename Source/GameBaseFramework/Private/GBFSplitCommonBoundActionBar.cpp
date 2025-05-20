@@ -27,8 +27,8 @@ static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
     Super( object_initializer ),
-    WidgetPool( *this ),
-    bHideDefaultAcceptAction( false )
+    bHideDefaultAcceptAction( false ),
+    WidgetPool( *this )
 {
 }
 
