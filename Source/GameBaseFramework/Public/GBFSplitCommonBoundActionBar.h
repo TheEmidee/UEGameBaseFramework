@@ -30,7 +30,7 @@ public:
     // FTickableGameObject End
 
 protected:
-    bool IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const;
+    bool IsEntryClassValid( const TSubclassOf< UUserWidget > & in_entry_class ) const;
     void OnWidgetRebuilt() override;
     void ReleaseSlateResources( bool release_children ) override;
     UUserWidget * CreateEntryInternal( TSubclassOf< UUserWidget > in_entry_class, bool is_back_action );
@@ -53,6 +53,9 @@ private:
 
     UPROPERTY( EditAnywhere, Category = EntryLayout, meta = ( MustImplement = "/Script/CommonUI.CommonBoundActionButtonInterface" ) )
     TSubclassOf< UGBFBoundActionButton > ActionButtonClass;
+
+    UPROPERTY( EditAnywhere, Category = Display, meta = ( AllowPrivateAccess ) )
+    uint8 bHideDefaultAcceptAction : 1;
 
     UPROPERTY( EditAnywhere, Category = Display )
     uint8 bDisplayOwningPlayerActionsOnly : 1;

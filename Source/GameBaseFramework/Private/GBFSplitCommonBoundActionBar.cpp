@@ -27,6 +27,7 @@ static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
     Super( object_initializer ),
+    bHideDefaultAcceptAction( false ),
     WidgetPool( *this )
 {
 }
@@ -54,7 +55,7 @@ bool UGBFSplitCommonBoundActionBar::IsTickableWhenPaused() const
     return true;
 }
 
-bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( TSubclassOf< UUserWidget > in_entry_class ) const
+bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( const TSubclassOf< UUserWidget > & in_entry_class ) const
 {
     if ( in_entry_class != nullptr )
     {
@@ -122,7 +123,7 @@ UUserWidget * UGBFSplitCommonBoundActionBar::CreateEntryInternal( TSubclassOf< U
     } );
     if ( has_recursive_user_widget )
     {
-        UE_LOG( LogSlate, Error, TEXT( "'%s' cannot be added to DynamicEntry '%s' because it is already a child and it would create a recurssion." ), *in_entry_class->GetName(), *UGBFSplitCommonBoundActionBarInternal::recursive_detection.Last()->GetName() );
+        UE_LOG( LogSlate, Error, TEXT( "'%s' cannot be added to DynamicEntry '%s' because it is already a child and it would create a recursion." ), *in_entry_class->GetName(), *UGBFSplitCommonBoundActionBarInternal::recursive_detection.Last()->GetName() );
 #if 0
         for (TSubclassOf<UUserWidget> recursive_item : UGBFSplitCommonBoundActionBarInternal::recursive_detection)
         {
@@ -365,6 +366,11 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                         const auto * input_action = binding->InputAction.Get();
                         key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
                         is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                    }
+
+                    if ( key == EKeys::Virtual_Accept && bHideDefaultAcceptAction )
+                    {
+                        continue;
                     }
 
                     auto * action_button = Cast< ICommonBoundActionButtonInterface >( CreateEntryInternal( ActionButtonClass, is_back_action ) );
