@@ -112,10 +112,7 @@ void UGBFGameViewportClient::LayoutPlayers()
                 player->Origin.X = origin_offset.X;
                 player->Origin.Y = viewport_ratio.Y / player_count * player_index + origin_offset.Y;
 
-                if ( player_index > 0 )
-                {
-                    player->Origin.Y += half_border_offset.Y;
-                }
+                player->Origin.Y += half_border_offset.Y * static_cast< float >( player_index );
             }
             break;
             case ESplitScreenType::TwoPlayer_Vertical:
@@ -125,10 +122,7 @@ void UGBFGameViewportClient::LayoutPlayers()
                 player->Origin.X = viewport_ratio.X / player_count * player_index + origin_offset.X;
                 player->Origin.Y = origin_offset.Y;
 
-                if ( player_index > 0 )
-                {
-                    player->Origin.X += half_border_offset.X;
-                }
+                player->Origin.X += half_border_offset.X * static_cast< float >( player_index );
             }
             break;
             case ESplitScreenType::ThreePlayer_FavorTop:
