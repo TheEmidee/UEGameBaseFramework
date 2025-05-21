@@ -10,6 +10,11 @@
 #include <Kismet/GameplayStatics.h>
 #include <NiagaraFunctionLibrary.h>
 
+bool UGBFContextEffectsExecuteCondition::CanExecuteContextEffects_Implementation( USkeletalMeshComponent * mesh_comp, AActor * owning_actor, UAnimSequenceBase * animation ) const
+{
+    return false;
+}
+
 FString UGBFAnimNotify_ContextEffects::GetNotifyName_Implementation() const
 {
     // If the Effect Tag is valid, pass the string name to the notify name
@@ -35,6 +40,16 @@ void UGBFAnimNotify_ContextEffects::Notify( USkeletalMeshComponent * mesh_comp, 
     if ( owning_actor == nullptr )
     {
         return;
+    }
+
+    // Can Execute ContextEffects ?
+    if ( ContextEffectExecuteCondition != nullptr )
+    {
+        const auto * execute_condition = NewObject< UGBFContextEffectsExecuteCondition >( this, ContextEffectExecuteCondition );
+        if ( execute_condition == nullptr || !execute_condition->CanExecuteContextEffects( mesh_comp, owning_actor, animation ) )
+        {
+            return;
+        }
     }
 
     // Prepare Trace Data
