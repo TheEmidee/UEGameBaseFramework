@@ -416,10 +416,11 @@ TSubclassOf< UGBFCameraMode > UGBFHeroComponent::DetermineCameraMode() const
     return nullptr;
 }
 
-void UGBFHeroComponent::OnPossessedPawnChanged( APawn * old_pawn, APawn * new_pawn )
+void UGBFHeroComponent::OnPossessedPawnChanged( APawn * /*old_pawn*/, APawn * new_pawn )
 {
     if ( new_pawn == nullptr )
     {
+        BoundActionsByInputConfig.Empty();
         bReadyToBindInputs = false;
         return;
     }
