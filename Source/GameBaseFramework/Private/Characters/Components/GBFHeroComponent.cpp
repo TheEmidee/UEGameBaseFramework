@@ -117,11 +117,12 @@ void UGBFHeroComponent::HandleChangeInitState( UGameFrameworkComponentManager * 
             pawn_ext_comp->InitializeAbilitySystem( player_state->GetGBFAbilitySystemComponent(), player_state );
         }
 
-        if ( const auto * pc = GetController< AGBFPlayerController >() )
+        if ( auto * pc = GetController< AGBFPlayerController >() )
         {
             if ( pawn->InputComponent != nullptr )
             {
                 InitializePlayerInput( pawn->InputComponent );
+                pc->OnPossessedPawnChanged.AddDynamic( this, &ThisClass::OnPossessedPawnChanged );
             }
 
             // Hook up the delegate for all pawns, in case we spectate later
@@ -253,6 +254,25 @@ void UGBFHeroComponent::OnRegister()
         }
 #endif
     }
+}
+
+void UGBFHeroComponent::OnUnregister()
+{
+    Super::OnUnregister();
+
+    const auto * pawn = GetPawn< APawn >();
+    if ( pawn == nullptr )
+    {
+        return;
+    }
+
+    auto * pc = pawn->GetController< APlayerController >();
+    if ( pc == nullptr )
+    {
+        return;
+    }
+
+    pc->OnPossessedPawnChanged.RemoveDynamic( this, &ThisClass::OnPossessedPawnChanged );
 }
 
 void UGBFHeroComponent::BindToRequiredOnActorInitStateChanged()
@@ -394,4 +414,31 @@ TSubclassOf< UGBFCameraMode > UGBFHeroComponent::DetermineCameraMode() const
     }
 
     return nullptr;
+}
+
+void UGBFHeroComponent::OnPossessedPawnChanged( APawn * /*old_pawn*/, APawn * new_pawn )
+{
+    if ( new_pawn == nullptr )
+    {
+        BoundActionsByInputConfig.Empty();
+        bReadyToBindInputs = false;
+        return;
+    }
+
+    if ( new_pawn->InputComponent == nullptr )
+    {
+        return;
+    }
+
+    if ( bReadyToBindInputs )
+    {
+        return;
+    }
+
+    if ( !HasReachedInitState( GBFTag_InitState_DataInitialized ) )
+    {
+        return;
+    }
+
+    InitializePlayerInput( new_pawn->InputComponent );
 }

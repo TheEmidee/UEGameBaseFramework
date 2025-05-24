@@ -62,6 +62,7 @@ public:
 
 protected:
     void OnRegister() override;
+    void OnUnregister() override;
     void BindToRequiredOnActorInitStateChanged() override;
     void InitializePlayerInput( UInputComponent * player_input_component );
     void Input_AbilityInputTagPressed( FGameplayTag input_tag );
@@ -70,6 +71,9 @@ protected:
     TSubclassOf< UGBFCameraMode > DetermineCameraMode() const;
 
 private:
+    UFUNCTION()
+    void OnPossessedPawnChanged( APawn * old_pawn, APawn * new_pawn );
+
     FSimpleMulticastDelegate::FDelegate OnPawnReadyToInitializeDelegate;
 
     // True when player input bindings have been applyed, will never be true for non-players
