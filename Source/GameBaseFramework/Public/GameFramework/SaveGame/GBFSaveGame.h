@@ -2,8 +2,32 @@
 
 #include <CoreMinimal.h>
 #include <GameFramework/SaveGame.h>
+#include <Serialization/MemoryReader.h>
+#include <Serialization/MemoryWriter.h>
+#include <Serialization/ObjectAndNameAsStringProxyArchive.h>
+#include <Templates/ChooseClass.h>
 
 #include "GBFSaveGame.generated.h"
+
+namespace GameBaseFramework
+{
+    namespace SaveGameSystem
+    {
+        namespace Helpers
+        {
+            template < bool bIsLoading >
+            FORCEINLINE void SerializeObject( UObject & object, TArray< uint8 > & data )
+            {
+                using TMemoryClass = typename TChooseClass< bIsLoading, FMemoryReader, FMemoryWriter >::Result;
+
+                TMemoryClass memory_archive( data );
+                FObjectAndNameAsStringProxyArchive archive( memory_archive, true );
+                archive.ArIsSaveGame = true;
+                object.Serialize( archive );
+            }
+        }
+    }
+}
 
 UINTERFACE( MinimalAPI, meta = ( CannotImplementInterfaceInBlueprint ) )
 class UGBFSaveGameSystemSavableInterface : public UInterface

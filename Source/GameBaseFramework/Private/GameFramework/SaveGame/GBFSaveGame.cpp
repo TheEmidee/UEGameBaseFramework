@@ -18,11 +18,7 @@ namespace
             return;
         }
 
-        FMemoryReader memory_reader( savable_data.Data );
-        FObjectAndNameAsStringProxyArchive archive( memory_reader, false );
-        archive.ArIsSaveGame = true;
-
-        savable_data.Savable.GetObject()->Serialize( archive );
+        GameBaseFramework::SaveGameSystem::Helpers::SerializeObject< true >( *savable_data.Savable.GetObject(), savable_data.Data );
     }
 }
 
@@ -62,11 +58,7 @@ void UGBFSaveGame::HandlePreSave()
             continue;
         }
 
-        FMemoryWriter memory_writer( savable_data.Data );
-        FObjectAndNameAsStringProxyArchive archive( memory_writer, false );
-        archive.ArIsSaveGame = true;
-
-        savable_data.Savable.GetObject()->Serialize( archive );
+        GameBaseFramework::SaveGameSystem::Helpers::SerializeObject< false >( *savable_data.Savable.GetObject(), savable_data.Data );
     }
 }
 
