@@ -82,6 +82,16 @@ struct GAMEBASEFRAMEWORK_API FGBFContextEffectAnimNotifyPreviewSettings
     FGameplayTagContainer PreviewContexts;
 };
 
+UCLASS( Abstract, Blueprintable )
+class UGBFContextEffectsExecuteCondition : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    UFUNCTION( BlueprintNativeEvent )
+    bool CanExecuteContextEffects( USkeletalMeshComponent * mesh_comp, AActor * owning_actor, UAnimSequenceBase * animation ) const;
+};
+
 UCLASS( const, hidecategories = Object, CollapseCategories, Config = Game, meta = ( DisplayName = "Play Context Effects" ) )
 class GAMEBASEFRAMEWORK_API UGBFAnimNotify_ContextEffects : public UAnimNotify
 {
@@ -139,6 +149,10 @@ public:
     // Scale to spawn the particle system at
     UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "AnimNotify", meta = ( ExposeOnSpawn = true, EditCondition = "bPerformTrace" ) )
     FGBFContextEffectAnimNotifyTraceSettings TraceProperties;
+
+    // Execute Condition, will execute if nullptr
+    UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = "AnimNotify", meta = ( ExposeOnSpawn = true ) )
+    TSubclassOf< UGBFContextEffectsExecuteCondition > ContextEffectExecuteCondition;
 
 #if WITH_EDITORONLY_DATA
     UPROPERTY( Config, EditAnywhere, Category = "PreviewProperties" )
