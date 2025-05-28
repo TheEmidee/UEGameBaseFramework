@@ -38,7 +38,11 @@ bool IGBFSaveGameSystemSavableInterface::CanBeSerialized() const
 
 void FGBFSavableData::Reset()
 {
-    Savable->OnSaveGameReset();
+    // :NOTE: When the save game is reset, not all savable objects are alive
+    if ( Savable != nullptr )
+    {
+        Savable->OnSaveGameReset();
+    }
     Data.Reset();
 }
 
