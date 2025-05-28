@@ -156,7 +156,7 @@ void UGBFHeroComponent::OnActorInitStateChanged( const FActorInitStateChangedPar
     {
         if ( params.FeatureState == GBFTag_InitState_DataInitialized )
         {
-            // If the extension component says all all other components are initialized, try to progress to next state
+            // If the extension component says all other components are initialized, try to progress to next state
             CheckDefaultInitialization();
         }
     }
