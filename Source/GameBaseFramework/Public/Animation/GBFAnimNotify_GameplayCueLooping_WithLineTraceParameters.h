@@ -32,4 +32,7 @@ private:
 
     UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( Categories = "Parameters", AllowPrivateAccess ) )
     TEnumAsByte< ECollisionChannel > LineTraceChannel;
+
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( Categories = "Parameters", AllowPrivateAccess ) )
+    uint8 bUseHitPointLocationForCue : 1;
 };

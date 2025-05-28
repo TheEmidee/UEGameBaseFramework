@@ -23,10 +23,16 @@ void UGBFAnimNotify_GameplayCueLooping_WithLineTraceParameters::NotifyBegin( USk
         FHitResult hit_result;
         owning_actor->GetWorld()->LineTraceSingleByChannel( hit_result, start_location, end_location, LineTraceChannel, collision_params );
 
-        auto gameplaycue_parameters = UGameplayCueFunctionLibrary::MakeGameplayCueParametersFromHitResult( hit_result );
-        gameplaycue_parameters.TargetAttachComponent = mesh_component;
+        auto gameplay_cue_parameters = UGameplayCueFunctionLibrary::MakeGameplayCueParametersFromHitResult( hit_result );
+        gameplay_cue_parameters.TargetAttachComponent = mesh_component;
 
-        UGameplayCueFunctionLibrary::AddGameplayCueOnActor( owning_actor, GameplayCueTag, gameplaycue_parameters );
+        if ( !bUseHitPointLocationForCue )
+        {
+            gameplay_cue_parameters.Location = FVector3d::Zero();
+            gameplay_cue_parameters.Normal = FVector3d::Zero();
+        }
+
+        UGameplayCueFunctionLibrary::AddGameplayCueOnActor( owning_actor, GameplayCueTag, gameplay_cue_parameters );
     }
 }
 
