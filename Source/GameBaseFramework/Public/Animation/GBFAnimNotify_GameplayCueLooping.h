@@ -2,7 +2,6 @@
 
 #include <Animation/AnimNotifies/AnimNotifyState.h>
 #include <CoreMinimal.h>
-#include <GAS/GameplayCues/GBFGameplayCueManager.h>
 
 #include "GBFAnimNotify_GameplayCueLooping.generated.h"
 
@@ -21,6 +20,21 @@ private:
     UPROPERTY( EditAnywhere, Category = "GameplayCue", meta = ( Categories = "GameplayCue", AllowPrivateAccess ) )
     FGameplayTag GameplayCueTag;
 
-    UPROPERTY( EditAnywhere, Category = "GameplayCue", meta = ( Categories = "GameplayCue", AllowPrivateAccess ) )
-    FGameplayCueParameters Parameters;
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( AllowPrivateAccess ) )
+    uint8 bUseLineTraceToFeelParameters : 1;
+
+    /* Line trace will start at actor location */
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( AllowPrivateAccess, EditCondition = "bUseLineTraceToFeelParameters" ) )
+    FVector LineTraceVector;
+
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( AllowPrivateAccess, EditCondition = "bUseLineTraceToFeelParameters" ) )
+    TEnumAsByte< ECollisionChannel > TraceCollisionChannel;
+
+    /* keep line trace hit point physical material, usefull for gameplay cue's surfaces spawn conditions */
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( AllowPrivateAccess, EditCondition = "bUseLineTraceToFeelParameters" ) )
+    uint8 bGatherPhysicalMaterial : 1;
+
+    /* will override attachment gameplay cue position*/
+    UPROPERTY( EditAnywhere, Category = "Parameters", meta = ( AllowPrivateAccess, EditCondition = "bUseLineTraceToFeelParameters" ) )
+    uint8 bGatherTraceHitPointLocation : 1;
 };
