@@ -8,7 +8,13 @@
 
 #define LOCTEXT_NAMESPACE "GBF"
 
-static const int32 SettingSystemDefaultLanguageIndex = 0;
+static constexpr int32 SettingSystemDefaultLanguageIndex = 0;
+
+UGBFSettingValueDiscrete_Language::UGBFSettingValueDiscrete_Language() :
+    bDisplayOnlyCultureNativeNames( false ),
+    bAddSystemDefaultLanguage( true )
+{
+}
 
 void UGBFSettingValueDiscrete_Language::StoreInitial()
 {
@@ -109,13 +115,22 @@ TArray< FText > UGBFSettingValueDiscrete_Language::GetDiscreteOptions() const
             if ( const auto culture = FInternationalization::Get().GetCulture( culture_name );
                 ensureMsgf( culture != nullptr, TEXT( "Unable to find Culture '%s'!" ), *culture_name ) )
             {
-                const auto culture_display_name = culture->GetDisplayName();
-                const auto culture_native_name = culture->GetNativeName();
+                FString entry;
 
-                // Only show both names if they're different (to avoid repetition)
-                auto entry = ( !culture_native_name.Equals( culture_display_name, ESearchCase::CaseSensitive ) )
-                                 ? FString::Printf( TEXT( "%s (%s)" ), *culture_native_name, *culture_display_name )
-                                 : culture_native_name;
+                if ( bDisplayOnlyCultureNativeNames )
+                {
+                    entry = culture->GetNativeName();
+                }
+                else
+                {
+                    const auto culture_display_name = culture->GetDisplayName();
+                    const auto culture_native_name = culture->GetNativeName();
+
+                    // Only show both names if they're different (to avoid repetition)
+                    entry = ( !culture_native_name.Equals( culture_display_name, ESearchCase::CaseSensitive ) )
+                                ? FString::Printf( TEXT( "%s (%s)" ), *culture_native_name, *culture_display_name )
+                                : culture_native_name;
+                }
 
                 options.Add( FText::FromString( entry ) );
             }
@@ -138,7 +153,10 @@ void UGBFSettingValueDiscrete_Language::OnInitialized()
         }
     }
 
-    AvailableCultureNames.Insert( TEXT( "" ), SettingSystemDefaultLanguageIndex );
+    if ( bAddSystemDefaultLanguage )
+    {
+        AvailableCultureNames.Insert( TEXT( "" ), SettingSystemDefaultLanguageIndex );
+    }
 }
 
 void UGBFSettingValueDiscrete_Language::OnApply()
