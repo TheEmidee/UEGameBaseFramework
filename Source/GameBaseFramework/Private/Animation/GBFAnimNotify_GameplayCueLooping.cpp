@@ -11,7 +11,7 @@ void UGBFAnimNotify_GameplayCueLooping::NotifyBegin( USkeletalMeshComponent * me
     {
         FGameplayCueParameters gameplay_cue_parameters;
 
-        if ( bUseLineTraceToFeelParameters )
+        if ( bUseLineTraceToFillParameters )
         {
             FHitResult hit_result;
 
