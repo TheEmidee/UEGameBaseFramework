@@ -12,6 +12,11 @@ class GAMEBASEFRAMEWORK_API UGBFSettingValueDiscrete_Language final : public UGa
     GENERATED_BODY()
 
 public:
+    UGBFSettingValueDiscrete_Language();
+
+    void SetDisplayOnlyCultureNativeNames( bool enable );
+    void SetAddSystemDefaultLanguage( bool enable );
+
     /** UGameSettingValue */
     void StoreInitial() override;
     void ResetToDefault() override;
@@ -28,4 +33,16 @@ protected:
     void OnApply() override;
 
     TArray< FString > AvailableCultureNames;
+    bool bDisplayOnlyCultureNativeNames;
+    bool bAddSystemDefaultLanguage;
 };
+
+FORCEINLINE void UGBFSettingValueDiscrete_Language::SetDisplayOnlyCultureNativeNames( bool enable )
+{
+    bDisplayOnlyCultureNativeNames = enable;
+}
+
+FORCEINLINE void UGBFSettingValueDiscrete_Language::SetAddSystemDefaultLanguage( bool enable )
+{
+    bAddSystemDefaultLanguage = enable;
+}
