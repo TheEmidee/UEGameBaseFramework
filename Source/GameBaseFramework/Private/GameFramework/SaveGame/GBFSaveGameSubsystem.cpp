@@ -39,13 +39,6 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 {
     UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "UGBFSaveGameSubsystem::Load" ) );
 
-    if ( CVarDisableSave.GetValueOnGameThread() )
-    {
-        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Failed to load : Loading the game is disabled with the console variable GBF.SaveGameSystem.DisableSave" ) );
-        on_save_game_loaded.ExecuteIfBound( SaveGame, false );
-        return;
-    }
-
     const auto * world = GetWorld();
     const auto * world_settings = Cast< AGBFWorldSettings >( world->GetWorldSettings() );
     if ( world_settings->GetGameplayTags().HasTag( GBFTag_WorldSettings_NoSaveGame ) )
