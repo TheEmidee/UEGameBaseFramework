@@ -12,11 +12,13 @@
 
 DEFINE_LOG_CATEGORY_STATIC( LogGBFSaveGameSystem, Verbose, Verbose )
 
+#if !UE_BUILD_SHIPPING
 // :NOTE: Check if this cvar can't be edited by users through console commands or .ini files in shipping builds
 static TAutoConsoleVariable< bool > CVarDisableSave( TEXT( "GBF.SaveGameSystem.DisableSave" ),
     false,
     TEXT( "Set to true to disable saving the game." ),
     ECVF_Default );
+#endif
 
 void UGBFSaveGameSubsystem::Initialize( FSubsystemCollectionBase & collection )
 {
@@ -105,12 +107,14 @@ void UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 {
     UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "UGBFSaveGameSubsystem::Save" ) );
 
+#if !UE_BUILD_SHIPPING
     if ( CVarDisableSave.GetValueOnGameThread() )
     {
         UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Failed to save : Saving the game is disabled with the console variable GBF.SaveGameSystem.DisableSave" ) );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
         return;
     }
+#endif
 
     if ( SaveGame == nullptr )
     {
