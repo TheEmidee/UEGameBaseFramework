@@ -65,7 +65,7 @@ int32 UGBFSettingValueDiscrete_Language::GetDiscreteOptionIndex() const
         FString pending_culture = settings->GetPendingCulture();
         if ( pending_culture.IsEmpty() )
         {
-            if ( settings->IsUsingDefaultCulture() )
+            if ( bAddSystemDefaultLanguage && settings->IsUsingDefaultCulture() )
             {
                 return SettingSystemDefaultLanguageIndex;
             }
