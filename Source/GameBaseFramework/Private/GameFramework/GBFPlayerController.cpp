@@ -89,11 +89,10 @@ void AGBFPlayerController::SetPlayer( UPlayer * player )
 
     if ( const UGBFLocalPlayer * local_player = Cast< UGBFLocalPlayer >( player ) )
     {
-        /* :TODO: Settings
-        UGBFSettingsShared * UserSettings = local_player->GetSharedSettings();
-        UserSettings->OnSettingChanged.AddUObject( this, &ThisClass::OnSettingsChanged );
+        auto * user_settings = local_player->GetSharedSettings();
+        user_settings->OnSettingChanged.AddUObject( this, &ThisClass::OnSettingsChanged );
 
-        OnSettingsChanged( UserSettings );*/
+        OnSettingsChanged( user_settings );
     }
 }
 
@@ -198,6 +197,11 @@ void AGBFPlayerController::OnPossess( APawn * pawn )
 
 void AGBFPlayerController::OnPlayerStateChanged()
 {
+}
+
+void AGBFPlayerController::OnSettingsChanged( UGBFSettingsShared * settings )
+{
+    bForceFeedbackEnabled = settings->GetForceFeedbackEnabled();
 }
 
 void AGBFPlayerController::BroadcastOnPlayerStateChanged()
