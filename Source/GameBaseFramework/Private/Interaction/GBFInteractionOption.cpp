@@ -2,7 +2,13 @@
 
 #include "DVEDataValidator.h"
 
+USceneComponent * UGBFInteractionWidgetComponentSelector::GetSceneComponent_Implementation(const UGBFIndicatorDescriptor*) const
+{
+    return nullptr;
+}
+
 #if WITH_EDITOR
+
 EDataValidationResult FGBFInteractionWidgetInfos::IsDataValid( FDataValidationContext & context ) const
 {
     return FDVEDataValidator( context )

@@ -5,6 +5,7 @@
 
 #include "GBFIndicatorDescriptor.generated.h"
 
+class UGBFInteractionWidgetComponentSelector;
 class UMVVMViewModelBase;
 class SWidget;
 class UGBFIndicatorDescriptor;
@@ -50,6 +51,18 @@ public:
     void SetDataObject( UObject * data_object )
     {
         DataObject = data_object;
+    }
+
+    UFUNCTION( BlueprintCallable )
+    AActor * GetInstigator() const
+    {
+        return Instigator;
+    }
+
+    UFUNCTION( BlueprintCallable )
+    void SetInstigator( AActor * instigator )
+    {
+        Instigator = instigator;
     }
 
     UFUNCTION( BlueprintCallable )
@@ -226,6 +239,18 @@ public:
     }
 
     UFUNCTION( BlueprintCallable )
+    void SetSceneComponentSelector( UGBFInteractionWidgetComponentSelector * selector )
+    {
+        ComponentSelector = selector;
+    }
+
+    UFUNCTION( BlueprintPure )
+    UGBFInteractionWidgetComponentSelector * GetSceneComponentSelector() const
+    {
+        return ComponentSelector;
+    }
+
+    UFUNCTION( BlueprintCallable )
     int32 GetPriority() const
     {
         return Priority;
@@ -282,6 +307,9 @@ private:
     TObjectPtr< UObject > DataObject;
 
     UPROPERTY()
+    TObjectPtr< AActor > Instigator;
+
+    UPROPERTY()
     TObjectPtr< UMVVMViewModelBase > ViewModel;
 
     UPROPERTY()
@@ -292,6 +320,9 @@ private:
 
     UPROPERTY()
     TSoftClassPtr< UUserWidget > IndicatorWidgetClass;
+
+    UPROPERTY()
+    TObjectPtr< UGBFInteractionWidgetComponentSelector > ComponentSelector;
 
     UPROPERTY()
     TWeakObjectPtr< UGBFIndicatorManagerComponent > ManagerPtr;

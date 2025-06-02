@@ -14,6 +14,16 @@ class UUserWidget;
 class UAbilitySystemComponent;
 class IGBFInteractableTarget;
 
+UCLASS( Abstract, Blueprintable, DefaultToInstanced, EditInlineNew )
+class GAMEBASEFRAMEWORK_API UGBFInteractionWidgetComponentSelector : public UObject
+{
+    GENERATED_BODY()
+
+public:
+    UFUNCTION( BlueprintNativeEvent )
+    USceneComponent * GetSceneComponent( const UGBFIndicatorDescriptor * indicator_description ) const;
+};
+
 USTRUCT( BlueprintType )
 struct FGBFInteractionWidgetInfos
 {
@@ -41,6 +51,9 @@ struct FGBFInteractionWidgetInfos
 
     UPROPERTY( EditDefaultsOnly, BlueprintReadWrite )
     FName SocketName;
+
+    UPROPERTY( EditDefaultsOnly, Instanced, meta = ( EditCondition = "ProjectionMode == EGBFActorCanvasProjectionMode::ComponentPoint || ProjectionMode == EGBFActorCanvasProjectionMode::ComponentBoundingBox || ProjectionMode == EGBFActorCanvasProjectionMode::ComponentScreenBoundingBox" ) )
+    TObjectPtr< UGBFInteractionWidgetComponentSelector > WidgetComponentSelector;
 
     bool operator==( const FGBFInteractionWidgetInfos & other ) const;
 };

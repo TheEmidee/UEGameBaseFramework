@@ -204,6 +204,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
 
                 auto * interactable_target_actor = interactable_component->GetOwner();
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
+                indicator->SetInstigator( GetAvatarActorFromActorInfo() );
                 indicator->SetDataObject( interactable_target_actor );
                 indicator->SetSceneComponent( interactable_target_actor->GetRootComponent() );
                 indicator->SetComponentSocketName( widget_infos.SocketName );
@@ -212,6 +213,7 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
                 indicator->SetScreenSpaceOffset( widget_infos.InteractionWidgetOffset );
                 indicator->SetProjectionMode( widget_infos.ProjectionMode );
                 indicator->SetBoundingBoxAnchor( widget_infos.BoundingBoxAnchor );
+                indicator->SetSceneComponentSelector( widget_infos.WidgetComponentSelector );
 
                 TArray< FGBFInteractionOption > interaction_options;
                 interaction_options.Reserve( options.Num() );
