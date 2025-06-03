@@ -1,12 +1,12 @@
 #pragma once
 
 #include "CommonPlayerController.h"
-#include "Input/GBFInputTypes.h"
 
 #include "GBFPlayerController.generated.h"
 
 class UGBFLocalPlayer;
 class UGBFAbilitySystemComponent;
+class UGBFSettingsShared;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerController
@@ -53,6 +53,7 @@ protected:
     virtual void OnPlayerStateChanged();
 
 private:
+    void OnSettingsChanged( UGBFSettingsShared * settings );
     void BroadcastOnPlayerStateChanged();
 
     UPROPERTY()
