@@ -2,7 +2,7 @@
 
 #include "DVEDataValidator.h"
 
-USceneComponent * UGBFInteractionWidgetComponentSelector::GetSceneComponent_Implementation(const UGBFIndicatorDescriptor*) const
+USceneComponent * UGBFInteractionWidgetComponentSelector::GetSceneComponent_Implementation( const UGBFIndicatorDescriptor * ) const
 {
     return nullptr;
 }
