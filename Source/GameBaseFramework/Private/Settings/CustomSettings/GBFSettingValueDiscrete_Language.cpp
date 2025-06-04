@@ -38,7 +38,7 @@ void UGBFSettingValueDiscrete_Language::SetDiscreteOptionByIndex( const int32 in
 {
     if ( auto * settings = CastChecked< UGBFLocalPlayer >( LocalPlayer )->GetSharedSettings() )
     {
-        if ( index == SettingSystemDefaultLanguageIndex )
+        if ( bAddSystemDefaultLanguage && index == SettingSystemDefaultLanguageIndex )
         {
             settings->ResetToDefaultCulture();
         }
