@@ -5,7 +5,7 @@
 
 #include "GBFVolumeTriggerAction.generated.h"
 
-UCLASS( DefaultToInstanced, EditInlineNew )
+UCLASS( DefaultToInstanced, EditInlineNew, Blueprintable, Abstract )
 class GAMEBASEFRAMEWORK_API UGBFVolumeTriggerAction : public UObject
 {
     GENERATED_BODY()
