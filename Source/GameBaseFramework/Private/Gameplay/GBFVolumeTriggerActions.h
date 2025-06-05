@@ -23,6 +23,6 @@ private:
     UPROPERTY( BlueprintReadOnly, VisibleAnywhere, meta = ( AllowPrivateAccess ) )
     TObjectPtr< UBoxComponent > BoxCollision;
 
-    UPROPERTY( Instanced, EditDefaultsOnly )
+    UPROPERTY( Instanced, EditAnywhere )
     TArray< TObjectPtr< UGBFVolumeTriggerAction > > TriggerActions;
 };
