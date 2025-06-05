@@ -202,6 +202,11 @@ void UGBFGameplayAbility_Interact::UpdateIndicators()
                     return;
                 }
 
+                if ( interactable_component == nullptr )
+                {
+                    return;
+                }
+
                 auto * interactable_target_actor = interactable_component->GetOwner();
                 auto * indicator = NewObject< UGBFIndicatorDescriptor >();
                 indicator->SetInstigator( GetAvatarActorFromActorInfo() );
