@@ -66,7 +66,13 @@ void AGBFPlayerCameraManager::SetModifierStack( UGBFCameraModifierStack * modifi
     },
         false );
 
-    ModifierStack = modifier_stack;
+    UGBFCameraModifierStack * new_modifier_stack = nullptr;
+    if ( modifier_stack != nullptr )
+    {
+        new_modifier_stack = DuplicateObject( modifier_stack, modifier_stack->GetOuter() );
+    }
+
+    ModifierStack = new_modifier_stack;
 
     ForEachCameraStackModifier( [ & ]( auto * modifier ) {
         modifier->AddedToCamera( this );
