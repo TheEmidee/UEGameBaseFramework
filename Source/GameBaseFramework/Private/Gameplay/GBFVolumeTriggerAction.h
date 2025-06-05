@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Core/CoreExtObjectWithWorld.h"
+
 #include <CoreMinimal.h>
-#include <UObject/Object.h>
 
 #include "GBFVolumeTriggerAction.generated.h"
 
 UCLASS( DefaultToInstanced, EditInlineNew, Blueprintable, Abstract )
-class GAMEBASEFRAMEWORK_API UGBFVolumeTriggerAction : public UObject
+class GAMEBASEFRAMEWORK_API UGBFVolumeTriggerAction : public UCoreExtObjectWithWorld
 {
     GENERATED_BODY()
 
