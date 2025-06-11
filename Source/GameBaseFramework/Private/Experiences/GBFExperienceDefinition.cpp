@@ -83,6 +83,7 @@ void UGBFExperienceImplementation::GetLifetimeReplicatedProps( TArray< FLifetime
     DOREPLIFETIME( ThisClass, Actions );
     DOREPLIFETIME( ThisClass, ActionSets );
     DOREPLIFETIME( ThisClass, DefaultPawnData );
+    DOREPLIFETIME( ThisClass, GameStateTags )
 }
 
 FPrimaryAssetId UGBFExperienceDefinition::GetPrimaryAssetId() const
@@ -103,6 +104,7 @@ UGBFExperienceImplementation * UGBFExperienceDefinition::Resolve( UObject * owne
     append_to_array( implementation->Actions, DefaultActions.Actions );
     append_to_array( implementation->ActionSets, DefaultActions.ActionSets );
     append_to_array( implementation->GameFeaturesToEnable, DefaultActions.GameFeaturesToEnable );
+    implementation->GameStateTags = GameStateTags;
 
     for ( const auto & conditional_action : ConditionalActions )
     {

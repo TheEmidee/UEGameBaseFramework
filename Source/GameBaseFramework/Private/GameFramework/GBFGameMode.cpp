@@ -1,6 +1,7 @@
 #include "GameFramework/GBFGameMode.h"
 
 #include "AI/GBFAIController.h"
+#include "AbilitySystemComponent.h"
 #include "Characters/Components/GBFPawnExtensionComponent.h"
 #include "Characters/GBFCharacter.h"
 #include "Characters/GBFPawnDataSelector.h"
@@ -512,7 +513,7 @@ void AGBFGameMode::OnExperienceDefined( FPrimaryAssetId experience_id, const FSt
     }
 }
 
-void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceImplementation * /*current_experience*/ )
+void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceImplementation * current_experience )
 {
     // Spawn any players that are already attached
     //@TODO: Here we're handling only *player* controllers, but in GetDefaultPawnClassForController_Implementation we skipped all controllers
@@ -530,6 +531,8 @@ void AGBFGameMode::OnExperienceLoaded( const UGBFExperienceImplementation * /*cu
             }
         }
     }
+
+    Cast< AGBFGameState >( GameState )->GetAbilitySystemComponent()->AddLooseGameplayTags( current_experience->GameStateTags );
 }
 
 bool AGBFGameMode::IsExperienceLoaded() const

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "GameplayTagContainer.h"
+
 #include <CoreMinimal.h>
 #include <Engine/DataAsset.h>
 
@@ -110,6 +112,9 @@ public:
     UPROPERTY( Replicated )
     const UGBFPawnData * DefaultPawnData;
 
+    UPROPERTY( Replicated )
+    FGameplayTagContainer GameStateTags;
+
     UPROPERTY( BlueprintReadOnly )
     TSubclassOf< UGBFExperienceDefinition > OriginalExperienceDefinition;
 };
@@ -143,4 +148,8 @@ public:
     //@TODO: Make soft?
     UPROPERTY( EditDefaultsOnly, Category = Gameplay )
     const UGBFPawnData * DefaultPawnData;
+
+    /* Gameplay tags to add to the gamestate*/
+    UPROPERTY( EditDefaultsOnly, Category = GameplayTags )
+    FGameplayTagContainer GameStateTags;
 };
