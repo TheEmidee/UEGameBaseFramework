@@ -9,7 +9,7 @@ class UGBFVolumeTriggerAction;
 class UBoxComponent;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFVolumeTriggerActions : public AActor
+class GAMEBASEFRAMEWORK_API AGBFVolumeTriggerActions final : public AActor
 {
     GENERATED_BODY()
 
