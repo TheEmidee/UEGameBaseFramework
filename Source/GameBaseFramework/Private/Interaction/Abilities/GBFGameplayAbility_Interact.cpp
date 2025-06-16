@@ -3,6 +3,7 @@
 #include "Characters/Components/GBFHeroComponent.h"
 #include "Input/GBFInputComponent.h"
 #include "Interaction/GBFInteractableComponent.h"
+#include "Interaction/GBFInteractionAllowCondition.h"
 #include "Interaction/GBFInteractionEventCustomization.h"
 #include "Interaction/GBFInteractionOption.h"
 #include "Interaction/GBFInteractionStatics.h"
@@ -122,7 +123,14 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
     TActorToComponentMap previous_active_targets;
     fill_actor_to_component_map( previous_active_targets );
 
-    ResetUnusedInteractions( target_infos );
+    // Clear every interaction option and rebuild from scratch because some options can become invalid from frame to frame (tags added to the player, etc...)
+    for ( auto & [ actor, context ] : InteractableTargetContexts )
+    {
+        context.Reset();
+    }
+
+    InteractableTargetContexts.Reset();
+
     RegisterInteractions( target_infos );
 
     TActorToComponentMap new_active_targets;
@@ -278,49 +286,6 @@ void UGBFGameplayAbility_Interact::GatherTargetInfos( TArray< InteractableTarget
     } );
 }
 
-void UGBFGameplayAbility_Interact::ResetUnusedInteractions( const TArray< InteractableTargetInfos > & target_infos )
-{
-    TArray< TWeakObjectPtr< AActor >, TInlineAllocator< 8 > > actors_to_unregister;
-    InteractableTargetContexts.GetKeys( actors_to_unregister );
-
-    for ( auto index = 0; index < target_infos.Num(); ++index )
-    {
-        const auto & infos = target_infos[ index ];
-
-        auto remove_actor = false;
-
-        if ( auto * context = InteractableTargetContexts.Find( infos.Actor.Get() ) )
-        {
-            if ( context->InteractionsId == infos.InteractableComponent->GetInteractableOptions().GetInteractionsId() )
-            {
-                remove_actor = true;
-            }
-        }
-        else
-        {
-            remove_actor = true;
-        }
-        if ( remove_actor )
-        {
-            actors_to_unregister.Remove( infos.Actor );
-        }
-
-        if ( infos.Group == EGBFInteractionGroup::Exclusive )
-        {
-            break;
-        }
-    }
-
-    for ( auto actor : actors_to_unregister )
-    {
-        if ( auto * context = InteractableTargetContexts.Find( actor.Get() ) )
-        {
-            context->Reset();
-            InteractableTargetContexts.Remove( actor.Get() );
-        }
-    }
-}
-
 void UGBFGameplayAbility_Interact::RegisterInteractions( const TArray< InteractableTargetInfos > & target_infos )
 {
     for ( const auto & infos : target_infos )
@@ -336,13 +301,13 @@ void UGBFGameplayAbility_Interact::RegisterInteractions( const TArray< Interacta
 
 void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTargetInfos & target_infos )
 {
-    const auto * pawn = Cast< APawn >( GetAvatarActorFromActorInfo() );
+    const auto actor_info = GetActorInfo();
 
-    InteractableTargetContext context;
+    const auto * pawn = Cast< APawn >( actor_info.AvatarActor );
+
     auto interactable_component = target_infos.InteractableComponent;
 
     const auto & option_container = interactable_component->GetInteractableOptions();
-    context.InteractionsId = option_container.GetInteractionsId();
 
     auto * asc_from_actor_info = GetAbilitySystemComponentFromActorInfo_Ensured();
     auto * asc_from_interactable_target = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent( interactable_component.Get()->GetOwner() );
@@ -356,39 +321,16 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         asc_from_interactable_target->GetOwnedGameplayTags( interactable_target_tags );
     }
 
-    if ( !option_container.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
+    for ( auto condition : option_container.AllowConditions )
     {
-        return;
-    }
-
-    if ( !option_container.InteractableTargetTagRequirements.RequirementsMet( interactable_target_tags ) )
-    {
-        return;
-    }
-
-    bool has_a_matching_sub_option = false;
-
-    for ( auto sub_option : option_container.GetOptions() )
-    {
-        if ( !sub_option.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
+        if ( !condition->AreAllInteractionsAllowed( interactable_component.Get(), actor_info ) )
         {
-            continue;
+            return;
         }
-
-        if ( !sub_option.InteractableTargetTagRequirements.RequirementsMet( interactable_target_tags ) )
-        {
-            continue;
-        }
-
-        has_a_matching_sub_option = true;
-        break;
     }
 
-    if ( !has_a_matching_sub_option )
-    {
-        return;
-    }
-
+    InteractableTargetContext context;
+    context.InteractionsId = option_container.GetInteractionsId();
     context.WidgetInfosHandle = { interactable_component, option_container.CommonWidgetInfos };
 
     if ( const auto * pc = Cast< APlayerController >( pawn->GetController() ) )
@@ -406,18 +348,20 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         }
     }
 
-    for ( auto & option : option_container.GetOptions() )
+    auto valid_options = option_container.GetOptions().FilterByPredicate( [ & ]( const FGBFInteractionOption & option ) {
+        for ( auto condition : option.AllowConditions )
+        {
+            if ( !condition->IsOptionAllowed( interactable_component.Get(), actor_info, option ) )
+            {
+                return false;
+            }
+        }
+
+        return true;
+    } );
+
+    for ( auto & option : valid_options )
     {
-        if ( !option.InstigatorTagRequirements.RequirementsMet( actor_info_tags ) )
-        {
-            continue;
-        }
-
-        if ( !option.InteractableTargetTagRequirements.RequirementsMet( interactable_target_tags ) )
-        {
-            continue;
-        }
-
         OptionHandle option_handle;
         option_handle.InteractableComponent = interactable_component;
         option_handle.InitialInteractionOption = option;
