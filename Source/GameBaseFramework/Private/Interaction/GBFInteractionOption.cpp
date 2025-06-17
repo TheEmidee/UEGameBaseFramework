@@ -36,8 +36,8 @@ FGBFInteractionOptionContainer::FGBFInteractionOptionContainer( const FGBFIntera
     InputMappingContext( other.InputMappingContext ),
     DefaultInputAction( other.DefaultInputAction ),
     InteractionGroup( other.InteractionGroup ),
-    CommonWidgetInfos( other.CommonWidgetInfos ),
     AllowConditions( other.AllowConditions ),
+    CommonWidgetInfos( other.CommonWidgetInfos ),
     Options( other.Options ),
     // :NOTE: Increment the id to make sure we invalidate this container and force a full refresh of the options
     InteractionsId( other.InteractionsId + 1 )
