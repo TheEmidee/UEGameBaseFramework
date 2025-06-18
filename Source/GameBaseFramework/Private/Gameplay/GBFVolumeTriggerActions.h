@@ -6,7 +6,6 @@
 #include "GBFVolumeTriggerActions.generated.h"
 
 class UGBFVolumeTriggerAction;
-class UBoxComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFVolumeTriggerActions final : public AActor
@@ -20,9 +19,6 @@ public:
     void NotifyActorEndOverlap( AActor * other_actor ) override;
 
 private:
-    UPROPERTY( BlueprintReadOnly, VisibleAnywhere, meta = ( AllowPrivateAccess ) )
-    TObjectPtr< UBoxComponent > BoxCollision;
-
     UPROPERTY( Instanced, EditAnywhere )
     TArray< TObjectPtr< UGBFVolumeTriggerAction > > TriggerActions;
 };
