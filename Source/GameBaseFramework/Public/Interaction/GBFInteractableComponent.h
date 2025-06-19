@@ -52,6 +52,9 @@ public:
     UFUNCTION( BlueprintPure )
     bool HasInteractableActorsInRadius() const;
 
+    UFUNCTION( BlueprintPure )
+    bool HasInteractionOptionWithTag( FGameplayTag gameplay_tag ) const;
+
 protected:
     UFUNCTION( BlueprintNativeEvent, DisplayName = "OnInteractableActorEnteredRadius", meta = ( ForceAsFunction ) )
     void K2_OnInteractableActorEnteredRadius( AActor * actor );
