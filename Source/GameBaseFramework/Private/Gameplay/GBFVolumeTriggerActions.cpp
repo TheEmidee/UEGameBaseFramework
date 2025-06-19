@@ -2,15 +2,9 @@
 
 #include "GBFVolumeTriggerAction.h"
 
-#include <Components/BoxComponent.h>
-
 AGBFVolumeTriggerActions::AGBFVolumeTriggerActions()
 {
     PrimaryActorTick.bCanEverTick = false;
-
-    BoxCollision = CreateDefaultSubobject< UBoxComponent >( TEXT( "BoxCollision" ) );
-    BoxCollision->SetCollisionProfileName( TEXT( "OverlapOnlyPawn" ) );
-    RootComponent = BoxCollision;
 }
 
 void AGBFVolumeTriggerActions::NotifyActorBeginOverlap( AActor * other_actor )
