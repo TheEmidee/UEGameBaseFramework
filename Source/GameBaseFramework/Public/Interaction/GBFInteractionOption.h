@@ -6,6 +6,7 @@
 
 #include "GBFInteractionOption.generated.h"
 
+class UGBFInteractionAllowCondition;
 class UGBFInteractionEventCustomization;
 class UInputAction;
 class UInputMappingContext;
@@ -115,11 +116,8 @@ struct FGBFInteractionOption
     UPROPERTY( EditAnywhere, Instanced )
     TObjectPtr< UGBFInteractionEventCustomization > EventCustomization;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGameplayTagRequirements InteractableTargetTagRequirements;
-
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGameplayTagRequirements InstigatorTagRequirements;
+    UPROPERTY( EditAnywhere, Instanced )
+    TArray< TObjectPtr< UGBFInteractionAllowCondition > > AllowConditions;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
@@ -166,11 +164,8 @@ struct FGBFInteractionOptionContainer
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     EGBFInteractionGroup InteractionGroup = EGBFInteractionGroup::Exclusive;
 
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGameplayTagRequirements InteractableTargetTagRequirements;
-
-    UPROPERTY( EditAnywhere, BlueprintReadOnly )
-    FGameplayTagRequirements InstigatorTagRequirements;
+    UPROPERTY( EditAnywhere, Instanced )
+    TArray< TObjectPtr< UGBFInteractionAllowCondition > > AllowConditions;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
     FGBFInteractionWidgetInfos CommonWidgetInfos;
@@ -199,8 +194,7 @@ FORCEINLINE FGBFInteractionOptionContainer & FGBFInteractionOptionContainer::ope
     InputMappingContext = other.InputMappingContext;
     DefaultInputAction = other.DefaultInputAction;
     InteractionGroup = other.InteractionGroup;
-    InteractableTargetTagRequirements = other.InteractableTargetTagRequirements;
-    InstigatorTagRequirements = other.InstigatorTagRequirements;
+
     Options = other.Options;
     CommonWidgetInfos = other.CommonWidgetInfos;
 
