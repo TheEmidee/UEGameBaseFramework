@@ -120,6 +120,9 @@ struct FGBFInteractionOption
     TArray< TObjectPtr< UGBFInteractionAllowCondition > > AllowConditions;
 
     UPROPERTY( EditAnywhere, BlueprintReadOnly )
+    FGameplayTagContainer Tags;
+
+    UPROPERTY( EditAnywhere, BlueprintReadOnly )
     TObjectPtr< const UInputAction > InputAction = nullptr;
 
     bool operator==( const FGBFInteractionOption & other ) const;

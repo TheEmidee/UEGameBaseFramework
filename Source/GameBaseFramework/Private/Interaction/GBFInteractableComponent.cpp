@@ -61,6 +61,13 @@ void UGBFInteractableComponent::OnInteractableActorLeftRadius( AActor * actor )
     K2_OnInteractableActorLeftRadius( actor );
 }
 
+bool UGBFInteractableComponent::HasInteractionOptionWithTag( FGameplayTag gameplay_tag ) const
+{
+    return InteractionOptionContainer.GetOptions().FindByPredicate( [ & ]( const auto & option ) {
+        return option.Tags.HasTagExact( gameplay_tag );
+    } ) != nullptr;
+}
+
 void UGBFInteractableComponent::K2_OnInteractableActorEnteredRadius_Implementation( AActor * actor )
 {
 }
