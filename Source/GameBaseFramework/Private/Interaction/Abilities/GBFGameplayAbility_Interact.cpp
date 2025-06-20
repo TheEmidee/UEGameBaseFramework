@@ -156,6 +156,12 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< UGBF
 void UGBFGameplayAbility_Interact::OnPressCallBack( OptionHandle interaction_option )
 {
     auto * instigator = GetAvatarActorFromActorInfo();
+
+    if ( !interaction_option.InteractableComponent.IsValid() )
+    {
+        return;
+    }
+
     auto * interactable_target_actor = interaction_option.InteractableComponent->GetOwner();
 
     // Allow the target to customize the event data we're about to pass in, in case the ability needs custom data
