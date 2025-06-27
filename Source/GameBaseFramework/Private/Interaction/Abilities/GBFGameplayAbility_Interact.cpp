@@ -277,19 +277,35 @@ void UGBFGameplayAbility_Interact::GatherTargetInfos( TArray< InteractableTarget
         target_infos.Emplace( interactable_actor, interactable_component, option_container.InteractionGroup );
     }
 
-    target_infos.Sort( [ instigator = GetAvatarActorFromActorInfo() ]( const InteractableTargetInfos & left, const InteractableTargetInfos & right ) {
-        if ( left.Group == EGBFInteractionGroup::Exclusive && right.Group != EGBFInteractionGroup::Exclusive )
-        {
-            return true;
-        }
+    InteractableTargetInfos exclusive_target_info;
+    auto exclusive_distance_sq = 0.0f;
 
-        if ( left.Group != EGBFInteractionGroup::Exclusive && right.Group == EGBFInteractionGroup::Exclusive )
-        {
-            return false;
-        }
+    const auto * instigator = GetAvatarActorFromActorInfo();
 
-        return FVector::DistSquared2D( instigator->GetActorLocation(), left.Actor->GetActorLocation() ) < FVector::DistSquared2D( instigator->GetActorLocation(), right.Actor->GetActorLocation() );
-    } );
+    for ( const auto & target_info : target_infos )
+    {
+        if ( target_info.Group == EGBFInteractionGroup::Exclusive )
+        {
+            if ( exclusive_target_info.Actor == nullptr )
+            {
+                exclusive_target_info = target_info;
+                exclusive_distance_sq = FVector::DistSquared2D( instigator->GetActorLocation(), target_info.Actor->GetActorLocation() );
+                continue;
+            }
+
+            const auto current_distance_sq = FVector::DistSquared2D( instigator->GetActorLocation(), target_info.Actor->GetActorLocation() );
+            if ( current_distance_sq < exclusive_distance_sq )
+            {
+                exclusive_target_info = target_info;
+            }
+        }
+    }
+
+    if ( exclusive_target_info.Actor != nullptr )
+    {
+        target_infos.Empty();
+        target_infos.Add( exclusive_target_info );
+    }
 }
 
 void UGBFGameplayAbility_Interact::RegisterInteractions( const TArray< InteractableTargetInfos > & target_infos )
