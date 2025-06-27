@@ -54,9 +54,6 @@ private:
     UPROPERTY( EditAnywhere, Category = EntryLayout, meta = ( MustImplement = "/Script/CommonUI.CommonBoundActionButtonInterface" ) )
     TSubclassOf< UGBFBoundActionButton > ActionButtonClass;
 
-    UPROPERTY( EditAnywhere, Category = Display, meta = ( AllowPrivateAccess ) )
-    uint8 bHideDefaultAcceptAction : 1;
-
     UPROPERTY( EditAnywhere, Category = Display )
     uint8 bDisplayOwningPlayerActionsOnly : 1;
 
@@ -65,6 +62,9 @@ private:
 
     UPROPERTY( BlueprintReadOnly, meta = ( AllowPrivateAccess, BindWidget ) )
     TObjectPtr< UPanelWidget > ActionButtonsContainer;
+
+    UPROPERTY( EditAnywhere, Category = Display, meta = ( AllowPrivateAccess ) )
+    TArray< FDataTableRowHandle > ActionExclusionList;
 
     UPROPERTY( Transient )
     FUserWidgetPool WidgetPool;

@@ -27,7 +27,6 @@ static FAutoConsoleVariableRef CVarSplitActionBarIgnoreOptOut(
 
 UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer ) :
     Super( object_initializer ),
-    bHideDefaultAcceptAction( false ),
     WidgetPool( *this )
 {
 }
@@ -368,7 +367,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                         is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
                     }
 
-                    if ( key == EKeys::Virtual_Accept && bHideDefaultAcceptAction )
+                    if ( ActionExclusionList.Contains( binding->LegacyActionTableRow ) )
                     {
                         continue;
                     }
