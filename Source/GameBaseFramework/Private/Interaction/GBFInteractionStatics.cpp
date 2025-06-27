@@ -40,7 +40,9 @@ void UGBFInteractionStatics::AppendInteractableTargetsFromTargetDataHandle( TArr
                 continue;
             }
 
-            actor->GetComponents< UGBFInteractableComponent >( interactable_components );
+            TArray< UGBFInteractableComponent * > components;
+            actor->GetComponents< UGBFInteractableComponent >( components );
+            interactable_components.Append( components );
         }
     }
 }
