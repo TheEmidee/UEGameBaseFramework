@@ -3,6 +3,7 @@
 #include <Engine/Canvas.h>
 #include <GameFramework/Character.h>
 #include <GameFramework/CharacterMovementComponent.h>
+
 UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     LandingTransitionTime( 0.5f ),
     LandOnSameHeightCheckTolerance( 1.0f ),
