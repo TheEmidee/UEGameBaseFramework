@@ -78,7 +78,8 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
         break;
         case EState::Landing:
         {
-            if ( character->bWasJumping )
+            if ( character->bWasJumping &&
+                 FMath::Abs( CurrentCharacterZPosition - LastGroundedCharacterZPosition ) < DistanceFromLastGroundedPositionToResetModifier )
             {
                 LastGroundedCharacterZPosition = CurrentCharacterZPosition;
                 LastGroundedCameraZPosition = CurrentCameraZPosition;
@@ -89,6 +90,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
 
             if ( LandingTransitionRemainingTime <= 0.0f )
             {
+
                 CurrentState = EState::WaitingForJump;
                 break;
             }
@@ -106,6 +108,8 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
         {
             LastGroundedCameraZPosition = CurrentCameraZPosition;
             LastGroundedCharacterZPosition = CurrentCharacterZPosition;
+
+            new_view_location.Z = FMath::FInterpTo( CurrentCameraZPosition, view_location.Z, delta_time, 10.0f );
         }
         break;
         case EState::Jumping:
@@ -117,7 +121,16 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
         {
             LandingTransitionRemainingTime -= delta_time;
 
-            new_view_location.Z = FMath::Lerp( LastGroundedCameraZPosition, view_location.Z, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
+            if ( FMath::Abs( LastGroundedCharacterZPosition - CurrentCharacterZPosition ) <= DistanceFromLastGroundedPositionToResetModifier )
+            {
+                LerpEndCameraZPosition = LastGroundedCameraZPosition;
+            }
+            else
+            {
+                LerpEndCameraZPosition = view_location.Z;
+            }
+
+            new_view_location.Z = FMath::Lerp( LastGroundedCameraZPosition, LerpEndCameraZPosition, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
         }
         break;
         default:
