@@ -35,10 +35,6 @@ private:
     UPROPERTY( EditAnywhere )
     float LandingTransitionTime;
 
-    // Tolerance when comparing the character location on Z when he lands versus when he jumped
-    UPROPERTY( EditAnywhere )
-    float LandOnSameHeightCheckTolerance;
-
     // When falling after jumping, when the character goes below his last grounded position minus this property, we stop the modifier
     UPROPERTY( EditAnywhere )
     float DistanceFromLastGroundedPositionToResetModifier;
@@ -46,10 +42,8 @@ private:
     EState CurrentState;
     float LastGroundedCameraZPosition;
     float LastGroundedCharacterZPosition;
-    float DeltaLastGroundedCharacterToCameraZ;
     float CurrentCharacterZPosition;
-    float CurrentCameraZPosition;
-    float LerpStartCameraZPosition;
+    TOptional< float > CurrentCameraZPosition;
     float LerpEndCameraZPosition;
     float LandingTransitionRemainingTime;
 };
