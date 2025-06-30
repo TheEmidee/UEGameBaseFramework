@@ -7,6 +7,7 @@
 UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     LandingTransitionTime( 0.5f ),
     DistanceFromLastGroundedPositionToResetModifier( 50.0f ),
+    DefaultInterpolationSpeed( 10.0f ),
     CurrentState( EState::WaitingForJump ),
     LastGroundedCameraZPosition( 0.0f ),
     LastGroundedCharacterZPosition( 0.0f ),
@@ -110,7 +111,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
             LastGroundedCameraZPosition = CurrentCameraZPosition.GetValue();
             LastGroundedCharacterZPosition = CurrentCharacterZPosition;
 
-            new_view_location.Z = FMath::FInterpTo( CurrentCameraZPosition.GetValue(), view_location.Z, delta_time, 10.0f );
+            new_view_location.Z = FMath::FInterpTo( CurrentCameraZPosition.GetValue(), view_location.Z, delta_time, DefaultInterpolationSpeed );
         }
         break;
         case EState::Jumping:

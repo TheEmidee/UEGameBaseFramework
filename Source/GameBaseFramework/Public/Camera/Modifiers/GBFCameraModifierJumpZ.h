@@ -39,6 +39,10 @@ private:
     UPROPERTY( EditAnywhere )
     float DistanceFromLastGroundedPositionToResetModifier;
 
+    // When waiting for a jump, how fast do we interpolate to the camera view
+    UPROPERTY( EditAnywhere )
+    float DefaultInterpolationSpeed;
+
     EState CurrentState;
     float LastGroundedCameraZPosition;
     float LastGroundedCharacterZPosition;
