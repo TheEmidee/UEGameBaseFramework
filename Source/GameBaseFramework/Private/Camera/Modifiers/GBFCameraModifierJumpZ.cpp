@@ -3,6 +3,7 @@
 #include <Engine/Canvas.h>
 #include <GameFramework/Character.h>
 #include <GameFramework/CharacterMovementComponent.h>
+
 UGBFCameraModifierJumpZ::UGBFCameraModifierJumpZ() :
     LandingTransitionTime( 0.5f ),
     LandOnSameHeightCheckTolerance( 1.0f ),
@@ -29,17 +30,21 @@ bool UGBFCameraModifierJumpZ::IsDisabled() const
     return Cast< ACharacter >( GetViewTarget() ) == nullptr;
 }
 
-void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
+void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVector view_location, FRotator view_rotation, float fov, FVector & new_view_location, FRotator & new_view_rotation, float & new_fov )
 {
-    auto * character = Cast< ACharacter >( GetViewTarget() );
-
+    const auto * character = Cast< ACharacter >( GetViewTarget() );
     if ( character == nullptr )
     {
         return;
     }
 
+    const auto * cmc = character->GetCharacterMovement();
+    if ( cmc == nullptr )
+    {
+        return;
+    }
+
     CurrentCharacterZPosition = character->GetActorLocation().Z;
-    auto * cmc = character->GetCharacterMovement();
 
     switch ( CurrentState )
     {
@@ -48,12 +53,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
             if ( character->bWasJumping )
             {
                 CurrentState = EState::Jumping;
-            }
-            else
-            {
-                LastGroundedCharacterZPosition = CurrentCharacterZPosition;
-                LastGroundedCameraZPosition = view_location.Z;
-                DeltaLastGroundedCharacterToCameraZ = LastGroundedCameraZPosition - LastGroundedCharacterZPosition;
+                break;
             }
         }
         break;
@@ -61,52 +61,63 @@ void UGBFCameraModifierJumpZ::ModifyCamera( float delta_time, FVector view_locat
         {
             if ( cmc->MovementMode == MOVE_Walking )
             {
-                CurrentState = EState::Landing;
                 LandingTransitionRemainingTime = LandingTransitionTime;
 
-                LerpStartCameraZPosition = LastGroundedCameraZPosition;
+                CurrentState = EState::Landing;
+                break;
             }
 
             if ( character->GetVelocity().Z <= 0.0f && CurrentCharacterZPosition < LastGroundedCharacterZPosition - DistanceFromLastGroundedPositionToResetModifier )
             {
-                CurrentState = EState::WaitingForJump;
-                return;
-            }
+                LandingTransitionRemainingTime = LandingTransitionTime;
 
-            new_view_location.Z = LastGroundedCameraZPosition;
+                CurrentState = EState::Landing;
+                break;
+            }
         }
         break;
         case EState::Landing:
         {
             if ( character->bWasJumping )
             {
-                CurrentState = EState::Jumping;
                 LastGroundedCharacterZPosition = CurrentCharacterZPosition;
                 LastGroundedCameraZPosition = CurrentCameraZPosition;
+
+                CurrentState = EState::Jumping;
+                break;
             }
-            else
+
+            if ( LandingTransitionRemainingTime <= 0.0f )
             {
-                LandingTransitionRemainingTime -= delta_time;
-
-                if ( LandingTransitionRemainingTime <= 0.0f )
-                {
-                    LandingTransitionRemainingTime = 0.0f;
-                    CurrentState = EState::WaitingForJump;
-                }
-                else
-                {
-                    if ( FMath::Abs( CurrentCharacterZPosition - LastGroundedCharacterZPosition ) >= DistanceFromLastGroundedPositionToResetModifier )
-                    {
-                        LerpEndCameraZPosition = view_location.Z;
-                    }
-                    else
-                    {
-                        LerpEndCameraZPosition = LastGroundedCameraZPosition;
-                    }
-
-                    new_view_location.Z = FMath::Lerp( LerpStartCameraZPosition, LerpEndCameraZPosition, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
-                }
+                CurrentState = EState::WaitingForJump;
+                break;
             }
+        }
+        break;
+        default:
+        {
+            checkNoEntry();
+        }
+    }
+
+    switch ( CurrentState )
+    {
+        case EState::WaitingForJump:
+        {
+            LastGroundedCameraZPosition = CurrentCameraZPosition;
+            LastGroundedCharacterZPosition = CurrentCharacterZPosition;
+        }
+        break;
+        case EState::Jumping:
+        {
+            new_view_location.Z = LastGroundedCameraZPosition;
+        }
+        break;
+        case EState::Landing:
+        {
+            LandingTransitionRemainingTime -= delta_time;
+
+            new_view_location.Z = FMath::Lerp( LastGroundedCameraZPosition, view_location.Z, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
         }
         break;
         default:
