@@ -61,7 +61,6 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
             if ( cmc->MovementMode == MOVE_Walking )
             {
                 LandingTransitionRemainingTime = LandingTransitionTime;
-                LerpStartCameraZPosition = LastGroundedCameraZPosition;
 
                 CurrentState = EState::Landing;
                 break;
@@ -69,6 +68,8 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
 
             if ( character->GetVelocity().Z <= 0.0f && CurrentCharacterZPosition < LastGroundedCharacterZPosition - DistanceFromLastGroundedPositionToResetModifier )
             {
+                LandingTransitionRemainingTime = LandingTransitionTime;
+
                 CurrentState = EState::Landing;
                 break;
             }
@@ -76,17 +77,19 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
         break;
         case EState::Landing:
         {
-            /*if ( character->bWasJumping )
+            if ( character->bWasJumping )
             {
                 LastGroundedCharacterZPosition = CurrentCharacterZPosition;
                 LastGroundedCameraZPosition = CurrentCameraZPosition;
+
                 CurrentState = EState::Jumping;
                 break;
-            }*/
+            }
 
             if ( LandingTransitionRemainingTime <= 0.0f )
             {
                 CurrentState = EState::WaitingForJump;
+                break;
             }
         }
         break;
@@ -113,7 +116,7 @@ void UGBFCameraModifierJumpZ::ModifyCamera( const float delta_time, const FVecto
         {
             LandingTransitionRemainingTime -= delta_time;
 
-            new_view_location.Z = FMath::Lerp( CurrentCameraZPosition, view_location.Z, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
+            new_view_location.Z = FMath::Lerp( LastGroundedCameraZPosition, view_location.Z, 1.0f - ( LandingTransitionRemainingTime / LandingTransitionTime ) );
         }
         break;
         default:
