@@ -16,6 +16,7 @@ void UGBFCommonTextTyper::SetTextToAnimate( const FText & new_text )
     EntireText = new_text;
     CurrentCharIndex = 0;
     bIsFullyDisplayed = false;
+    AnimatedTextBlock->SetText( FText::GetEmpty() );
 }
 
 void UGBFCommonTextTyper::CompleteTextWritingInstantly()
