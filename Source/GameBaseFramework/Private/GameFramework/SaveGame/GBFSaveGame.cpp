@@ -1,9 +1,5 @@
 #include "GameFramework/SaveGame/GBFSaveGame.h"
 
-#include <Serialization/MemoryReader.h>
-#include <Serialization/MemoryWriter.h>
-#include <Serialization/ObjectAndNameAsStringProxyArchive.h>
-
 namespace
 {
     void TryLoadSavable( FGBFSavableData & savable_data )
