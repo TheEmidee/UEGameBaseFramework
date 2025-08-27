@@ -45,7 +45,7 @@ void UGBFCheatManager::SelfDestructLocalPlayer()
 {
     if ( const auto * pc = Cast< AGBFPlayerController >( GetOuterAPlayerController() ) )
     {
-        if ( const auto * pawn = pc->GetPawn() )
+        if ( const auto pawn = pc->GetPawn() )
         {
             if ( const auto * health_component = UGBFHealthComponent::FindHealthComponent( pawn ) )
             {

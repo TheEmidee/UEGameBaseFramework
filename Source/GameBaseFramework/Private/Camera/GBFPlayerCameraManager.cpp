@@ -93,7 +93,7 @@ void AGBFPlayerCameraManager::DisplayDebug( UCanvas * canvas, const FDebugDispla
 
     Super::DisplayDebug( canvas, debug_display, yl, y_pos );
 
-    const auto * pawn = PCOwner ? PCOwner->GetPawn() : nullptr;
+    const auto pawn = PCOwner ? PCOwner->GetPawn() : nullptr;
 
     if ( const auto * camera_component = UGBFCameraComponent::FindCameraComponent( pawn ) )
     {

@@ -42,7 +42,7 @@ void UGBFOwningPlayerTagsVisibilityBorder::ListenToTagChanged()
     {
         if ( auto * pc = lp->GetPlayerController( GetWorld() ) )
         {
-            if ( auto * pawn = pc->GetPawn() )
+            if ( auto pawn = pc->GetPawn() )
             {
                 OnPlayerControllerPawnChanged( nullptr, pawn );
             }

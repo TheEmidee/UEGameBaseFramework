@@ -328,7 +328,7 @@ UGBFEquipmentManagerComponent * UGBFEquipmentManagerComponent::FindEquipmentMana
 {
     if ( const auto * owner_controller = Cast< AController >( actor ) )
     {
-        if ( const auto * pawn = owner_controller->GetPawn() )
+        if ( const auto pawn = owner_controller->GetPawn() )
         {
             return pawn->FindComponentByClass< UGBFEquipmentManagerComponent >();
         }
