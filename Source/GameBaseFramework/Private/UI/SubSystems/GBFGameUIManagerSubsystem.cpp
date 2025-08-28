@@ -3,6 +3,7 @@
 #include "CommonLocalPlayer.h"
 #include "GameUIPolicy.h"
 #include "PrimaryGameLayout.h"
+#include "Engine/GameInstance.h"
 
 #include <Components/SlateWrapperTypes.h>
 #include <Engine/LocalPlayer.h>
