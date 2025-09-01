@@ -40,7 +40,6 @@ EDataValidationResult UGBFPawnData::IsDataValid( FDataValidationContext & contex
 {
     return FDVEDataValidator( context )
         .NotNull( VALIDATOR_GET_PROPERTY( PawnClass ) )
-        .NotNull( VALIDATOR_GET_PROPERTY( TagRelationshipMapping ) )
         .Result();
 }
 #endif

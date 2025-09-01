@@ -58,7 +58,7 @@ UEnhancedPlayerMappableKeyProfile * UGBFSettingValueKeyboardInput::FindMappableK
 {
     if ( const auto * settings = GetUserSettings() )
     {
-        return settings->GetKeyProfileWithIdentifier( ProfileIdentifier );
+        return settings->GetKeyProfileWithId( ProfileIdentifier );
     }
 
     ensure( false );
@@ -99,7 +99,7 @@ void UGBFSettingValueKeyboardInput::InitializeInputData( const UEnhancedPlayerMa
 {
     check( key_profile );
 
-    ProfileIdentifier = key_profile->GetProfileIdentifer();
+    ProfileIdentifier = key_profile->GetProfileIdString();
     QueryOptions = InQueryOptions;
 
     for ( const auto & mapping : mapping_data.Mappings )

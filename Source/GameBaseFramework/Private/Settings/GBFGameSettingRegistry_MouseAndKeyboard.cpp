@@ -168,7 +168,7 @@ UGameSettingCollection * UGBFGameSettingRegistry::InitializeMouseAndKeyboardSett
         static TSet< FName > created_mapping_names;
         created_mapping_names.Reset();
 
-        for ( const auto & [ tag, key_profile ] : user_settings->GetAllSavedKeyProfiles() )
+        for ( const auto & [ str, key_profile ] : user_settings->GetAllAvailableKeyProfiles() )
         {
             for ( const auto & [ name, key_mapping_row ] : key_profile->GetPlayerMappingRows() )
             {

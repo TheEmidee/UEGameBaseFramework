@@ -2,6 +2,7 @@
 
 #include <CommonBorder.h>
 #include <CoreMinimal.h>
+#include <GameplayTagContainer.h>
 
 #include "GBFOwningPlayerTagsVisibilityBorder.generated.h"
 
