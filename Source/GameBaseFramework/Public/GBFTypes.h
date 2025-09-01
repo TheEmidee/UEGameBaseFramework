@@ -23,5 +23,3 @@ class GAMEBASEFRAMEWORK_API UGBFTypes2 : public UObject
 {
     GENERATED_BODY()
 };
-
-GAMEBASEFRAMEWORK_API FString GetClientServerContextString( UObject * context_object = nullptr );
