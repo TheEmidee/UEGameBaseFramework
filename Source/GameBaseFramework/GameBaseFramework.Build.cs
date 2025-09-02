@@ -5,6 +5,7 @@ namespace UnrealBuildTool.Rules
         public GameBaseFramework( ReadOnlyTargetRules Target )
             : base( Target )
         {
+            PrivateDependencyModuleNames.AddRange(new string[] { "GameplayExperiences" });
             PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
             PrivatePCHHeaderFile = "Private/GameBaseFrameworkPCH.h";
 

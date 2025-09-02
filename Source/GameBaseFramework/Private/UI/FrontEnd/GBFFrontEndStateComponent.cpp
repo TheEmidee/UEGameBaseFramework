@@ -99,7 +99,7 @@ void UGBFFrontEndStateComponent::FlowStep_TryShowMainScreen( FControlFlowNodeRef
     }
 }
 
-void UGBFFrontEndStateComponent::OnExperienceLoaded( const UGBFExperienceImplementation * /*experience*/ )
+void UGBFFrontEndStateComponent::OnExperienceLoaded( const UGEExperienceImplementation * /*experience*/ )
 {
     auto & flow = FControlFlowStatics::Create( this, TEXT( "FrontendFlow" ) )
                       .QueueStep( TEXT( "Wait For User Initialization" ), this, &ThisClass::FlowStep_WaitForUserInitialization )

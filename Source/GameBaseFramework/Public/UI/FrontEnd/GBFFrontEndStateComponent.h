@@ -9,7 +9,7 @@
 #include "GBFFrontEndStateComponent.generated.h"
 
 class UCommonActivatableWidget;
-class UGBFExperienceImplementation;
+class UGEExperienceImplementation;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFFrontEndStateComponent : public UGameStateComponent, public ILoadingProcessInterface
@@ -33,7 +33,7 @@ protected:
     bool bShouldShowLoadingScreen;
 
 private:
-    void OnExperienceLoaded( const UGBFExperienceImplementation * experience );
+    void OnExperienceLoaded( const UGEExperienceImplementation * experience );
 
     UFUNCTION()
     void OnUserInitialized( const UCommonUserInfo * user_info, bool success, FText error, ECommonUserPrivilege requested_privilege, ECommonUserOnlineContext online_context );
