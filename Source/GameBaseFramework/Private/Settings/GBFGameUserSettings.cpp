@@ -947,7 +947,7 @@ void UGBFGameUserSettings::AddOrUpdateCustomKeyboardBindings( const FName mappin
     if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
 #if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
-        subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
+        //subsystem->AddPlayerMappedKeyInSlot( mapping_name, new_key );
 #else
         subsystem->AddPlayerMappedKey( mapping_name, new_key );
 #endif
@@ -959,7 +959,7 @@ void UGBFGameUserSettings::ResetKeybindingToDefault( const FName mapping_name, c
     if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
 #if ENGINE_MAJOR_VERSION == 5 && ENGINE_MINOR_VERSION >= 2
-        subsystem->RemovePlayerMappedKeyInSlot( mapping_name );
+        //subsystem->RemovePlayerMappedKeyInSlot( mapping_name );
 #else
         subsystem->RemovePlayerMappedKey( mapping_name );
 #endif
@@ -970,7 +970,7 @@ void UGBFGameUserSettings::ResetKeybindingsToDefault( const UGBFLocalPlayer * lo
 {
     if ( auto * subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem >( local_player ) )
     {
-        subsystem->RemoveAllPlayerMappedKeys();
+        //subsystem->RemoveAllPlayerMappedKeys();
     }
 }
 PRAGMA_ENABLE_DEPRECATION_WARNINGS

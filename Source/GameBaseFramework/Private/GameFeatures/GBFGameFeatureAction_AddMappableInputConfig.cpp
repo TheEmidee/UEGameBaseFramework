@@ -154,11 +154,11 @@ void UGBFGameFeatureAction_AddMappableInputConfig::AddInputConfig( APawn * pawn,
             {
                 if ( pair.bShouldActivateAutomatically && pair.CanBeActivated() )
                 {
-                    subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
+                    //subsystem->AddPlayerMappableConfig( pair.Config.LoadSynchronous(), options );
                 }
                 else
                 {
-                    subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous(), options );
+                    //subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous(), options );
                 }
             }
             active_data.PawnsAddedTo.AddUnique( pawn );
@@ -178,7 +178,7 @@ void UGBFGameFeatureAction_AddMappableInputConfig::RemoveInputConfig( APawn * pa
             // Remove the input mappings
             for ( const auto & pair : InputConfigs )
             {
-                subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous() );
+                //subsystem->RemovePlayerMappableConfig( pair.Config.LoadSynchronous() );
             }
         }
     }

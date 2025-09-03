@@ -19,6 +19,8 @@ public:
     AGBFGameState();
 
     UGBFExperienceManagerComponent * GetExperienceManagerComponent() const;
+    float GetServerFPS() const;
+
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
     void PostInitializeComponents() override;
     void Tick( float delta_seconds ) override;
@@ -31,11 +33,16 @@ private:
     UPROPERTY( VisibleAnywhere )
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
 
-    UPROPERTY( Replicated )
+    UPROPERTY( Replicated, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
     float ServerFPS;
 };
 
 FORCEINLINE UGBFExperienceManagerComponent * AGBFGameState::GetExperienceManagerComponent() const
 {
     return ExperienceManagerComponent;
+}
+
+FORCEINLINE float AGBFGameState::GetServerFPS() const
+{
+    return ServerFPS;
 }
