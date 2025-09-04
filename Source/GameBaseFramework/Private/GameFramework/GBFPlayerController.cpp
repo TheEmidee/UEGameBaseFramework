@@ -3,12 +3,15 @@
 #include "Camera/GBFPlayerCameraManager.h"
 #include "CommonInputSubsystem.h"
 #include "Engine/GBFLocalPlayer.h"
-#include "GAS/Components/GBFAbilitySystemComponent.h"
 #include "GBFLog.h"
 #include "GameFramework/GBFPlayerState.h"
 
 #include <Engine/World.h>
 #include <TimerManager.h>
+
+#include "AbilitySystemComponent.h"
+#include "GameBaseFrameworkDeveloperSettings.h"
+#include "GameFramework/GBFSettingsShared.h"
 
 AGBFPlayerController::AGBFPlayerController() :
     LastSeenPlayerState( nullptr )
@@ -171,10 +174,10 @@ void AGBFPlayerController::AddCheats( bool force )
 #endif //
 }
 
-UGBFAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
+UAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
 {
     const auto * ps = GetPlayerState< AGBFPlayerState >();
-    return ( ps ? ps->GetGBFAbilitySystemComponent() : nullptr );
+    return ( ps ? ps->GetAbilitySystemComponent() : nullptr );
 }
 
 void AGBFPlayerController::OnPossess( APawn * pawn )

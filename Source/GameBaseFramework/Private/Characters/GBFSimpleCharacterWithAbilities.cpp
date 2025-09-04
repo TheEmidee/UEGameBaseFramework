@@ -12,7 +12,7 @@ AGBFSimpleCharacterWithAbilities::AGBFSimpleCharacterWithAbilities( const FObjec
 
     GameplayEffectReplicationMode = EGameplayEffectReplicationMode::Mixed;
 
-    AbilitySystemComponent = CreateDefaultSubobject< UGBFAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
+    AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
     AbilitySystemComponent->SetReplicationMode( GameplayEffectReplicationMode );
 }

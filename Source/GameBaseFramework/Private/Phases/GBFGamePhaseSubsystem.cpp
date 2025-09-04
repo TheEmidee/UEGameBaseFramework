@@ -28,7 +28,7 @@ void UGBFGamePhaseSubsystem::StartPhase( const TSubclassOf< UGBFGamePhaseAbility
         return;
     }
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
     const auto incoming_phase_tag = phase_ability.GetDefaultObject()->GetGamePhaseTag();
 
     if ( ensure( game_state_asc != nullptr ) )
@@ -186,7 +186,7 @@ void UGBFGamePhaseSubsystem::OnBeginPhase( const UGBFGamePhaseAbility * phase_ab
     UE_LOG( LogGBFGamePhase, Log, TEXT( "Beginning Phase '%s' (%s)" ), *incoming_phase_tag.ToString(), *GetNameSafe( phase_ability ) );
 
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
     if ( ensure( game_state_asc != nullptr ) )
     {
         TArray< FGameplayAbilitySpec * > active_phases;
@@ -331,7 +331,7 @@ void UGBFGamePhaseSubsystem::OnEndPhase( const UGBFGamePhaseAbility * phase_abil
 void UGBFGamePhaseSubsystem::EndAllPhases()
 {
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
 
     for ( auto copy = ActivePhaseMap;
         auto & item : copy )
@@ -349,7 +349,7 @@ void UGBFGamePhaseSubsystem::EndAllPhases()
 void UGBFGamePhaseSubsystem::EndPhasesWithTags( const FGameplayTagContainer & tags )
 {
     const auto * world = GetWorld();
-    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGBFAbilitySystemComponent >();
+    auto * game_state_asc = world->GetGameState()->FindComponentByClass< UGASExtAbilitySystemComponent >();
 
     TArray< FGameplayAbilitySpec * > active_phases;
     GetActivePhases( active_phases, game_state_asc );
@@ -368,7 +368,7 @@ void UGBFGamePhaseSubsystem::EndPhasesWithTags( const FGameplayTagContainer & ta
     }
 }
 
-void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGBFAbilitySystemComponent * asc ) const
+void UGBFGamePhaseSubsystem::GetActivePhases( TArray< FGameplayAbilitySpec * > & active_phases, UGASExtAbilitySystemComponent * asc ) const
 {
     for ( const auto & kvp : ActivePhaseMap )
     {

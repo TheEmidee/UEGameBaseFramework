@@ -69,7 +69,7 @@ struct FGBFEquipmentList : public FFastArraySerializer
     UGBFEquipmentInstance * AddEntry( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition );
 
 private:
-    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UGASExtAbilitySystemComponent * GetAbilitySystemComponent() const;
     UGBFEquipmentInstance * AddEntryInternal( UGBFEquipmentInstance * equipment_instance, TSubclassOf< UGBFEquipmentDefinition > equipment_definition, bool spawn_equipment_actors );
 
     friend UGBFEquipmentManagerComponent;

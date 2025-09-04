@@ -1,23 +1,19 @@
 #include "Engine/GBFAssetManager.h"
 
-#include "Characters/GBFPawnData.h"
-#include "GAS/GameplayCues/GBFGameplayCueManager.h"
 #include "GBFLog.h"
+#include "AbilitySystemGlobals.h"
+#include "Engine/DataAsset.h"
+#include "Engine/Engine.h"
+#include "Misc/App.h"
+#include "Misc/ScopedSlowTask.h"
+#include "Stats/StatsMisc.h"
 
-#include <AbilitySystemGlobals.h>
-#include <Engine/Engine.h>
-#include <Misc/App.h>
-#include <Misc/ScopedSlowTask.h>
-#include <Stats/StatsMisc.h>
-
-static FAutoConsoleCommand CVarDumpLoadedAssets(
+namespace
+{
+    static FAutoConsoleCommand CVarDumpLoadedAssets(
     TEXT( "GBF.DumpLoadedAssets" ),
     TEXT( "Shows all assets that were loaded via the asset manager and are currently in memory." ),
-    FConsoleCommandDelegate::CreateStatic( UGBFAssetManager::DumpLoadedAssets ) );
-
-const UGBFPawnData * UGBFAssetManager::GetDefaultPawnData() const
-{
-    return GetAsset( DefaultPawnDataPath );
+    FConsoleCommandDelegate::CreateStatic( UGBFAssetManager::DumpLoadedAssets ) );   
 }
 
 void UGBFAssetManager::DumpLoadedAssets()
@@ -79,13 +75,6 @@ void UGBFAssetManager::StartInitialLoading()
     // This does all of the scanning, need to do this now even if loads are deferred
     Super::StartInitialLoading();
 
-    AddStartupJob(
-        "InitializeGameplayCueManager",
-        [ this ]() {
-            InitializeGameplayCueManager();
-        },
-        1.0f );
-
     PreDoStartupJobs();
 
     // Run all the queued up startup jobs
@@ -94,16 +83,6 @@ void UGBFAssetManager::StartInitialLoading()
 
 void UGBFAssetManager::PreDoStartupJobs()
 {
-}
-
-void UGBFAssetManager::InitializeGameplayCueManager()
-{
-    SCOPED_BOOT_TIMING( "UGBFAssetManager::InitializeGameplayCueManager" );
-
-    auto * gameplay_cue_manager = UGBFGameplayCueManager::Get();
-    check( gameplay_cue_manager );
-
-    gameplay_cue_manager->LoadAlwaysLoadedCues();
 }
 
 void UGBFAssetManager::DoAllStartupJobs()

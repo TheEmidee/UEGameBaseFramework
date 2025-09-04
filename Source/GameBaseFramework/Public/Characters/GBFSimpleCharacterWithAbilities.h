@@ -12,7 +12,7 @@
 class UGameplayEffect;
 class UGBFAbilitySet;
 class UGBFAbilityTagRelationshipMapping;
-class UGBFAbilitySystemComponent;
+class UGASExtAbilitySystemComponent;
 
 /*
  * Character class with support for an abilitysystem component
@@ -36,7 +36,7 @@ public:
 
 protected:
     UPROPERTY( VisibleAnywhere, BlueprintReadOnly, meta = ( AllowPrivateAccess = "true" ) )
-    TObjectPtr< UGBFAbilitySystemComponent > AbilitySystemComponent;
+    TObjectPtr< UGASExtAbilitySystemComponent > AbilitySystemComponent;
 
     TMap< uint8, FGameplayTag > CustomMovementModeTagMap;
 

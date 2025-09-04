@@ -5,7 +5,7 @@
 #include "GBFPlayerController.generated.h"
 
 class UGBFLocalPlayer;
-class UGBFAbilitySystemComponent;
+class UGASExtAbilitySystemComponent;
 class UGBFSettingsShared;
 
 UCLASS()
@@ -44,7 +44,7 @@ public:
 
     void AddCheats( bool force ) override;
 
-    UGBFAbilitySystemComponent * GetAbilitySystemComponent() const;
+    UAbilitySystemComponent * GetAbilitySystemComponent() const;
 
 protected:
     void OnPossess( APawn * pawn ) override;

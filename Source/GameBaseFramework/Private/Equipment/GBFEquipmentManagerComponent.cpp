@@ -169,11 +169,11 @@ void FGBFEquipmentList::RemoveEntry( UGBFEquipmentInstance * instance )
     }
 }
 
-UGBFAbilitySystemComponent * FGBFEquipmentList::GetAbilitySystemComponent() const
+UGASExtAbilitySystemComponent * FGBFEquipmentList::GetAbilitySystemComponent() const
 {
     check( OwnerComponent != nullptr );
     const auto * owning_actor = OwnerComponent->GetOwner();
-    return Cast< UGBFAbilitySystemComponent >( UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor ) );
+    return Cast< UGASExtAbilitySystemComponent >( UAbilitySystemGlobals::GetAbilitySystemComponentFromActor( owning_actor ) );
 }
 
 UGBFEquipmentManagerComponent::UGBFEquipmentManagerComponent( const FObjectInitializer & object_initializer ) :

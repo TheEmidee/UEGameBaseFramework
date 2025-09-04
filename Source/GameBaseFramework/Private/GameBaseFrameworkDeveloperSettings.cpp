@@ -1,16 +1,12 @@
 #include "GameBaseFrameworkDeveloperSettings.h"
 
-#include <Misc/App.h>
-
-#if WITH_EDITOR
-#include <Framework/Notifications/NotificationManager.h>
-#include <Widgets/Notifications/SNotificationList.h>
-#endif
+#include "Misc/App.h"
 
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkCheats"
 
 UGameBaseFrameworkDeveloperSettings::UGameBaseFrameworkDeveloperSettings()
-{}
+{
+}
 
 FName UGameBaseFrameworkDeveloperSettings::GetCategoryName() const
 {
@@ -21,26 +17,13 @@ FName UGameBaseFrameworkDeveloperSettings::GetCategoryName() const
 
 FText UGameBaseFrameworkDeveloperSettings::GetSectionText() const
 {
-    return NSLOCTEXT( "GameBaseFrameworkPlugin", "GameBaseFrameworkSettingsSection", "GameBaseFramework" );
+    return NSLOCTEXT("GameBaseFrameworkPlugin", "GameBaseFrameworkSettingsSection", "GameBaseFramework");
 }
 
-void UGameBaseFrameworkDeveloperSettings::PostEditChangeProperty( FPropertyChangedEvent & property_change_event )
+void UGameBaseFrameworkDeveloperSettings::PostEditChangeProperty(FPropertyChangedEvent& property_change_event)
 {
-    if ( property_change_event.Property != nullptr )
+    if (property_change_event.Property != nullptr)
     {
-    }
-}
-
-void UGameBaseFrameworkDeveloperSettings::OnPlayInEditorStarted() const
-{
-    // Show a notification toast to remind the user that there's an experience override set
-    if ( ExperienceOverride.IsValid() )
-    {
-        FNotificationInfo info( FText::Format(
-            LOCTEXT( "ExperienceOverrideActive", "Developer Settings Override\nExperience {0}" ),
-            FText::FromName( ExperienceOverride.PrimaryAssetName ) ) );
-        info.ExpireDuration = 2.0f;
-        FSlateNotificationManager::Get().AddNotification( info );
     }
 }
 
