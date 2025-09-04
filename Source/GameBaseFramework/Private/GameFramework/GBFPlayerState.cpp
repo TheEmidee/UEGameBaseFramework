@@ -22,7 +22,7 @@ AGBFPlayerState::AGBFPlayerState( const FObjectInitializer & object_initializer 
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
 
     // AbilitySystemComponent needs to be updated at a high frequency.
-    NetUpdateFrequency = 100.0f;
+    SetNetUpdateFrequency( 100.0f );
 }
 
 AGBFPlayerController * AGBFPlayerState::GetGBFPlayerController() const
@@ -97,7 +97,7 @@ void AGBFPlayerState::PostInitializeComponents()
 void AGBFPlayerState::OnPlayerInitialized()
 {
     if ( const auto * world = GetWorld();
-         world->IsGameWorld() && world->GetNetMode() != NM_Client )
+        world->IsGameWorld() && world->GetNetMode() != NM_Client )
     {
         // :TODO:
         // In games like Lyra or UT we want bots to have their pawn data the same way as human players

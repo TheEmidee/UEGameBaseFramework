@@ -144,7 +144,7 @@ void UGBFGameplayAbility_Interact::UpdateInteractableOptions( const TArray< TScr
         for ( auto & option : temp_options )
         {
             const FGameplayAbilitySpec * interaction_ability_spec = nullptr;
-            auto * asc = GetAbilitySystemComponentFromActorInfo_Checked();
+            auto * asc = GetAbilitySystemComponentFromActorInfo_Ensured();
 
             // if there is a handle an a target ability system, we're triggering the ability on the target.
             if ( option.TargetAbilitySystem != nullptr && option.TargetInteractionAbilityHandle.IsValid() )

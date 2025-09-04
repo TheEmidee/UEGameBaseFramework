@@ -18,7 +18,7 @@ AGBFCharacter::AGBFCharacter( const FObjectInitializer & object_initializer ) :
     PrimaryActorTick.bCanEverTick = false;
     PrimaryActorTick.bStartWithTickEnabled = false;
 
-    NetCullDistanceSquared = 900000000.0f;
+    SetNetCullDistanceSquared( 900000000.0f );
 
     PawnExtComponent = CreateDefaultSubobject< UGBFPawnExtensionComponent >( TEXT( "PawnExtensionComponent" ) );
     PawnExtComponent->OnAbilitySystemInitialized_RegisterAndCall( FSimpleMulticastDelegate::FDelegate::CreateUObject( this, &ThisClass::OnAbilitySystemInitialized ) );

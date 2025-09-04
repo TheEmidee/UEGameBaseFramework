@@ -80,7 +80,7 @@ void UGBFGameFeatureObserver_AddGameplayCuePath::OnGameFeatureUnregistering( con
     const auto plugin_root_path = TEXT( "/" ) + plugin_name;
     for ( const UGameFeatureAction * action : game_feature_data->GetActions() )
     {
-        if ( const auto * game_feature_action_add_gameplay_cue_path = Cast< UGBFGameFeatureAction_AddGameplayCuePath >( game_feature_data ) )
+        if ( const auto * game_feature_action_add_gameplay_cue_path = Cast< UGBFGameFeatureAction_AddGameplayCuePath >( action ) )
         {
             const auto & dirs_to_add = game_feature_action_add_gameplay_cue_path->GetDirectoryPathsToAdd();
 
