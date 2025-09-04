@@ -39,6 +39,7 @@ public:
     void Logout( AController * exiting_controller ) override;
     bool ReadyToStartMatch_Implementation() override;
 
+    void GenericPlayerInitialization( AController * new_player ) override;
     virtual bool TryDedicatedServerLogin();
 
 protected:
@@ -48,7 +49,6 @@ protected:
     void FinishRestartPlayer( AController * new_player, const FRotator & start_rotation ) override;
     bool UpdatePlayerStartSpot( AController * player, const FString & portal, FString & out_error_message ) override;
     void FailedToRestartPlayer( AController * new_player ) override;
-    void GenericPlayerInitialization( AController * new_player ) override;
     virtual void HostDedicatedServerMatch( ECommonSessionOnlineMode online_mode );
 
 private:

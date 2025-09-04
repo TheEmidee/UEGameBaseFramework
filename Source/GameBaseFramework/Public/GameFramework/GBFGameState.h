@@ -23,7 +23,6 @@ public:
 
     UAbilitySystemComponent * GetAbilitySystemComponent() const override;
     void PostInitializeComponents() override;
-    void Tick( float delta_seconds ) override;
     void SeamlessTravelTransitionCheckpoint( bool to_transition ) override;
 
 private:
@@ -32,9 +31,6 @@ private:
 
     UPROPERTY( VisibleAnywhere )
     UGASExtAbilitySystemComponent * AbilitySystemComponent;
-
-    UPROPERTY( Replicated, BlueprintReadOnly, meta = ( AllowPrivateAccess = true ) )
-    float ServerFPS;
 };
 
 FORCEINLINE UGBFExperienceManagerComponent * AGBFGameState::GetExperienceManagerComponent() const

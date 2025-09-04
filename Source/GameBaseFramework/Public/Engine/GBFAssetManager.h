@@ -37,6 +37,7 @@ protected:
     void StartInitialLoading() override;
 
 private:
+    void InitializeAbilitySystem();
     void InitializeGameplayCueManager();
     void DoAllStartupJobs();
     void UpdateInitialGameContentLoadPercent( float game_content_percent );

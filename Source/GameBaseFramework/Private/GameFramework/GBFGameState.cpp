@@ -4,9 +4,6 @@
 
 #include <AbilitySystemComponent.h>
 #include <GameFramework/PlayerState.h>
-#include <Net/UnrealNetwork.h>
-
-extern ENGINE_API float GAverageFPS;
 
 AGBFGameState::AGBFGameState()
 {
@@ -18,8 +15,6 @@ AGBFGameState::AGBFGameState()
     AbilitySystemComponent = CreateDefaultSubobject< UGASExtAbilitySystemComponent >( TEXT( "AbilitySystemComponent" ) );
     AbilitySystemComponent->SetIsReplicated( true );
     AbilitySystemComponent->SetReplicationMode( EGameplayEffectReplicationMode::Mixed );
-
-    ServerFPS = 0.0f;
 }
 
 UAbilitySystemComponent * AGBFGameState::GetAbilitySystemComponent() const
@@ -33,16 +28,6 @@ void AGBFGameState::PostInitializeComponents()
     AbilitySystemComponent->InitAbilityActorInfo( this, this );
 }
 
-void AGBFGameState::Tick( float delta_seconds )
-{
-    Super::Tick( delta_seconds );
-
-    if ( GetLocalRole() == ROLE_Authority )
-    {
-        ServerFPS = GAverageFPS;
-    }
-}
-
 void AGBFGameState::SeamlessTravelTransitionCheckpoint( bool to_transition )
 {
     // Remove inactive and bots
@@ -54,11 +39,4 @@ void AGBFGameState::SeamlessTravelTransitionCheckpoint( bool to_transition )
             RemovePlayerState( ps );
         }
     }
-}
-
-void AGBFGameState::GetLifetimeReplicatedProps( TArray< FLifetimeProperty > & OutLifetimeProps ) const
-{
-    Super::GetLifetimeReplicatedProps( OutLifetimeProps );
-
-    DOREPLIFETIME( ThisClass, ServerFPS );
 }
