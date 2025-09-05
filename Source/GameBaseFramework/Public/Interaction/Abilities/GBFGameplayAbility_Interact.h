@@ -6,7 +6,7 @@
 #include "GBFGameplayAbility_Interact.generated.h"
 
 class UGBFInteractableComponent;
-class UGBFInputComponent;
+class UModularInputComponent;
 class UEnhancedInputLocalPlayerSubsystem;
 class UEnhancedInputUserSettings;
 class UGBFIndicatorDescriptor;
@@ -59,13 +59,13 @@ private:
     {
         InputBindingInfos() = default;
 
-        InputBindingInfos( const TWeakObjectPtr< UGBFInputComponent > & InputComponent, uint32 Handle ) :
+        InputBindingInfos( const TWeakObjectPtr< UModularInputComponent > & InputComponent, uint32 Handle ) :
             InputComponent( InputComponent ),
             Handle( Handle )
         {
         }
 
-        TWeakObjectPtr< UGBFInputComponent > InputComponent;
+        TWeakObjectPtr< UModularInputComponent > InputComponent;
         uint32 Handle;
     };
 

@@ -437,7 +437,7 @@ void UGBFGameplayAbility_Interact::RegisterInteraction( const InteractableTarget
         if ( option_handle.InitialInteractionOption.InputAction != nullptr )
         {
 
-            if ( auto * input_component = pawn->FindComponentByClass< UGBFInputComponent >() )
+            if ( auto * input_component = pawn->FindComponentByClass< UModularInputComponent >() )
             {
                 context.BindActionHandles.Emplace( input_component, input_component->BindAction( option_handle.InitialInteractionOption.InputAction, ETriggerEvent::Triggered, this, &ThisClass::OnPressCallBack, option_handle ).GetHandle() );
             }

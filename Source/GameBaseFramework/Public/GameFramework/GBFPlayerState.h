@@ -1,8 +1,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
+#include "GBFPlayerController.h"
 #include "ModularPlayerState.h"
 #include "Tags/GBFGameplayTagStack.h"
 
@@ -12,7 +12,7 @@ class UAbilitySystemComponent;
 class AGBFPlayerController;
 
 UCLASS()
-class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState, public IAbilitySystemInterface
+class GAMEBASEFRAMEWORK_API AGBFPlayerState : public AModularPlayerState
 {
     GENERATED_BODY()
 
@@ -20,9 +20,10 @@ public:
     explicit AGBFPlayerState(const FObjectInitializer& ObjectInitializer);
 
     UFUNCTION(BlueprintPure, Category = "PlayerState")
-    AGBFPlayerController* GetGBFPlayerController() const;
-
-    UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+    FORCEINLINE AGBFPlayerController* GetGBFPlayerController() const
+    {
+        return Cast< AGBFPlayerController >( GetPlayerController() );
+    }
 
     // Adds a specified number of stacks to the tag (does nothing if StackCount is below 1)
     UFUNCTION(BlueprintCallable, BlueprintAuthorityOnly)
@@ -43,12 +44,17 @@ public:
     // Returns true if there is at least one stack of the specified tag
     UFUNCTION(BlueprintPure)
     bool HasStatTag(FGameplayTag Tag) const;
-
-    void PostInitializeComponents() override;
-    void SetConnectionOptions(const FString& connection_options);
+    
+    FORCEINLINE void SetConnectionOptions(const FString& connection_options)
+    {
+        ConnectionOptions = connection_options;
+    }
 
     UFUNCTION(BlueprintPure)
-    const FString& GetConnectionOptions() const;
+    const FString& GetConnectionOptions() const
+    {
+        return ConnectionOptions;
+    }
 
 protected:
     void OverrideWith(APlayerState* PlayerState) override;
@@ -56,22 +62,8 @@ protected:
 
     void CopyProperties(APlayerState* PlayerState) override;
 
-    UPROPERTY(VisibleAnywhere, Category = "PlayerState")
-    UAbilitySystemComponent* AbilitySystemComponent;
-
     UPROPERTY(Replicated)
     FGBFGameplayTagStackContainer StatTags;
 
     FString ConnectionOptions;
-    TArray<FGBFAbilitySet_GrantedHandles> GrantedAbilities;
 };
-
-FORCEINLINE void AGBFPlayerState::SetConnectionOptions(const FString& connection_options)
-{
-    ConnectionOptions = connection_options;
-}
-
-FORCEINLINE const FString& AGBFPlayerState::GetConnectionOptions() const
-{
-    return ConnectionOptions;
-}

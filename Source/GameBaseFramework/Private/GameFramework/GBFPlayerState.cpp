@@ -1,24 +1,10 @@
 #include "GameFramework/GBFPlayerState.h"
 
-#include "AbilitySystemComponent.h"
-#include "Engine/World.h"
-#include "GameFramework/Pawn.h"
 #include "Net/UnrealNetwork.h"
 
 AGBFPlayerState::AGBFPlayerState(const FObjectInitializer& ObjectInitializer) :
     Super(ObjectInitializer)
 {
-    AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
-    AbilitySystemComponent->SetIsReplicated(true);
-    AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-
-    // AbilitySystemComponent needs to be updated at a high frequency.
-    SetNetUpdateFrequency(100.0f);
-}
-
-UAbilitySystemComponent* AGBFPlayerState::GetAbilitySystemComponent() const
-{
-    return AbilitySystemComponent;
 }
 
 void AGBFPlayerState::AddStatTagStack(const FGameplayTag Tag, const int32 StackCount)
@@ -44,14 +30,6 @@ int32 AGBFPlayerState::GetStatTagStackCount(const FGameplayTag Tag) const
 bool AGBFPlayerState::HasStatTag(const FGameplayTag Tag) const
 {
     return StatTags.ContainsTag(Tag);
-}
-
-void AGBFPlayerState::PostInitializeComponents()
-{
-    Super::PostInitializeComponents();
-
-    check(AbilitySystemComponent != nullptr);
-    AbilitySystemComponent->InitAbilityActorInfo(this, GetPawn());
 }
 
 void AGBFPlayerState::OverrideWith(APlayerState* PlayerState)
