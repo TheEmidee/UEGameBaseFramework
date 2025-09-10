@@ -1,16 +1,14 @@
 #include "GameFramework/GBFPlayerController.h"
 
-#include "Camera/GBFPlayerCameraManager.h"
-#include "CommonInputSubsystem.h"
-#include "Engine/GBFLocalPlayer.h"
-#include "GBFLog.h"
-#include "GameFramework/GBFPlayerState.h"
-
-#include <Engine/World.h>
-#include <TimerManager.h>
-
 #include "AbilitySystemComponent.h"
+#include "CommonInputSubsystem.h"
 #include "GameBaseFrameworkDeveloperSettings.h"
+#include "GBFLog.h"
+#include "TimerManager.h"
+#include "Camera/GBFPlayerCameraManager.h"
+#include "Engine/GBFLocalPlayer.h"
+#include "Engine/World.h"
+#include "GameFramework/GBFPlayerState.h"
 #include "GameFramework/GBFSettingsShared.h"
 
 AGBFPlayerController::AGBFPlayerController() :
@@ -99,16 +97,6 @@ void AGBFPlayerController::SetPlayer( UPlayer * player )
     }
 }
 
-void AGBFPlayerController::PostProcessInput( const float delta_time, const bool game_paused )
-{
-    if ( auto * asc = GetAbilitySystemComponent() )
-    {
-        asc->ProcessAbilityInput( delta_time, game_paused );
-    }
-
-    Super::PostProcessInput( delta_time, game_paused );
-}
-
 void AGBFPlayerController::UpdateForceFeedback( IInputInterface * input_interface, const int32 controller_id )
 {
     if ( bForceFeedbackEnabled )
@@ -174,12 +162,6 @@ void AGBFPlayerController::AddCheats( bool force )
 #endif //
 }
 
-UAbilitySystemComponent * AGBFPlayerController::GetAbilitySystemComponent() const
-{
-    const auto * ps = GetPlayerState< AGBFPlayerState >();
-    return ( ps ? ps->GetAbilitySystemComponent() : nullptr );
-}
-
 void AGBFPlayerController::OnPossess( APawn * pawn )
 {
     Super::OnPossess( pawn );
@@ -189,7 +171,7 @@ void AGBFPlayerController::OnPossess( APawn * pawn )
     {
         for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CheatsToRun )
         {
-            if ( cheat_row.Phase == ECheatExecutionTime::OnPlayerPawnPossession )
+            if ( cheat_row.Phase == EGBFCheatExecutionTime::OnPlayerPawnPossession )
             {
                 ConsoleCommand( cheat_row.Cheat, /*bWriteToLog=*/true );
             }

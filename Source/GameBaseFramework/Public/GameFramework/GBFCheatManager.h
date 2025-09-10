@@ -10,7 +10,7 @@
 #endif // #ifndef USING_CHEAT_MANAGER
 
 UENUM()
-enum class ECheatExecutionTime
+enum class EGBFCheatExecutionTime
 {
     // When the cheat manager is created
     OnCheatManagerCreated,
@@ -25,7 +25,7 @@ struct FGBFCheatToRun
     GENERATED_BODY()
 
     UPROPERTY( EditAnywhere )
-    ECheatExecutionTime Phase = ECheatExecutionTime::OnPlayerPawnPossession;
+    EGBFCheatExecutionTime Phase = EGBFCheatExecutionTime::OnPlayerPawnPossession;
 
     UPROPERTY( EditAnywhere )
     FString Cheat;
@@ -46,7 +46,4 @@ public:
 
     UFUNCTION( exec )
     void CheatAll( const FString & message );
-
-    UFUNCTION( exec )
-    void SelfDestructLocalPlayer();
 };

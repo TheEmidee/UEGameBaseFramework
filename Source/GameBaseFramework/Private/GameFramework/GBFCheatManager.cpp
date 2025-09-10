@@ -1,56 +1,41 @@
 #include "GameFramework/GBFCheatManager.h"
-
-#include "Characters/Components/GBFHealthComponent.h"
 #include "GameFramework/GBFPlayerController.h"
+#include "GameFramework/Pawn.h"
+#include "GameFramework/PlayerController.h"
 
-#include <GameFramework/Pawn.h>
-#include <GameFramework/PlayerController.h>
+#include "GameBaseFrameworkDeveloperSettings.h"
 
 void UGBFCheatManager::InitCheatManager()
 {
     Super::InitCheatManager();
 
 #if WITH_EDITOR
-    if ( GIsEditor )
+    if (GIsEditor)
     {
-        auto * pc = GetOuterAPlayerController();
-        for ( const auto & CheatRow : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CheatsToRun )
+        auto* pc = GetOuterAPlayerController();
+        for (const auto& CheatRow : GetDefault<UGameBaseFrameworkDeveloperSettings>()->CheatsToRun)
         {
-            if ( CheatRow.Phase == ECheatExecutionTime::OnCheatManagerCreated )
+            if (CheatRow.Phase == EGBFCheatExecutionTime::OnCheatManagerCreated)
             {
-                pc->ConsoleCommand( CheatRow.Cheat, /*bWriteToLog=*/true );
+                pc->ConsoleCommand(CheatRow.Cheat, /*bWriteToLog=*/true);
             }
         }
     }
 #endif
 }
 
-void UGBFCheatManager::Cheat( const FString & message )
+void UGBFCheatManager::Cheat(const FString& message)
 {
-    if ( auto * pc = Cast< AGBFPlayerController >( GetOuterAPlayerController() ) )
+    if (auto* pc = Cast<AGBFPlayerController>(GetOuterAPlayerController()))
     {
-        pc->ServerCheat( message.Left( 128 ) );
+        pc->ServerCheat(message.Left(128));
     }
 }
 
-void UGBFCheatManager::CheatAll( const FString & message )
+void UGBFCheatManager::CheatAll(const FString& message)
 {
-    if ( auto * pc = Cast< AGBFPlayerController >( GetOuterAPlayerController() ) )
+    if (auto* pc = Cast<AGBFPlayerController>(GetOuterAPlayerController()))
     {
-        pc->ServerCheatAll( message.Left( 128 ) );
-    }
-}
-
-void UGBFCheatManager::SelfDestructLocalPlayer()
-{
-    if ( const auto * pc = Cast< AGBFPlayerController >( GetOuterAPlayerController() ) )
-    {
-        if ( const auto pawn = pc->GetPawn() )
-        {
-            if ( const auto * health_component = UGBFHealthComponent::FindHealthComponent( pawn ) )
-            {
-                health_component->DamageSelfDestruct( nullptr );
-            }
-        }
+        pc->ServerCheatAll(message.Left(128));
     }
 }

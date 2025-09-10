@@ -36,6 +36,7 @@ protected:
     void FailedToRestartPlayer(AController* new_player) override;
 
 private:
+    void RestartAIController(AController* new_controller);
     FOnGameModePlayerInitializedEventDelegate OnPlayerInitializedDelegate;
     FOnGameModePlayerInitializedEventDelegate OnControllerLogoutDelegate;
 };

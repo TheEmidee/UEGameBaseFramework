@@ -1,9 +1,10 @@
 #include "GameFramework/GBFGameMode.h"
 
+#include "AIController.h"
 #include "GBFLog.h"
 #include "TimerManager.h"
-#include "AI/GBFAIController.h"
 #include "AssetRegistry/AssetData.h"
+#include "Chaos/Joint/PBDJointContainerSolver.h"
 #include "Engine/GBFAssetManager.h"
 #include "Engine/GBFHUD.h"
 #include "Engine/World.h"
@@ -13,7 +14,6 @@
 #include "GameFramework/Components/GBFPlayerSpawningManagerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Online/GBFGameSession.h"
-#include "Phases/GBFGamePhaseSubsystem.h"
 
 AGBFGameMode::AGBFGameMode()
 {
@@ -66,9 +66,12 @@ void AGBFGameMode::RequestPlayerRestartNextFrame(AController* controller, bool f
     {
         GetWorldTimerManager().SetTimerForNextTick(player_controller, &APlayerController::ServerRestartPlayer_Implementation);
     }
-    else if (auto* bot_controller = Cast<AGBFAIController>(controller))
+    else if (auto* bot_controller = Cast<AAIController>(controller))
     {
-        GetWorldTimerManager().SetTimerForNextTick(bot_controller, &AGBFAIController::ServerRestartController);
+        GetWorldTimerManager().SetTimerForNextTick(FTimerDelegate::CreateLambda([&]()
+        {
+            RestartAIController(bot_controller);
+        }));
     }
 }
 
@@ -168,5 +171,36 @@ void AGBFGameMode::FailedToRestartPlayer(AController* new_player)
     else
     {
         UE_LOG(LogGBF, Verbose, TEXT( "FailedToRestartPlayer(%s) but there's no pawn class so giving up." ), *GetPathNameSafe( new_player ));
+    }
+}
+
+void AGBFGameMode::RestartAIController(AController* new_controller)
+{
+    if (new_controller->GetNetMode() == NM_Client)
+    {
+        return;
+    }
+
+    ensure(( new_controller->GetPawn() == nullptr ) && new_controller->IsInState( NAME_Inactive ));
+
+    if (new_controller->IsInState(NAME_Inactive) || (new_controller->IsInState(NAME_Spectating)))
+    {
+        auto* const game_mode = GetWorld()->GetAuthGameMode<AGBFGameMode>();
+
+        if (game_mode == nullptr || !ControllerCanRestart(new_controller))
+        {
+            return;
+        }
+
+        // If we're still attached to a Pawn, leave it
+        if (new_controller->GetPawn() != nullptr)
+        {
+            new_controller->UnPossess();
+        }
+
+        // Re-enable input, similar to code in ClientRestart
+        new_controller->ResetIgnoreInputFlags();
+
+        game_mode->RestartPlayer(new_controller);
     }
 }

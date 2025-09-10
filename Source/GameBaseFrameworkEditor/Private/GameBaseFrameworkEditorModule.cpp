@@ -1,5 +1,4 @@
 #include "AssetToolsModule.h"
-#include "GBFAssetTypeActions_ContextEffectsLibrary.h"
 #include "GBFGameEditorStyle.h"
 #include "GameBaseFrameworkDeveloperSettings.h"
 #include "IGameBaseFrameworkEditorModule.h"
@@ -13,6 +12,12 @@
 #include <GameplayCueNotify_Looping.h>
 #include <Modules/ModuleManager.h>
 #include <PropertyEditorModule.h>
+
+#include "Editor.h"
+#include "ToolMenus.h"
+#include "Framework/Application/SlateApplication.h"
+#include "Subsystems/AssetEditorSubsystem.h"
+#include "UObject/UObjectIterator.h"
 
 #define LOCTEXT_NAMESPACE "GBFEditor"
 
@@ -168,14 +173,6 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
             FEditorDelegates::BeginPIE.AddRaw( this, &ThisClass::OnBeginPIE );
             FEditorDelegates::EndPIE.AddRaw( this, &ThisClass::OnEndPIE );
         }
-
-        // Register the Context Effects Library asset type actions.
-        {
-            auto & asset_tools = FModuleManager::LoadModuleChecked< FAssetToolsModule >( "AssetTools" ).Get();
-            const auto asset_action = MakeShared< FGBFAssetTypeActions_ContextEffectsLibrary >();
-            ContextEffectsLibraryAssetAction = asset_action;
-            asset_tools.RegisterAssetTypeActions( asset_action );
-        }
     }
 
     void OnBeginPIE( bool bIsSimulating )
@@ -193,13 +190,6 @@ class FGameBaseFrameworkEditorModule : public FDefaultGameModuleImpl
     void ShutdownModule() override
     {
         // Unregister the Context Effects Library asset type actions.
-        const auto * asset_tools_module = FModuleManager::GetModulePtr< FAssetToolsModule >( "AssetTools" );
-        const auto asset_action = ContextEffectsLibraryAssetAction.Pin();
-        if ( asset_tools_module && asset_action )
-        {
-            asset_tools_module->Get().UnregisterAssetTypeActions( asset_action.ToSharedRef() );
-        }
-
         FEditorDelegates::BeginPIE.RemoveAll( this );
         FEditorDelegates::EndPIE.RemoveAll( this );
 
@@ -244,7 +234,6 @@ protected:
     }
 
 private:
-    TWeakPtr< IAssetTypeActions > ContextEffectsLibraryAssetAction;
     FDelegateHandle ToolMenusHandle;
 };
 

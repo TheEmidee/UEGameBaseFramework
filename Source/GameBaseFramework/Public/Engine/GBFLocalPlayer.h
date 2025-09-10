@@ -7,7 +7,7 @@
 #include "GBFLocalPlayer.generated.h"
 
 struct FSwapAudioOutputResult;
-class UGBFGameUserSettings;
+class UGUSGameUserSettings;
 
 UCLASS( BlueprintType )
 class GAMEBASEFRAMEWORK_API UGBFLocalPlayer : public UCommonLocalPlayer
@@ -25,7 +25,7 @@ public:
 
     /** Gets the local settings for this player, this is read from config files at process startup and is always valid */
     UFUNCTION()
-    UGBFGameUserSettings * GetLocalSettings() const;
+    UGUSGameUserSettings * GetLocalSettings() const;
 
     /** Gets the shared setting for this player, this is read using the save game system so may not be correct until after user login */
     UFUNCTION( BlueprintPure )

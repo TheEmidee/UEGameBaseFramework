@@ -108,11 +108,12 @@
       "Enabled": true
     },
     {
-      "Name": "ChaosCaching",
+      "Name": "ModelViewViewModel",
       "Enabled": true
     },
     {
-      "Name": "ModelViewViewModel",
+      "Name": "GameplayTagsExtensions",
       "Enabled": true
-    } 
-] }
+    }
+  ]
+}

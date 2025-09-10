@@ -6,6 +6,8 @@
 
 #include "GBFUIMessagingSubsystem.generated.h"
 
+class UCommonGameDialog;
+
 UCLASS()
 class GAMEBASEFRAMEWORK_API UGBFUIMessagingSubsystem final : public UCommonMessagingSubsystem
 {

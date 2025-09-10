@@ -7,6 +7,9 @@
 #include <Settings/ContentBrowserSettings.h>
 #include <Widgets/Notifications/SNotificationList.h>
 
+#include "Framework/Commands/InputBindingManager.h"
+#include "Settings/LevelEditorPlaySettings.h"
+
 #define LOCTEXT_NAMESPACE "GameBaseFrameworkEditor"
 
 void UGBFEditorEngine::Tick( float delta_seconds, bool idle_mode )
@@ -37,7 +40,7 @@ FGameInstancePIEResult UGBFEditorEngine::PreCreatePIEInstances( const bool any_b
     }
 
     //@TODO: Should add delegates that a *non-editor* module could bind to for PIE start/stop instead of poking directly
-    GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
+    // GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
 
     //: TODO: PlatformEmulationSettings
     // GetDefault< ULyraPlatformEmulationSettings >()->OnPlayInEditorStarted();
@@ -49,7 +52,7 @@ void UGBFEditorEngine::StartPlayInEditorSession( FRequestPlaySessionParams & in_
 {
     Super::StartPlayInEditorSession( in_request_params );
 
-    GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
+    // GetDefault< UGameBaseFrameworkDeveloperSettings >()->OnPlayInEditorStarted();
 }
 
 void UGBFEditorEngine::FirstTickSetup()

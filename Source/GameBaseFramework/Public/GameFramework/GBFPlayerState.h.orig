@@ -2,7 +2,15 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+<<<<<<< HEAD
 #include "GBFPlayerController.h"
+=======
+<<<<<<< Updated upstream
+=======
+#include "GBFPlayerController.h"
+#include "GTExtGameplayTagStack.h"
+>>>>>>> Stashed changes
+>>>>>>> 37eb53e (#4)
 #include "ModularPlayerState.h"
 
 #include "GBFPlayerState.generated.h"

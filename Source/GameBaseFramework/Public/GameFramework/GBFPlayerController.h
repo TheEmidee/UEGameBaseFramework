@@ -5,8 +5,8 @@
 #include "GBFPlayerController.generated.h"
 
 class UGBFLocalPlayer;
-class UGASExtAbilitySystemComponent;
 class UGBFSettingsShared;
+class UAbilitySystemComponent;
 
 UCLASS()
 class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerController
@@ -16,53 +16,50 @@ class GAMEBASEFRAMEWORK_API AGBFPlayerController : public ACommonPlayerControlle
 public:
     AGBFPlayerController();
 
-    UFUNCTION( BlueprintPure )
-    UGBFLocalPlayer * GetGBFLocalPlayer() const;
+    UFUNCTION(BlueprintPure)
+    UGBFLocalPlayer* GetGBFLocalPlayer() const;
 
-    UFUNCTION( BlueprintPure )
-    AActor * GetStartSpot() const;
+    UFUNCTION(BlueprintPure)
+    AActor* GetStartSpot() const;
 
-    void EnableInput( APlayerController * player_controller ) override;
-    void DisableInput( APlayerController * player_controller ) override;
+    void EnableInput(APlayerController* player_controller) override;
+    void DisableInput(APlayerController* player_controller) override;
 
-    UFUNCTION( BlueprintCallable )
-    void ForceEnableInput( class APlayerController * player_controller );
+    UFUNCTION(BlueprintCallable)
+    void ForceEnableInput(class APlayerController* player_controller);
 
-    void DisableInputForDuration( const float duration );
+    void DisableInputForDuration(const float duration);
     void OnRep_PlayerState() override;
     void InitPlayerState() override;
     void CleanupPlayerState() override;
-    void SetPlayer( UPlayer * player ) override;
-    void PostProcessInput( const float delta_time, const bool game_paused ) override;
-    void UpdateForceFeedback( IInputInterface * input_interface, const int32 controller_id ) override;
+    void SetPlayer(UPlayer* player) override;
+    void UpdateForceFeedback(IInputInterface* input_interface, const int32 controller_id) override;
 
-    UFUNCTION( Reliable, Server, WithValidation )
-    void ServerCheat( const FString & message );
+    UFUNCTION(Reliable, Server, WithValidation)
+    void ServerCheat(const FString& message);
 
-    UFUNCTION( Reliable, Server, WithValidation )
-    void ServerCheatAll( const FString & message );
+    UFUNCTION(Reliable, Server, WithValidation)
+    void ServerCheatAll(const FString& message);
 
-    void AddCheats( bool force ) override;
-
-    UAbilitySystemComponent * GetAbilitySystemComponent() const;
+    void AddCheats(bool force) override;
 
 protected:
-    void OnPossess( APawn * pawn ) override;
+    void OnPossess(APawn* pawn) override;
 
     // Called when the player state is set or cleared
     virtual void OnPlayerStateChanged();
 
 private:
-    void OnSettingsChanged( UGBFSettingsShared * settings );
+    void OnSettingsChanged(UGBFSettingsShared* settings);
     void BroadcastOnPlayerStateChanged();
 
     UPROPERTY()
-    APlayerState * LastSeenPlayerState;
+    APlayerState* LastSeenPlayerState;
 
     FTimerHandle ReEnableInputTimerHandle;
 };
 
-FORCEINLINE AActor * AGBFPlayerController::GetStartSpot() const
+FORCEINLINE AActor* AGBFPlayerController::GetStartSpot() const
 {
     return StartSpot.Get();
 }

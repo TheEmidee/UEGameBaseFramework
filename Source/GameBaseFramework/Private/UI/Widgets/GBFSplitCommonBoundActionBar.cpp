@@ -1,4 +1,4 @@
-#include "GBFSplitCommonBoundActionBar.h"
+#include "UI/Widgets/GBFSplitCommonBoundActionBar.h"
 
 #include "CommonInputSubsystem.h"
 #include "CommonInputTypeEnum.h"

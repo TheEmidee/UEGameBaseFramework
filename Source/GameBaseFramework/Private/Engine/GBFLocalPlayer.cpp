@@ -6,6 +6,8 @@
 #include <Engine/World.h>
 #include <GameFramework/PlayerController.h>
 
+#include "GameFramework/GBFSettingsShared.h"
+
 UGBFLocalPlayer::UGBFLocalPlayer()
 {
 }
@@ -42,9 +44,9 @@ void UGBFLocalPlayer::InitOnlineSession()
     Super::InitOnlineSession();
 }
 
-UGBFGameUserSettings * UGBFLocalPlayer::GetLocalSettings() const
+UGUSGameUserSettings * UGBFLocalPlayer::GetLocalSettings() const
 {
-    return UGBFGameUserSettings::Get();
+    return UGUSGameUserSettings::Get();
 }
 
 UGBFSettingsShared * UGBFLocalPlayer::GetSharedSettings() const

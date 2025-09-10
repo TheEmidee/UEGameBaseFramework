@@ -7,6 +7,8 @@
 #include <EnhancedInputSubsystems.h>
 #include <InputMappingContext.h>
 
+#include "Engine/GameInstance.h"
+
 UGBFLocalMultiplayerSubsystem::UGBFLocalMultiplayerSubsystem() :
     LerpToTargetOffsetRemainingTime( 0.0f ),
     LerpToTargetOffsetDuration( 0.0f )
