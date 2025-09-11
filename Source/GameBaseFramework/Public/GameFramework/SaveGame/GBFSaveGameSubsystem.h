@@ -4,8 +4,8 @@
 #include "FrequencyThrottler.h"
 #include "GBFSaveGame.h"
 
-#include <CoreMinimal.h>
-#include <Subsystems/GameInstanceSubsystem.h>
+#include "CoreMinimal.h"
+#include "Subsystems/GameInstanceSubsystem.h"
 
 #include "GBFSaveGameSubsystem.generated.h"
 

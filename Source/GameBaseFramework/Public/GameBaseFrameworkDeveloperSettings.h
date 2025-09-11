@@ -1,8 +1,8 @@
 #pragma once
 
 #include "GameFramework/GBFCheatManager.h"
-#include <CoreMinimal.h>
-#include <Engine/DeveloperSettings.h>
+#include "CoreMinimal.h"
+#include "Engine/DeveloperSettings.h"
 
 #include "GameBaseFrameworkDeveloperSettings.generated.h"
 

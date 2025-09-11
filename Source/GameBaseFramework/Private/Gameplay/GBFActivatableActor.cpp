@@ -1,6 +1,6 @@
 #include "Gameplay/GBFActivatableActor.h"
 
-#include <Net/UnrealNetwork.h>
+#include "Net/UnrealNetwork.h"
 
 AGBFActivatableActor::AGBFActivatableActor()
 {

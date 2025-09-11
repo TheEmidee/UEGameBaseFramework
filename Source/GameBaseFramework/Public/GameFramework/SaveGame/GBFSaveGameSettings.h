@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <Engine/DeveloperSettings.h>
+#include "CoreMinimal.h"
+#include "Engine/DeveloperSettings.h"
 
 #include "GBFSaveGameSettings.generated.h"
 

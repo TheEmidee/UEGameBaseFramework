@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Components/ControllerComponent.h>
-#include <CoreMinimal.h>
+#include "Components/ControllerComponent.h"
+#include "CoreMinimal.h"
 
 #include "GBFNetworkFailureHandlerComponent.generated.h"
 

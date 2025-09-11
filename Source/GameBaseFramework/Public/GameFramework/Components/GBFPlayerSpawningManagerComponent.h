@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Components/GameStateComponent.h>
-#include <CoreMinimal.h>
+#include "Components/GameStateComponent.h"
+#include "CoreMinimal.h"
 
 #include "GBFPlayerSpawningManagerComponent.generated.h"
 

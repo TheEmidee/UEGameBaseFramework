@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <Engine/DataAsset.h>
+#include "CoreMinimal.h"
+#include "Engine/DataAsset.h"
 
 #include "GBFPlayerDisplayAsset.generated.h"
 

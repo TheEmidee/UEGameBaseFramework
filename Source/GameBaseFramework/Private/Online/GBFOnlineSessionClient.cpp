@@ -2,7 +2,7 @@
 
 #include "Engine/GBFGameInstance.h"
 
-#include <OnlineSubsystem.h>
+#include "OnlineSubsystem.h"
 
 void UGBFOnlineSessionClient::OnSessionUserInviteAccepted( const bool was_success, const int32 controller_id, const TSharedPtr< const FUniqueNetId > user_id, const FOnlineSessionSearchResult & invite_result )
 {

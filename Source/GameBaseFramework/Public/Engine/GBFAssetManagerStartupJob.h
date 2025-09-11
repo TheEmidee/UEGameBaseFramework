@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <Engine/StreamableManager.h>
+#include "CoreMinimal.h"
+#include "Engine/StreamableManager.h"
 
 DECLARE_DELEGATE_OneParam( FGBFAssetManagerStartupJobSubstepProgress, float /*NewProgress*/ );
 

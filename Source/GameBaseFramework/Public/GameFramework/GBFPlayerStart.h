@@ -1,8 +1,8 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <GameFramework/PlayerStart.h>
-#include <GameplayTagContainer.h>
+#include "CoreMinimal.h"
+#include "GameFramework/PlayerStart.h"
+#include "GameplayTagContainer.h"
 
 #include "GBFPlayerStart.generated.h"
 

@@ -3,9 +3,9 @@
 #include "GameBaseFrameworkDeveloperSettings.h"
 #include "GameFramework/GBFWorldSettings.h"
 
-#include <Framework/Notifications/NotificationManager.h>
-#include <Settings/ContentBrowserSettings.h>
-#include <Widgets/Notifications/SNotificationList.h>
+#include "Framework/Notifications/NotificationManager.h"
+#include "Settings/ContentBrowserSettings.h"
+#include "Widgets/Notifications/SNotificationList.h"
 
 #include "Framework/Commands/InputBindingManager.h"
 #include "Settings/LevelEditorPlaySettings.h"

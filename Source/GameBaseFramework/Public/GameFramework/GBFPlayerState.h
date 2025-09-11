@@ -1,13 +1,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "GBFPlayerController.h"
+#include "GTExtGameplayTagStack.h"
 #include "ModularPlayerState.h"
 
 #include "GBFPlayerState.generated.h"
 
-class UAbilitySystemComponent;
 class AGBFPlayerController;
 
 UCLASS()

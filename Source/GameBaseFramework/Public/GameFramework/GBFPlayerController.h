@@ -32,8 +32,6 @@ public:
     void OnRep_PlayerState() override;
     void InitPlayerState() override;
     void CleanupPlayerState() override;
-    void SetPlayer(UPlayer* player) override;
-    void UpdateForceFeedback(IInputInterface* input_interface, const int32 controller_id) override;
 
     UFUNCTION(Reliable, Server, WithValidation)
     void ServerCheat(const FString& message);
@@ -50,7 +48,6 @@ protected:
     virtual void OnPlayerStateChanged();
 
 private:
-    void OnSettingsChanged(UGBFSettingsShared* settings);
     void BroadcastOnPlayerStateChanged();
 
     UPROPERTY()

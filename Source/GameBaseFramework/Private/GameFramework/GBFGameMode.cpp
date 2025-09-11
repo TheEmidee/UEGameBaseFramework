@@ -3,10 +3,6 @@
 #include "AIController.h"
 #include "GBFLog.h"
 #include "TimerManager.h"
-#include "AssetRegistry/AssetData.h"
-#include "Chaos/Joint/PBDJointContainerSolver.h"
-#include "Engine/GBFAssetManager.h"
-#include "Engine/GBFHUD.h"
 #include "Engine/World.h"
 #include "GameFramework/GBFGameState.h"
 #include "GameFramework/GBFPlayerController.h"
@@ -21,7 +17,6 @@ AGBFGameMode::AGBFGameMode()
     GameSessionClass = AGBFGameSession::StaticClass();
     PlayerControllerClass = AGBFPlayerController::StaticClass();
     PlayerStateClass = AGBFPlayerState::StaticClass();
-    HUDClass = AGBFHUD::StaticClass();
 }
 
 bool AGBFGameMode::PlayerCanRestart_Implementation(APlayerController* player)

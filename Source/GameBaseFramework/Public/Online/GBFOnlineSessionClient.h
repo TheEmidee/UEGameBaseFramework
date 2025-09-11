@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <OnlineSessionClient.h>
+#include "CoreMinimal.h"
+#include "OnlineSessionClient.h"
 
 #include "GBFOnlineSessionClient.generated.h"
 

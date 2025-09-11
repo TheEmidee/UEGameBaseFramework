@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <Editor/UnrealEdEngine.h>
+#include "CoreMinimal.h"
+#include "Editor/UnrealEdEngine.h"
 
 #include "GBFEditorEngine.generated.h"
 

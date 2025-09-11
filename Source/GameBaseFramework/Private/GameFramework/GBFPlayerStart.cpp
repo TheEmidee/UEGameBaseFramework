@@ -1,8 +1,8 @@
 #include "GameFramework/GBFPlayerStart.h"
 
-#include <Engine/World.h>
-#include <GameFramework/GameModeBase.h>
-#include <TimerManager.h>
+#include "Engine/World.h"
+#include "GameFramework/GameModeBase.h"
+#include "TimerManager.h"
 
 AGBFPlayerStart::AGBFPlayerStart( const FObjectInitializer & object_initializer ) :
     Super( object_initializer )

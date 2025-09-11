@@ -1,68 +1,65 @@
 #include "GameFramework/GBFPlayerController.h"
 
-#include "AbilitySystemComponent.h"
 #include "CommonInputSubsystem.h"
 #include "GameBaseFrameworkDeveloperSettings.h"
 #include "GBFLog.h"
 #include "TimerManager.h"
-#include "Camera/GBFPlayerCameraManager.h"
 #include "Engine/GBFLocalPlayer.h"
 #include "Engine/World.h"
 #include "GameFramework/GBFPlayerState.h"
-#include "GameFramework/GBFSettingsShared.h"
 
 AGBFPlayerController::AGBFPlayerController() :
-    LastSeenPlayerState( nullptr )
+    LastSeenPlayerState(nullptr)
 {
-    PlayerCameraManagerClass = AGBFPlayerCameraManager::StaticClass();
 }
 
-UGBFLocalPlayer * AGBFPlayerController::GetGBFLocalPlayer() const
+UGBFLocalPlayer* AGBFPlayerController::GetGBFLocalPlayer() const
 {
-    return Cast< UGBFLocalPlayer >( GetLocalPlayer() );
+    return Cast<UGBFLocalPlayer>(GetLocalPlayer());
 }
 
-void AGBFPlayerController::EnableInput( class APlayerController * player_controller )
+void AGBFPlayerController::EnableInput(class APlayerController* player_controller)
 {
-    if ( GetWorldTimerManager().IsTimerActive( ReEnableInputTimerHandle ) )
+    if (GetWorldTimerManager().IsTimerActive(ReEnableInputTimerHandle))
     {
         return;
     }
 
-    Super::EnableInput( player_controller );
+    Super::EnableInput(player_controller);
 }
 
-void AGBFPlayerController::DisableInput( class APlayerController * player_controller )
+void AGBFPlayerController::DisableInput(class APlayerController* player_controller)
 {
-    GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
-    Super::DisableInput( player_controller );
+    GetWorldTimerManager().ClearTimer(ReEnableInputTimerHandle);
+    Super::DisableInput(player_controller);
 }
 
-void AGBFPlayerController::ForceEnableInput( class APlayerController * player_controller )
+void AGBFPlayerController::ForceEnableInput(class APlayerController* player_controller)
 {
-    GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
-    Super::EnableInput( player_controller );
+    GetWorldTimerManager().ClearTimer(ReEnableInputTimerHandle);
+    Super::EnableInput(player_controller);
 }
 
-void AGBFPlayerController::DisableInputForDuration( const float duration )
+void AGBFPlayerController::DisableInputForDuration(const float duration)
 {
-    DisableInput( nullptr );
+    DisableInput(nullptr);
 
     auto new_duration = duration;
 
-    if ( ensureMsgf( duration > 0.0f, TEXT( "DisableInputForDuration must be called with a valid duration" ) ) )
+    if (ensureMsgf(duration > 0.0f, TEXT( "DisableInputForDuration must be called with a valid duration" )))
     {
         new_duration = 1.0f;
     }
 
-    if ( !ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining( ReEnableInputTimerHandle ) < new_duration )
+    if (!ReEnableInputTimerHandle.IsValid() || GetWorldTimerManager().GetTimerRemaining(ReEnableInputTimerHandle) < new_duration)
     {
-        auto enable_input = [ this ]() {
-            GetWorldTimerManager().ClearTimer( ReEnableInputTimerHandle );
-            EnableInput( nullptr );
+        auto enable_input = [ this ]()
+        {
+            GetWorldTimerManager().ClearTimer(ReEnableInputTimerHandle);
+            EnableInput(nullptr);
         };
 
-        GetWorldTimerManager().SetTimer( ReEnableInputTimerHandle, enable_input, new_duration, false );
+        GetWorldTimerManager().SetTimer(ReEnableInputTimerHandle, enable_input, new_duration, false);
     }
 }
 
@@ -84,96 +81,65 @@ void AGBFPlayerController::CleanupPlayerState()
     BroadcastOnPlayerStateChanged();
 }
 
-void AGBFPlayerController::SetPlayer( UPlayer * player )
-{
-    Super::SetPlayer( player );
-
-    if ( const UGBFLocalPlayer * local_player = Cast< UGBFLocalPlayer >( player ) )
-    {
-        auto * user_settings = local_player->GetSharedSettings();
-        user_settings->OnSettingChanged.AddUObject( this, &ThisClass::OnSettingsChanged );
-
-        OnSettingsChanged( user_settings );
-    }
-}
-
-void AGBFPlayerController::UpdateForceFeedback( IInputInterface * input_interface, const int32 controller_id )
-{
-    if ( bForceFeedbackEnabled )
-    {
-        if ( const auto * common_input_subsystem = UCommonInputSubsystem::Get( GetLocalPlayer() ) )
-        {
-            const ECommonInputType CurrentInputType = common_input_subsystem->GetCurrentInputType();
-            if ( CurrentInputType == ECommonInputType::Gamepad || CurrentInputType == ECommonInputType::Touch )
-            {
-                input_interface->SetForceFeedbackChannelValues( controller_id, ForceFeedbackValues );
-                return;
-            }
-        }
-    }
-
-    input_interface->SetForceFeedbackChannelValues( controller_id, FForceFeedbackValues() );
-}
-
-void AGBFPlayerController::ServerCheat_Implementation( const FString & message )
+void AGBFPlayerController::ServerCheat_Implementation(const FString& message)
 {
 #if USING_CHEAT_MANAGER
-    if ( CheatManager != nullptr )
+    if (CheatManager != nullptr)
     {
-        UE_LOG( LogGBF, Warning, TEXT( "ServerCheat: %s" ), *message );
-        ClientMessage( ConsoleCommand( message ) );
+        UE_LOG(LogGBF, Warning, TEXT( "ServerCheat: %s" ), *message);
+        ClientMessage(ConsoleCommand(message));
     }
 #endif
 }
 
-bool AGBFPlayerController::ServerCheat_Validate( const FString & /*message*/ )
+bool AGBFPlayerController::ServerCheat_Validate(const FString& /*message*/)
 {
     return true;
 }
 
-void AGBFPlayerController::ServerCheatAll_Implementation( const FString & message )
+void AGBFPlayerController::ServerCheatAll_Implementation(const FString& message)
 {
 #if USING_CHEAT_MANAGER
-    if ( CheatManager )
+    if (CheatManager)
     {
-        UE_LOG( LogGBF, Warning, TEXT( "ServerCheatAll: %s" ), *message );
-        for ( auto iterator = GetWorld()->GetPlayerControllerIterator(); iterator; ++iterator )
+        UE_LOG(LogGBF, Warning, TEXT( "ServerCheatAll: %s" ), *message);
+        for (auto iterator = GetWorld()->GetPlayerControllerIterator(); iterator; ++iterator)
         {
-            if ( auto * pc = Cast< AGBFPlayerController >( *iterator ) )
+            if (auto* pc = Cast<AGBFPlayerController>(*iterator))
             {
-                pc->ClientMessage( pc->ConsoleCommand( message ) );
+                pc->ClientMessage(pc->ConsoleCommand(message));
             }
         }
     }
 #endif // #if USING_CHEAT_MANAGER
 }
 
-bool AGBFPlayerController::ServerCheatAll_Validate( const FString & /*message*/ )
+bool AGBFPlayerController::ServerCheatAll_Validate(const FString& /*message*/)
 {
     return true;
 }
 
-void AGBFPlayerController::AddCheats( bool force )
+void AGBFPlayerController::AddCheats(bool force)
 {
 #if USING_CHEAT_MANAGER
-    Super::AddCheats( true );
+    Super::AddCheats(true);
 #else  // #if USING_CHEAT_MANAGER
-    Super::AddCheats( force );
+    Super::AddCheats(force);
 #endif //
 }
 
-void AGBFPlayerController::OnPossess( APawn * pawn )
+void AGBFPlayerController::OnPossess(APawn* pawn)
 {
-    Super::OnPossess( pawn );
+    Super::OnPossess(pawn);
 
 #if WITH_SERVER_CODE && WITH_EDITOR
-    if ( GIsEditor && ( pawn != nullptr ) && ( GetPawn() == pawn ) )
+    if (GIsEditor && (pawn != nullptr) && (GetPawn() == pawn))
     {
-        for ( const auto & cheat_row : GetDefault< UGameBaseFrameworkDeveloperSettings >()->CheatsToRun )
+        for (const auto& cheat_row : GetDefault<UGameBaseFrameworkDeveloperSettings>()->CheatsToRun)
         {
-            if ( cheat_row.Phase == EGBFCheatExecutionTime::OnPlayerPawnPossession )
+            if (cheat_row.Phase == EGBFCheatExecutionTime::OnPlayerPawnPossession)
             {
-                ConsoleCommand( cheat_row.Cheat, /*bWriteToLog=*/true );
+                ConsoleCommand(cheat_row.Cheat, /*bWriteToLog=*/true);
             }
         }
     }
@@ -182,11 +148,6 @@ void AGBFPlayerController::OnPossess( APawn * pawn )
 
 void AGBFPlayerController::OnPlayerStateChanged()
 {
-}
-
-void AGBFPlayerController::OnSettingsChanged( UGBFSettingsShared * settings )
-{
-    bForceFeedbackEnabled = settings->GetForceFeedbackEnabled();
 }
 
 void AGBFPlayerController::BroadcastOnPlayerStateChanged()

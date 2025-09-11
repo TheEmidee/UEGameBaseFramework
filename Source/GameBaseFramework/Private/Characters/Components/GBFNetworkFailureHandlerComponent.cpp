@@ -1,7 +1,7 @@
 #include "Characters/Components/GBFNetworkFailureHandlerComponent.h"
 
-#include <Engine/Engine.h>
-#include <Engine/NetDriver.h>
+#include "Engine/Engine.h"
+#include "Engine/NetDriver.h"
 
 void UGBFNetworkFailureHandlerComponent::BeginPlay()
 {

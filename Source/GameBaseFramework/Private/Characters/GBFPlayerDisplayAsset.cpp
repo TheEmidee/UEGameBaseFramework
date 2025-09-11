@@ -1,8 +1,8 @@
 #include "Characters/GBFPlayerDisplayAsset.h"
 
-#include <Components/MeshComponent.h>
-#include <Materials/MaterialInstanceDynamic.h>
-#include <NiagaraComponent.h>
+#include "Components/MeshComponent.h"
+#include "Materials/MaterialInstanceDynamic.h"
+#include "NiagaraComponent.h"
 
 void UGBFPlayerDisplayAsset::ApplyToMaterial( UMaterialInstanceDynamic * material ) const
 {

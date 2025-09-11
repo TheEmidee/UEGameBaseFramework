@@ -3,15 +3,15 @@
 #include "GameBaseFrameworkDeveloperSettings.h"
 #include "IGameBaseFrameworkEditorModule.h"
 
-#include <AbilitySystemGlobals.h>
-#include <GameplayAbilitiesEditorModule.h>
-#include <GameplayAbilitiesModule.h>
-#include <GameplayCueInterface.h>
-#include <GameplayCueNotify_Burst.h>
-#include <GameplayCueNotify_BurstLatent.h>
-#include <GameplayCueNotify_Looping.h>
-#include <Modules/ModuleManager.h>
-#include <PropertyEditorModule.h>
+#include "AbilitySystemGlobals.h"
+#include "GameplayAbilitiesEditorModule.h"
+#include "GameplayAbilitiesModule.h"
+#include "GameplayCueInterface.h"
+#include "GameplayCueNotify_Burst.h"
+#include "GameplayCueNotify_BurstLatent.h"
+#include "GameplayCueNotify_Looping.h"
+#include "Modules/ModuleManager.h"
+#include "PropertyEditorModule.h"
 
 #include "Editor.h"
 #include "ToolMenus.h"

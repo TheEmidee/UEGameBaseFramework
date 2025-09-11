@@ -2,7 +2,7 @@
 
 #include "Core/CoreExtObjectWithWorld.h"
 
-#include <CoreMinimal.h>
+#include "CoreMinimal.h"
 
 #include "GBFVolumeTriggerAction.generated.h"
 

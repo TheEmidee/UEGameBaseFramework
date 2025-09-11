@@ -1,13 +1,8 @@
 #include "GBFTags.h"
 
-#include <Engine/EngineTypes.h>
+#include "Engine/EngineTypes.h"
 
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_WorldSettings_NoSaveGame, TEXT( "WorldSettings.NoSaveGame" ) );
-
-UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_Game, TEXT( "UI.Layer.Game" ) );
-UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_GameMenu, TEXT( "UI.Layer.GameMenu" ) );
-UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_Menu, TEXT( "UI.Layer.Menu" ) );
-UE_DEFINE_GAMEPLAY_TAG( GBFTag_UI_Layer_Modal, TEXT( "UI.Layer.Modal" ) );
 
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_Gameplay_Movement_Mode_Walking, TEXT( "Gameplay.Movement.Mode.Walking" ) );
 UE_DEFINE_GAMEPLAY_TAG( GBFTag_Gameplay_Movement_Mode_Flying, TEXT( "Gameplay.Movement.Mode.Flying" ) );

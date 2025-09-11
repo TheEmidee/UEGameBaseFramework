@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <GameFramework/GameSession.h>
+#include "CoreMinimal.h"
+#include "GameFramework/GameSession.h"
 
 #include "GBFGameSession.generated.h"
 

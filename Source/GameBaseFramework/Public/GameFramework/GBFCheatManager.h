@@ -1,7 +1,7 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <GameFramework/CheatManager.h>
+#include "CoreMinimal.h"
+#include "GameFramework/CheatManager.h"
 
 #include "GBFCheatManager.generated.h"
 

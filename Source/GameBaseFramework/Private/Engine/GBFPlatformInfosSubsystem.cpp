@@ -1,7 +1,7 @@
 #include "Engine/GBFPlatformInfosSubsystem.h"
 
-#include <CommonUISettings.h>
-#include <ICommonUIModule.h>
+#include "CommonUISettings.h"
+#include "ICommonUIModule.h"
 
 void UGBFPlatformInfosSubsystem::Initialize( FSubsystemCollectionBase & collection )
 {

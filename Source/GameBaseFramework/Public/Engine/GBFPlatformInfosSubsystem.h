@@ -1,8 +1,8 @@
 #pragma once
 
-#include <CoreMinimal.h>
-#include <GameplayTagContainer.h>
-#include <Subsystems/EngineSubsystem.h>
+#include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
+#include "Subsystems/EngineSubsystem.h"
 
 #include "GBFPlatformInfosSubsystem.generated.h"
 
