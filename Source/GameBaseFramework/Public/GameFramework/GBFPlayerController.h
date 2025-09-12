@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CommonPlayerController.h"
+#include "CommonPlayerController.h"
 
 #include "GBFPlayerController.generated.h"
 

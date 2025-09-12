@@ -2,6 +2,7 @@
 
 #include "ModularGameMode.h"
 #include "CoreMinimal.h"
+#include "ModularGameMode.h"
 
 #include "GBFGameMode.generated.h"
 

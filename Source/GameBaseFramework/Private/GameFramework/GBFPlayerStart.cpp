@@ -5,7 +5,8 @@
 #include "TimerManager.h"
 
 AGBFPlayerStart::AGBFPlayerStart( const FObjectInitializer & object_initializer ) :
-    Super( object_initializer )
+    Super(object_initializer),
+    ClaimingController(nullptr)
 {
     bEnabled = true;
 }

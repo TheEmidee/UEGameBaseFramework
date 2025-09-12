@@ -3,6 +3,7 @@
 #include "ModularGameState.h"
 #include "AbilitySystemInterface.h"
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 
 #include "GBFGameState.generated.h"
 
