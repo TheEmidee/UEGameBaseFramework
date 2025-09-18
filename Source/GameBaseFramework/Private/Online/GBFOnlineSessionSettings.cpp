@@ -27,7 +27,7 @@ FGBFOnlineSearchSettings::FGBFOnlineSearchSettings( const bool searching_lan, co
 
     if ( searching_presence )
     {
-        QuerySettings.Set( SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals );
+        //QuerySettings.Set( SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals );
     }
 }
 

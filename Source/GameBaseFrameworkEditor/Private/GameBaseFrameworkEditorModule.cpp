@@ -248,6 +248,6 @@ private:
     FDelegateHandle ToolMenusHandle;
 };
 
-IMPLEMENT_MODULE( FGameBaseFrameworkEditorModule, GBFEditorEngine );
+IMPLEMENT_MODULE( FGameBaseFrameworkEditorModule, GameBaseFrameworkEditor );
 
 #undef LOCTEXT_NAMESPACE
