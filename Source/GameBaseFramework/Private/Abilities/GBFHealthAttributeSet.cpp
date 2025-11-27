@@ -34,25 +34,21 @@ void UGBFHealthAttributeSet::PostAttributeChange( const FGameplayAttribute & att
 
     if ( attribute == GetMaxHealthAttribute() )
     {
-        // Make sure current health is not greater than the new max health.
-        if ( GetHealth() > new_value )
-        {
-            auto * asc = GetAbilitySystemComponent();
-            check( asc );
+        auto * asc = GetAbilitySystemComponent();
+        check( asc );
 
-            asc->ApplyModToAttribute( GetHealthAttribute(), EGameplayModOp::Override, new_value );
-        }
+        // Make sure current health scales percentually with the new max health.
+        const auto new_health = new_value * GetHealth() / old_value;
+        asc->ApplyModToAttribute( GetHealthAttribute(), EGameplayModOp::Override, new_health );
     }
     else if ( attribute == GetMaxShieldAttribute() )
     {
-        // Make sure current shield is not greater than the new max shield.
-        if ( GetShield() > new_value )
-        {
-            auto * asc = GetAbilitySystemComponent();
-            check( asc );
+        auto * asc = GetAbilitySystemComponent();
+        check( asc );
 
-            asc->ApplyModToAttribute( GetShieldAttribute(), EGameplayModOp::Override, new_value );
-        }
+        // Make sure current shield scales percentually with the new max shield.
+        const auto new_shield = new_value * GetHealth() / old_value;
+        asc->ApplyModToAttribute( GetShieldAttribute(), EGameplayModOp::Override, new_shield );
     }
 
     if ( bOutOfHealth && GetHealth() > 0.0f )
