@@ -52,14 +52,14 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
 
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before loading" ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Frequency check before loading" ) );
     if ( !LoadGameFrequencyThrottler.RecordEvent() )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Too much calls to Load. Max calls : %i in %f seconds" ), settings->MaxLoadFrequency, settings->MaxLoadFrequencyDuration );
         on_save_game_loaded.ExecuteIfBound( SaveGame, false );
         return;
     }
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Loaded %i times for the last %i seconds" ), LoadGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( LoadGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Frequency check successful. Loaded %i times for the last %i seconds" ), LoadGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( LoadGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
 
     if ( SaveGame != nullptr )
     {
@@ -70,7 +70,7 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
     }
 
     auto callback = FOnLocalPlayerSaveGameLoadedNative::CreateLambda( [ &, delegate = MoveTemp( on_save_game_loaded ) ]( ULocalPlayerSaveGame * save_game ) {
-        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "AsyncSaveGameToSlot returned : %i" ), save_game != nullptr );
+        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "AsyncSaveGameToSlot returned : %i" ), save_game != nullptr );
 
         SaveGame = Cast< UGBFSaveGame >( save_game );
 
@@ -81,7 +81,7 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
             return;
         }
 
-        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Register savables" ) );
+        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Register savables" ) );
         for ( const auto & pending_savable : PendingSavables )
         {
             SaveGame->RegisterSavable( pending_savable );
@@ -93,7 +93,7 @@ void UGBFSaveGameSubsystem::Load( FGBFOnSaveGameLoaded on_save_game_loaded )
         OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Calling AsyncLoadOrCreateSaveGameForLocalPlayer" ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Calling AsyncLoadOrCreateSaveGameForLocalPlayer" ) );
     OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Load, EGBFSaveGameSubsystemOperationEvent::Started );
 
     if ( !UGBFSaveGame::AsyncLoadOrCreateSaveGameForLocalPlayer( settings->SaveGameClass, PrimaryPlayer.Get(), settings->SaveGameSlotName, callback ) )
@@ -150,27 +150,27 @@ void UGBFSaveGameSubsystem::Save( FGBFOnSaveGameSaved on_save_game_saved )
 
     auto * settings = GetDefault< UGBFSaveGameSettings >();
 
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check before saving" ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Frequency check before saving" ) );
     if ( !SaveGameFrequencyThrottler.RecordEvent() )
     {
         UE_LOG( LogGBFSaveGameSystem, Warning, TEXT( "Failed to save : Too much calls to Save. Max calls : %i in %f seconds" ), settings->MaxSaveFrequency, settings->MaxSaveFrequencyDuration );
         on_save_game_saved.ExecuteIfBound( SaveGame, false );
         return;
     }
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Frequency check successful. Saved %i times for the last %i seconds" ), SaveGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( SaveGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Frequency check successful. Saved %i times for the last %i seconds" ), SaveGameFrequencyThrottler.GetEventCount(), FMath::RoundToInt( SaveGameFrequencyThrottler.GetTimeBetweenFirstAndLastEvents() ) );
 
     OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Started );
 
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Handle PreSave" ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Handle PreSave" ) );
     SaveGame->HandlePreSave();
 
     auto callback = FAsyncSaveGameToSlotDelegate::CreateLambda( [ &, delegate = MoveTemp( on_save_game_saved ) ]( const FString & /*slot_name*/, const int32 /*user_index*/, bool success ) {
-        UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "AsyncSaveGameToSlot returned %i" ), success );
+        UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "AsyncSaveGameToSlot returned %i" ), success );
         delegate.ExecuteIfBound( SaveGame, success );
         OnOperationTriggeredDelegate.Broadcast( EGBFSaveGameSubsystemOperation::Save, EGBFSaveGameSubsystemOperationEvent::Ended );
     } );
 
-    UE_LOG( LogGBFSaveGameSystem, VeryVerbose, TEXT( "Calling AsyncSaveGameToSlot" ) );
+    UE_LOG( LogGBFSaveGameSystem, Verbose, TEXT( "Calling AsyncSaveGameToSlot" ) );
     UGameplayStatics::AsyncSaveGameToSlot( SaveGame, request_slot_name, request_user_index, callback );
 }
 

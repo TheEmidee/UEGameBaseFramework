@@ -10,7 +10,7 @@ void UGBFGameFeatureProjectPolicies::InitGameFeatureManager()
 
     for ( auto & observer : Observers )
     {
-        sub_system.AddObserver( observer.Get() );
+        sub_system.AddObserver( observer.Get(), UGameFeaturesSubsystem::EObserverPluginStateUpdateMode::FutureOnly );
     }
 
     Super::InitGameFeatureManager();

@@ -219,7 +219,7 @@ FGameplayTag UGBFAbilityInputBufferComponent::GetMostTriggeredInput()
     // Get most triggered input
     TArray< int > triggered_tag_keys;
     triggered_tag_map.GetKeys( triggered_tag_keys );
-    int max = triggered_tag_keys[ triggered_tag_map.GetMaxIndex() ];
+    int max = triggered_tag_keys[ triggered_tag_map.Num() - 1 ];
 
     FGameplayTag most_triggered_tag = triggered_tag_map.FindAndRemoveChecked( max );
 
