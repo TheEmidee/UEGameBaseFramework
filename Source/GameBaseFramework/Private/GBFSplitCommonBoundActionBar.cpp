@@ -212,7 +212,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                         {
                             auto key = legacy_input_action_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
 
-                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                            return key == EKeys::Virtual_Gamepad_Back.GetVirtualKey() || key == EKeys::Escape || key == EKeys::Android_Back;
                         }
 
                         return false;
@@ -270,7 +270,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                                 }
                             }
 
-                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                            return key == EKeys::Virtual_Gamepad_Back.GetVirtualKey() || key == EKeys::Escape || key == EKeys::Android_Back;
                         }
                         else if ( input_action )
                         {
@@ -284,7 +284,7 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                                 }
                             }
 
-                            return key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                            return key == EKeys::Virtual_Gamepad_Back.GetVirtualKey() || key == EKeys::Escape || key == EKeys::Android_Back;
                         }
 
                         return false;
@@ -358,13 +358,13 @@ void UGBFSplitCommonBoundActionBar::HandleDeferredDisplayUpdate()
                     if ( const auto legacy_data = binding->GetLegacyInputActionData() )
                     {
                         key = legacy_data->GetInputTypeInfo( player_input_type, player_gamepad_name ).GetKey();
-                        is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                        is_back_action = key == EKeys::Virtual_Gamepad_Back.GetVirtualKey() || key == EKeys::Escape || key == EKeys::Android_Back;
                     }
                     else
                     {
                         const auto * input_action = binding->InputAction.Get();
                         key = CommonUI::GetFirstKeyForInputType( action_router->GetLocalPlayer(), player_input_type, input_action );
-                        is_back_action = key == EKeys::Virtual_Back || key == EKeys::Escape || key == EKeys::Android_Back;
+                        is_back_action = key == EKeys::Virtual_Gamepad_Back.GetVirtualKey() || key == EKeys::Escape || key == EKeys::Android_Back;
                     }
 
                     if ( ActionExclusionList.Contains( binding->LegacyActionTableRow ) )
