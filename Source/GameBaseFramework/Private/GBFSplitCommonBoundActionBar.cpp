@@ -31,28 +31,28 @@ UGBFSplitCommonBoundActionBar::UGBFSplitCommonBoundActionBar( const FObjectIniti
 {
 }
 
-void UGBFSplitCommonBoundActionBar::Tick( float delta_time )
-{
-    if ( bIsRefreshQueued )
-    {
-        HandleDeferredDisplayUpdate();
-    }
-}
-
-ETickableTickType UGBFSplitCommonBoundActionBar::GetTickableTickType() const
-{
-    return ETickableTickType::Always;
-}
-
-TStatId UGBFSplitCommonBoundActionBar::GetStatId() const
-{
-    RETURN_QUICK_DECLARE_CYCLE_STAT( UGBFSplitCommonBoundActionBar, STATGROUP_Tickables )
-}
-
-bool UGBFSplitCommonBoundActionBar::IsTickableWhenPaused() const
-{
-    return true;
-}
+//void UGBFSplitCommonBoundActionBar::Tick( float delta_time )
+//{
+//    if ( bIsRefreshQueued )
+//    {
+//        HandleDeferredDisplayUpdate();
+//    }
+//}
+//
+//ETickableTickType UGBFSplitCommonBoundActionBar::GetTickableTickType() const
+//{
+//    return ETickableTickType::Always;
+//}
+//
+//TStatId UGBFSplitCommonBoundActionBar::GetStatId() const
+//{
+//    RETURN_QUICK_DECLARE_CYCLE_STAT( UGBFSplitCommonBoundActionBar, STATGROUP_Tickables )
+//}
+//
+//bool UGBFSplitCommonBoundActionBar::IsTickableWhenPaused() const
+//{
+//    return true;
+//}
 
 bool UGBFSplitCommonBoundActionBar::IsEntryClassValid( const TSubclassOf< UUserWidget > & in_entry_class ) const
 {

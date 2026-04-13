@@ -16,17 +16,17 @@ struct FUIActionBindingHandle;
  * split action bar with one part snap to the left fort the back handler action and display the other actions snap to the right
  */
 UCLASS()
-class GAMEBASEFRAMEWORK_API UGBFSplitCommonBoundActionBar : public UUserWidget, public FTickableGameObject
+class GAMEBASEFRAMEWORK_API UGBFSplitCommonBoundActionBar : public UUserWidget//, public FTickableGameObject
 {
     GENERATED_BODY()
 
 public:
     explicit UGBFSplitCommonBoundActionBar( const FObjectInitializer & object_initializer );
     // FTickableGameObject Begin
-    void Tick( float delta_time ) override;
+    /*void Tick( float delta_time ) override;
     ETickableTickType GetTickableTickType() const override;
     TStatId GetStatId() const override;
-    bool IsTickableWhenPaused() const override;
+    bool IsTickableWhenPaused() const override;*/
     // FTickableGameObject End
 
 protected:
