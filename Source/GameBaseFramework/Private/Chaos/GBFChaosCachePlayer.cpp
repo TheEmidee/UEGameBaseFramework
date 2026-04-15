@@ -81,3 +81,10 @@ void AGBFChaosCachePlayer::BeginPlay()
         SetActorTickEnabled( false );
     }
 }
+
+void AGBFChaosCachePlayer::Destroyed()
+{
+    // If we don't call stop before Super::Destroyed then we can have a crash because the observed components count is not the same as the ActiveAdapters count that the parent class creates (maybe this should be done by the parent class???)
+    Stop();
+    Super::Destroyed();
+}

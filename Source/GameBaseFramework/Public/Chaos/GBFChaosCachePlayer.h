@@ -30,4 +30,7 @@ public:
     void K2_BeginEvaluate();
 
     void BeginPlay() override;
+
+protected:
+    void Destroyed() override;
 };
